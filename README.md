@@ -1,81 +1,436 @@
-[![Coverage Status](https://codecov.io/gh/koupleless/koupleless/branch/main/graph/badge.svg)](https://codecov.io/gh/koupleless/koupleless/branch/main/graph/badge.svg)
-![license](https://img.shields.io/badge/license-Apache--2.0-green.svg)
-![Maven Central](https://img.shields.io/maven-central/v/com.alipay.sofa.koupleless/koupleless-runtime)
-
-<h1 align="center">Koupleless: Modular Development Framework and Serving Platform</h1>
-
 <div align="center">
 
 English | [简体中文](./README-zh_CN.md)
 
 </div>
 
-Would you like your application to start in just 10 seconds, consuming only 20MB of memory? Have you encountered issues with large applications causing collaboration bottlenecks and low release efficiency? Are you struggling with the high resource and maintenance costs associated with numerous small applications? If you're facing these challenges, then Koupleless might be the solution you're looking for. Koupleless approaches application architecture from a modular perspective, offering an extremely low-cost solution to address pain points encountered throughout the entire lifecycle of application development, operation, and execution:
+[![codecov](https://codecov.io/gh/sofastack/sofa-serverless/graph/badge.svg?token=q8SGKKa58G)](https://codecov.io/gh/sofastack/sofa-serverless)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.alipay.sofa/sofa-serverless/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.alipay.sofa/sofa-serverless/)
+[![GitHub release](https://img.shields.io/github/release/sofastack/sofa-serverless.svg)](https://github.com/sofastack/sofa-serverless/releases)
+# Overview
 
-1. Excessive application fragmentation leading to high machine and long-term maintenance costs
-2. Insufficient application fragmentation causing collaboration bottlenecks
-3. Lengthy application build, startup, and deployment times resulting in low iteration efficiency
-4. Severe fragmentation of SDK versions with high upgrade costs and long cycles
-5. High costs associated with building platforms and middle platforms, as well as difficulties in business asset precipitation and architectural constraints
-6. Long microservice chains leading to poor call performance
-7. High costs associated with microservice decomposition and evolution
+Arklet provides an operational interface for delivery of SofaArk bases and modules. With Arklet, the release and operation of Ark Biz can be easily and flexibly operated.
 
-How does Koupleless address these issues? Koupleless vertically and horizontally splits traditional applications, with the vertical split separating the base and the horizontal split separating multiple modules. The base shields modules from infrastructure concerns, while modules contain only the business-specific portion, enabling quick startup and insulating them from infrastructure concerns, allowing module developers to experience a Serverless-like environment. Koupleless thus evolves into a low-cost, Serverless solution by refining the granularity of development and operations while shielding infrastructure. For detailed explanations of the principles, please refer to the official website.
-Further detailed explanations of the principles are available on [the official website](https://koupleless.gitee.io/docs/introduction/architecture/arch-principle/).
+Arklet is internally constructed by **ArkletComponent**
 
-![image](https://github.com/koupleless/koupleless/assets/3754074/004c0fa5-62f6-42d7-a77e-f7152ac89248)
+![image](https://github.com/sofastack/sofa-serverless/assets/11410549/a2740422-569e-4dd3-9c9a-1503996bd2f1)
+- ApiClient: The core components responsible for interacting with the outside world
+- CommandService: Arklet exposes capability instruction definition and extension
+- OperationService: Ark Biz interacts with SofaArk to add, delete, modify, and encapsulate basic capabilities
+- HealthService: Based on health and stability, base, Biz, system and other indicators are calculated
 
-The most important aspect is that Koupleless can **assist existing applications** in evolving into a modular development model **at an extremely low cost**, addressing the aforementioned issues and helping businesses reduce costs, increase efficiency, and enhance competitiveness.
+The collaboration between them is shown in the figure
+![overview](https://user-images.githubusercontent.com/11410549/266193839-7865e417-6909-4e89-bd48-c926162eaf83.jpg)
 
-## The Advantages of Koupleless
 
-Koupleless is a mature development framework and operational scheduling platform capability that has been refined internally within Ant Group for 5 years. Compared to traditional image-based application models, it offers approximately 10 times improvement in development, operations, and runtime calling. Summarized into 5 key features: Fast, Cost-efficient, Flexible deployment, Smooth evolution, and Production-scale validation.
+Of course, you can also extend Arklet's component capabilities by implementing the **ArkletComponent** interface
 
-<img width="788" alt="image" src="https://github.com/sofastack/sofa-serverless/assets/3754074/11d1d662-d33b-482b-946b-bf600aeb34da">
+# Command Extension
+The Arklet exposes the instruction API externally and handles the instruction internally through a CommandHandler mapped from each API.
+> CommandHandler related extensions belong to the unified management of the CommandService component
 
-Here are performance data comparing modular development and deployment with traditional image-based approaches for an actual production application.
+You can customize extension commands by inheriting **AbstractCommandHandler**
 
-<img width="600" alt="image" src="https://github.com/koupleless/koupleless/assets/3754074/913a6f11-54cb-4c8b-b417-d014e53c920a"/>
+## Build-in Command API
 
-## What is a Module?
+All of the following instruction apis access the arklet using the POST(application/json) request format
 
-Modules utilize extreme sharing and isolation technologies, which enable hot deployment (updating online code without restarting the machine).
+The http protocol is enabled and the default port is 1238
+> You can set `koupleless.arklet.http.port` JVM startup parameters override the default port
 
-Isolation is achieved through ClassLoader class isolation based on [SOFAArk](https://github.com/sofastack/sofa-ark) and object isolation based on [SpringBoot SpringContext](https://github.com/spring-projects/spring-boot).
 
-Sharing is facilitated by class delegation loading based on [SOFAArk](https://github.com/sofastack/sofa-ark) and cross-SpringContext object lookup and invocation based on SpringBootManager.
+## Query the supported commands
+- URL: 127.0.0.1:1238/help
+- input sample:
+```json
+{}
+```
+- output sample:
+```json
+{
+    "code":"SUCCESS",
+    "data":[
+        {
+            "desc":"query all ark biz(including master biz)",
+            "id":"queryAllBiz"
+        },
+        {
+            "desc":"list all supported commands",
+            "id":"help"
+        },
+        {
+            "desc":"uninstall one ark biz",
+            "id":"uninstallBiz"
+        },
+        {
+            "desc":"switch one ark biz",
+            "id":"switchBiz"
+        },
+        {
+            "desc":"install one ark biz",
+            "id":"installBiz"
+        }
+    ]
+}
+```
 
-So, in physical terms, a module can be considered as one ClassLoader + one SpringContext.
+## Install a biz
+- URL: 127.0.0.1:1238/installBiz
+- input sample:
+```json
+{
+    "bizName": "test",
+    "bizVersion": "1.0.0",
+    // local path should start with file://, alse support remote url which can be downloaded
+    "bizUrl": "file:///Users/jaimezhang/workspace/github/sofa-ark-dynamic-guides/dynamic-provider/target/dynamic-provider-1.0.0-ark-biz.jar"
+}
+```
 
-## What is the Base？
-The base is just a regular application, same with the original app (such as standard SpringBoot).
+- output sample(success):
+```json
+{
+  "code":"SUCCESS",
+  "data":{
+    "bizInfos":[
+      {
+        "bizName":"dynamic-provider",
+        "bizState":"ACTIVATED",
+        "bizVersion":"1.0.0",
+        "declaredMode":true,
+        "identity":"dynamic-provider:1.0.0",
+        "mainClass":"io.sofastack.dynamic.provider.ProviderApplication",
+        "priority":100,
+        "webContextPath":"provider"
+      }
+    ],
+    "code":"SUCCESS",
+    "message":"Install Biz: dynamic-provider:1.0.0 success, cost: 1092 ms, started at: 16:07:47,769"
+  }
+}
+```
 
-## Quick start
-Please check [the official website Quick Start](https://koupleless.gitee.io/docs/quick-start/).
+- output sample(failed):
+```json
+{
+  "code":"FAILED",
+  "data":{
+    "code":"REPEAT_BIZ",
+    "message":"Biz: dynamic-provider:1.0.0 has been installed or registered."
+  }
+}
+```
 
-<video width=100% controls autoplay>
-<source src="https://koupleless.oss-cn-shanghai.aliyuncs.com/outer-materials/docs/videos/module_dev_and_deploy.mp4" type="video/mp4">
-Your browser does not support the video tag.  
-</video>
 
-## Koupleless Components
+## Uninstall a biz
+- URL: 127.0.0.1:1238/uninstallBiz
+- input sample:
+```json
+{
+    "bizName":"dynamic-provider",
+    "bizVersion":"1.0.0"
+}
+```
+- output sample(success):
+```json
+{
+  "code":"SUCCESS"
+}
+```
 
-![image](https://github.com/sofastack/sofa-serverless/assets/101314559/995f1e17-f3be-4672-b1b8-c0c041590fb0)
+- output sample(failed):
+```json
+{
+  "code":"FAILED",
+  "data":{
+    "code":"NOT_FOUND_BIZ",
+    "message":"Uninstall biz: test:1.0.0 not found."
+  }
+}
+```
 
-## Contributing
-We appreciate anyone who contribute here together. Please scan the QR code to join the developer collaboration group.
+## Switch a biz
+- URL: 127.0.0.1:1238/switchBiz
+- input sample:
+```json
+{
+    "bizName":"dynamic-provider",
+    "bizVersion":"1.0.0"
+}
+```
+- output sample:
+```json
+{
+  "code":"SUCCESS"
+}
+```
 
-| IAM                        | number      | QR code                                                                                                                          |
-|----------------------------|-------------|----------------------------------------------------------------------------------------------------------------------------------|
-| DingTalk group (recommand) | 24970018417 | <img width="256" alt="image" src="https://github.com/koupleless/koupleless/assets/3754074/7ba1db74-20c1-43a4-a2ab-d38c99a920cd"> |
-| WeChat                     | zzl_ing     | <img width="256" alt="image" src="https://github.com/koupleless/koupleless/assets/3754074/35ebc2bc-86cd-4a24-b12e-e9f44cccc2d7"> |
+## Query all Biz
+- URL: 127.0.0.1:1238/queryAllBiz
+- input sample:
+```json
+{}
+```
+- output sample:
+```json
+{
+  "code":"SUCCESS",
+  "data":[
+    {
+      "bizName":"dynamic-provider",
+      "bizState":"ACTIVATED",
+      "bizVersion":"1.0.0",
+      "mainClass":"io.sofastack.dynamic.provider.ProviderApplication",
+      "webContextPath":"provider"
+    },
+    {
+      "bizName":"stock-mng",
+      "bizState":"ACTIVATED",
+      "bizVersion":"1.0.0",
+      "mainClass":"embed main",
+      "webContextPath":"/"
+    }
+  ]
+}
+```
 
-## Long-term planning and our vision
-We hope to further refine and open up these capabilities to be more extreme and applicable to a wider range of scenarios. Help more businesses solve application development problems, achieve cost reduction and efficiency improvement, and ultimately become an excellent research and development framework and solution for global green computing, achieving:
+## Query Health
+- URL: 127.0.0.1:1238/health
 
-1. Speed as you need
-2. Pay as you need
-3. Deploy as you need
-4. Evolution as you need
+### Query All Health Info
+- input sample:
+```json
+{}
+```
+- output sample:
+```json
+{
+  "code": "SUCCESS",
+  "data": {
+    "healthData": {
+      "jvm": {
+        "max non heap memory(M)": -9.5367431640625E-7,
+        "java version": "1.8.0_331",
+        "max memory(M)": 885.5,
+        "max heap memory(M)": 885.5,
+        "used heap memory(M)": 137.14127349853516,
+        "used non heap memory(M)": 62.54662322998047,
+        "loaded class count": 10063,
+        "init non heap memory(M)": 2.4375,
+        "total memory(M)": 174.5,
+        "free memory(M)": 37.358726501464844,
+        "unload class count": 0,
+        "total class count": 10063,
+        "committed heap memory(M)": 174.5,
+        "java home": "****\\jre",
+        "init heap memory(M)": 64.0,
+        "committed non heap memory(M)": 66.203125,
+        "run time(s)": 34.432
+      },
+      "cpu": {
+        "count": 4,
+        "total used (%)": 131749.0,
+        "type": "****",
+        "user used (%)": 9.926451054656962,
+        "free (%)": 81.46475495070172,
+        "system used (%)": 6.249762806548817
+      },
+      "masterBizInfo": {
+        "webContextPath": "/",
+        "bizName": "bookstore-manager",
+        "bizState": "ACTIVATED",
+        "bizVersion": "1.0.0"
+      },
+      "pluginListInfo": [
+        {
+          "artifactId": "web-ark-plugin",
+          "groupId": "com.alipay.sofa",
+          "pluginActivator": "com.alipay.sofa.ark.web.embed.WebPluginActivator",
+          "pluginName": "web-ark-plugin",
+          "pluginUrl": "file:/****/2.2.3-SNAPSHOT/web-ark-plugin-2.2.3-20230901.090402-2.jar!/",
+          "pluginVersion": "2.2.3-SNAPSHOT"
+        },
+        {
+          "artifactId": "runtime-sofa-boot-plugin",
+          "groupId": "com.alipay.sofa",
+          "pluginActivator": "com.alipay.sofa.runtime.ark.plugin.SofaRuntimeActivator",
+          "pluginName": "runtime-sofa-boot-plugin",
+          "pluginUrl": "file:/****/runtime-sofa-boot-plugin-3.11.0.jar!/",
+          "pluginVersion": "3.11.0"
+        }
+      ],
+      "masterBizHealth": {
+        "readinessState": "ACCEPTING_TRAFFIC"
+      },
+      "bizListInfo": [
+        {
+          "bizName": "bookstore-manager",
+          "bizState": "ACTIVATED",
+          "bizVersion": "1.0.0",
+          "webContextPath": "/"
+        }
+      ]
+    }
+  }
+}
+```
 
-<img width="1069" alt="image" src="https://github.com/koupleless/koupleless/assets/3754074/17ebd41d-38c7-46e8-a4ba-b6b8bf8f76dd">
+### Query System Health Info
+- input sample:
+
+```json
+{
+  "type": "system",
+  // [OPTIONAL] if metrics is null -> query all system health info
+  "metrics": ["cpu", "jvm"]
+}
+```
+- output sample:
+```json
+{
+  "code": "SUCCESS",
+  "data": {
+    "healthData": {
+      "jvm": {...},
+      "cpu": {...},
+//      "masterBizHealth": {...}
+    }
+  }
+}
+```
+
+### Query Biz Health Info
+- input sample:
+
+```json
+{
+  "type": "biz",
+  // [OPTIONAL] if moduleName is null and moduleVersion is null -> query all biz
+  "moduleName": "bookstore-manager",
+  // [OPTIONAL] if moduleVersion is null -> query all biz named moduleName
+  "moduleVersion": "1.0.0"
+}
+```
+- output sample:
+```json
+{
+  "code": "SUCCESS",
+  "data": {
+    "healthData": {
+      "bizInfo": {
+        "bizName": "bookstore-manager",
+        "bizState": "ACTIVATED",
+        "bizVersion": "1.0.0",
+        "webContextPath": "/"
+      }
+//      "bizListInfo": [
+//        {
+//          "bizName": "bookstore-manager",
+//          "bizState": "ACTIVATED",
+//          "bizVersion": "1.0.0",
+//          "webContextPath": "/"
+//        }
+//      ]
+    }
+  }
+}
+```
+
+### Query Plugin Health Info
+- input sample:
+
+```json
+{
+  "type": "plugin",
+  // [OPTIONAL] if moduleName is null -> query all biz
+  "moduleName": "web-ark-plugin"
+}
+```
+- output sample:
+```json
+{
+  "code": "SUCCESS",
+  "data": {
+    "healthData": {
+      "pluginListInfo": [
+        {
+          "artifactId": "web-ark-plugin",
+          "groupId": "com.alipay.sofa",
+          "pluginActivator": "com.alipay.sofa.ark.web.embed.WebPluginActivator",
+          "pluginName": "web-ark-plugin",
+          "pluginUrl": "file:/****/web-ark-plugin-2.2.3-20230901.090402-2.jar!/",
+          "pluginVersion": "2.2.3-SNAPSHOT"
+        }
+      ]
+    }
+  }
+}
+```
+
+### Query Health Using Endpoint
+
+use endpoint for k8s module to get helath info
+
+**default config**
+* endpoints exposure include: `*`
+* endpoints base path: `/`
+* endpoints sever port: `8080`
+
+**http code result**
+* `HEALTHY(200)`: get health if all health indicator is healthy
+* `UNHEALTHY(400)`: get health once a health indicator is unhealthy
+* `ENDPOINT_NOT_FOUND(404)`: endpoint path or params not found
+* `ENDPOINT_PROCESS_INTERNAL_ERROR(500)`:  get health process throw an error
+
+### query all health info
+- url: 127.0.0.1:8080/arkletHealth
+- method: GET
+- output sample
+
+```json  
+{   
+    "healthy": true,
+    "code": 200,    
+    "codeType": "HEALTHY",    
+    "data": {        
+        "jvm": {...},        
+        "masterBizHealth": {...},        
+        "cpu": {...},        
+        "masterBizInfo": {...},        
+        "bizListInfo": [...],        
+        "pluginListInfo": [...]    
+    }
+}  
+```    
+### query all biz/plugin health info
+- url: 127.0.0.1:8080/arkletHealth/{moduleType} (moduleType must in ['biz', 'plugin'])
+- method: GET
+- output sample
+ ```json  
+{   
+    "healthy": true,
+    "code": 200,    
+    "codeType": "HEALTHY",    
+    "data": {        
+        "bizListInfo": [...],  
+        // "pluginListInfo": [...]      
+    }
+}  
+```      
+### query single biz/plugin health info
+- url: 127.0.0.1:8080/arkletHealth/{moduleType}/moduleName/moduleVersion (moduleType must in ['biz', 'plugin'])
+- method: GET
+- output sample
+
+ ```json  
+{   
+    "healthy": true,
+    "code": 200,    
+    "codeType": "HEALTHY",    
+    "data": {        
+        "bizInfo": {...},  
+        // "pluginInfo": {...}      
+    }
+}  
+```  
+
+

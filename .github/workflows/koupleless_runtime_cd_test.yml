@@ -34,7 +34,7 @@ jobs:
 
       - name: get koupleless-runtime version & update koupleless-runtime version for all test sample app
         run: |
-          koupleless_version=`egrep "<revision.default>([^<]+)</revision.default>" koupleless-runtime/pom.xml |awk -F "revision.default>|</revision.default" '{print $2}'`
+          koupleless_version=`egrep "<revision.default>([^<]+)</revision.default>" pom.xml |awk -F "revision.default>|</revision.default" '{print $2}'`
           echo "升级 koupleless-runtime version to $koupleless_version"
           for testsample in `find samples -name "*-samples"`;do  sed -i "s/<koupleless.runtime.version>.*<\/koupleless.runtime.version>/<koupleless.runtime.version>$koupleless_version<\/koupleless.runtime.version>/g"  $testsample/pom.xml ;done
 

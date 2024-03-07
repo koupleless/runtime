@@ -5,24 +5,16 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'koupleless-runtime/**'
 
   pull_request:
     branches:
       - main
-    paths:
-      - 'koupleless-runtime/**'
 
   # enable manually running the workflow
   workflow_dispatch:
 
 env:
-  WORK_DIR: koupleless-runtime
-
-defaults:
-  run:
-    working-directory: koupleless-runtime
+  WORK_DIR: .
 
 jobs:
   unit-test-for-jdk8:
