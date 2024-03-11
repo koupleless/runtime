@@ -4,28 +4,20 @@ run-name: ${{ github.actor }} pushed code
 on:
   push:
     branches:
-      - springboot3-main
-    paths:
-      - 'koupleless-runtime/**'
+      - main
 
   pull_request:
     branches:
-      - springboot3-main
-    paths:
-      - 'koupleless-runtime/**'
+      - main
 
   # enable manually running the workflow
   workflow_dispatch:
 
 env:
-  WORK_DIR: koupleless-runtime
-
-defaults:
-  run:
-    working-directory: koupleless-runtime
+  WORK_DIR: .
 
 jobs:
-  unit-test-for-jdk17:
+  unit-test-for-jdk8:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -33,7 +25,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: adopt
-          java-version: 17
+          java-version: 8
           cache: maven
 
       - name: Test

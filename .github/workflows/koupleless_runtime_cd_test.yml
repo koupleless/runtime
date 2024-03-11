@@ -18,10 +18,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Set up JDK 17
+      - name: Set up JDK 8
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
+          java-version: '8'
           distribution: 'temurin'
           cache: maven
 
@@ -34,7 +34,7 @@ jobs:
 
       - name: get koupleless-runtime version & update koupleless-runtime version for all test sample app
         run: |
-          koupleless_version=`egrep "<revision.default>([^<]+)</revision.default>" koupleless-runtime/pom.xml |awk -F "revision.default>|</revision.default" '{print $2}'`
+          koupleless_version=`egrep "<revision.default>([^<]+)</revision.default>" pom.xml |awk -F "revision.default>|</revision.default" '{print $2}'`
           echo "升级 koupleless-runtime version to $koupleless_version"
           for testsample in `find samples -name "*-samples"`;do  sed -i "s/<koupleless.runtime.version>.*<\/koupleless.runtime.version>/<koupleless.runtime.version>$koupleless_version<\/koupleless.runtime.version>/g"  $testsample/pom.xml ;done
 
@@ -50,7 +50,7 @@ jobs:
           sudo systemctl start redis-server
           sudo cp samples/ccbin/arkctl /usr/bin/arkctl
 
-      - name: Run jdk17 serverless runtime test
+      - name: Run jdk8 serverless runtime test
         run: |
           set -e
-          bash samples/ccbin/start.sh jdk17
+          bash samples/ccbin/start.sh jdk8

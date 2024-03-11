@@ -1,73 +1,439 @@
-[![Coverage Status](https://codecov.io/gh/koupleless/koupleless/branch/main/graph/badge.svg)](https://codecov.io/gh/koupleless/koupleless/branch/main/graph/badge.svg)
-![license](https://img.shields.io/badge/license-Apache--2.0-green.svg)
-![Maven Central](https://img.shields.io/maven-central/v/com.alipay.sofa.koupleless/koupleless-runtime)
-
-# Koupleless: 模块化研发框架与运维调度平台
-
 <div align="center">
 
-English | [简体中文](./README-zh_CN.md)
+[English](./README.md) | 简体中文
 
 </div>
 
-你想让你的应用 10 秒启动，只占 20MB 内存吗？你是否遇到大应用多人协作互相阻塞、发布效率不高的问题？你是否遇到小应用太多，资源成本和长期维护成本太高的问题呢？如果你也是被这些问题困扰着的，那么 Koupleless 会是你想要的解决方案。Koupleless 从应用架构角度出发，采用模块化架构，以 **极低接入成本** 的方式，解决应用在研发、运维、运行等完整生命周期遇到的痛点问题：
+[![codecov](https://codecov.io/gh/sofastack/sofa-serverless/graph/badge.svg?token=q8SGKKa58G)](https://codecov.io/gh/sofastack/sofa-serverless)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.alipay.sofa/sofa-serverless/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.alipay.sofa/sofa-serverless/)
+[![GitHub release](https://img.shields.io/github/release/sofastack/sofa-serverless.svg)](https://github.com/sofastack/sofa-serverless/releases)
 
-1. 应用拆分过度，机器成本和长期维护成本高
-2. 应用拆分不够，多人协作互相阻塞
-3. 应用构建、启动与部署耗时久，应用迭代效率不高
-4. SDK 版本碎片化严重，升级成本高周期长
-5. 平台、中台搭建成本高，业务资产沉淀与架构约束困难
-6. 微服务链路过长，调用性能不高
-7. 微服务拆分、演进成本高
+[//]: # (翻译成中文)
+# Overview
+# 概述
 
-为什么 Koupleless 能解决呢？原因是 Koupleless 对传统应用同时进行了纵向和横向的拆分，纵向拆分出基座，横向拆分出多个模块，基座为模块屏蔽基础设施，模块只包含业务自身部分启动快且不感知基础设施专注于业务本身，模块开发者实际上具备了 Serverless 的体验。所以 Koupleless 是从细化研发运维粒度和屏蔽基础设施的两个方面，演进出的一套低成本接入的 Serverless 解决方案。
-详细原理介绍[可以查看官网介绍](https://koupleless.gitee.io/docs/introduction/architecture/arch-principle/)。
+Arklet 提供了 SOFAArk 基座和模块的运维接口，通过 Arklet 可以轻松灵活的进行 Ark Biz 的发布和运维。
 
-![image](https://github.com/koupleless/koupleless/assets/3754074/004c0fa5-62f6-42d7-a77e-f7152ac89248)
+Arklet 内部由 **ArkletComponent** 构成
 
-最重要的是, Koupleless 能以 **极低成本** 帮助 **存量应用** 演进为模块化研发模式，解决上述问题，帮助企业降本增效提升竞争力。
+![image](https://github.com/sofastack/sofa-serverless/assets/11410549/a2740422-569e-4dd3-9c9a-1503996bd2f1)
+- ApiClient: The core components responsible for interacting with the outside world
+- ApiClient: 负责与外界交互的核心组件
+- CommandService: Arklet 暴露能力指令定义和扩展
+- OperationService: Ark Biz 与 SOFAArk 交互，增删改查，封装基础能力
+- HealthService: 基于基座、模块系统等指标统计健康和稳定性
 
-## Koupleless 优势
+这些组件之间的关联关系如下图
+![overview](https://user-images.githubusercontent.com/11410549/266193839-7865e417-6909-4e89-bd48-c926162eaf83.jpg)
 
-Koupleless 是蚂蚁集团内部经过 5 年打磨成熟的研发框架和运维调度平台能力，相较于传统镜像化的应用模式研发、运维、运行阶段都有 10 倍左右的提升，总结起来 5 大特点：快、省、灵活部署、平滑演进、生产规模化验证。
 
-<img width="788" alt="image" src="https://github.com/sofastack/sofa-serverless/assets/3754074/11d1d662-d33b-482b-946b-bf600aeb34da">
+当然，您也可以通过实现 **ArkletComponent** 接口来扩展 Arklet 的组件功能。
 
-举个实际生产应用模块化研发部署与传统镜像化对比的性能数据
+# Command Extension
+# 指令扩展
+Arklet 通过外部暴露指令 API，通过每个 API 映射的 CommandHandler 内部处理指令。
+> CommandHandler 相关扩展属于 CommandService 组件统一管理
 
-![image](https://github.com/koupleless/koupleless/assets/3754074/cf8877c6-80f1-4138-8314-0fd4deec6b40)
+你可以通过继承 **AbstractCommandHandler** 来自定义扩展指令
 
-## 模块是什么？
-这里的模块采用了极致的共享和隔离技术，隔离之后就可以做到热部署（不重启机器的方式更新线上代码）。
-隔离 = 基于 [SOFAArk](https://github.com/sofastack/sofa-ark) 的 ClassLoader 类隔离, 基于 [SpringBoot](https://github.com/spring-projects/spring-boot) 的 SpringContext 对象隔离。
-共享 = 基于 [SOFAArk](https://github.com/sofastack/sofa-ark) 的类委托加载，基于 SpringBootManager 的跨 SpringContext 的对象查找调用。
+## 内置指令 API
 
-所以从物理上，可以认为模块 = 一个 ClassLoader + 一个 SpringContext。
+下面所有的指令 API 都是通过 POST(application/json) 请求格式访问 arklet
 
-## 基座是什么？
-基座就是普通应用，与原有体系（比如标准 SpringBoot）没有任何区别。
+使用的是 http 协议，1238 端口
+> 你可以通过设置 `sofa.serverless.arklet.http.port` JVM 启动参数覆盖默认端口
 
-## 快速开始
-请查看[官网快速开始](https://koupleless.gitee.io/docs/quick-start/)
+## 查询支持的指令
+- URL: 127.0.0.1:1238/help
+- input sample:
+```json
+{}
+```
+- output sample:
+```json
+{
+    "code":"SUCCESS",
+    "data":[
+        {
+            "desc":"query all ark biz(including master biz)",
+            "id":"queryAllBiz"
+        },
+        {
+            "desc":"list all supported commands",
+            "id":"help"
+        },
+        {
+            "desc":"uninstall one ark biz",
+            "id":"uninstallBiz"
+        },
+        {
+            "desc":"switch one ark biz",
+            "id":"switchBiz"
+        },
+        {
+            "desc":"install one ark biz",
+            "id":"installBiz"
+        }
+    ]
+}
+```
 
-## Koupleless 组件
+## 安装一个模块
+- URL: 127.0.0.1:1238/installBiz
+- 输入例子:
+```json
+{
+    "bizName": "test",
+    "bizVersion": "1.0.0",
+    // local path should start with file://, alse support remote url which can be downloaded
+    "bizUrl": "file:///Users/jaimezhang/workspace/github/sofa-ark-dynamic-guides/dynamic-provider/target/dynamic-provider-1.0.0-ark-biz.jar"
+}
+```
 
-![image](https://github.com/sofastack/sofa-serverless/assets/101314559/995f1e17-f3be-4672-b1b8-c0c041590fb0)
+- 输出例子(success):
+```json
+{
+  "code":"SUCCESS",
+  "data":{
+    "bizInfos":[
+      {
+        "bizName":"dynamic-provider",
+        "bizState":"ACTIVATED",
+        "bizVersion":"1.0.0",
+        "declaredMode":true,
+        "identity":"dynamic-provider:1.0.0",
+        "mainClass":"io.sofastack.dynamic.provider.ProviderApplication",
+        "priority":100,
+        "webContextPath":"provider"
+      }
+    ],
+    "code":"SUCCESS",
+    "message":"Install Biz: dynamic-provider:1.0.0 success, cost: 1092 ms, started at: 16:07:47,769"
+  }
+}
+```
 
-## 如何参与社区
-欢迎大家一起建设、搜索或者扫码加入开发者协作群。
+- 输出例子(failed):
+```json
+{
+  "code":"FAILED",
+  "data":{
+    "code":"REPEAT_BIZ",
+    "message":"Biz: dynamic-provider:1.0.0 has been installed or registered."
+  }
+}
+```
 
-|软件|群号|二维码|
-|-|-|-|
-| 钉钉群（推荐）| 24970018417 | <img width="256" alt="image" src="https://github.com/koupleless/koupleless/assets/3754074/7ba1db74-20c1-43a4-a2ab-d38c99a920cd"> |
-| QQ 群 | 813757901 | <img width="256" alt="image" src="https://github.com/koupleless/koupleless/assets/3754074/4445e3b3-dbc9-4761-a578-90c578e21954"> |
+## 卸载一个模块
+- URL: 127.0.0.1:1238/uninstallBiz
+- 输入例子:
+```json
+{
+    "bizName":"dynamic-provider",
+    "bizVersion":"1.0.0"
+}
+```
+- 输出例子(success):
+```json
+{
+  "code":"SUCCESS"
+}
+```
 
-## 长期规划与愿景
-希望将这些能力做得更加极致、更加开放，适用更多的场景。帮助更多的企业解决应用研发问题，实现降本增效，最终成为全球绿色计算优秀的研发框架和解决方案，做到：
+- 输出例子(failed):
+```json
+{
+  "code":"FAILED",
+  "data":{
+    "code":"NOT_FOUND_BIZ",
+    "message":"Uninstall biz: test:1.0.0 not found."
+  }
+}
+```
 
-1. Speed as you need
-2. Pay as you need
-3. Deploy as you need
-4. Evolution as you need
+## 切换一个模块
+- URL: 127.0.0.1:1238/switchBiz
+- 输入例子:
+```json
+{
+    "bizName":"dynamic-provider",
+    "bizVersion":"1.0.0"
+}
+```
+- 输出例子:
+```json
+{
+  "code":"SUCCESS"
+}
+```
 
-<img width="1069" alt="image" src="https://github.com/koupleless/koupleless/assets/3754074/17ebd41d-38c7-46e8-a4ba-b6b8bf8f76dd">
+## 查询所有模块
+- URL: 127.0.0.1:1238/queryAllBiz
+- 输入例子:
+```json
+{}
+```
+- 输出例子:
+```json
+{
+  "code":"SUCCESS",
+  "data":[
+    {
+      "bizName":"dynamic-provider",
+      "bizState":"ACTIVATED",
+      "bizVersion":"1.0.0",
+      "mainClass":"io.sofastack.dynamic.provider.ProviderApplication",
+      "webContextPath":"provider"
+    },
+    {
+      "bizName":"stock-mng",
+      "bizState":"ACTIVATED",
+      "bizVersion":"1.0.0",
+      "mainClass":"embed main",
+      "webContextPath":"/"
+    }
+  ]
+}
+```
+
+## 查询健康与状态信息
+- URL: 127.0.0.1:1238/health
+
+### 查询所有健康与状态信息
+
+- 输入信息:
+```json
+{}
+```
+- 输出信息:
+```json
+{
+  "code": "SUCCESS",
+  "data": {
+    "healthData": {
+      "jvm": {
+        "max non heap memory(M)": -9.5367431640625E-7,
+        "java version": "1.8.0_331",
+        "max memory(M)": 885.5,
+        "max heap memory(M)": 885.5,
+        "used heap memory(M)": 137.14127349853516,
+        "used non heap memory(M)": 62.54662322998047,
+        "loaded class count": 10063,
+        "init non heap memory(M)": 2.4375,
+        "total memory(M)": 174.5,
+        "free memory(M)": 37.358726501464844,
+        "unload class count": 0,
+        "total class count": 10063,
+        "committed heap memory(M)": 174.5,
+        "java home": "****\\jre",
+        "init heap memory(M)": 64.0,
+        "committed non heap memory(M)": 66.203125,
+        "run time(s)": 34.432
+      },
+      "cpu": {
+        "count": 4,
+        "total used (%)": 131749.0,
+        "type": "****",
+        "user used (%)": 9.926451054656962,
+        "free (%)": 81.46475495070172,
+        "system used (%)": 6.249762806548817
+      },
+      "masterBizInfo": {
+        "webContextPath": "/",
+        "bizName": "bookstore-manager",
+        "bizState": "ACTIVATED",
+        "bizVersion": "1.0.0"
+      },
+      "pluginListInfo": [
+        {
+          "artifactId": "web-ark-plugin",
+          "groupId": "com.alipay.sofa",
+          "pluginActivator": "com.alipay.sofa.ark.web.embed.WebPluginActivator",
+          "pluginName": "web-ark-plugin",
+          "pluginUrl": "file:/****/2.2.3-SNAPSHOT/web-ark-plugin-2.2.3-20230901.090402-2.jar!/",
+          "pluginVersion": "2.2.3-SNAPSHOT"
+        },
+        {
+          "artifactId": "runtime-sofa-boot-plugin",
+          "groupId": "com.alipay.sofa",
+          "pluginActivator": "com.alipay.sofa.runtime.ark.plugin.SofaRuntimeActivator",
+          "pluginName": "runtime-sofa-boot-plugin",
+          "pluginUrl": "file:/****/runtime-sofa-boot-plugin-3.11.0.jar!/",
+          "pluginVersion": "3.11.0"
+        }
+      ],
+      "masterBizHealth": {
+        "readinessState": "ACCEPTING_TRAFFIC"
+      },
+      "bizListInfo": [
+        {
+          "bizName": "bookstore-manager",
+          "bizState": "ACTIVATED",
+          "bizVersion": "1.0.0",
+          "webContextPath": "/"
+        }
+      ]
+    }
+  }
+}
+```
+
+### 查询系统健康与状态信息
+- 输入例子:
+
+```json
+{
+  "type": "system",
+  // [OPTIONAL] if metrics is null -> query all system health info
+  "metrics": ["cpu", "jvm"]
+}
+```
+- 输出例子:
+```json
+{
+  "code": "SUCCESS",
+  "data": {
+    "healthData": {
+      "jvm": {...},
+      "cpu": {...},
+//      "masterBizHealth": {...}
+    }
+  }
+}
+```
+
+### 查询模块健康与状态信息
+- 输入例子:
+
+```json
+{
+  "type": "biz",
+  // [OPTIONAL] if moduleName is null and moduleVersion is null -> query all biz
+  "moduleName": "bookstore-manager",
+  // [OPTIONAL] if moduleVersion is null -> query all biz named moduleName
+  "moduleVersion": "1.0.0"
+}
+```
+- 输出例子:
+```json
+{
+  "code": "SUCCESS",
+  "data": {
+    "healthData": {
+      "bizInfo": {
+        "bizName": "bookstore-manager",
+        "bizState": "ACTIVATED",
+        "bizVersion": "1.0.0",
+        "webContextPath": "/"
+      }
+//      "bizListInfo": [
+//        {
+//          "bizName": "bookstore-manager",
+//          "bizState": "ACTIVATED",
+//          "bizVersion": "1.0.0",
+//          "webContextPath": "/"
+//        }
+//      ]
+    }
+  }
+}
+```
+
+### 查询插件健康与状态信息
+- 输入例子:
+
+```json
+{
+  "type": "plugin",
+  // [OPTIONAL] if moduleName is null -> query all biz
+  "moduleName": "web-ark-plugin"
+}
+```
+- 输出例子:
+```json
+{
+  "code": "SUCCESS",
+  "data": {
+    "healthData": {
+      "pluginListInfo": [
+        {
+          "artifactId": "web-ark-plugin",
+          "groupId": "com.alipay.sofa",
+          "pluginActivator": "com.alipay.sofa.ark.web.embed.WebPluginActivator",
+          "pluginName": "web-ark-plugin",
+          "pluginUrl": "file:/****/web-ark-plugin-2.2.3-20230901.090402-2.jar!/",
+          "pluginVersion": "2.2.3-SNAPSHOT"
+        }
+      ]
+    }
+  }
+}
+```
+
+### 使用 Endpoint 来查询健康信息
+
+使用 endpoint 来查询 k8s 模块的健康信息
+
+** 默认配置 **
+* endpoints path: `/`
+* endpoints 服务端口: `8080`
+
+** http 结果码 **
+* `HEALTHY(200)`: 所有健康指标都健康
+* `UNHEALTHY(400)`: 至少有一个健康指标已经不健康
+* `ENDPOINT_NOT_FOUND(404)`: 路径或参数不存在
+* `ENDPOINT_PROCESS_INTERNAL_ERROR(500)`: 遇到异常
+
+### 查询所有健康信息
+- url: 127.0.0.1:8080/arkletHealth
+- method: GET
+- 输出例子
+
+```json  
+{   
+    "healthy": true,
+    "code": 200,    
+    "codeType": "HEALTHY",    
+    "data": {        
+        "jvm": {...},        
+        "masterBizHealth": {...},        
+        "cpu": {...},        
+        "masterBizInfo": {...},        
+        "bizListInfo": [...],        
+        "pluginListInfo": [...]    
+    }
+}  
+```    
+### 查询所有模块的健康信息
+- url: 127.0.0.1:8080/arkletHealth/{moduleType} (moduleType must in ['biz', 'plugin'])
+- method: GET
+- 输出例子
+ ```json  
+{   
+    "healthy": true,
+    "code": 200,    
+    "codeType": "HEALTHY",    
+    "data": {        
+        "bizListInfo": [...],  
+        // "pluginListInfo": [...]      
+    }
+}  
+```      
+### 查询单个模块的健康信息
+- url: 127.0.0.1:8080/arkletHealth/{moduleType}/moduleName/moduleVersion (moduleType must in ['biz', 'plugin'])
+- method: GET
+- 输出例子
+
+ ```json  
+{   
+    "healthy": true,
+    "code": 200,    
+    "codeType": "HEALTHY",    
+    "data": {        
+        "bizInfo": {...},  
+        // "pluginInfo": {...}      
+    }
+}  
+```  
+
+

@@ -14,10 +14,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - name: Set up JDK 17
+      - name: Set up JDK 8
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
+          java-version: '8'
           distribution: 'temurin'
           cache: maven
 
@@ -31,7 +31,6 @@ jobs:
           echo "$GITHUB_WORKSPACE/apache-maven-${MAVEN_VERSION}/bin" >> $GITHUB_PATH
 
       - name: Build with Maven
-        working-directory: koupleless-runtime
         run: mvn clean install  -DskipTests -B -U -e && sh ./check_format.sh
 
       - name: Set up Docker
@@ -42,10 +41,10 @@ jobs:
 
       - name: get koupleless-runtime version & update koupleless-runtime version for all test sample app
         run: |
-          koupleless_runtime_version=$(find koupleless-runtime/koupleless-common -name "*.jar" |grep -v source |sed "s/.*koupleless-common-\(.*\).jar/\1/")
+          koupleless_runtime_version=$(find ./koupleless-common -name "*.jar" |grep -v source |sed "s/.*koupleless-common-\(.*\).jar/\1/")
           echo "升级 koupleless-runtime version to $koupleless_runtime_version"
-          for testsample in `find samples -name "*[^3|^dubbo]-samples"`;do  sed -i "s/<koupleless.runtime.version>.*<\/koupleless.runtime.version>/<koupleless.runtime.version>$koupleless_runtime_version<\/koupleless.runtime.version>/g"  $testsample/pom.xml ;done
-          for testsample in `find samples -name "*[^3|^dubbo]-samples"`;do if cat $testsample/pom.xml |grep "<koupleless.runtime.version>"|grep $koupleless_runtime_version;then echo "版本校验通过";else echo "版本校验失败";exit 1;fi;done
+          for testsample in `find samples -name "*[^3|^dubbo|^dubbo32]-samples"`;do  sed -i "s/<koupleless.runtime.version>.*<\/koupleless.runtime.version>/<koupleless.runtime.version>$koupleless_runtime_version<\/koupleless.runtime.version>/g"  $testsample/pom.xml ;done
+          for testsample in `find samples -name "*[^3|^dubbo|^dubbo32]-samples"`;do if cat $testsample/pom.xml |grep "<koupleless.runtime.version>"|grep $koupleless_runtime_version;then echo "版本校验通过";else echo "版本校验失败";exit 1;fi;done
 
       - name: Test Env prepare
         run: |
@@ -59,20 +58,20 @@ jobs:
           sudo systemctl start redis-server
           sudo cp .github/workflows/ccbin/arkctl /usr/bin/arkctl
 
-      - name: Run jdk17 koupleless runtime test
+      - name: Run jdk8 koupleless runtime test
         run: |
           set -e
-          bash -x .github/workflows/ccbin/start.sh jdk17
+          bash -x .github/workflows/ccbin/start.sh jdk8
 
-  release_for_jdk17:
+  release_for_jdk8:
     needs: build_and_test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Set up JDK 17
+      - name: Set up JDK 8
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
+          java-version: '8'
           distribution: 'temurin'
           cache: maven
           server-id: ossrh
@@ -82,7 +81,6 @@ jobs:
           gpg-passphrase: MAVEN_GPG_PASSPHRASE # env variable for GPG private key passphrase
       - name: Build with Maven
         run: mvn --batch-mode deploy -DskipTests -Prelease
-        working-directory: koupleless-runtime
         env:
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}

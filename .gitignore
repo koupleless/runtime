@@ -10,8 +10,5 @@ pom.xml.bak
 logs/
 logs*/
 .flattened-pom.xml
-docs/resources/
-docs/node_modules/
-docs/package-lock.json
-docs/.hugo_build.lock
+coverage.out
 */coverage.out
