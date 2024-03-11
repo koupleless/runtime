@@ -49,8 +49,8 @@ jobs:
         run: |
           koupleless_runtime_version=$(find koupleless-common -name "*.jar" |grep -v source |sed "s/.*koupleless-common-\(.*\).jar/\1/")
           echo "升级 koupleless-runtime version to $koupleless_runtime_version"
-          for testsample in `find samples -name "*[^3|^dubbo|^dubbo32]-samples"`;do  sed -i "s/<koupleless.runtime.version>.*<\/koupleless.runtime.version>/<koupleless.runtime.version>$koupleless_runtime_version<\/koupleless.runtime.version>/g"  $testsample/pom.xml ;done
-          for testsample in `find samples -name "*[^3|^dubbo|^dubbo32]-samples"`;do if cat $testsample/pom.xml |grep "<koupleless.runtime.version>"|grep $koupleless_runtime_version;then echo "版本校验通过";else echo "版本校验失败";exit 1;fi;done
+          for testsample in `find samples \( -name "*3-samples" -o -name "*dubbo32-samples" \)`;do  sed -i "s/<koupleless.runtime.version>.*<\/koupleless.runtime.version>/<koupleless.runtime.version>$koupleless_runtime_version<\/koupleless.runtime.version>/g"  $testsample/pom.xml ;done
+          for testsample in `find samples \( -name "*3-samples" -o -name "*dubbo32-samples" \)`;do if cat $testsample/pom.xml |grep "<koupleless.runtime.version>"|grep $koupleless_runtime_version;then echo "版本校验通过";else echo "版本校验失败";exit 1;fi;done
 
       - name: Test Env prepare
         run: |
@@ -60,14 +60,23 @@ jobs:
           docker run --name mongodb -d -p 27017:27017 -v /home/runner/work/data:/data/db mongo:7.0.2-jammy
           docker pull zookeeper:3.9.0
           docker run -p 2181:2181 -it --name zookeeper --restart always -d zookeeper:3.9.0
+          docker pull apache/rocketmq:4.9.7
+          docker run -d -p 9876:9876 -p 10909:10909 -p 10910:10910 -p 10911:10911 -p 10912:10912 -v $(pwd)/samples/springboot-samples/msg/rocketmq/config/start.sh:/home/rocketmq/rocketmq-4.9.7/bin/start.sh -v $(pwd)/samples/springboot-samples/msg/rocketmq/config/broker.conf:/home/rocketmq/rocketmq-4.9.7/bin/broker.conf apache/rocketmq:4.9.7 sh /home/rocketmq/rocketmq-4.9.7/bin/start.sh
           sudo apt-get install redis-server -y
           sudo systemctl start redis-server
-          sudo cp .github/workflows/ccbin/arkctl /usr/bin/arkctl
+          docker-compose  -f samples/springboot-samples/config/apollo/config/docker-compose.yml up -d
+          sudo cp .github/workflows/ccbin/arkctl /usr/bin/arkctl 
+          sudo chmod +x /usr/bin/arkctl 
 
       - name: Run jdk8 koupleless runtime test
         run: |
           set -e
           bash -x .github/workflows/ccbin/start.sh jdk8
+
+      - name: Setup tmate session for debugging
+        uses: mxschmitt/action-tmate@v3
+        with:
+          on_failure: true
 
   release_for_jdk8:
     needs: build_and_test

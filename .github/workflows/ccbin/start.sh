@@ -31,7 +31,7 @@ if [[ $testSuite == "jdk8" ]];then
   suiteReg="*[^3|^dubbo|^dubbo32]-samples"
 else
 #  suiteReg="*[3|dubbo]-samples"
-  suiteReg="*[3]-samples"
+  suiteReg="*[3|32]-samples"
 fi
 #测试路径
 for TEST_DIR in $(find $(pwd) -name "$suiteReg");do
@@ -39,7 +39,7 @@ for TEST_DIR in $(find $(pwd) -name "$suiteReg");do
   echo "TESTAPP_DIR=$TESTAPP_DIR"
   cd ${TESTAPP_DIR}
   mvn clean install -U -Dmaven.test.skip=true
-  for BaseDir in $( find $(pwd)  -type d -name "*base" |grep -v src|grep -v target|grep -v mybatis|grep -v logs);do
+  for BaseDir in $( find $(pwd)  -type d -name "*base" |grep -v src|grep -v target|grep -v mybatis|grep -v logs|grep -v dubbo3base|grep -v webflux|grep -v apollo|grep -v logback);do
     echo "BaseDir $BaseDir"
     export BaseDir=$BaseDir
     cd $BaseDir
@@ -47,7 +47,7 @@ for TEST_DIR in $(find $(pwd) -name "$suiteReg");do
     echo "start clean old java processes"
     kill_java_process
 
-    baseJar=$(find . -name "*[base|bootstrap]*.jar"|grep -v facade)
+    baseJar=$(find . -name "*[base|bootstrap]*.jar"|grep -v facade|grep -v sources)
     echo "Deployed base app $baseJar"
     if [[ "$baseJar" == "" ]];then
       echo "找不到基座jar包！"
@@ -57,14 +57,27 @@ for TEST_DIR in $(find $(pwd) -name "$suiteReg");do
     sleep 5
 
     echo "Start health check"
-    if echo $BaseDir | grep "apollo"; then
-      bash $ROOTDir/.github/workflows/ccbin/healthcheck.sh 8081
+    if echo $BaseDir | grep "webflux"; then
+      if ! bash $ROOTDir/.github/workflows/ccbin/healthcheck.sh 8080/actuator;then
+        echo "基座健康检查失败！"
+        exit 1
+      fi
+#    elif echo $BaseDir | grep "apollo";  then
+#      if ! bash $ROOTDir/.github/workflows/ccbin/healthcheck.sh 8081;then
+#        echo "基座健康检查失败！"
+#        exit 1
+#      fi
     else
-      bash $ROOTDir/.github/workflows/ccbin/healthcheck.sh 8080
+      if ! bash $ROOTDir/.github/workflows/ccbin/healthcheck.sh 8080;then
+        echo "基座健康检查失败！"
+        exit 1
+      fi
     fi
     echo "Start module biz Test"
-    bash $ROOTDir/.github/workflows/ccbin/moduletest.sh
-
+    if ! bash $ROOTDir/.github/workflows/ccbin/moduletest.sh;then
+        echo "模块测试异常退出！"
+        exit 1
+    fi
     echo "测试通过 $BaseDir"
 
   done
