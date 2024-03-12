@@ -5,12 +5,10 @@ on:
   push:
     branches:
       - runtime-2.1.x
-      - runtime-2.1.x-gongjiu
 
   pull_request:
     branches:
       - runtime-2.1.x
-      - runtime-2.1.x-gongjiu
 
   # enable manually running the workflow
   workflow_dispatch:
