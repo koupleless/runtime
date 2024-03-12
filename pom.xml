@@ -82,6 +82,7 @@
         <module>koupleless-adapter-ext</module>
         <module>koupleless-base-loader</module>
         <module>koupleless-ext</module>
+        <module>koupleless-base-plugin</module>
     </modules>
 
     <dependencyManagement>
