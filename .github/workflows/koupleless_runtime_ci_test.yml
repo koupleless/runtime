@@ -5,10 +5,12 @@ on:
   push:
     branches:
       - runtime-2.1.x
+      - runtime-2.1.x-gongjiu
 
   pull_request:
     branches:
       - runtime-2.1.x
+      - runtime-2.1.x-gongjiu
 
   # enable manually running the workflow
   workflow_dispatch:
@@ -74,8 +76,3 @@ jobs:
         run: |
           set -e
           bash -x .github/workflows/ccbin/start.sh jdk17
-
-      - name: Setup tmate session for debugging
-        uses: mxschmitt/action-tmate@v3
-        with:
-          on_failure: true
