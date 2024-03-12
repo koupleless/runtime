@@ -19,15 +19,22 @@ env:
   WORK_DIR: .
 
 jobs:
-  unit-test-for-jdk8:
+  ci-test-for-jdk17:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'temurin'
           cache: maven
+
+      - name: Set up Docker
+        uses: docker/metadata-action@v3
+        with:
+          images: |
+            node:14
 
       - name: Test
         run: mvn clean install -DskipTests -Dmaven.javadoc.skip=true -B -U
@@ -37,11 +44,6 @@ jobs:
       - name: upload coverage reports to Codecov with github action
         uses: codecov/codecov-action@v3
 
-      - name: Set up Docker
-        uses: docker/metadata-action@v3
-        with:
-          images: |
-            node:14
         
       - name: Checkout sampletest Repository
         uses: actions/checkout@v3
