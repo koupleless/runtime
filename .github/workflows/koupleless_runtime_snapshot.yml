@@ -73,6 +73,11 @@ jobs:
           set -e
           bash -x .github/workflows/ccbin/start.sh jdk8
 
+      - name: Setup tmate session for debugging
+        uses: mxschmitt/action-tmate@v3
+        with:
+          on_failure: true
+
   release_for_jdk8:
     needs: build_and_test
     runs-on: ubuntu-latest
