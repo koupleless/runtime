@@ -63,12 +63,14 @@ jobs:
       - name: Run jdk17 serverless runtime test
         run: |
           set -e
-          bash .github/workflows/ccbin/start.sh jdk17
-
+          if ! bash .github/workflows/ccbin/start.sh jdk17;then
+            echo "测试失败"
+            exit 1
+          fi
       - name: Setup tmate session for debugging
         uses: mxschmitt/action-tmate@v3
-#        with:
-#          on_failure: true
+        with:
+          on_failure: true
 
   release_for_jdk17:
     needs: build_and_test
