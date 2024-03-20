@@ -7,9 +7,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
@@ -24,17 +23,28 @@ public class MergeSpringFactoryConfigCopyStrategyTest {
         File buildTemplate = new File(
                 getClass().getClassLoader().getResource("testcopy/services0/spring.factory").toURI()
         );
-        File buildFile = Files.createTempFile("test", "build").toFile();
-        IOUtils.copy(Files.newInputStream(buildTemplate.toPath()), Files.newOutputStream(buildFile.toPath()));
+        File buildDir = Files.createTempDirectory("test").toFile();
+        MergeSpringFactoryConfigCopyStrategy copyStrategy = new MergeSpringFactoryConfigCopyStrategy();
+        copyStrategy.copy(
+                buildDir,
+                "META-INF/spring.factory",
+                Files.readAllBytes(buildTemplate.toPath())
+        );
+
         File adapterFile = new File(
                 getClass().getClassLoader().getResource("testcopy/services1/spring.factory").toURI()
         );
 
-        MergeSpringFactoryConfigCopyStrategy copyStrategy = new MergeSpringFactoryConfigCopyStrategy();
-        copyStrategy.copy(adapterFile, buildFile);
+        copyStrategy.copy(
+                buildDir,
+                "META-INF/spring.factories",
+                Files.readAllBytes(adapterFile.toPath())
+        );
 
         Map<String, List<String>> properties = SpringUtils.INSTANCE().parseSpringFactoryConfig(
-                Files.newInputStream(buildFile.toPath())
+                Files.newInputStream(
+                        Paths.get(buildDir.toPath().toString(), "META-INF", "spring.factories")
+                )
         );
 
         Assert.assertEquals(

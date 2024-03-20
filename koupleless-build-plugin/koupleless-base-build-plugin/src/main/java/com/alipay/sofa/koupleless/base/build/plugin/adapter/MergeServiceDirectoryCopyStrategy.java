@@ -1,17 +1,17 @@
 package com.alipay.sofa.koupleless.base.build.plugin.adapter;
 
-import com.google.common.base.Preconditions;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 
@@ -21,53 +21,35 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
  **/
 public class MergeServiceDirectoryCopyStrategy implements CopyAdapterStrategy {
 
-    public void mergeFile(File inputServiceFile, File outputServiceFile) throws Throwable {
+    public List<String> mergeContent(byte[] inputContent, byte[] outputContent) throws Throwable {
+        // convert byte[] to Reader
         List<String> mergedLines = null;
-        List<String> adapterLines = Files.readAllLines(inputServiceFile.toPath());
-        List<String> originalLines = Files.readAllLines(outputServiceFile.toPath());
+        InputStreamReader inputReader = new InputStreamReader(new ByteArrayInputStream(inputContent));
+        List<String> adapterLines = IOUtils.readLines(inputReader);
+
+        InputStreamReader outputReader = new InputStreamReader(new ByteArrayInputStream(outputContent));
+        List<String> originalLines = IOUtils.readLines(outputReader);
+
         mergedLines = new ArrayList<>(originalLines);
         Collection<String> deltaLines = CollectionUtils.subtract(adapterLines, originalLines);
         mergedLines.addAll(deltaLines);
-        Files.write(outputServiceFile.toPath(), mergedLines, TRUNCATE_EXISTING);
+        return mergedLines;
     }
 
     @Override
-    public void copy(File adapter, File build) throws Throwable {
-        Preconditions.checkState(adapter.isDirectory(), "in must be a directory");
-        Preconditions.checkState(build.isDirectory(), "out must be a directory");
-        Collection<File> adapterFiles = FileUtils.listFiles(adapter, null, false);
-        Collection<File> buildFiles = FileUtils.listFiles(build, null, false);
-
-        // Extract filenames for comparison
-        Collection<String> inFileNames = adapterFiles.stream()
-                .map(File::getName)
-                .collect(Collectors.toList());
-        Collection<String> outFileNames = buildFiles.stream()
-                .map(File::getName)
-                .collect(Collectors.toList());
-
-        // firstly, lets find those files existed in input but not in output
-        Collection<String> filesToCreate = CollectionUtils.subtract(inFileNames, outFileNames);
-
-        for (File file : adapterFiles.stream().filter(
-                f -> filesToCreate.contains(f.getName())
-        ).collect(Collectors.toList())) {
-            // normally there should be no dir in the input directory
-            if (!file.isDirectory()) {
-                File outputFile = Paths.get(build.getPath(), file.getName()).toFile();
-                IOUtils.copy(Files.newInputStream(file.toPath()), Files.newOutputStream(outputFile.toPath()));
-            }
+    public void copy(File buildDir, String entryName, byte[] content) throws Throwable {
+        File serviceDir = Paths.get(buildDir.getAbsolutePath(), "META-INF", "services").toFile();
+        if (!serviceDir.exists()) {
+            Files.createDirectories(serviceDir.toPath());
+        }
+        String configName = StringUtils.removeStart(entryName, "META-INF/services");
+        File originalConfigFile = Paths.get(serviceDir.getAbsolutePath(), configName).toFile();
+        if (!originalConfigFile.exists()) {
+            Files.createFile(originalConfigFile.toPath());
         }
 
-        // then, lets find those files existed in both input and output
-        Collection<String> filesToMerge = CollectionUtils.intersection(inFileNames, outFileNames);
-        for (File file : adapterFiles.stream().filter(
-                f -> filesToMerge.contains(f.getName())
-        ).collect(Collectors.toList())) {
-            if (!file.isDirectory()) {
-                File outputFile = Paths.get(build.getPath(), file.getName()).toFile();
-                mergeFile(file, outputFile);
-            }
-        }
+        byte[] originalBytes = Files.readAllBytes(originalConfigFile.toPath());
+        List<String> mergedLines = mergeContent(content, originalBytes);
+        Files.write(originalConfigFile.toPath(), mergedLines, TRUNCATE_EXISTING);
     }
 }
