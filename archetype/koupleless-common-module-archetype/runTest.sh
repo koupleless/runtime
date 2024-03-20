@@ -7,7 +7,7 @@ appName=testBiz1
 echo "开始初始化单 bundle 模块： testBiz1"
 rm -rf testBiz1
 mvn archetype:generate \
-        -DarchetypeArtifactId=koupleless-common-app-archetype \
+        -DarchetypeArtifactId=koupleless-common-module-archetype \
         -DarchetypeGroupId=com.alipay.sofa.koupleless \
         -DarchetypeVersion=0.0.1-SNAPSHOT \
         -DgroupId=com.alipay.sofa.koupleless.${appName} \
