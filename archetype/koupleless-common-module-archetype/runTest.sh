@@ -16,5 +16,5 @@ mvn archetype:generate \
         -Dpackage=com.alipay.sofa.koupleless.${appName} \
         -DarchetypeCatalog=local
 #
-#cd testBiz1
-#mvn clean package
+cd testBiz1
+mvn clean package
