@@ -1,15 +1,9 @@
 package com.alipay.sofa.koupleless.base.build.plugin.adapter;
 
-import com.google.common.base.Preconditions;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.ArrayUtils;
-
 import java.io.*;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
 
 /**
  * @author CodeNoobKing
