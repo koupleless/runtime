@@ -2,13 +2,15 @@ package com.alipay.sofa.koupleless.base.build.plugin.adapter;
 
 import com.alipay.sofa.koupleless.build.common.SpringUtils;
 import com.google.common.base.Preconditions;
+import jdk.internal.util.xml.impl.Input;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.codehaus.plexus.util.CollectionUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,30 +48,23 @@ public class MergeSpringFactoryConfigCopyStrategy implements CopyAdapterStrategy
         return result;
     }
 
-    /**
-     * 合并 spring factory 配置文件。
-     * 由于 spring factory 配置文件是一个特殊的配置文件，需要合并而不是直接覆盖。
-     * spring factory 文件由 key value 组成，需要合并。
-     * 当 key 重复时，需要合并 value。
-     * 当 key 不存在时，直接添加。
-     */
     @Override
-    public void copy(File adapter, File build) throws Throwable {
-        FileInputStream adapterIS = FileUtils.openInputStream(adapter);
-        if (!build.exists()) {
-            Preconditions.checkState(
-                    build.createNewFile(),
-                    "outputServiceFile %s should be created successfully",
-                    build.toPath().toAbsolutePath()
-            );
-            IOUtils.copy(adapterIS, FileUtils.openOutputStream(build));
+    public void copy(File buildDir, String entryName, byte[] content) throws Throwable {
+        File factoryFile = new File(Paths.get(buildDir.getAbsolutePath(), "META-INF", "spring.factories").toUri());
+        if (!factoryFile.exists()) {
+            Files.createDirectories(factoryFile.toPath().getParent());
+            Files.createFile(factoryFile.toPath());
         }
 
-        FileInputStream buildIS = FileUtils.openInputStream(build);
-        Map<String, List<String>> inFactories = SpringUtils.INSTANCE().parseSpringFactoryConfig(adapterIS);
-        Map<String, List<String>> outFactories = SpringUtils.INSTANCE().parseSpringFactoryConfig(buildIS);
-        mergeSpringFactories(inFactories, outFactories);
-        List<String> lines = formatSpringFactoryConfig(outFactories);
-        Files.write(build.toPath(), lines, StandardOpenOption.TRUNCATE_EXISTING);
+        Map<String, List<String>> adapterConfig = SpringUtils.INSTANCE()
+                .parseSpringFactoryConfig(new ByteArrayInputStream(content));
+
+        InputStream buildIS = Files.newInputStream(factoryFile.toPath());
+        Map<String, List<String>> buildConfig = SpringUtils.INSTANCE().parseSpringFactoryConfig(buildIS);
+
+        mergeSpringFactories(adapterConfig, buildConfig);
+        List<String> lines = formatSpringFactoryConfig(buildConfig);
+        Files.write(factoryFile.toPath(), lines, StandardOpenOption.TRUNCATE_EXISTING);
     }
+
 }

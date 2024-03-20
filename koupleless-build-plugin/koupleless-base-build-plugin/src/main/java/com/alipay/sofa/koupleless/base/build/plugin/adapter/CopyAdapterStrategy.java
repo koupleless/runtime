@@ -7,5 +7,5 @@ import java.io.File;
  * @date 2024/3/18
  **/
 public interface CopyAdapterStrategy {
-    void copy(File adapter, File build) throws Throwable;
+    void copy(File buildDir, String entryName, byte[] content) throws Throwable;
 }

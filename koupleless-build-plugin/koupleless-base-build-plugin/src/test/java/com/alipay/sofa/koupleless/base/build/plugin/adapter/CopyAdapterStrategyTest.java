@@ -4,8 +4,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
-import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 
 /**
  * @author CodeNoobKing
@@ -16,11 +16,11 @@ public class CopyAdapterStrategyTest {
     @Test
     public void testDirectCopy() throws Throwable {
         File adapterFile = new File(getClass().getClassLoader().getResource("testcopy/file0").toURI());
-        File buildFile = Files.createTempFile("test", "copy").toFile();
-        DirectCopyStrategy directCopyStrategy = new DirectCopyStrategy();
-        directCopyStrategy.copy(adapterFile, buildFile);
+        File buildDir = Files.createTempDirectory("test").toFile();
+        ClassCopyStrategy directCopyStrategy = new ClassCopyStrategy();
+        directCopyStrategy.copy(buildDir, "example/file0", Files.readAllBytes(adapterFile.toPath()));
 
-        byte[] bytes = Files.readAllBytes(buildFile.toPath());
+        byte[] bytes = Files.readAllBytes(Paths.get(buildDir.toPath().toString(), "example", "file0"));
         Assert.assertEquals("hello world!", new String(bytes));
     }
 }

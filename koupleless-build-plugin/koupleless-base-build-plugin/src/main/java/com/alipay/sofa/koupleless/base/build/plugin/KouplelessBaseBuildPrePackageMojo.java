@@ -74,34 +74,34 @@ import java.util.regex.Pattern;
 public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${project.build.directory}", readonly = true)
-    File                    outputDirectory;
+    File outputDirectory;
 
     @Parameter(defaultValue = "${project}", required = true, readonly = true)
-    MavenProject            project;
+    MavenProject project;
 
     @Parameter(defaultValue = "${session}", required = true, readonly = true)
-    MavenSession            session;
+    MavenSession session;
 
     @Component
-    RepositorySystem        repositorySystem;
+    RepositorySystem repositorySystem;
 
-    private ObjectMapper    yamlMapper     = new ObjectMapper(new YAMLFactory());
+    private ObjectMapper yamlMapper = new ObjectMapper(new YAMLFactory());
 
     KouplelessAdapterConfig kouplelessAdapterConfig;
 
-    String                  defaultGroupId = "";
-    String                  defaultVersion = "";
+    String defaultGroupId = "";
+    String defaultVersion = "";
 
     void initKouplelessAdapterConfig() throws Exception {
         if (kouplelessAdapterConfig == null) {
             InputStream mappingConfigIS = this.getClass().getClassLoader()
-                .getResourceAsStream("adapter-mapping.yaml");
+                    .getResourceAsStream("adapter-mapping.yaml");
 
             kouplelessAdapterConfig = yamlMapper.readValue(mappingConfigIS,
-                KouplelessAdapterConfig.class);
+                    KouplelessAdapterConfig.class);
 
             for (MavenDependencyAdapterMapping mappings : CollectionUtils
-                .emptyIfNull(kouplelessAdapterConfig.getAdapterMappings())) {
+                    .emptyIfNull(kouplelessAdapterConfig.getAdapterMappings())) {
 
             }
         }
@@ -131,7 +131,7 @@ public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
         }
 
         Collection<MavenDependencyAdapterMapping> adapterMappings = CollectionUtils
-            .emptyIfNull(kouplelessAdapterConfig.getAdapterMappings());
+                .emptyIfNull(kouplelessAdapterConfig.getAdapterMappings());
         for (MavenDependencyAdapterMapping adapterMapping : adapterMappings) {
             MavenDependencyMatcher matcher = adapterMapping.getMatcher();
 
@@ -182,10 +182,10 @@ public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
 
         try {
             ArtifactRequest artifactRequest = new ArtifactRequest().setArtifact(patchArtifact)
-                .setRepositories(project.getRemoteProjectRepositories());
+                    .setRepositories(project.getRemoteProjectRepositories());
 
             ArtifactResult artifactResult = repositorySystem.resolveArtifact(
-                session.getRepositorySession(), artifactRequest);
+                    session.getRepositorySession(), artifactRequest);
 
             Preconditions.checkState(artifactResult.isResolved(), "artifact not resolved.");
             return artifactResult.getArtifact();
@@ -197,11 +197,14 @@ public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
 
     void addArtifactToProjectRoot(Artifact artifact) {
         File file = artifact.getFile();
-        Map<String, Byte[]> entryToContent = JarFileUtils.getFileContentAsLines(file,
-            Pattern.compile(".*\\.class$"));
+        Map<String, Byte[]> entryToContent = JarFileUtils.getFileContentAsLines(
+                file,
+                Pattern.compile(".*\\.class$")
+        );
         for (Map.Entry<String, Byte[]> entry : entryToContent.entrySet()) {
             addPatchToProjectRoot(entry.getKey(), entry.getValue());
         }
+
     }
 
     @SneakyThrows
