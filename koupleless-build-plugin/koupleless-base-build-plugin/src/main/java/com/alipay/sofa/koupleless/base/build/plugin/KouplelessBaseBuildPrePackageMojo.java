@@ -58,11 +58,8 @@ import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResult;
-import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -77,36 +74,36 @@ import java.util.regex.Pattern;
 public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${project.build.directory}", readonly = true)
-    File                    outputDirectory;
+    File outputDirectory;
 
     @Parameter(defaultValue = "${project}", required = true, readonly = true)
-    MavenProject            project;
+    MavenProject project;
 
     @Parameter(defaultValue = "${session}", required = true, readonly = true)
-    MavenSession            session;
+    MavenSession session;
 
     @Component
-    RepositorySystem        repositorySystem;
+    RepositorySystem repositorySystem;
 
-    private ObjectMapper    yamlMapper         = new ObjectMapper(new YAMLFactory());
+    private ObjectMapper yamlMapper = new ObjectMapper(new YAMLFactory());
 
     KouplelessAdapterConfig kouplelessAdapterConfig;
 
-    AdapterCopyService      adapterCopyService = new AdapterCopyService();
+    AdapterCopyService adapterCopyService = new AdapterCopyService();
 
-    String                  defaultGroupId     = "";
-    String                  defaultVersion     = "";
+    String defaultGroupId = "";
+    String defaultVersion = "";
 
     void initKouplelessAdapterConfig() throws Exception {
         if (kouplelessAdapterConfig == null) {
             InputStream mappingConfigIS = this.getClass().getClassLoader()
-                .getResourceAsStream("adapter-mapping.yaml");
+                    .getResourceAsStream("adapter-mapping.yaml");
 
             kouplelessAdapterConfig = yamlMapper.readValue(mappingConfigIS,
-                KouplelessAdapterConfig.class);
+                    KouplelessAdapterConfig.class);
 
             for (MavenDependencyAdapterMapping mappings : CollectionUtils
-                .emptyIfNull(kouplelessAdapterConfig.getAdapterMappings())) {
+                    .emptyIfNull(kouplelessAdapterConfig.getAdapterMappings())) {
 
             }
         }
@@ -136,7 +133,7 @@ public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
         }
 
         Collection<MavenDependencyAdapterMapping> adapterMappings = CollectionUtils
-            .emptyIfNull(kouplelessAdapterConfig.getAdapterMappings());
+                .emptyIfNull(kouplelessAdapterConfig.getAdapterMappings());
         for (MavenDependencyAdapterMapping adapterMapping : adapterMappings) {
             MavenDependencyMatcher matcher = adapterMapping.getMatcher();
 
@@ -187,10 +184,10 @@ public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
 
         try {
             ArtifactRequest artifactRequest = new ArtifactRequest().setArtifact(patchArtifact)
-                .setRepositories(project.getRemoteProjectRepositories());
+                    .setRepositories(project.getRemoteProjectRepositories());
 
             ArtifactResult artifactResult = repositorySystem.resolveArtifact(
-                session.getRepositorySession(), artifactRequest);
+                    session.getRepositorySession(), artifactRequest);
 
             Preconditions.checkState(artifactResult.isResolved(), "artifact not resolved.");
             return artifactResult.getArtifact();
@@ -204,11 +201,11 @@ public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
         File file = artifact.getFile();
         File buildDir = Paths.get(outputDirectory.getAbsolutePath(), "classes").toFile();
         Map<String, Byte[]> entryToContent = JarFileUtils.getFileContentAsLines(file,
-            Pattern.compile("(.*\\.class$|^META-INF/services/.*$|^META-INF/spring.factories$)"));
+                Pattern.compile("(.*\\.class$|^META-INF/services/.*$|^META-INF/spring.factories$)"));
 
         for (Map.Entry<String, Byte[]> entry : entryToContent.entrySet()) {
             adapterCopyService.copy(buildDir, entry.getKey(),
-                ArrayUtils.toPrimitive(entry.getValue()));
+                    ArrayUtils.toPrimitive(entry.getValue()));
         }
 
     }
