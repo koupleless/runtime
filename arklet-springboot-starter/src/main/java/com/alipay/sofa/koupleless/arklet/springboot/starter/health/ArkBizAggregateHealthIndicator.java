@@ -64,7 +64,12 @@ public class ArkBizAggregateHealthIndicator extends AbstractHealthIndicator {
             bizIndicators.forEach((bizIndicatorBeanName, bizIndicator) -> {
                 String bizIndicatorName = bizIndicatorBeanName.substring(0,bizIndicatorBeanName.length()-"HealthIndicator".length());
                 Health bizIndicatorHealth = bizIndicator.health();
-                bizBuilder.withDetail(bizIndicatorName, bizIndicatorHealth.getDetails());
+
+                Map<String, Object> bizIndicatorDetails = new HashMap<>();
+                bizIndicatorDetails.put("details",bizIndicatorHealth.getDetails());
+                bizIndicatorDetails.put("status",bizIndicatorHealth.getStatus());
+
+                bizBuilder.withDetail(bizIndicatorName, bizIndicatorDetails);
                 if(bizIndicatorHealth.getStatus().equals(Status.DOWN)) {
                     bizBuilder.down();
                 }else if(bizIndicatorHealth.getStatus().equals(Status.UNKNOWN)){
