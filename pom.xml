@@ -82,6 +82,7 @@
         <module>koupleless-base-loader</module>
         <module>koupleless-ext</module>
         <module>koupleless-build-plugin</module>
+        <module>archetype/koupleless-common-module-archetype</module>
     </modules>
 
     <dependencyManagement>
