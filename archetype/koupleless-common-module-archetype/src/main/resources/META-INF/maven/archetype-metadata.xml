@@ -17,9 +17,9 @@
       </includes>
     </fileSet>
     <fileSet filtered="true" encoding="UTF-8">
-      <directory>.idea/inspectionProfiles</directory>
+      <directory>conf/ark</directory>
       <includes>
-        <include>**/*.xml</include>
+        <include>*</include>
       </includes>
     </fileSet>
   </fileSets>

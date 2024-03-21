@@ -72,6 +72,8 @@
                     <!--					打包、安装和发布 ark biz-->
                     <!--					静态合并部署需要配置-->
                     <!--					<attach>true</attach>-->
+                    <!-- 多 bundle 使用该配置文件 conf/ark/rules.txt 排包，可与 scope=provided 同时使用 -->
+                    <packExcludesConfig>rules.txt</packExcludesConfig>
                 </configuration>
             </plugin>
         </plugins>
