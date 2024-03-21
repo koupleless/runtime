@@ -58,6 +58,7 @@ import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResult;
+import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.io.*;
 import java.nio.file.Files;
