@@ -14,5 +14,6 @@
 
     <modules>
         <module>koupleless-ext-web-gateway</module>
+        <module>koupleless-adapter-ext</module>
     </modules>
 </project>
