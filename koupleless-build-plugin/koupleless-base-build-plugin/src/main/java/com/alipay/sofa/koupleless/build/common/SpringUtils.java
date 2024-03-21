@@ -17,6 +17,8 @@
 package com.alipay.sofa.koupleless.build.common;
 
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -37,24 +39,15 @@ public class SpringUtils {
 
     @SneakyThrows
     public Map<String, List<String>> parseSpringFactoryConfig(InputStream inputStream) {
+        Properties properties = new Properties();
+        properties.load(inputStream);
         Map<String, List<String>> result = new HashMap<>();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-            StringBuilder currentLine = new StringBuilder();
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-                if (line.trim().endsWith("\\")) {
-                    currentLine.append(line.substring(0, line.length() - 1)); // Remove '\'
-                } else {
-                    currentLine.append(line);
-                    String[] keyValue = currentLine.toString().split("=", 2);
-                    if (keyValue.length == 2) {
-                        String key = keyValue[0].trim();
-                        String[] values = keyValue[1].trim().split("\\s*,\\s*"); // Split on comma with optional spaces
-                        result.put(key, (List<String>) Arrays.asList(values));
-                    }
-                    currentLine = new StringBuilder();
-                }
+        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+            String key = (String) entry.getKey();
+            String value = (String) entry.getValue();
+            if (StringUtils.isNotBlank(value)) {
+                String[] values = value.split("\\s*,\\s*");
+                result.put(key, Arrays.asList(values));
             }
         }
         return result;
