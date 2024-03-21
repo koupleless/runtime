@@ -18,8 +18,6 @@ package com.alipay.sofa.koupleless.test.suite.biz;
 
 import com.alipay.sofa.ark.container.service.classloader.BizClassLoader;
 import com.alipay.sofa.ark.support.common.DelegateToMasterBizClassLoaderHook;
-import lombok.Getter;
-import lombok.Setter;
 import lombok.SneakyThrows;
 
 import java.lang.reflect.Field;
@@ -42,7 +40,7 @@ public class SOFAArkTestBizClassLoader extends BizClassLoader {
         bizClassLoaderHookField.setAccessible(false);
 
         Field bizClassLoaderIsHookLoadedField = BizClassLoader.class
-            .getDeclaredField("isHookLoaded");
+                .getDeclaredField("isHookLoaded");
         bizClassLoaderIsHookLoadedField.setAccessible(true);
         bizClassLoaderIsHookLoadedField.set(this, new AtomicBoolean(true));
         bizClassLoaderIsHookLoadedField.setAccessible(false);
@@ -90,4 +88,5 @@ public class SOFAArkTestBizClassLoader extends BizClassLoader {
         // default to base classLoader
         return null;
     }
+
 }
