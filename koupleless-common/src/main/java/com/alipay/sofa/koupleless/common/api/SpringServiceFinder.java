@@ -65,5 +65,4 @@ public class SpringServiceFinder {
         return ServiceProxyFactory.batchCreateServiceProxy(moduleName, moduleVersion, serviceType,
             null);
     }
-
 }
