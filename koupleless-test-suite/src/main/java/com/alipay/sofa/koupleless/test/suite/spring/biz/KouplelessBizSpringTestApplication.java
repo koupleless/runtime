@@ -44,11 +44,11 @@ import java.util.concurrent.Executor;
 @Getter
 public class KouplelessBizSpringTestApplication {
 
-    private SOFAArkTestBiz testBiz;
+    private SOFAArkTestBiz                 testBiz;
 
     private ConfigurableApplicationContext applicationContext;
 
-    private KouplelessBizSpringTestConfig config;
+    private KouplelessBizSpringTestConfig  config;
 
     @SneakyThrows
     public KouplelessBizSpringTestApplication(KouplelessBizSpringTestConfig config) {
@@ -58,7 +58,7 @@ public class KouplelessBizSpringTestApplication {
 
     public boolean isExcludedDependency(String dependency) {
         for (String regexp : CollectionUtils.emptyIfNull(KouplelessSpringTestUtils.getConfig()
-                .getBiz().getExcludeDependencyRegexps())) {
+            .getBiz().getExcludeDependencyRegexps())) {
             if (dependency.matches(".*" + regexp + ".*")) {
                 return true;
             }
@@ -84,18 +84,15 @@ public class KouplelessBizSpringTestApplication {
         }
 
         testBiz = new SOFAArkTestBiz(
-                SOFAArkTestBizConfig
-                        .builder()
-                        .bootstrapClassName("")
-                        .bizName(config.getBizName())
-                        .bizVersion("TEST")
-                        .testClassNames(new ArrayList<>())
-                        .includeClassPatterns(includeClassPatterns)
-                        .baseClassLoader(new URLClassLoader(
-                                excludedUrls.toArray(new URL[0]),
-                                tccl.getParent()))
-                        .build()
-        );
+            SOFAArkTestBizConfig
+                .builder()
+                .bootstrapClassName("")
+                .bizName(config.getBizName())
+                .bizVersion("TEST")
+                .testClassNames(new ArrayList<>())
+                .includeClassPatterns(includeClassPatterns)
+                .baseClassLoader(
+                    new URLClassLoader(excludedUrls.toArray(new URL[0]), tccl.getParent())).build());
         testBiz.setWebContextPath(config.getBizName());
     }
 

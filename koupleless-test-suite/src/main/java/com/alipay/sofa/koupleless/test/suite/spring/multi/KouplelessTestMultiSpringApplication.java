@@ -37,7 +37,7 @@ import java.util.*;
 public class KouplelessTestMultiSpringApplication {
 
     @Getter
-    private KouplelessBaseSpringTestApplication baseApplication;
+    private KouplelessBaseSpringTestApplication             baseApplication;
 
     private Map<String, KouplelessBizSpringTestApplication> bizApplications = new HashMap<>();
 
@@ -49,7 +49,7 @@ public class KouplelessTestMultiSpringApplication {
         this.baseApplication = new KouplelessBaseSpringTestApplication(config.getBaseConfig());
         for (KouplelessBizSpringTestConfig bizConfig : config.getBizConfigs()) {
             this.bizApplications.put(bizConfig.getBizName(),
-                    new KouplelessBizSpringTestApplication(bizConfig));
+                new KouplelessBizSpringTestApplication(bizConfig));
         }
     }
 
@@ -68,13 +68,13 @@ public class KouplelessTestMultiSpringApplication {
 
     public void bootStrapTest() {
         SOFAArkTestBootstrap.init(baseApplication.getBaseClassLoader());
-        for (Map.Entry<String, KouplelessBizSpringTestApplication> entry : bizApplications.entrySet()) {
+        for (Map.Entry<String, KouplelessBizSpringTestApplication> entry : bizApplications
+            .entrySet()) {
             KouplelessBizSpringTestApplication app = entry.getValue();
             String bizIdentity = app.getConfig().getBizName() + ":TEST";
             String artifactId = app.getConfig().getArtifactId();
-            SOFAArkTestBootstrap
-                    .getClassLoaderHook()
-                    .putHigherPriorityResourceArtifacts(bizIdentity, Collections.singletonList(artifactId));
+            SOFAArkTestBootstrap.getClassLoaderHook().putHigherPriorityResourceArtifacts(
+                bizIdentity, Collections.singletonList(artifactId));
         }
     }
 

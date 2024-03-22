@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.alipay.sofa.koupleless.test.suite.biz;
 
 import com.alipay.sofa.ark.spi.model.Biz;
@@ -24,7 +40,8 @@ import java.util.jar.JarFile;
  **/
 public class SOFAArkTestClassLoaderHook extends DelegateToMasterBizClassLoaderHook {
 
-    private ConcurrentMap<String, List<String>> higherPriorityResourceArtifacts = Maps.newConcurrentMap();
+    private ConcurrentMap<String, List<String>> higherPriorityResourceArtifacts = Maps
+                                                                                    .newConcurrentMap();
 
     public void putHigherPriorityResourceArtifacts(String identity, List<String> artifacts) {
         higherPriorityResourceArtifacts.put(identity, artifacts);
@@ -55,7 +72,8 @@ public class SOFAArkTestClassLoaderHook extends DelegateToMasterBizClassLoaderHo
     @Override
     public URL preFindResource(String name, ClassLoaderService classLoaderService, Biz biz) {
         String identity = biz.getIdentity();
-        List<String> artifacts = higherPriorityResourceArtifacts.getOrDefault(identity, Collections.emptyList());
+        List<String> artifacts = higherPriorityResourceArtifacts.getOrDefault(identity,
+            Collections.emptyList());
 
         URL targetUrl = null;
         for (String artifact : artifacts) {
@@ -70,7 +88,8 @@ public class SOFAArkTestClassLoaderHook extends DelegateToMasterBizClassLoaderHo
                     }
 
                     // located in a build directory
-                    if (url.toString().contains("target/classes") && url.toString().contains(artifact)) {
+                    if (url.toString().contains("target/classes")
+                        && url.toString().contains(artifact)) {
                         targetUrl = findResourceInBuildDirectory(new File(url.getFile()), name);
                     }
 

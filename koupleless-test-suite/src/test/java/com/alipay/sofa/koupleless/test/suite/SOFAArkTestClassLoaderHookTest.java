@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.alipay.sofa.koupleless.test.suite;
 
 import com.alipay.sofa.ark.container.model.BizModel;
@@ -37,24 +53,15 @@ public class SOFAArkTestClassLoaderHookTest {
         artifacts.add("demo-executable");
 
         URL resource = getClass().getClassLoader().getResource("demo-executable.jar");
-        sofaArkTestClassLoaderHook
-                .putHigherPriorityResourceArtifacts(
-                        "test:TEST",
-                        artifacts
-                );
+        sofaArkTestClassLoaderHook.putHigherPriorityResourceArtifacts("test:TEST", artifacts);
 
         ClassLoaderService classLoaderService = mock(ClassLoaderService.class);
-        doReturn(
-                new URLClassLoader(new URL[] { resource }), Thread.currentThread().getContextClassLoader()
-        ).when(classLoaderService).getMasterBizClassLoader();
+        doReturn(new URLClassLoader(new URL[] { resource }),
+            Thread.currentThread().getContextClassLoader()).when(classLoaderService)
+            .getMasterBizClassLoader();
 
-        URL url = sofaArkTestClassLoaderHook.preFindResource(
-                "META-INF/MANIFEST.MF",
-                classLoaderService,
-                new BizModel()
-                        .setBizName("test")
-                        .setBizVersion("TEST")
-        );
+        URL url = sofaArkTestClassLoaderHook.preFindResource("META-INF/MANIFEST.MF",
+            classLoaderService, new BizModel().setBizName("test").setBizVersion("TEST"));
 
         InputStream inputStream = url.openConnection().getInputStream();
         InputStreamReader reader = new InputStreamReader(inputStream);
@@ -67,27 +74,19 @@ public class SOFAArkTestClassLoaderHookTest {
         List<String> artifacts = new ArrayList<>();
         artifacts.add("project");
 
-        Path dir = Paths.get(new File(getClass().getClassLoader().getResource("demo-executable.jar").getPath())
-                .getParent(), "project", "target", "classes");
+        Path dir = Paths.get(new File(getClass().getClassLoader()
+            .getResource("demo-executable.jar").getPath()).getParent(), "project", "target",
+            "classes");
 
-        sofaArkTestClassLoaderHook
-                .putHigherPriorityResourceArtifacts(
-                        "test:TEST",
-                        artifacts
-                );
+        sofaArkTestClassLoaderHook.putHigherPriorityResourceArtifacts("test:TEST", artifacts);
 
         ClassLoaderService classLoaderService = mock(ClassLoaderService.class);
-        doReturn(
-                new URLClassLoader(new URL[] { new File(dir.toString()).toURI().toURL() }), Thread.currentThread().getContextClassLoader()
-        ).when(classLoaderService).getMasterBizClassLoader();
+        doReturn(new URLClassLoader(new URL[] { new File(dir.toString()).toURI().toURL() }),
+            Thread.currentThread().getContextClassLoader()).when(classLoaderService)
+            .getMasterBizClassLoader();
 
-        URL url = sofaArkTestClassLoaderHook.preFindResource(
-                "META-INF/MANIFEST.MF",
-                classLoaderService,
-                new BizModel()
-                        .setBizName("test")
-                        .setBizVersion("TEST")
-        );
+        URL url = sofaArkTestClassLoaderHook.preFindResource("META-INF/MANIFEST.MF",
+            classLoaderService, new BizModel().setBizName("test").setBizVersion("TEST"));
 
         InputStream inputStream = url.openConnection().getInputStream();
         InputStreamReader reader = new InputStreamReader(inputStream);

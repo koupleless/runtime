@@ -40,10 +40,10 @@ public class KouplelessBaseSpringTestConfig {
     private String artifactId;
 
     public void init() {
-        Preconditions.checkState(StringUtils.isNotBlank(artifactId),
-                "artifactId must not be blank");
+        Preconditions
+            .checkState(StringUtils.isNotBlank(artifactId), "artifactId must not be blank");
         Preconditions.checkState(StringUtils.isNotBlank(packageName),
-                "packageName must not be blank");
+            "packageName must not be blank");
 
         if (StringUtils.isBlank(mainClass)) {
             mainClass = packageName + ".Application";

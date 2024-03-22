@@ -35,36 +35,31 @@ public class KouplelessTestMultiSSpringApplicationTest {
     @Test
     public void testMultiApplicationLaunched() throws Throwable {
         KouplelessBaseSpringTestConfig baseConfig = KouplelessBaseSpringTestConfig.builder()
-                .packageName("com.alipay.sofa.koupleless.test.suite.spring.mock.base")
-                .artifactId("mock-base")
-                .build();
+            .packageName("com.alipay.sofa.koupleless.test.suite.spring.mock.base")
+            .artifactId("mock-base").build();
 
         List<KouplelessBizSpringTestConfig> bizConfigs = new ArrayList<>();
         bizConfigs.add(KouplelessBizSpringTestConfig.builder()
-                .packageName("com.alipay.sofa.koupleless.test.suite.spring.mock.biz")
-                .bizName("biz0")
-                .artifactId("mock-no-exist")
-                .build());
+            .packageName("com.alipay.sofa.koupleless.test.suite.spring.mock.biz").bizName("biz0")
+            .artifactId("mock-no-exist").build());
 
         KouplelessTestMultiSpringApplication application = new KouplelessTestMultiSpringApplication(
-                KouplelessMultiSpringTestConfig.builder()
-                        .baseConfig(baseConfig)
-                        .bizConfigs(bizConfigs)
-                        .build());
+            KouplelessMultiSpringTestConfig.builder().baseConfig(baseConfig).bizConfigs(bizConfigs)
+                .build());
 
         application.run();
         Thread.sleep(1_000);
 
         HelloService sampleBaseService = application.getBaseApplication().getApplicationContext()
-                .getBean(HelloService.class);
+            .getBean(HelloService.class);
 
         Assert.assertEquals(Thread.currentThread().getContextClassLoader().getClass().getName(),
-                sampleBaseService.helloWorld());
+            sampleBaseService.helloWorld());
 
         HelloService sampleBizService = application.getBizApplication("biz0")
-                .getApplicationContext().getBean(HelloService.class);
+            .getApplicationContext().getBean(HelloService.class);
 
         Assert.assertEquals("com.alipay.sofa.koupleless.test.suite.biz.SOFAArkTestBizClassLoader",
-                sampleBizService.helloWorld());
+            sampleBizService.helloWorld());
     }
 }

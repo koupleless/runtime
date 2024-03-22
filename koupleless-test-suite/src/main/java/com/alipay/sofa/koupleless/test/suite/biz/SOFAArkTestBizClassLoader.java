@@ -36,11 +36,11 @@ public class SOFAArkTestBizClassLoader extends BizClassLoader {
     private void initHook() {
         Field bizClassLoaderHookField = BizClassLoader.class.getDeclaredField("bizClassLoaderHook");
         bizClassLoaderHookField.setAccessible(true);
-        bizClassLoaderHookField.set(this, new DelegateToMasterBizClassLoaderHook());
+        bizClassLoaderHookField.set(this, SOFAArkTestBootstrap.getClassLoaderHook());
         bizClassLoaderHookField.setAccessible(false);
 
         Field bizClassLoaderIsHookLoadedField = BizClassLoader.class
-                .getDeclaredField("isHookLoaded");
+            .getDeclaredField("isHookLoaded");
         bizClassLoaderIsHookLoadedField.setAccessible(true);
         bizClassLoaderIsHookLoadedField.set(this, new AtomicBoolean(true));
         bizClassLoaderIsHookLoadedField.setAccessible(false);

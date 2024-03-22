@@ -50,14 +50,13 @@ public class KouplelessBaseSpringTestApplication {
 
     private ConfigurableApplicationContext applicationContext;
 
-    private URLClassLoader baseClassLoader;
+    private URLClassLoader                 baseClassLoader;
 
     public void initBaseClassLoader() {
-        URLClassLoader baseClassLoader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
-        this.baseClassLoader = new BaseClassLoader(
-                Lists.newArrayList(config.getArtifactId()),
-                baseClassLoader
-        );
+        URLClassLoader baseClassLoader = (URLClassLoader) Thread.currentThread()
+            .getContextClassLoader();
+        this.baseClassLoader = new BaseClassLoader(Lists.newArrayList(config.getArtifactId()),
+            baseClassLoader);
     }
 
     public KouplelessBaseSpringTestApplication(KouplelessBaseSpringTestConfig config) {
@@ -67,7 +66,7 @@ public class KouplelessBaseSpringTestApplication {
 
     private boolean isNotArkApplicationStartListener(ApplicationListener<?> listener) {
         return !listener.getClass().getName()
-                .equals("com.alipay.sofa.ark.springboot.listener.ArkApplicationStartListener");
+            .equals("com.alipay.sofa.ark.springboot.listener.ArkApplicationStartListener");
     }
 
     @SneakyThrows
