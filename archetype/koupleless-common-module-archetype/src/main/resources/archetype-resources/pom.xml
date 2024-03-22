@@ -13,7 +13,7 @@
     <properties>
         <java.version>17</java.version>
         <koupleless.runtime.version>1.0.1</koupleless.runtime.version>
-        <sofa.ark.version>2.2.8</sofa.ark.version>
+        <sofa.ark.version>2.2.9-SNAPSHOT</sofa.ark.version>
     </properties>
 
     <dependencies>

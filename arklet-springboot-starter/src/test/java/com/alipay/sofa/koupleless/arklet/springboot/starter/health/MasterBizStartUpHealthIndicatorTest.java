@@ -79,7 +79,6 @@ public class MasterBizStartUpHealthIndicatorTest {
         }
     }
 
-
     @Test
     public void testMasterBizStartUpHealthWithoutArkBiz() {
         Biz masterBiz = Mockito.mock(Biz.class);
