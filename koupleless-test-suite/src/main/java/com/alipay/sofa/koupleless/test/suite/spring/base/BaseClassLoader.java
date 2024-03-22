@@ -48,7 +48,7 @@ public class BaseClassLoader extends URLClassLoader {
 
     @Override
     public URL[] getURLs() {
-        return super.getURLs();
+        return parent.getURLs();
     }
 
     @Override
@@ -56,5 +56,13 @@ public class BaseClassLoader extends URLClassLoader {
         URL resource = higherPriorityClassLoader.getResource(name);
         resource = resource != null ? resource : super.getResource(name);
         return resource;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj.equals(this)) {
+            return true;
+        }
+        return parent.equals(obj);
     }
 }

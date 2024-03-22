@@ -30,6 +30,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.io.DefaultResourceLoader;
 
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -73,7 +74,10 @@ public class KouplelessBaseSpringTestApplication {
     public void run() {
         Class<?> mainClass = baseClassLoader.loadClass(config.getMainClass());
         // add necessary bizRuntimeContext
-        SpringApplication springApplication = new SpringApplication(mainClass) {
+        SpringApplication springApplication = new SpringApplication(
+                new DefaultResourceLoader(baseClassLoader),
+                mainClass
+        ) {
             // the listener is not needed in the test workflow.
             // because it will automatically create another ArkServiceContainer with a unreachable Container ClassLoader
             @Override
@@ -97,9 +101,9 @@ public class KouplelessBaseSpringTestApplication {
                     }
                 });
 
-        CompletableFuture.runAsync(() -> {
-            Thread.currentThread().setContextClassLoader(baseClassLoader);
-            applicationContext = springApplication.run();
-        }).get();
+        applicationContext = springApplication.run();
+        //CompletableFuture.runAsync(() -> {
+        //    Thread.currentThread().setContextClassLoader(baseClassLoader);
+        //}).get();
     }
 }

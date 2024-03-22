@@ -17,7 +17,6 @@
 package com.alipay.sofa.koupleless.test.suite.biz;
 
 import com.alipay.sofa.ark.container.service.classloader.BizClassLoader;
-import com.alipay.sofa.ark.support.common.DelegateToMasterBizClassLoaderHook;
 import lombok.SneakyThrows;
 
 import java.lang.reflect.Field;
