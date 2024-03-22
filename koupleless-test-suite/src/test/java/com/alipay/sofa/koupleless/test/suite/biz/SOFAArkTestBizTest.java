@@ -41,9 +41,17 @@ public class SOFAArkTestBizTest {
         testClassNames.add("com.alipay.sofa.koupleless.test.suite.mock.LoadByTestBizClassB");
         List<String> includeClassPatterns = new ArrayList<>();
 
-        testBiz = new SOFAArkTestBiz("com.alipay.sofa.koupleless.test.suite.mock.BootStrapClass",
-            "test", "1.0.0", testClassNames, includeClassPatterns,
-            (URLClassLoader) SOFAArkTestBizTest.class.getClassLoader());
+        testBiz = new SOFAArkTestBiz(
+                SOFAArkTestBizConfig
+                        .builder()
+                        .bootstrapClassName("com.alipay.sofa.koupleless.test.suite.mock.BootStrapClass")
+                        .bizName("test")
+                        .bizVersion("1.0.0")
+                        .testClassNames(testClassNames)
+                        .includeClassPatterns(includeClassPatterns)
+                        .baseClassLoader((URLClassLoader) SOFAArkTestBizTest.class.getClassLoader())
+                        .build()
+        );
     }
 
     @Test

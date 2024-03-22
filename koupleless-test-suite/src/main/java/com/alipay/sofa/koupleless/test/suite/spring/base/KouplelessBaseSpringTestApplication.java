@@ -22,6 +22,7 @@ import com.alipay.sofa.koupleless.common.BizRuntimeContext;
 import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
 import com.alipay.sofa.koupleless.test.suite.biz.SOFAArkTestBootstrap;
 import com.alipay.sofa.koupleless.test.suite.spring.model.KouplelessBaseSpringTestConfig;
+import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.codehaus.plexus.util.StringUtils;
@@ -30,8 +31,10 @@ import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEven
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import java.util.Collection;
-import java.util.HashMap;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import static com.alipay.sofa.ark.spi.constant.Constants.MASTER_BIZ;
@@ -47,6 +50,16 @@ public class KouplelessBaseSpringTestApplication {
 
     private ConfigurableApplicationContext applicationContext;
 
+    private URLClassLoader baseClassLoader;
+
+    public void initBaseClassLoader() {
+        URLClassLoader baseClassLoader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
+        this.baseClassLoader = new BaseClassLoader(
+                Lists.newArrayList(config.getArtifactId()),
+                baseClassLoader
+        );
+    }
+
     public KouplelessBaseSpringTestApplication(KouplelessBaseSpringTestConfig config) {
         config.init();
         this.config = config;
@@ -54,14 +67,14 @@ public class KouplelessBaseSpringTestApplication {
 
     private boolean isNotArkApplicationStartListener(ApplicationListener<?> listener) {
         return !listener.getClass().getName()
-            .equals("com.alipay.sofa.ark.springboot.listener.ArkApplicationStartListener");
+                .equals("com.alipay.sofa.ark.springboot.listener.ArkApplicationStartListener");
     }
 
     @SneakyThrows
     public void run() {
+        Class<?> mainClass = baseClassLoader.loadClass(config.getMainClass());
         // add necessary bizRuntimeContext
-
-        SpringApplication springApplication = new SpringApplication(Class.forName(config.getMainClass())) {
+        SpringApplication springApplication = new SpringApplication(mainClass) {
             // the listener is not needed in the test workflow.
             // because it will automatically create another ArkServiceContainer with a unreachable Container ClassLoader
             @Override
@@ -85,7 +98,9 @@ public class KouplelessBaseSpringTestApplication {
                     }
                 });
 
-        applicationContext = springApplication.run();
-
+        CompletableFuture.runAsync(() -> {
+            Thread.currentThread().setContextClassLoader(baseClassLoader);
+            applicationContext = springApplication.run();
+        }).get();
     }
 }

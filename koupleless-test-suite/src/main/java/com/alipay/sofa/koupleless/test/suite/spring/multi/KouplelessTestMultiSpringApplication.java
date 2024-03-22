@@ -28,8 +28,7 @@ import com.alipay.sofa.koupleless.test.suite.spring.model.KouplelessBizSpringTes
 import com.alipay.sofa.koupleless.test.suite.spring.model.KouplelessMultiSpringTestConfig;
 import lombok.Getter;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author CodeNoobKing
@@ -38,7 +37,7 @@ import java.util.Map;
 public class KouplelessTestMultiSpringApplication {
 
     @Getter
-    private KouplelessBaseSpringTestApplication             baseApplication;
+    private KouplelessBaseSpringTestApplication baseApplication;
 
     private Map<String, KouplelessBizSpringTestApplication> bizApplications = new HashMap<>();
 
@@ -50,7 +49,7 @@ public class KouplelessTestMultiSpringApplication {
         this.baseApplication = new KouplelessBaseSpringTestApplication(config.getBaseConfig());
         for (KouplelessBizSpringTestConfig bizConfig : config.getBizConfigs()) {
             this.bizApplications.put(bizConfig.getBizName(),
-                new KouplelessBizSpringTestApplication(bizConfig));
+                    new KouplelessBizSpringTestApplication(bizConfig));
         }
     }
 
@@ -63,8 +62,25 @@ public class KouplelessTestMultiSpringApplication {
         bizApplications.get(bizName).run(); // run biz
     }
 
+    public void bootStrapBase() {
+        baseApplication.initBaseClassLoader();
+    }
+
+    public void bootStrapTest() {
+        SOFAArkTestBootstrap.init(baseApplication.getBaseClassLoader());
+        for (Map.Entry<String, KouplelessBizSpringTestApplication> entry : bizApplications.entrySet()) {
+            KouplelessBizSpringTestApplication app = entry.getValue();
+            String bizIdentity = app.getConfig().getBizName() + ":TEST";
+            String artifactId = app.getConfig().getArtifactId();
+            SOFAArkTestBootstrap
+                    .getClassLoaderHook()
+                    .putHigherPriorityResourceArtifacts(bizIdentity, Collections.singletonList(artifactId));
+        }
+    }
+
     public void run() {
-        SOFAArkTestBootstrap.init(Thread.currentThread().getContextClassLoader());
+        bootStrapBase();
+        bootStrapTest();
         runBase();
         bizApplications.keySet().forEach(this::runBiz);
     }

@@ -18,7 +18,6 @@ package com.alipay.sofa.koupleless.test.suite.biz;
 
 import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.container.model.BizModel;
-import com.alipay.sofa.ark.container.service.ArkServiceContainerHolder;
 import com.alipay.sofa.ark.spi.model.BizState;
 import com.alipay.sofa.ark.spi.model.Plugin;
 import com.alipay.sofa.ark.spi.service.plugin.PluginManagerService;
@@ -28,7 +27,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -40,29 +38,15 @@ import java.util.stream.Collectors;
  */
 public class SOFAArkTestBiz extends BizModel {
 
-    private List<String> testClassNames;
+    private SOFAArkTestBizConfig config;
 
-    /**
-     * This class is used to mock a certain behaviour in real production environment.
-     * This certain behaviour is that some logic need to be executed in master biz classLoader.
-     * Therefore, we need to delegate the class loading to master biz classLoader and executed with master biz TCCL.
-     */
-    private String       bootstrapClassName;
-
-    private ClassLoader  baseClassLoader = null;
-
-    public SOFAArkTestBiz(
-            String bootstrapClassName,
-            String bizName,
-            String bizVersion,
-            List<String> testClassNames,
-            List<String> includeClassPatterns,
-            URLClassLoader baseClassLoader) {
+    public SOFAArkTestBiz(SOFAArkTestBizConfig config) {
 
         super();
+        this.config = config;
 
         List<Pattern> compiledIncludeClassPatterns = CollectionUtils.
-                emptyIfNull(includeClassPatterns).
+                emptyIfNull(config.getIncludeClassPatterns()).
                 stream().
                 map(Pattern::compile).
                 collect(Collectors.toList());
@@ -72,8 +56,8 @@ public class SOFAArkTestBiz extends BizModel {
         for (Plugin plugin : pluginManagerService.getPluginsInOrder()) {
             pluginUrls.add(plugin.getPluginURL());
         }
-        this.setBizName(bizName).
-                setBizVersion(bizVersion).
+        this.setBizName(config.getBizName()).
+                setBizVersion(config.getBizVersion()).
                 setBizState(BizState.RESOLVED).
                 setDenyImportClasses("").
                 setDenyImportPackages("").
@@ -82,18 +66,14 @@ public class SOFAArkTestBiz extends BizModel {
         registerBiz();
 
         SOFAArkTestBizClassLoader testBizClassLoader = new SOFAArkTestBizClassLoader(
-                bizName,
-                testClassNames,
+                config.getBizName(),
+                config.getTestClassNames(),
                 compiledIncludeClassPatterns,
-                baseClassLoader
+                config.getBaseClassLoader()
         );
         testBizClassLoader.setBizModel(this);
         testBizClassLoader.setBizIdentity(this.getIdentity());
         this.setClassLoader(testBizClassLoader);
-
-        this.testClassNames = testClassNames;
-        this.bootstrapClassName = bootstrapClassName;
-        this.baseClassLoader = baseClassLoader;
     }
 
     public void registerBiz() {
@@ -120,7 +100,7 @@ public class SOFAArkTestBiz extends BizModel {
     @SneakyThrows
     public List<Class<?>> getTestClasses() {
         List<Class<?>> classInBizLoader = new ArrayList<>();
-        for (String testClassName : testClassNames) {
+        for (String testClassName : config.getTestClassNames()) {
             classInBizLoader.add(getBizClassLoader().loadClass(testClassName));
         }
         return classInBizLoader;
@@ -128,9 +108,9 @@ public class SOFAArkTestBiz extends BizModel {
 
     @SneakyThrows
     public CompletableFuture<Void> executeTest(Runnable runnable) {
-        if (StringUtils.isNoneBlank(bootstrapClassName)) {
+        if (StringUtils.isNoneBlank(config.getBootstrapClassName())) {
             // bootstrap the biz, do some initialization in side base.
-            Class<?> bootstrapClass = baseClassLoader.loadClass(bootstrapClassName);
+            Class<?> bootstrapClass = config.getBaseClassLoader().loadClass(config.getBootstrapClassName());
             Method bootstrapBaseMethod = bootstrapClass.getMethod("bootstrapBase");
             bootstrapBaseMethod.invoke(bootstrapClass.newInstance());
         }

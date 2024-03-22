@@ -16,6 +16,7 @@
  */
 package com.alipay.sofa.koupleless.test.suite.mojo;
 
+import com.alipay.sofa.koupleless.test.suite.biz.SOFAArkTestBizConfig;
 import com.alipay.sofa.koupleless.test.suite.biz.SOFAArkTestBootstrap;
 import com.alipay.sofa.koupleless.test.suite.biz.SOFAArkTestBiz;
 import com.alipay.sofa.koupleless.test.suite.model.CompatibleTestBizConfig;
@@ -52,15 +53,15 @@ import org.junit.runner.Result;
 public class KouplelessCompatibleTestMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${project}", readonly = true)
-    MavenProject         project;
+    MavenProject project;
 
     @Parameter(property = "compatibleTestConfigFile", defaultValue = "sofa-ark-compatible-test-config.yaml")
-    String               compatibleTestConfigFile = "sofa-ark-compatible-test-config.yaml";
+    String compatibleTestConfigFile = "sofa-ark-compatible-test-config.yaml";
 
-    private ObjectMapper yamlObjectMapper         = new ObjectMapper(new YAMLFactory())
-                                                      .configure(
-                                                          DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
-                                                          false);
+    private ObjectMapper yamlObjectMapper = new ObjectMapper(new YAMLFactory())
+            .configure(
+                    DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
+                    false);
 
     @SneakyThrows
     public URLClassLoader buildURLClassLoader() {
@@ -76,17 +77,17 @@ public class KouplelessCompatibleTestMojo extends AbstractMojo {
         }
 
         return new URLClassLoader(urls.toArray(new URL[0]),
-        // this is necessary because we are calling test engine programmatically.
-        // some classes are required to be loaded by TCCL even when we are setting TCCL to biz classLoader.
-            Thread.currentThread().getContextClassLoader());
+                // this is necessary because we are calling test engine programmatically.
+                // some classes are required to be loaded by TCCL even when we are setting TCCL to biz classLoader.
+                Thread.currentThread().getContextClassLoader());
     }
 
     @SneakyThrows
     private CompatibleTestConfig loadConfigs() {
         return yamlObjectMapper.readValue(
-            Paths.get(project.getBuild().getTestOutputDirectory(), compatibleTestConfigFile)
-                .toUri().toURL(), new TypeReference<CompatibleTestConfig>() {
-            });
+                Paths.get(project.getBuild().getTestOutputDirectory(), compatibleTestConfigFile)
+                        .toUri().toURL(), new TypeReference<CompatibleTestConfig>() {
+                });
     }
 
     private List<SOFAArkTestBiz> buildTestBiz(URLClassLoader baseClassLoader) {
@@ -96,20 +97,29 @@ public class KouplelessCompatibleTestMojo extends AbstractMojo {
         // then it mused be loaded by base classloader
         List<String> rootProjectClasses = new ArrayList<>();
         rootProjectClasses.add(Paths.get(project.getBuild().getOutputDirectory()).toAbsolutePath()
-            .toString());
+                .toString());
 
         rootProjectClasses.add(Paths.get(project.getBuild().getTestOutputDirectory())
-            .toAbsolutePath().toString());
+                .toAbsolutePath().toString());
 
         List<SOFAArkTestBiz> result = new ArrayList<>();
         for (CompatibleTestBizConfig config : CollectionUtils.emptyIfNull(configs
-            .getTestBizConfigs())) {
+                .getTestBizConfigs())) {
 
-            SOFAArkTestBiz testBiz = new SOFAArkTestBiz(config.getBootstrapClass(),
-                config.getName(), project.getVersion(), ListUtils.emptyIfNull(config
-                    .getTestClasses()), ListUtils.union(
-                    ListUtils.emptyIfNull(config.getLoadByBizClassLoaderPatterns()),
-                    rootProjectClasses), baseClassLoader);
+            SOFAArkTestBiz testBiz = new SOFAArkTestBiz(
+                    SOFAArkTestBizConfig
+                            .builder()
+                            .bootstrapClassName(config.getBootstrapClass())
+                            .bizName(config.getName())
+                            .bizVersion(project.getVersion())
+                            .testClassNames(ListUtils.emptyIfNull(config.getTestClasses()))
+                            .includeClassPatterns(ListUtils.union(
+                                    ListUtils.emptyIfNull(config.getLoadByBizClassLoaderPatterns()),
+                                    rootProjectClasses)
+                            )
+                            .baseClassLoader(baseClassLoader)
+                            .build()
+            );
 
             result.add(testBiz);
         }
@@ -132,10 +142,10 @@ public class KouplelessCompatibleTestMojo extends AbstractMojo {
                     List<Class<?>> testClasses = sofaArkTestBiz.getTestClasses();
                     Result result = JUnitCore.runClasses(testClasses.toArray(new Class[0]));
                     getLog().info(
-                        String.format("%s, CompatibleTestFinished", sofaArkTestBiz.getIdentity()));
+                            String.format("%s, CompatibleTestFinished", sofaArkTestBiz.getIdentity()));
 
                     Preconditions.checkState(result.wasSuccessful(),
-                        "Test failed: " + result.getFailures());
+                            "Test failed: " + result.getFailures());
                 }
             }).get();
         }

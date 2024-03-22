@@ -38,29 +38,34 @@ public class KouplelessBizSpringTestConfig {
     /**
      * 包名。
      */
-    private String       packageName;
+    private String packageName;
 
     /**
      * 业务名。
      */
-    private String       bizName;
+    private String bizName;
 
     /**
      * 主类。
      */
-    private String       mainClass;
+    private String mainClass;
 
     /**
      * webContextPath。
      */
-    private String       webContextPath;
+    private String webContextPath;
+
+    private String artifactId;
 
     @Builder.Default
     private List<String> excludePackages = new ArrayList<>();
 
     public void init() {
+        Preconditions.checkState(StringUtils.isNotBlank(artifactId),
+                "artifactId must not be blank");
+
         Preconditions.checkState(StringUtils.isNotBlank(packageName),
-            "packageName must not be blank");
+                "packageName must not be blank");
 
         if (StringUtils.isBlank(bizName)) {
             bizName = StringUtils.replace(packageName, ".", "-");
