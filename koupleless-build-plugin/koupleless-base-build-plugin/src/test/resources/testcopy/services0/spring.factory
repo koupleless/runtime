@@ -1,0 +1,6 @@
+key0=org.example.0
+key2=\
+  org.example.0, \
+  org.example.2
+key1=org.example.0, org.example.1 , org.example.2
+just=keep

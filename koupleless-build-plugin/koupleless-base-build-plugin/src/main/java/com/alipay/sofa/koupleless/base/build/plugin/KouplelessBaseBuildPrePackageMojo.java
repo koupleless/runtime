@@ -32,6 +32,7 @@ package com.alipay.sofa.koupleless.base.build.plugin;
  * limitations under the License.
  */
 
+import com.alipay.sofa.koupleless.base.build.plugin.adapter.AdapterCopyService;
 import com.alipay.sofa.koupleless.base.build.plugin.common.JarFileUtils;
 import com.alipay.sofa.koupleless.base.build.plugin.model.KouplelessAdapterConfig;
 import com.alipay.sofa.koupleless.base.build.plugin.model.MavenDependencyAdapterMapping;
@@ -41,6 +42,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.base.Preconditions;
 import lombok.SneakyThrows;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
@@ -58,8 +60,6 @@ import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResult;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -85,12 +85,14 @@ public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
     @Component
     RepositorySystem        repositorySystem;
 
-    private ObjectMapper    yamlMapper     = new ObjectMapper(new YAMLFactory());
+    private ObjectMapper    yamlMapper         = new ObjectMapper(new YAMLFactory());
 
     KouplelessAdapterConfig kouplelessAdapterConfig;
 
-    String                  defaultGroupId = "";
-    String                  defaultVersion = "";
+    AdapterCopyService      adapterCopyService = new AdapterCopyService();
+
+    String                  defaultGroupId     = "";
+    String                  defaultVersion     = "";
 
     void initKouplelessAdapterConfig() throws Exception {
         if (kouplelessAdapterConfig == null) {
@@ -197,23 +199,15 @@ public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
 
     void addArtifactToProjectRoot(Artifact artifact) {
         File file = artifact.getFile();
+        File buildDir = Paths.get(outputDirectory.getAbsolutePath(), "classes").toFile();
         Map<String, Byte[]> entryToContent = JarFileUtils.getFileContentAsLines(file,
-            Pattern.compile(".*\\.class$"));
-        for (Map.Entry<String, Byte[]> entry : entryToContent.entrySet()) {
-            addPatchToProjectRoot(entry.getKey(), entry.getValue());
-        }
-    }
+            Pattern.compile("(.*\\.class$|^META-INF/services/.*$|^META-INF/spring.factories$)"));
 
-    @SneakyThrows
-    void addPatchToProjectRoot(String entryName, Byte[] bytes) {
-        Path outputfile = Paths.get(outputDirectory.getAbsolutePath(), "classes", entryName);
-        Path parentDir = outputfile.getParent();
-        byte[] primitiveByte = new byte[bytes.length];
-        for (int i = 0; i < bytes.length; i++) {
-            primitiveByte[i] = bytes[i];
+        for (Map.Entry<String, Byte[]> entry : entryToContent.entrySet()) {
+            adapterCopyService.copy(buildDir, entry.getKey(),
+                ArrayUtils.toPrimitive(entry.getValue()));
         }
-        Files.createDirectories(parentDir);
-        Files.write(outputfile, primitiveByte);
+
     }
 
     @Override
