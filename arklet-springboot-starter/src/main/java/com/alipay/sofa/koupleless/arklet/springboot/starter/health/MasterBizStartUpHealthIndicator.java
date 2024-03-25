@@ -21,7 +21,7 @@ import com.alipay.sofa.ark.spi.event.AbstractArkEvent;
 import com.alipay.sofa.ark.spi.event.biz.AfterBizStartupEvent;
 import com.alipay.sofa.ark.spi.event.biz.AfterBizStopEvent;
 import com.alipay.sofa.ark.spi.event.biz.BeforeBizStartupEvent;
-import com.alipay.sofa.ark.spi.event.biz.BizFailedEvent;
+import com.alipay.sofa.ark.spi.event.biz.AfterBizFailedEvent;
 import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.ark.spi.service.event.EventHandler;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
@@ -75,7 +75,7 @@ public class MasterBizStartUpHealthIndicator extends AbstractHealthIndicator
             bizStartUpStatus.put(biz.getIdentity(), Status.UNKNOWN);
         } else if (event instanceof AfterBizStartupEvent) {
             bizStartUpStatus.put(biz.getIdentity(), Status.UP);
-        } else if (event instanceof BizFailedEvent) {
+        } else if (event instanceof AfterBizFailedEvent) {
             bizStartUpStatus.put(biz.getIdentity(), Status.DOWN);
         } else if (event instanceof AfterBizStopEvent) {
             bizStartUpStatus.remove(biz.getIdentity());

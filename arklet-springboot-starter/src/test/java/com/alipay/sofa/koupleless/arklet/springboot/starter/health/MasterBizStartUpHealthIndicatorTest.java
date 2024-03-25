@@ -20,7 +20,7 @@ import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.spi.event.biz.AfterBizStartupEvent;
 import com.alipay.sofa.ark.spi.event.biz.AfterBizStopEvent;
 import com.alipay.sofa.ark.spi.event.biz.BeforeBizStartupEvent;
-import com.alipay.sofa.ark.spi.event.biz.BizFailedEvent;
+import com.alipay.sofa.ark.spi.event.biz.AfterBizFailedEvent;
 import com.alipay.sofa.ark.spi.model.Biz;
 import org.junit.Test;
 import org.mockito.MockedStatic;
@@ -70,7 +70,7 @@ public class MasterBizStartUpHealthIndicatorTest {
             assertEquals(Status.UP, indicator.health().getStatus());
 
             // case2-4: base started && biz failed:
-            indicator.handleEvent(new BizFailedEvent(biz1,new Throwable()));
+            indicator.handleEvent(new AfterBizFailedEvent(biz1,new Throwable()));
             assertEquals(Status.DOWN, indicator.health().getStatus());
 
             // case2-5: base started && biz stop:
@@ -112,7 +112,7 @@ public class MasterBizStartUpHealthIndicatorTest {
             assertEquals(Status.UP, indicator.health().getStatus());
 
             // case2-4: base started && biz failed:
-            indicator.handleEvent(new BizFailedEvent(biz1,new Throwable()));
+            indicator.handleEvent(new AfterBizFailedEvent(biz1,new Throwable()));
             assertEquals(Status.UP, indicator.health().getStatus());
 
             // case2-5: base started && biz stop:
