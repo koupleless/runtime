@@ -39,6 +39,11 @@ public class CustomBiz implements Biz {
     }
 
     @Override
+    public void start(String[] strings, Map<String, String> map) throws Throwable {
+
+    }
+
+    @Override
     public void stop() throws Throwable {
 
     }
