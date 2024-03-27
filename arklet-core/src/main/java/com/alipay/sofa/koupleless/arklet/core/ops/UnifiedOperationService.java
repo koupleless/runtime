@@ -17,10 +17,12 @@
 package com.alipay.sofa.koupleless.arklet.core.ops;
 
 import java.util.List;
+import java.util.Map;
 
 import com.alipay.sofa.ark.api.ClientResponse;
 import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.koupleless.arklet.core.ArkletComponent;
+import com.alipay.sofa.koupleless.arklet.core.command.meta.bizops.ArkBizMeta;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BatchInstallRequest;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BatchInstallResponse;
 
@@ -37,7 +39,8 @@ public interface UnifiedOperationService extends ArkletComponent {
      * @return response
      * @throws Throwable error
      */
-    ClientResponse install(String bizUrl) throws Throwable;
+    ClientResponse install(String bizName, String bizVersion, String bizUrl, String[] args,
+                           Map<String, String> envs) throws Throwable;
 
     /**
      * uninstall biz

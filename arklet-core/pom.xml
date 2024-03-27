@@ -21,6 +21,12 @@
             <groupId>com.alipay.sofa.koupleless</groupId>
             <artifactId>koupleless-common</artifactId>
             <version>${revision}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-actuator</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
 

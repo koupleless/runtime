@@ -56,11 +56,14 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
     }
 
     @Override
-    public ClientResponse install(String bizUrl) throws Throwable {
+    public ClientResponse install(String bizName, String bizVersion, String bizUrl, String[] args,
+                                  Map<String, String> envs) throws Throwable {
         BizOperation bizOperation = new BizOperation()
             .setOperationType(BizOperation.OperationType.INSTALL);
+        bizOperation.setBizName(bizName);
+        bizOperation.setBizVersion(bizVersion);
         bizOperation.putParameter(Constants.CONFIG_BIZ_URL, bizUrl);
-        return ArkClient.installOperation(bizOperation);
+        return ArkClient.installOperation(bizOperation, args, envs);
     }
 
     public ClientResponse safeBatchInstall(String bizUrl) {
