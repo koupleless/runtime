@@ -82,7 +82,7 @@ public class UnifiedOperationServiceImplTests {
         try (MockedStatic<ArkClient> arkClientMockedStatic = Mockito.mockStatic(ArkClient.class)) {
             ClientResponse clientResponse = Mockito.mock(ClientResponse.class);
             arkClientMockedStatic.when(() -> ArkClient.installOperation(Mockito.any(BizOperation.class))).thenReturn(clientResponse);
-            ClientResponse response = unifiedOperationService.install("http://example.com/biz.jar");
+            ClientResponse response = unifiedOperationService.install("bizName", "bizVersion", "http://example.com/biz.jar", new String[]{}, new HashMap<>());
             arkClientMockedStatic.verify(() -> ArkClient.installOperation(Mockito.any(BizOperation.class)));
             Assert.assertEquals(clientResponse, response);
         }
