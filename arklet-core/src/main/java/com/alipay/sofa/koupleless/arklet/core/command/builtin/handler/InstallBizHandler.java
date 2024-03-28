@@ -43,6 +43,7 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryPoolMXBean;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author mingmen
@@ -61,7 +62,8 @@ public class InstallBizHandler
         long startSpace = metaSpaceMXBean.getUsage().getUsed();
         try {
             InstallBizClientResponse installBizClientResponse = convertClientResponse(getOperationService()
-                .install(input.getBizUrl()));
+                .install(input.getBizName(), input.getBizVersion(), input.getBizUrl(),
+                    input.getArgs(), input.getEnvs()));
             installBizClientResponse.setElapsedSpace(metaSpaceMXBean.getUsage().getUsed()
                                                      - startSpace);
             if (ResponseCode.SUCCESS.equals(installBizClientResponse.getCode())) {
@@ -143,7 +145,17 @@ public class InstallBizHandler
     @Getter
     @Setter
     public static class Input extends ArkBizMeta {
-        private String bizUrl;
+        private String              bizUrl;
+        /**
+         * can set --key=value, or just args
+         */
+        private String[]            args;
+
+        /**
+         * only used in multi-tenant jdk which support to set env for each Biz
+         * Don't use this in non-multi-tenant jdk.
+         */
+        private Map<String, String> envs;
     }
 
     @Getter
