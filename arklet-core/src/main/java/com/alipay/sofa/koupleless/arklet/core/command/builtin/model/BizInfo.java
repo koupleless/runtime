@@ -16,7 +16,10 @@
  */
 package com.alipay.sofa.koupleless.arklet.core.command.builtin.model;
 
+import com.alipay.sofa.ark.spi.model.BizInfo.BizStateRecord;
 import com.alipay.sofa.ark.spi.model.BizState;
+
+import java.util.List;
 
 /**
  * @author mingmen
@@ -32,6 +35,10 @@ public class BizInfo {
     private String   mainClass;
 
     private String   webContextPath;
+
+    private ClassLoader classLoader;
+
+    private List<BizStateRecord> bizStateChangeLogs;
 
     public String getBizName() {
         return bizName;
@@ -71,5 +78,19 @@ public class BizInfo {
 
     public void setWebContextPath(String webContextPath) {
         this.webContextPath = webContextPath;
+    }
+
+    public ClassLoader getClassLoader() {
+        return classLoader;
+    }
+    public void setClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
+    }
+
+    public List<BizStateRecord> getBizStateChangeLogs() {
+        return bizStateChangeLogs;
+    }
+    public void setBizStateChangeLogs(List<BizStateRecord> bizStateChangeLogs) {
+        this.bizStateChangeLogs = bizStateChangeLogs;
     }
 }

@@ -16,18 +16,18 @@
  */
 package com.alipay.sofa.koupleless.arklet.core.command.builtin.handler;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-
 import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.koupleless.arklet.core.command.builtin.BuiltinCommand;
 import com.alipay.sofa.koupleless.arklet.core.command.builtin.model.BizInfo;
 import com.alipay.sofa.koupleless.arklet.core.command.meta.AbstractCommandHandler;
 import com.alipay.sofa.koupleless.arklet.core.command.meta.Command;
+import com.alipay.sofa.koupleless.arklet.core.command.meta.InputMeta;
 import com.alipay.sofa.koupleless.arklet.core.command.meta.Output;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.CommandValidationException;
-import com.alipay.sofa.koupleless.arklet.core.command.meta.InputMeta;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author mingmen
@@ -51,6 +51,8 @@ public class QueryAllBizHandler extends AbstractCommandHandler<InputMeta, List<B
             model.setBizState(biz.getBizState());
             model.setMainClass(biz.getMainClass());
             model.setWebContextPath(biz.getWebContextPath());
+            model.setClassLoader(biz.getBizClassLoader());
+            model.setBizStateChangeLogs(biz.getBizStateChangeLogs());
             bizInfos.add(model);
         }
         return Output.ofSuccess(bizInfos);
