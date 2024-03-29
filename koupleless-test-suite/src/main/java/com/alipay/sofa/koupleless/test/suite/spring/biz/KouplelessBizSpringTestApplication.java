@@ -45,11 +45,11 @@ import java.util.stream.Collectors;
 @Getter
 public class KouplelessBizSpringTestApplication {
 
-    private SOFAArkTestBiz testBiz;
+    private SOFAArkTestBiz                 testBiz;
 
     private ConfigurableApplicationContext applicationContext;
 
-    private KouplelessBizSpringTestConfig config;
+    private KouplelessBizSpringTestConfig  config;
 
     @SneakyThrows
     public KouplelessBizSpringTestApplication(KouplelessBizSpringTestConfig config) {
@@ -59,7 +59,7 @@ public class KouplelessBizSpringTestApplication {
 
     public boolean isExcludedDependency(String dependency) {
         for (String regexp : CollectionUtils.emptyIfNull(KouplelessSpringTestUtils.getConfig()
-                .getBiz().getExcludeDependencyRegexps())) {
+            .getBiz().getExcludeDependencyRegexps())) {
             if (dependency.matches(".*" + regexp + ".*")) {
                 return true;
             }
@@ -109,7 +109,8 @@ public class KouplelessBizSpringTestApplication {
                 Thread.currentThread().setContextClassLoader(testBiz.getBizClassLoader());
                 EventAdminService eventAdminService = ArkClient.getEventAdminService();
                 eventAdminService.sendEvent(new BeforeBizStartupEvent(testBiz));
-                Class<?> mainClass = testBiz.getBizClassLoader().loadClass(config.getMainClassName());
+                Class<?> mainClass = testBiz.getBizClassLoader().loadClass(
+                    config.getMainClassName());
                 SpringApplication springApplication = new SpringApplication(mainClass);
                 springApplication.setAdditionalProfiles(config.getBizName());
                 applicationContext = springApplication.run();

@@ -41,7 +41,7 @@ public class KouplelessBizSpringTestConfig {
     /**
      * 包名。
      */
-    private String packageName;
+    private String       packageName;
 
     /**
      * 包名列表。
@@ -51,21 +51,21 @@ public class KouplelessBizSpringTestConfig {
     /**
      * 业务名。
      */
-    private String bizName;
+    private String       bizName;
 
     /**
      * 主类。
      */
-    private Class<?> mainClass;
+    private Class<?>     mainClass;
 
-    private String mainClassName;
+    private String       mainClassName;
 
     /**
      * webContextPath。
      */
-    private String webContextPath;
+    private String       webContextPath;
 
-    private String artifactId;
+    private String       artifactId;
 
     @Builder.Default
     private List<String> excludePackages = new ArrayList<>();
@@ -73,7 +73,8 @@ public class KouplelessBizSpringTestConfig {
     public void init() {
         Preconditions.checkState(mainClass != null, "mainClass must not be blank");
         mainClassName = mainClass.getName();
-        artifactId = JarUtils.parseArtifactId(mainClass.getProtectionDomain().getCodeSource().getLocation().toString());
+        artifactId = JarUtils.parseArtifactId(mainClass.getProtectionDomain().getCodeSource()
+            .getLocation().toString());
 
         if (StringUtils.isBlank(bizName)) {
             bizName = artifactId;
