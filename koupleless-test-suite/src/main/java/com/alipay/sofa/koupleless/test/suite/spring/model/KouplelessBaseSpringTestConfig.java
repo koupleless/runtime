@@ -16,12 +16,16 @@
  */
 package com.alipay.sofa.koupleless.test.suite.spring.model;
 
+import com.alipay.sofa.ark.loader.jar.JarUtils;
 import com.google.common.base.Preconditions;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.sisu.wire.ParameterKeys;
+
+import java.util.List;
 
 /**
  * @author CodeNoobKing
@@ -33,20 +37,14 @@ import org.apache.commons.lang3.StringUtils;
 @Builder
 public class KouplelessBaseSpringTestConfig {
 
-    private String packageName;
-
-    private String mainClass;
+    private Class<?> mainClass;
 
     private String artifactId;
 
     public void init() {
-        Preconditions
-            .checkState(StringUtils.isNotBlank(artifactId), "artifactId must not be blank");
-        Preconditions.checkState(StringUtils.isNotBlank(packageName),
-            "packageName must not be blank");
-
-        if (StringUtils.isBlank(mainClass)) {
-            mainClass = packageName + ".Application";
+        Preconditions.checkState(mainClass != null, "mainClass must not be blank");
+        if (StringUtils.isBlank(artifactId)) {
+            artifactId = JarUtils.parseArtifactId(mainClass.getProtectionDomain().getCodeSource().getLocation().toString());
         }
     }
 }

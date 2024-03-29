@@ -72,7 +72,7 @@ public class KouplelessBaseSpringTestApplication {
 
     @SneakyThrows
     public void run() {
-        Class<?> mainClass = baseClassLoader.loadClass(config.getMainClass());
+        Class<?> mainClass = baseClassLoader.loadClass(config.getMainClass().getName());
         // add necessary bizRuntimeContext
         SpringApplication springApplication = new SpringApplication(
                 new DefaultResourceLoader(baseClassLoader),
@@ -102,8 +102,5 @@ public class KouplelessBaseSpringTestApplication {
                 });
 
         applicationContext = springApplication.run();
-        //CompletableFuture.runAsync(() -> {
-        //    Thread.currentThread().setContextClassLoader(baseClassLoader);
-        //}).get();
     }
 }

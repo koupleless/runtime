@@ -16,6 +16,8 @@
  */
 package com.alipay.sofa.koupleless.test.suite.spring.model;
 
+import com.alipay.sofa.ark.loader.jar.JarUtils;
+import com.alipay.sofa.koupleless.test.suite.spring.common.SpringUtils;
 import com.google.common.base.Preconditions;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,6 +25,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,45 +41,55 @@ public class KouplelessBizSpringTestConfig {
     /**
      * 包名。
      */
-    private String       packageName;
+    private String packageName;
+
+    /**
+     * 包名列表。
+     */
+    private List<String> packageNames;
 
     /**
      * 业务名。
      */
-    private String       bizName;
+    private String bizName;
 
     /**
      * 主类。
      */
-    private String       mainClass;
+    private Class<?> mainClass;
+
+    private String mainClassName;
 
     /**
      * webContextPath。
      */
-    private String       webContextPath;
+    private String webContextPath;
 
-    private String       artifactId;
+    private String artifactId;
 
     @Builder.Default
     private List<String> excludePackages = new ArrayList<>();
 
     public void init() {
-        Preconditions
-            .checkState(StringUtils.isNotBlank(artifactId), "artifactId must not be blank");
-
-        Preconditions.checkState(StringUtils.isNotBlank(packageName),
-            "packageName must not be blank");
+        Preconditions.checkState(mainClass != null, "mainClass must not be blank");
+        mainClassName = mainClass.getName();
+        artifactId = JarUtils.parseArtifactId(mainClass.getProtectionDomain().getCodeSource().getLocation().toString());
 
         if (StringUtils.isBlank(bizName)) {
-            bizName = StringUtils.replace(packageName, ".", "-");
-        }
-
-        if (StringUtils.isBlank(mainClass)) {
-            mainClass = packageName + ".Application";
+            bizName = artifactId;
         }
 
         if (StringUtils.isBlank(webContextPath)) {
             webContextPath = bizName;
+        }
+
+        if (StringUtils.isNotBlank(packageName)) {
+            packageNames = packageNames == null ? new ArrayList<>() : packageNames;
+            packageNames.add(packageName);
+        }
+
+        if (packageNames == null) {
+            packageNames = SpringUtils.getBasePackages(mainClass);
         }
     }
 
