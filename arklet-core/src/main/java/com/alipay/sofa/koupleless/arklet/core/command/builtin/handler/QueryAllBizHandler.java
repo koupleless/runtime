@@ -52,7 +52,7 @@ public class QueryAllBizHandler extends AbstractCommandHandler<InputMeta, List<B
             model.setMainClass(biz.getMainClass());
             model.setWebContextPath(biz.getWebContextPath());
             model.setClassLoader(biz.getBizClassLoader());
-            model.setBizStateChangeLogs(biz.getBizStateChangeLogs());
+            model.setBizStateRecords(biz.getBizStateRecords());
             bizInfos.add(model);
         }
         return Output.ofSuccess(bizInfos);

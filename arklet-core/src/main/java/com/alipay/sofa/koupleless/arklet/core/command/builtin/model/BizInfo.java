@@ -38,7 +38,7 @@ public class BizInfo {
 
     private ClassLoader          classLoader;
 
-    private List<BizStateRecord> bizStateChangeLogs;
+    private List<BizStateRecord> bizStateRecords;
 
     public String getBizName() {
         return bizName;
@@ -88,11 +88,11 @@ public class BizInfo {
         this.classLoader = classLoader;
     }
 
-    public List<BizStateRecord> getBizStateChangeLogs() {
-        return bizStateChangeLogs;
+    public List<BizStateRecord> getBizStateRecords() {
+        return bizStateRecords;
     }
 
-    public void setBizStateChangeLogs(List<BizStateRecord> bizStateChangeLogs) {
-        this.bizStateChangeLogs = bizStateChangeLogs;
+    public void setBizStateRecords(List<BizStateRecord> bizStateRecords) {
+        this.bizStateRecords = bizStateRecords;
     }
 }
