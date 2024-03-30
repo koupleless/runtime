@@ -20,6 +20,7 @@ import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.ark.spi.model.BizState;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -145,8 +146,8 @@ public class CustomBiz implements Biz {
     }
 
     @Override
-    public CopyOnWriteArrayList<BizStateRecord> getBizStateChangeLogs() {
-        return new CopyOnWriteArrayList<BizStateRecord>();
+    public List<BizStateRecord> getBizStateRecords() {
+        return new CopyOnWriteArrayList<>();
     }
 
     @Override
