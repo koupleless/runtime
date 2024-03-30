@@ -146,7 +146,7 @@ public class CustomBiz implements Biz {
 
     @Override
     public CopyOnWriteArrayList<BizStateRecord> getBizStateChangeLogs() {
-        return null;
+        return new CopyOnWriteArrayList<BizStateRecord>();
     }
 
     @Override
