@@ -26,17 +26,17 @@ import java.util.List;
  * @date 2023/6/14
  */
 public class BizInfo {
-    private String   bizName;
+    private String               bizName;
 
-    private String   bizVersion;
+    private String               bizVersion;
 
-    private BizState bizState;
+    private BizState             bizState;
 
-    private String   mainClass;
+    private String               mainClass;
 
-    private String   webContextPath;
+    private String               webContextPath;
 
-    private ClassLoader classLoader;
+    private ClassLoader          classLoader;
 
     private List<BizStateRecord> bizStateChangeLogs;
 
@@ -83,6 +83,7 @@ public class BizInfo {
     public ClassLoader getClassLoader() {
         return classLoader;
     }
+
     public void setClassLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
     }
@@ -90,6 +91,7 @@ public class BizInfo {
     public List<BizStateRecord> getBizStateChangeLogs() {
         return bizStateChangeLogs;
     }
+
     public void setBizStateChangeLogs(List<BizStateRecord> bizStateChangeLogs) {
         this.bizStateChangeLogs = bizStateChangeLogs;
     }
