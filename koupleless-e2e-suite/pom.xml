@@ -10,8 +10,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-
-    <artifactId>koupleless-test-suite</artifactId>
+    <artifactId>koupleless-e2e-suite</artifactId>
     <packaging>maven-plugin</packaging>
 
     <dependencies>
@@ -131,7 +130,6 @@
                 <version>3.6.0</version> <!-- Use an appropriate version -->
                 <executions>
                     <execution>
-                        <id>default-descriptor</id>
                         <goals>
                             <goal>descriptor</goal>
                         </goals>
