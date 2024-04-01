@@ -194,15 +194,14 @@ public class MultiBizPropertiesTest {
         Assert.assertEquals(properties.getOrDefault(key1, value2), value1);
         Assert.assertEquals(properties.getOrDefault(key2, value2), value2);
 
-
         Assert.assertEquals(properties.putIfAbsent(key1, value2), value1);
         Assert.assertNull(properties.putIfAbsent(key2, value2));
 
         Assert.assertEquals(properties.computeIfAbsent(key3, k -> value1), value1);
-        Assert.assertEquals(properties.computeIfPresent(key3, (k, v) -> v + value2), value1 + value2);
+        Assert.assertEquals(properties.computeIfPresent(key3, (k, v) -> v + value2),
+            value1 + value2);
         Assert.assertEquals(properties.computeIfPresent(key3, (k, v) -> null), null);
         Assert.assertEquals(properties.computeIfPresent(key4, (k, v) -> v + value2), null);
-
 
         properties.setProperty(key3, value1);
         Assert.assertEquals(properties.compute(key3, (k, v) -> v + value2), value1 + value2);

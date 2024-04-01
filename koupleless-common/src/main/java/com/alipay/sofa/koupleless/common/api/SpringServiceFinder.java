@@ -18,9 +18,13 @@ package com.alipay.sofa.koupleless.common.api;
 
 import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.spi.model.Biz;
+import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
 import com.alipay.sofa.koupleless.common.service.ServiceProxyFactory;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.alipay.sofa.koupleless.common.service.ServiceProxyFactory.determineMostSuitableBiz;
 
@@ -64,5 +68,14 @@ public class SpringServiceFinder {
                                                         Class<T> serviceType) {
         return ServiceProxyFactory.batchCreateServiceProxy(moduleName, moduleVersion, serviceType,
             null);
+    }
+
+    public static <T> Map<Biz, Map<String, T>> listAllModuleServices(Class<T> serviceType) {
+        Biz masterBiz = ArkClient.getMasterBiz();
+        return ArkClient.getBizManagerService().getBizInOrder().stream()
+            .filter(biz -> biz != masterBiz)
+            .collect(Collectors.toMap(biz -> biz,
+                biz -> ServiceProxyFactory.batchCreateServiceProxy(biz.getBizName(),
+                    biz.getBizVersion(), serviceType, null)));
     }
 }

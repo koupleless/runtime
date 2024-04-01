@@ -34,32 +34,25 @@ import org.springframework.boot.loader.archive.Archive;
  * @version CachedLaunchedURLClassLoader.java, v 0.1 2023年12月26日 14:45 syd
  */
 public class CachedLaunchedURLClassLoader extends LaunchedURLClassLoader {
-    private static final int                   ENTRY_CACHE_SIZE  = Integer.getInteger(
-                                                                     "serverless.class.cache.size",
-                                                                     6000);
+    private static final int                   ENTRY_CACHE_SIZE  = Integer
+        .getInteger("serverless.class.cache.size", 6000);
     private static final Object                NOT_FOUND         = new Object();
     protected final Map<String, Object>        classCache        = Collections
-                                                                     .synchronizedMap(new LinkedHashMap<String, Object>(
-                                                                         ENTRY_CACHE_SIZE, 0.75f,
-                                                                         true) {
+        .synchronizedMap(new LinkedHashMap<String, Object>(ENTRY_CACHE_SIZE, 0.75f, true) {
                                                                          @Override
                                                                          protected boolean removeEldestEntry(Map.Entry<String, Object> eldest) {
                                                                              return size() >= ENTRY_CACHE_SIZE;
                                                                          }
                                                                      });
     protected final Map<String, Optional<URL>> resourceUrlCache  = Collections
-                                                                     .synchronizedMap(new LinkedHashMap<String, Optional<URL>>(
-                                                                         ENTRY_CACHE_SIZE, 0.75f,
-                                                                         true) {
+        .synchronizedMap(new LinkedHashMap<String, Optional<URL>>(ENTRY_CACHE_SIZE, 0.75f, true) {
                                                                          @Override
                                                                          protected boolean removeEldestEntry(Map.Entry<String, Optional<URL>> eldest) {
                                                                              return size() >= ENTRY_CACHE_SIZE;
                                                                          }
                                                                      });
     protected final Map<String, Optional>      resourcesUrlCache = Collections
-                                                                     .synchronizedMap(new LinkedHashMap<String, Optional>(
-                                                                         ENTRY_CACHE_SIZE, 0.75f,
-                                                                         true) {
+        .synchronizedMap(new LinkedHashMap<String, Optional>(ENTRY_CACHE_SIZE, 0.75f, true) {
                                                                          @Override
                                                                          protected boolean removeEldestEntry(Map.Entry<String, Optional> eldest) {
                                                                              return size() >= ENTRY_CACHE_SIZE;
@@ -113,8 +106,8 @@ public class CachedLaunchedURLClassLoader extends LaunchedURLClassLoader {
      * @return
      * @throws ClassNotFoundException
      */
-    protected Class<?> loadClassWithCache(String name, boolean resolve)
-                                                                       throws ClassNotFoundException {
+    protected Class<?> loadClassWithCache(String name,
+                                          boolean resolve) throws ClassNotFoundException {
         Object resultInCache = classCache.get(name);
         if (resultInCache == NOT_FOUND) {
             throw new ClassNotFoundException(name);

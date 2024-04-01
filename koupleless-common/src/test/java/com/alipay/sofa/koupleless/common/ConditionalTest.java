@@ -28,8 +28,7 @@ import org.springframework.context.annotation.Configuration;
 
 public class ConditionalTest {
     private final ApplicationContextRunner runner = new ApplicationContextRunner()
-                                                      .withConfiguration(UserConfigurations
-                                                          .of(ConditionalAutoConfiguration.class));
+        .withConfiguration(UserConfigurations.of(ConditionalAutoConfiguration.class));
 
     @Test
     public void testConditional() {

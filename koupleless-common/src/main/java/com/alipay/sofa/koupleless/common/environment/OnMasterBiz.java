@@ -30,7 +30,8 @@ public class OnMasterBiz extends SpringBootCondition {
     private static final String BIZ_CLASSLOADER = "com.alipay.sofa.ark.container.service.classloader.BizClassLoader";
 
     @Override
-    public ConditionOutcome getMatchOutcome(ConditionContext context, AnnotatedTypeMetadata metadata) {
+    public ConditionOutcome getMatchOutcome(ConditionContext context,
+                                            AnnotatedTypeMetadata metadata) {
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         if (contextClassLoader == null
             || BIZ_CLASSLOADER.equals(contextClassLoader.getClass().getName())) {

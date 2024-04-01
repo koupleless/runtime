@@ -124,8 +124,8 @@ public class DecodeableRpcInvocation extends RpcInvocation implements Codec, Dec
         setParameterTypesDesc(desc);
 
         try {
-            if (ConfigurationUtils.getSystemConfiguration().getBoolean(
-                SERIALIZATION_SECURITY_CHECK_KEY, false)) {
+            if (ConfigurationUtils.getSystemConfiguration()
+                .getBoolean(SERIALIZATION_SECURITY_CHECK_KEY, false)) {
                 CodecSupport.checkSerialization(path, version, serializationType);
             }
             Object[] args = DubboCodec.EMPTY_OBJECT_ARRAY;
@@ -137,8 +137,8 @@ public class DecodeableRpcInvocation extends RpcInvocation implements Codec, Dec
                 ServiceRepository repository = ApplicationModel.getServiceRepository();
                 ServiceDescriptor serviceDescriptor = repository.lookupService(path);
                 if (serviceDescriptor != null) {
-                    MethodDescriptor methodDescriptor = serviceDescriptor.getMethod(
-                        getMethodName(), desc);
+                    MethodDescriptor methodDescriptor = serviceDescriptor.getMethod(getMethodName(),
+                        desc);
                     if (methodDescriptor != null) {
                         pts = methodDescriptor.getParameterClasses();
                         this.setReturnTypes(methodDescriptor.getReturnTypes());
@@ -147,8 +147,8 @@ public class DecodeableRpcInvocation extends RpcInvocation implements Codec, Dec
                 if (pts == DubboCodec.EMPTY_CLASS_ARRAY) {
                     if (!RpcUtils.isGenericCall(desc, getMethodName())
                         && !RpcUtils.isEcho(desc, getMethodName())) {
-                        throw new IllegalArgumentException("Service not found:" + path + ", "
-                                                           + getMethodName());
+                        throw new IllegalArgumentException(
+                            "Service not found:" + path + ", " + getMethodName());
                     }
                     pts = ReflectUtils.desc2classArray(desc);
                 }

@@ -24,19 +24,21 @@ import com.alipay.sofa.koupleless.arklet.core.command.meta.Command;
  */
 public enum BuiltinCommand implements Command {
 
-    HELP("help", "list all supported commands"),
+                                               HELP("help", "list all supported commands"),
 
-    INSTALL_BIZ("installBiz", "install one ark biz"),
+                                               INSTALL_BIZ("installBiz", "install one ark biz"),
 
-    UNINSTALL_BIZ("uninstallBiz", "uninstall one ark biz"),
+                                               UNINSTALL_BIZ("uninstallBiz",
+                                                             "uninstall one ark biz"),
 
-    SWITCH_BIZ("switchBiz", "switch one ark biz"),
+                                               SWITCH_BIZ("switchBiz", "switch one ark biz"),
 
-    QUERY_ALL_BIZ("queryAllBiz", "query all ark biz(including master biz)"),
+                                               QUERY_ALL_BIZ("queryAllBiz",
+                                                             "query all ark biz(including master biz)"),
 
-    HEALTH("health", "get all health info"),
+                                               HEALTH("health", "get all health info"),
 
-    QUERY_BIZ_OPS("queryBizOps", "query ark biz ops");
+                                               QUERY_BIZ_OPS("queryBizOps", "query ark biz ops");
 
     private final String id;
     private final String desc;

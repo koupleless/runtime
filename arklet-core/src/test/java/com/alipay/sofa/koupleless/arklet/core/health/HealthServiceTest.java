@@ -46,8 +46,8 @@ public class HealthServiceTest extends BaseTest {
         Assert.assertTrue(health != null && !health.getHealthData().isEmpty());
         Map<String, Object> healthData = health.getHealthData();
         for (String metric : expectedMetrics) {
-            Assert.assertTrue(healthData.containsKey(metric)
-                              && !((Map<?, ?>) healthData.get(metric)).isEmpty());
+            Assert.assertTrue(
+                healthData.containsKey(metric) && !((Map<?, ?>) healthData.get(metric)).isEmpty());
         }
     }
 
@@ -80,7 +80,8 @@ public class HealthServiceTest extends BaseTest {
     }
 
     private void validateHealth(Health health, final List<Biz> expectedBizList,
-                                final List<Plugin> expectedPluginList, final Biz expectedMasterBiz) {
+                                final List<Plugin> expectedPluginList,
+                                final Biz expectedMasterBiz) {
         validateBizListHealth(health, expectedBizList);
         validatePluginListHealth(health, expectedPluginList);
         Assert.assertTrue(health.getHealthData().containsKey(Constants.MASTER_BIZ_INFO));
@@ -125,8 +126,10 @@ public class HealthServiceTest extends BaseTest {
     public void initHealthService() {
         arkClient = mockStatic(ArkClient.class);
         arkClient.when(ArkClient::getBizManagerService).thenReturn(new CustomBizManagerService());
-        arkClient.when(ArkClient::getPluginManagerService).thenReturn(new CustomPluginManagerService());
-        arkClient.when(ArkClient::getMasterBiz).thenReturn(new CustomBizManagerService().getMasterBiz());
+        arkClient.when(ArkClient::getPluginManagerService)
+            .thenReturn(new CustomPluginManagerService());
+        arkClient.when(ArkClient::getMasterBiz)
+            .thenReturn(new CustomBizManagerService().getMasterBiz());
     }
 
     @Test

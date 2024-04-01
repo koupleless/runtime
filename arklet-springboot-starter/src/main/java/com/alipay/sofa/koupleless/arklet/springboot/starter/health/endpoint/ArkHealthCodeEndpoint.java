@@ -36,9 +36,9 @@ public class ArkHealthCodeEndpoint {
 
     @ReadOperation
     public int healthCode() {
-        return ArkHealthCodeEndpoint.ofCode(new HealthBuilder().init()
-            .putAllHealthData(healthService.getHealth())
-            .putAllHealthData(healthService.queryModuleInfo()).build());
+        return ArkHealthCodeEndpoint
+            .ofCode(new HealthBuilder().init().putAllHealthData(healthService.getHealth())
+                .putAllHealthData(healthService.queryModuleInfo()).build());
     }
 
     @ReadOperation
@@ -49,8 +49,8 @@ public class ArkHealthCodeEndpoint {
     @ReadOperation
     public int getModuleInfoHealthCode2(@Selector String moduleType, @Selector String name,
                                         @Selector String version) {
-        return ArkHealthCodeEndpoint.ofCode(healthService
-            .queryModuleInfo(moduleType, name, version));
+        return ArkHealthCodeEndpoint
+            .ofCode(healthService.queryModuleInfo(moduleType, name, version));
     }
 
     public static int ofCode(Health health) {

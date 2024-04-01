@@ -39,9 +39,9 @@ public class ClassLoaderObjectInputStream extends ObjectInputStream {
      * @throws IOException in case of an I/O error
      * @throws StreamCorruptedException if the stream is corrupted
      */
-    public ClassLoaderObjectInputStream(final ClassLoader classLoader, final InputStream inputStream)
-                                                                                                     throws IOException,
-                                                                                                     StreamCorruptedException {
+    public ClassLoaderObjectInputStream(final ClassLoader classLoader,
+                                        final InputStream inputStream) throws IOException,
+                                                                       StreamCorruptedException {
         super(inputStream);
         this.classLoader = classLoader;
     }
@@ -57,7 +57,7 @@ public class ClassLoaderObjectInputStream extends ObjectInputStream {
      */
     @Override
     protected Class<?> resolveClass(final ObjectStreamClass objectStreamClass) throws IOException,
-                                                                              ClassNotFoundException {
+                                                                               ClassNotFoundException {
 
         try {
             return Class.forName(objectStreamClass.getName(), false, classLoader);
@@ -80,7 +80,7 @@ public class ClassLoaderObjectInputStream extends ObjectInputStream {
      */
     @Override
     protected Class<?> resolveProxyClass(final String[] interfaces) throws IOException,
-                                                                   ClassNotFoundException {
+                                                                    ClassNotFoundException {
         final Class<?>[] interfaceClasses = new Class[interfaces.length];
         for (int i = 0; i < interfaces.length; i++) {
             interfaceClasses[i] = Class.forName(interfaces[i], false, classLoader);

@@ -116,10 +116,7 @@ public class CpuIndicator extends Indicator {
 
     enum CpuMetrics {
 
-        CPU_COUNT("count"), CPU_TYPE("type"), CPU_TOTAL_USED("total used (%)"), CPU_USER_USED(
-                                                                                              "user used (%)"), CPU_SYSTEM_USED(
-                                                                                                                                "system used (%)"), CPU_FREE(
-                                                                                                                                                             "free (%)");
+                     CPU_COUNT("count"), CPU_TYPE("type"), CPU_TOTAL_USED("total used (%)"), CPU_USER_USED("user used (%)"), CPU_SYSTEM_USED("system used (%)"), CPU_FREE("free (%)");
 
         private final String id;
 

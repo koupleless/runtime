@@ -24,7 +24,7 @@ import com.alipay.sofa.koupleless.arklet.core.command.meta.Command;
  */
 public enum CustomCommand implements Command {
 
-    HELLO("hello", "say hello");
+                                              HELLO("hello", "say hello");
 
     private final String id;
     private final String desc;

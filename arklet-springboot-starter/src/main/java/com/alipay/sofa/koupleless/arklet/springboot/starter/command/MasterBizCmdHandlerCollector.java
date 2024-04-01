@@ -34,7 +34,8 @@ public class MasterBizCmdHandlerCollector implements ApplicationContextAware {
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        Map<String, AbstractCommandHandler> map = applicationContext.getBeansOfType(AbstractCommandHandler.class);
+        Map<String, AbstractCommandHandler> map = applicationContext
+            .getBeansOfType(AbstractCommandHandler.class);
         map.forEach((k, v) -> {
             // find custom directive beans from master base's spring context
             ArkletComponentRegistry.getCommandServiceInstance().registerCommandHandler(v);

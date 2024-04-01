@@ -25,7 +25,7 @@ import java.util.Set;
  */
 public enum EndpointResponseCode {
 
-    HEALTHY(200), UNHEALTHY(400), ENDPOINT_NOT_FOUND(404), ENDPOINT_PROCESS_INTERNAL_ERROR(500);
+                                  HEALTHY(200), UNHEALTHY(400), ENDPOINT_NOT_FOUND(404), ENDPOINT_PROCESS_INTERNAL_ERROR(500);
 
     private final int code;
 

@@ -48,11 +48,14 @@ public class ProcessRecordHolder {
     }
 
     public static List<ProcessRecord> getAllExecutingProcessRecords() {
-        return processRecords.values().stream().filter(record -> !record.finished()).collect(Collectors.toList());
+        return processRecords.values().stream().filter(record -> !record.finished())
+            .collect(Collectors.toList());
     }
 
     public static List<ProcessRecord> getProcessRecordsByStatus(String status) {
-        return processRecords.values().stream().filter(record -> StringUtils.isSameStr(record.getStatus().name(), status)).collect(Collectors.toList());
+        return processRecords.values().stream()
+            .filter(record -> StringUtils.isSameStr(record.getStatus().name(), status))
+            .collect(Collectors.toList());
     }
 
     public static ProcessRecord createProcessRecord(String rid, ArkBizMeta arkBizMeta) {

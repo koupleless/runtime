@@ -83,8 +83,10 @@ public class ArkHealthCodeEndpointTest extends SpringbootBaseTest {
     public void testGetModuleInfo2_PluginFailure() {
         final String nonPluginName = "non";
         final String nonPluginVersion = "x.x.x";
-        Assert.assertEquals(arkHealthCodeEndpoint.getModuleInfoHealthCode2(Constants.BIZ,
-            nonPluginName, nonPluginVersion), EndpointResponseCode.ENDPOINT_PROCESS_INTERNAL_ERROR
-            .getCode());
+        Assert
+            .assertEquals(
+                arkHealthCodeEndpoint.getModuleInfoHealthCode2(Constants.BIZ, nonPluginName,
+                    nonPluginVersion),
+                EndpointResponseCode.ENDPOINT_PROCESS_INTERNAL_ERROR.getCode());
     }
 }

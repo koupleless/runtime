@@ -95,8 +95,8 @@ public class DecodeableRpcResult extends RpcResult implements Codec, Decodeable 
                 try {
                     Type[] returnType = RpcUtils.getReturnTypes(invocation);
                     setValue(returnType == null || returnType.length == 0 ? in.readObject()
-                        : (returnType.length == 1 ? in.readObject((Class<?>) returnType[0]) : in
-                            .readObject((Class<?>) returnType[0], returnType[1])));
+                        : (returnType.length == 1 ? in.readObject((Class<?>) returnType[0])
+                            : in.readObject((Class<?>) returnType[0], returnType[1])));
                 } catch (ClassNotFoundException e) {
                     throw new IOException(StringUtils.toString("Read response data failed.", e));
                 } finally {
@@ -107,8 +107,8 @@ public class DecodeableRpcResult extends RpcResult implements Codec, Decodeable 
                 try {
                     Object obj = in.readObject();
                     if (obj instanceof Throwable == false)
-                        throw new IOException("Response data error, expect Throwable, but get "
-                                              + obj);
+                        throw new IOException(
+                            "Response data error, expect Throwable, but get " + obj);
                     setException((Throwable) obj);
                 } catch (ClassNotFoundException e) {
                     throw new IOException(StringUtils.toString("Read response data failed.", e));
@@ -129,8 +129,8 @@ public class DecodeableRpcResult extends RpcResult implements Codec, Decodeable 
                 try {
                     Type[] returnType = RpcUtils.getReturnTypes(invocation);
                     setValue(returnType == null || returnType.length == 0 ? in.readObject()
-                        : (returnType.length == 1 ? in.readObject((Class<?>) returnType[0]) : in
-                            .readObject((Class<?>) returnType[0], returnType[1])));
+                        : (returnType.length == 1 ? in.readObject((Class<?>) returnType[0])
+                            : in.readObject((Class<?>) returnType[0], returnType[1])));
                     setAttachments((Map<String, String>) in.readObject(Map.class));
                 } catch (ClassNotFoundException e) {
                     throw new IOException(StringUtils.toString("Read response data failed.", e));
@@ -142,8 +142,8 @@ public class DecodeableRpcResult extends RpcResult implements Codec, Decodeable 
                 try {
                     Object obj = in.readObject();
                     if (obj instanceof Throwable == false)
-                        throw new IOException("Response data error, expect Throwable, but get "
-                                              + obj);
+                        throw new IOException(
+                            "Response data error, expect Throwable, but get " + obj);
                     setException((Throwable) obj);
                     setAttachments((Map<String, String>) in.readObject(Map.class));
                 } catch (ClassNotFoundException e) {

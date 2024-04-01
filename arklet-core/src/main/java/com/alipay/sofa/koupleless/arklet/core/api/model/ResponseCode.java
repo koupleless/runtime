@@ -22,7 +22,8 @@ package com.alipay.sofa.koupleless.arklet.core.api.model;
  */
 
 public enum ResponseCode {
-    SUCCESS(200), FAILED(400), CMD_NOT_FOUND(404), CMD_PROCESS_INTERNAL_ERROR(500);
+                          SUCCESS(200), FAILED(400), CMD_NOT_FOUND(404), CMD_PROCESS_INTERNAL_ERROR(500);
+
     private final int code;
 
     ResponseCode(int code) {

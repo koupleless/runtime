@@ -35,7 +35,8 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 public class CancelTimersOnUninstallEventHandler implements EventHandler<BeforeBizRecycleEvent> {
 
-    private static final Logger                                               LOGGER                     = getLogger(CancelTimersOnUninstallEventHandler.class);
+    private static final Logger                                               LOGGER                     = getLogger(
+        CancelTimersOnUninstallEventHandler.class);
 
     static final ConcurrentHashMap<ClassLoader, ConcurrentLinkedQueue<Timer>> BIZ_CLASS_LOADER_TO_TIMERS = new ConcurrentHashMap<>();
 
@@ -55,10 +56,9 @@ public class CancelTimersOnUninstallEventHandler implements EventHandler<BeforeB
 
         ConcurrentLinkedQueue<Timer> timers = BIZ_CLASS_LOADER_TO_TIMERS.get(bizClassLoader);
         if (timers == null) {
-            LOGGER
-                .info(
-                    "[CancelTimersOnUninstallEventHandler] No managed timer found for module: {} , just return. ",
-                    event.getSource().getBizName());
+            LOGGER.info(
+                "[CancelTimersOnUninstallEventHandler] No managed timer found for module: {} , just return. ",
+                event.getSource().getBizName());
             return;
         }
 

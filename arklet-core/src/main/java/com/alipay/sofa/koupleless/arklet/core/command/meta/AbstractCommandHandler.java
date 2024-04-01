@@ -34,11 +34,11 @@ import com.alipay.sofa.koupleless.arklet.core.ops.UnifiedOperationService;
 public abstract class AbstractCommandHandler<P extends InputMeta, Q> {
 
     private final UnifiedOperationService unifiedOperationService = ArkletComponentRegistry
-                                                                      .getOperationServiceInstance();
+        .getOperationServiceInstance();
     private final CommandService          commandService          = ArkletComponentRegistry
-                                                                      .getCommandServiceInstance();
+        .getCommandServiceInstance();
     private final HealthService           healthService           = ArkletComponentRegistry
-                                                                      .getHealthServiceInstance();
+        .getHealthServiceInstance();
 
     public abstract void validate(P p) throws CommandValidationException;
 

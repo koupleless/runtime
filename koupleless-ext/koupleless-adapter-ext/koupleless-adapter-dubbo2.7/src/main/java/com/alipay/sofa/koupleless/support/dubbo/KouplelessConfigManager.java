@@ -47,7 +47,7 @@ import static org.apache.dubbo.config.AbstractConfig.getTagName;
 public class KouplelessConfigManager extends ConfigManager {
 
     private static final Logger                                      logger             = LoggerFactory
-                                                                                            .getLogger(ConfigManager.class);
+        .getLogger(ConfigManager.class);
 
     final Map<ClassLoader, Map<String, Map<String, AbstractConfig>>> globalConfigsCache = new HashMap<>();
 
@@ -68,7 +68,8 @@ public class KouplelessConfigManager extends ConfigManager {
         }
 
         write(() -> {
-            Map<String, AbstractConfig> configsMap = getCurrentConfigsCache().computeIfAbsent(getTagName(config.getClass()), type -> newMap());
+            Map<String, AbstractConfig> configsMap = getCurrentConfigsCache()
+                .computeIfAbsent(getTagName(config.getClass()), type -> newMap());
             addIfAbsent(config, configsMap, unique);
         });
     }
@@ -86,7 +87,8 @@ public class KouplelessConfigManager extends ConfigManager {
 
     @Override
     public <C extends AbstractConfig> Map<String, C> getConfigsMap(String configType) {
-        return (Map<String, C>) read(() -> getCurrentConfigsCache().getOrDefault(configType, emptyMap()));
+        return (Map<String, C>) read(
+            () -> getCurrentConfigsCache().getOrDefault(configType, emptyMap()));
     }
 
     @Override
@@ -97,7 +99,8 @@ public class KouplelessConfigManager extends ConfigManager {
     @Override
     public <C extends AbstractConfig> C getConfig(String configType, String id) {
         return read(() -> {
-            Map<String, C> configsMap = (Map) getCurrentConfigsCache().getOrDefault(configType, emptyMap());
+            Map<String, C> configsMap = (Map) getCurrentConfigsCache().getOrDefault(configType,
+                emptyMap());
             return configsMap.get(id);
         });
     }
@@ -105,10 +108,11 @@ public class KouplelessConfigManager extends ConfigManager {
     @Override
     public <C extends AbstractConfig> C getConfig(String configType) throws IllegalStateException {
         return read(() -> {
-            Map<String, C> configsMap = (Map) getCurrentConfigsCache().getOrDefault(configType, emptyMap());
+            Map<String, C> configsMap = (Map) getCurrentConfigsCache().getOrDefault(configType,
+                emptyMap());
             int size = configsMap.size();
             if (size < 1) {
-//                throw new IllegalStateException("No such " + configType.getName() + " is found");
+                //                throw new IllegalStateException("No such " + configType.getName() + " is found");
                 return null;
             } else if (size > 1) {
 
@@ -123,7 +127,8 @@ public class KouplelessConfigManager extends ConfigManager {
                     return defaultConfig.get();
                 }
 
-                logger.warn("Expected single matching of " + configType + ", but found " + size + " instances, will randomly pick the first one.");
+                logger.warn("Expected single matching of " + configType + ", but found " + size
+                            + " instances, will randomly pick the first one.");
             }
 
             return configsMap.values().iterator().next();
@@ -171,8 +176,8 @@ public class KouplelessConfigManager extends ConfigManager {
         return new HashMap<>();
     }
 
-    static <C extends AbstractConfig> void addIfAbsent(C config, Map<String, C> configsMap, boolean unique)
-            throws IllegalStateException {
+    static <C extends AbstractConfig> void addIfAbsent(C config, Map<String, C> configsMap,
+                                                       boolean unique) throws IllegalStateException {
 
         if (config == null || configsMap == null) {
             return;
@@ -191,28 +196,31 @@ public class KouplelessConfigManager extends ConfigManager {
         if (existedConfig != null && !config.equals(existedConfig)) {
             if (logger.isWarnEnabled()) {
                 String type = config.getClass().getSimpleName();
-                logger.warn(String.format("Duplicate %s found, there already has one default %s or more than two %ss have the same id, " +
-                        "you can try to give each %s a different id : %s", type, type, type, type, config));
+                logger.warn(String.format(
+                    "Duplicate %s found, there already has one default %s or more than two %ss have the same id, "
+                                          + "you can try to give each %s a different id : %s",
+                    type, type, type, type, config));
             }
         } else {
             configsMap.put(key, config);
         }
     }
 
-    private static void checkDuplicate(AbstractConfig oldOne, AbstractConfig newOne)
-                                                                                    throws IllegalStateException {
+    private static void checkDuplicate(AbstractConfig oldOne,
+                                       AbstractConfig newOne) throws IllegalStateException {
         if (oldOne != null && !oldOne.equals(newOne)) {
             String configName = oldOne.getClass().getSimpleName();
-            logger.warn("Duplicate Config found for " + configName
-                        + ", you should use only one unique " + configName
-                        + " for one application.");
+            logger
+                .warn("Duplicate Config found for " + configName
+                      + ", you should use only one unique " + configName + " for one application.");
         }
     }
 
     static <C extends AbstractConfig> String getId(C config) {
         String id = config.getId();
-        return isNotEmpty(id) ? id : isDefaultConfig(config) ? config.getClass().getSimpleName()
-                                                               + "#" + DEFAULT_KEY : null;
+        return isNotEmpty(id) ? id
+            : isDefaultConfig(config) ? config.getClass().getSimpleName() + "#" + DEFAULT_KEY
+                : null;
     }
 
     static <C extends AbstractConfig> boolean isDefaultConfig(C config) {

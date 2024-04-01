@@ -58,8 +58,8 @@ public class Layouts {
     /**
      * Executable JAR layout.
      */
-    public static class Jar extends org.springframework.boot.loader.tools.Layouts.Jar implements
-                                                                                     CustomLoaderLayout {
+    public static class Jar extends org.springframework.boot.loader.tools.Layouts.Jar
+                            implements CustomLoaderLayout {
         @Override
         public String getLauncherClassName() {
             return "com.alipay.sofa.koupleless.spring.loader.JarLauncher";

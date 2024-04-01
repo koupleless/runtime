@@ -129,8 +129,8 @@ public class NettyHttpServer {
         }
 
         @Override
-        protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request)
-                                                                                       throws Exception {
+        protected void channelRead0(ChannelHandlerContext ctx,
+                                    FullHttpRequest request) throws Exception {
             RequestValidation validation = validate(request);
             try {
                 if (!validation.isPass()) {
@@ -145,10 +145,8 @@ public class NettyHttpServer {
                     returnResponse(ctx, response);
                 }
             } catch (Throwable e) {
-                returnResponse(
-                    ctx,
-                    Response.internalError("Internal Error: " + e.getMessage(),
-                        ExceptionUtils.getStackTraceAsString(e)));
+                returnResponse(ctx, Response.internalError("Internal Error: " + e.getMessage(),
+                    ExceptionUtils.getStackTraceAsString(e)));
                 LOGGER.error("arklet process exception, cmd: {}", validation.getCmd(), e);
             }
         }
@@ -168,9 +166,9 @@ public class NettyHttpServer {
         }
 
         private void returnResponse(ChannelHandlerContext ctx, Response response) {
-            DefaultFullHttpResponse httpResponse = new DefaultFullHttpResponse(
-                HttpVersion.HTTP_1_1, HttpResponseStatus.OK, Unpooled.copiedBuffer(
-                    JSONObject.toJSONString(response), CharsetUtil.UTF_8));
+            DefaultFullHttpResponse httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1,
+                HttpResponseStatus.OK,
+                Unpooled.copiedBuffer(JSONObject.toJSONString(response), CharsetUtil.UTF_8));
             ChannelFuture future = ctx.writeAndFlush(httpResponse);
             if (future != null) {
                 future.addListener(ChannelFutureListener.CLOSE);
@@ -178,8 +176,8 @@ public class NettyHttpServer {
         }
 
         private void ret404(ChannelHandlerContext ctx) {
-            ChannelFuture future = ctx.writeAndFlush(new DefaultFullHttpResponse(
-                HttpVersion.HTTP_1_1, HttpResponseStatus.NOT_FOUND));
+            ChannelFuture future = ctx.writeAndFlush(
+                new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.NOT_FOUND));
             if (future != null) {
                 future.addListener(ChannelFutureListener.CLOSE);
             }
@@ -187,8 +185,8 @@ public class NettyHttpServer {
 
         private void ret500(ChannelHandlerContext ctx, String message) {
             FullHttpResponse httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1,
-                HttpResponseStatus.INTERNAL_SERVER_ERROR, Unpooled.copiedBuffer(message,
-                    CharsetUtil.UTF_8));
+                HttpResponseStatus.INTERNAL_SERVER_ERROR,
+                Unpooled.copiedBuffer(message, CharsetUtil.UTF_8));
             httpResponse.headers().set("Content_Length", httpResponse.content().readableBytes());
             ChannelFuture future = ctx.writeAndFlush(httpResponse);
             if (future != null) {

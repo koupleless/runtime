@@ -52,7 +52,7 @@ public class MasterBizHealthIndicator extends Indicator {
 
     enum MasterBizHealthMetrics {
 
-        READINESS_STATE("readinessState");
+                                 READINESS_STATE("readinessState");
 
         private final String id;
 

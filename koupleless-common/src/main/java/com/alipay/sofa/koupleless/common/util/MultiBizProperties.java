@@ -430,7 +430,9 @@ public class MultiBizProperties extends Properties {
             return bizPropertiesMap.get(invokeClassLoader);
         }
         ClassLoader classLoader = getBizClassLoader(invokeClassLoader);
-        Properties props = classLoader != null ? bizPropertiesMap.computeIfAbsent(classLoader, k -> new Properties()) : baseProperties;
+        Properties props = classLoader != null
+            ? bizPropertiesMap.computeIfAbsent(classLoader, k -> new Properties())
+            : baseProperties;
         bizPropertiesMap.put(invokeClassLoader, props);
         return baseProperties;
     }

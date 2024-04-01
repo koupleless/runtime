@@ -43,7 +43,7 @@ import com.google.inject.multibindings.Multibinder;
 public class ArkletComponentRegistry {
 
     private static final Injector        componentInjector = Guice
-                                                               .createInjector(new ComponentGuiceModule());
+        .createInjector(new ComponentGuiceModule());
 
     private static List<ArkletComponent> componentList     = new ArrayList<>(8);
 
@@ -57,13 +57,14 @@ public class ArkletComponentRegistry {
     }
 
     private static void initComponents() {
-            String components = componentList.stream().map(s -> s.getClass().getSimpleName()).collect(Collectors.joining(", "));
-            ArkletLoggerFactory.getDefaultLogger().info("found components: {}", components);
-            ArkletLoggerFactory.getDefaultLogger().info("start to initialize components");
-            for (ArkletComponent component : componentList) {
-                component.init();
-            }
-            ArkletLoggerFactory.getDefaultLogger().info("finish initialize components");
+        String components = componentList.stream().map(s -> s.getClass().getSimpleName())
+            .collect(Collectors.joining(", "));
+        ArkletLoggerFactory.getDefaultLogger().info("found components: {}", components);
+        ArkletLoggerFactory.getDefaultLogger().info("start to initialize components");
+        for (ArkletComponent component : componentList) {
+            component.init();
+        }
+        ArkletLoggerFactory.getDefaultLogger().info("finish initialize components");
     }
 
     private static void destroyComponents() {

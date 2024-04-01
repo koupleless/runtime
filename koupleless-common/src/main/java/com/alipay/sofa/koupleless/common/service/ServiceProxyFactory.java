@@ -56,14 +56,13 @@ public class ServiceProxyFactory {
                                                              Class<T> serviceType,
                                                              ClassLoader clientClassLoader) {
         Biz biz = ArkClient.getBizManagerService().getBiz(bizName, bizVersion);
-        Class<?> serviceClass = checkBizStateAndGetTargetClass(biz, serviceType);
+        Class<?> serviceClass = checkBizStateAndGetTargetClass(bizName, bizVersion, biz,
+            serviceType);
         Map<String, ?> serviceMap = listService(biz, serviceClass);
         Map<String, T> proxyMap = new HashMap<>();
         for (String beanName : serviceMap.keySet()) {
-            proxyMap.put(
-                beanName,
-                doCreateServiceProxy(biz.getBizName(), biz.getBizVersion(),
-                    serviceMap.get(beanName), null, serviceType, clientClassLoader));
+            proxyMap.put(beanName, doCreateServiceProxy(biz.getBizName(), biz.getBizVersion(),
+                serviceMap.get(beanName), null, serviceType, clientClassLoader));
         }
         return proxyMap;
     }
@@ -82,8 +81,8 @@ public class ServiceProxyFactory {
 
         BizRuntimeContext bizRuntimeContext = BizRuntimeContextRegistry.getBizRuntimeContext(biz);
         if (bizRuntimeContext.getRootApplicationContext() == null) {
-            throw new BizRuntimeException(E100002, String.format(
-                "biz %s:%s spring context is null", bizName, bizVersion));
+            throw new BizRuntimeException(E100002,
+                String.format("biz %s:%s spring context is null", bizName, bizVersion));
         }
 
         if (!StringUtils.isEmpty(name)) {
@@ -106,7 +105,8 @@ public class ServiceProxyFactory {
     }
 
     private static <T> Map<String, T> listService(Biz biz, Class<T> serviceType) {
-        BizRuntimeContext bizRuntimeContext = checkBizStateAndGetBizRuntimeContext(biz);
+        BizRuntimeContext bizRuntimeContext = checkBizStateAndGetBizRuntimeContext(biz.getBizName(),
+            biz.getBizVersion(), biz);
         ApplicationContext rootApplicationContext = bizRuntimeContext.getRootApplicationContext();
         if (rootApplicationContext instanceof AbstractApplicationContext) {
             ConfigurableListableBeanFactory beanFactory = ((AbstractApplicationContext) rootApplicationContext)
@@ -124,19 +124,23 @@ public class ServiceProxyFactory {
      * @param clientClassLoader  调用方classloader
      * @return 供调用方调用的代理对象
      */
-    private static <T> T doCreateServiceProxy(String bizName, String bizVersion, Object service, String name, Class<T> clientType, ClassLoader clientClassLoader) {
+    private static <T> T doCreateServiceProxy(String bizName, String bizVersion, Object service,
+                                              String name, Class<T> clientType,
+                                              ClassLoader clientClassLoader) {
         if (clientClassLoader == null) {
             Class<?> callerClass = ReflectionUtils.getCallerClass(6);
             clientClassLoader = callerClass.getClassLoader();
         }
 
-        BizRuntimeContext bizRuntimeContext = BizRuntimeContextRegistry.getBizRuntimeContextByClassLoader(clientClassLoader);
-        Map<ClassLoader, Map<String, ServiceProxyCache>> serviceProxyCaches =
-                bizRuntimeContext.getServiceProxyCaches();
+        BizRuntimeContext bizRuntimeContext = BizRuntimeContextRegistry
+            .getBizRuntimeContextByClassLoader(clientClassLoader);
+        Map<ClassLoader, Map<String, ServiceProxyCache>> serviceProxyCaches = bizRuntimeContext
+            .getServiceProxyCaches();
 
         Biz biz = determineMostSuitableBiz(bizName, bizVersion);
         if (biz != null) {
-            Map<String, ServiceProxyCache> cacheMap = serviceProxyCaches.computeIfAbsent(biz.getBizClassLoader(), o -> new ConcurrentHashMap<>());
+            Map<String, ServiceProxyCache> cacheMap = serviceProxyCaches
+                .computeIfAbsent(biz.getBizClassLoader(), o -> new ConcurrentHashMap<>());
             // 服务端模块被卸载时，cacheMap会被清空，需要重新生成proxy并缓存
             String cacheKey = service != null ? service.getClass().getName() : clientType.getName();
             if (cacheMap.containsKey(cacheKey)) {
@@ -145,7 +149,9 @@ public class ServiceProxyFactory {
             }
         }
 
-        SpringServiceInvoker serviceInvoker = new SpringServiceInvoker(service, name, clientType, bizName, bizVersion, clientClassLoader, service != null ? service.getClass().getClassLoader() : null);
+        SpringServiceInvoker serviceInvoker = new SpringServiceInvoker(service, name, clientType,
+            bizName, bizVersion, clientClassLoader,
+            service != null ? service.getClass().getClassLoader() : null);
         ProxyFactory factory = new ProxyFactory();
         if (clientType.isInterface()) {
             factory.addInterface(clientType);
@@ -158,7 +164,8 @@ public class ServiceProxyFactory {
 
         if (biz != null) {
             String cacheKey = service != null ? service.getClass().getName() : clientType.getName();
-            Map<String, ServiceProxyCache> cacheMap = serviceProxyCaches.computeIfAbsent(biz.getBizClassLoader(), o -> new ConcurrentHashMap<>());
+            Map<String, ServiceProxyCache> cacheMap = serviceProxyCaches
+                .computeIfAbsent(biz.getBizClassLoader(), o -> new ConcurrentHashMap<>());
             cacheMap.put(cacheKey, new ServiceProxyCache(proxy, serviceInvoker));
         }
 
@@ -172,15 +179,17 @@ public class ServiceProxyFactory {
             if (bizList.size() == 0) {
                 return null;
             }
-            biz = bizList.stream().filter(it -> BizState.ACTIVATED == it.getBizState()).findFirst().get();
+            biz = bizList.stream().filter(it -> BizState.ACTIVATED == it.getBizState()).findFirst()
+                .get();
         } else {
             biz = ArkClient.getBizManagerService().getBiz(moduleName, moduleVersion);
         }
         return biz;
     }
 
-    private static Class<?> checkBizStateAndGetTargetClass(Biz biz, Class<?> sourceClass) {
-        checkBizState(biz);
+    private static Class<?> checkBizStateAndGetTargetClass(String bizName, String bizVersion,
+                                                           Biz biz, Class<?> sourceClass) {
+        checkBizState(bizName, bizVersion, biz);
         try {
             return biz.getBizClassLoader().loadClass(sourceClass.getName());
         } catch (ClassNotFoundException e) {
@@ -189,8 +198,10 @@ public class ServiceProxyFactory {
         }
     }
 
-    private static BizRuntimeContext checkBizStateAndGetBizRuntimeContext(Biz biz) {
-        checkBizState(biz);
+    private static BizRuntimeContext checkBizStateAndGetBizRuntimeContext(String bizName,
+                                                                          String bizVersion,
+                                                                          Biz biz) {
+        checkBizState(bizName, bizVersion, biz);
         BizRuntimeContext bizRuntimeContext = BizRuntimeContextRegistry.getBizRuntimeContext(biz);
         if (bizRuntimeContext == null) {
             throw new BizRuntimeException(E100002, "biz runtime context is null");
@@ -201,12 +212,14 @@ public class ServiceProxyFactory {
         return bizRuntimeContext;
     }
 
-    private static void checkBizState(Biz biz) {
+    private static void checkBizState(String bizName, String bizVersion, Biz biz) {
         if (biz == null) {
-            throw new BizRuntimeException(E100003, "biz does not exist");
+            throw new BizRuntimeException(E100003,
+                String.format("biz %s:%s does not exist", bizName, bizVersion));
         }
         if (biz.getBizState() != BizState.ACTIVATED && biz.getBizState() != BizState.DEACTIVATED) {
-            throw new BizRuntimeException(E100004, "biz state is not valid");
+            throw new BizRuntimeException(E100004, String.format("biz %s:%s state %s is not valid",
+                bizName, bizVersion, biz.getBizState()));
         }
     }
 }

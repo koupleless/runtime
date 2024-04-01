@@ -39,9 +39,9 @@ public class ArkHealthEndpoint {
 
     @ReadOperation
     public EndpointResponse<Map<String, Object>> getHealth() {
-        return ArkHealthEndpoint.ofResponse(new HealthBuilder().init()
-            .putAllHealthData(healthService.getHealth())
-            .putAllHealthData(healthService.queryModuleInfo()).build());
+        return ArkHealthEndpoint
+            .ofResponse(new HealthBuilder().init().putAllHealthData(healthService.getHealth())
+                .putAllHealthData(healthService.queryModuleInfo()).build());
     }
 
     @ReadOperation
@@ -53,8 +53,8 @@ public class ArkHealthEndpoint {
     public EndpointResponse<Map<String, Object>> getModuleInfo2(@Selector String moduleType,
                                                                 @Selector String name,
                                                                 @Selector String version) {
-        return ArkHealthEndpoint.ofResponse(healthService
-            .queryModuleInfo(moduleType, name, version));
+        return ArkHealthEndpoint
+            .ofResponse(healthService.queryModuleInfo(moduleType, name, version));
     }
 
     private static EndpointResponse<Map<String, Object>> ofResponse(Health health) {
@@ -64,11 +64,11 @@ public class ArkHealthEndpoint {
             endpointResponse = EndpointResponse.ofFailed(EndpointResponseCode.ENDPOINT_NOT_FOUND,
                 healthData);
         } else if (health.containsError(Constants.HEALTH_ERROR)) {
-            endpointResponse = EndpointResponse.ofFailed(
-                EndpointResponseCode.ENDPOINT_PROCESS_INTERNAL_ERROR, healthData);
-        } else if (health.containsUnhealthy(Constants.READINESS_HEALTHY)) {
             endpointResponse = EndpointResponse
-                .ofFailed(EndpointResponseCode.UNHEALTHY, healthData);
+                .ofFailed(EndpointResponseCode.ENDPOINT_PROCESS_INTERNAL_ERROR, healthData);
+        } else if (health.containsUnhealthy(Constants.READINESS_HEALTHY)) {
+            endpointResponse = EndpointResponse.ofFailed(EndpointResponseCode.UNHEALTHY,
+                healthData);
         } else {
             endpointResponse = EndpointResponse.ofSuccess(healthData);
         }

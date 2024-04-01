@@ -71,8 +71,8 @@ public class ForwardsConfChangeListener implements ConfigChangeListener, Initial
             Set<String> beanNames = applicationContext.getBeansOfType(GatewayProperties.class)
                 .keySet();
             String beanName = beanNames.iterator().next();
-            ConfigurationPropertiesBean bean = ConfigurationPropertiesBean.get(
-                this.applicationContext, gatewayProperties, beanName);
+            ConfigurationPropertiesBean bean = ConfigurationPropertiesBean
+                .get(this.applicationContext, gatewayProperties, beanName);
             Bindable<?> target = bean.asBindTarget();
             ConfigurableEnvironment environment = applicationContext
                 .getBean(ConfigurableEnvironment.class);

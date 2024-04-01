@@ -37,9 +37,10 @@ import static org.slf4j.LoggerFactory.getLogger;
  * 使用 executorService.shutdownNow 尝试优雅关闭所有托管的 ExecutorService (包括线程池), 因此监听 BeforeBizStopEvent 模块事件即可
  */
 public class ShutdownExecutorServicesOnUninstallEventHandler implements
-                                                            EventHandler<BeforeBizRecycleEvent> {
+                                                             EventHandler<BeforeBizRecycleEvent> {
 
-    private static final Logger                                                         LOGGER                                = getLogger(ShutdownExecutorServicesOnUninstallEventHandler.class);
+    private static final Logger                                                         LOGGER                                = getLogger(
+        ShutdownExecutorServicesOnUninstallEventHandler.class);
 
     public static final String                                                          EXECUTOR_CLEANUP_TIMEOUT_SECONDS      = "com.alipay.koupleless.executor.cleanup.timeout.seconds";
 
@@ -57,25 +58,22 @@ public class ShutdownExecutorServicesOnUninstallEventHandler implements
     public void handleEvent(BeforeBizRecycleEvent event) {
 
         ClassLoader bizClassLoader = event.getSource().getBizClassLoader();
-        LOGGER
-            .info(
-                "[ShutdownExecutorServicesOnUninstallEventHandler] Module name: {} , BizClassLoader: {} .",
-                event.getSource().getBizName(), bizClassLoader);
+        LOGGER.info(
+            "[ShutdownExecutorServicesOnUninstallEventHandler] Module name: {} , BizClassLoader: {} .",
+            event.getSource().getBizName(), bizClassLoader);
 
         ConcurrentLinkedQueue<ExecutorService> executorServices = BIZ_CLASS_LOADER_TO_EXECUTOR_SERVICES
             .get(bizClassLoader);
         if (executorServices == null) {
-            LOGGER
-                .info(
-                    "[ShutdownExecutorServicesOnUninstallEventHandler] No managed executor service for module: {} , just return. ",
-                    event.getSource().getBizName());
+            LOGGER.info(
+                "[ShutdownExecutorServicesOnUninstallEventHandler] No managed executor service for module: {} , just return. ",
+                event.getSource().getBizName());
             return;
         }
 
-        LOGGER
-            .info(
-                "[ShutdownExecutorServicesOnUninstallEventHandler] {} managed executor services found for module: {} . ",
-                executorServices.size(), event.getSource().getBizName());
+        LOGGER.info(
+            "[ShutdownExecutorServicesOnUninstallEventHandler] {} managed executor services found for module: {} . ",
+            executorServices.size(), event.getSource().getBizName());
 
         int cleanupTimeoutSeconds = parseInt(getProperty(EXECUTOR_CLEANUP_TIMEOUT_SECONDS, "0"));
         for (ExecutorService executorService : executorServices) {
@@ -86,10 +84,9 @@ public class ShutdownExecutorServicesOnUninstallEventHandler implements
                 executorService.awaitTermination(cleanupTimeoutSeconds, SECONDS);
             } catch (InterruptedException ie) {
                 // 忽略 InterruptedException
-                LOGGER
-                    .warn(
-                        "InterruptedException occurred while invoke executorService.awaitTermination. ",
-                        ie);
+                LOGGER.warn(
+                    "InterruptedException occurred while invoke executorService.awaitTermination. ",
+                    ie);
             }
         }
     }

@@ -27,6 +27,10 @@ import java.lang.annotation.Target;
 @Documented
 public @interface AutowiredFromBase {
 
+    /**
+     * not implemented yet
+     * @return
+     */
     boolean required() default true;
 
     String name() default "";

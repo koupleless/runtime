@@ -36,8 +36,7 @@ import static org.mockito.Mockito.when;
 public class BaseRuntimeAutoConfigurationTest {
 
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
-                                                             .withConfiguration(AutoConfigurations
-                                                                 .of(BaseRuntimeAutoConfiguration.class));
+        .withConfiguration(AutoConfigurations.of(BaseRuntimeAutoConfiguration.class));
 
     @Before
     public void prepare() {

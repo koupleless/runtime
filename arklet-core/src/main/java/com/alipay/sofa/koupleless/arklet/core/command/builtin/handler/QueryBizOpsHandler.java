@@ -33,7 +33,7 @@ import static com.alipay.sofa.koupleless.arklet.core.command.builtin.BuiltinComm
  * @date: 2023/9/4 9:50 下午
  */
 public class QueryBizOpsHandler extends
-                               AbstractCommandHandler<QueryBizOpsHandler.Input, ProcessRecord> {
+                                AbstractCommandHandler<QueryBizOpsHandler.Input, ProcessRecord> {
 
     @Override
     public void validate(Input input) throws CommandValidationException {

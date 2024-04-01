@@ -35,12 +35,12 @@ public class CachedLaunchedURLClassLoaderTest extends TestCase {
 
         System.setProperty("serverless.class.cache.size", "100");
         CachedLaunchedURLClassLoader loader = new CachedLaunchedURLClassLoader(false, null,
-                new URL[] { appJar }, null);
+            new URL[] { appJar }, null);
         URL url = loader.getResource("com/example/demo/DemoApplication.class");
         assertNotNull(url);
         assertEquals(loader.getResource("com/example/demo/DemoApplication.class"), url);
         assertEquals(loader.loadClass("com.example.demo.DemoApplication"),
-                loader.loadClass("com.example.demo.DemoApplication"));
+            loader.loadClass("com.example.demo.DemoApplication"));
         assertNull(loader.getResource("demo/ApplicationNotExist.class"));
         assertTrue(!loader.getResources("demo/ApplicationNotExist.class").hasMoreElements());
         assertTrue(!loader.getResources("demo/ApplicationNotExist.class").hasMoreElements());
@@ -82,7 +82,7 @@ public class CachedLaunchedURLClassLoaderTest extends TestCase {
         assertNotSame(ex1, ex3);
         assertNotSame(ex2, ex3);
         ExecutorService executor = new ThreadPoolExecutor(5, 10, 60L, TimeUnit.SECONDS,
-                new LinkedBlockingQueue<Runnable>(100));
+            new LinkedBlockingQueue<Runnable>(100));
         CountDownLatch countDownLatch = new CountDownLatch(100);
         for (int i = 0; i < 100; i++) {
             final String className = "notExits" + i;

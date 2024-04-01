@@ -56,10 +56,10 @@ public class HealthAutoConfiguration implements ApplicationContextAware {
     @Bean
     public MasterBizHealthIndicator masterBizHealthIndicator() {
         MasterBizHealthIndicator masterBizHealthIndicator = new MasterBizHealthIndicator();
-        masterBizHealthIndicator.setApplicationAvailability(context
-            .getBean(ApplicationAvailability.class));
-        ArkletComponentRegistry.getHealthServiceInstance().registerIndicator(
-            masterBizHealthIndicator);
+        masterBizHealthIndicator
+            .setApplicationAvailability(context.getBean(ApplicationAvailability.class));
+        ArkletComponentRegistry.getHealthServiceInstance()
+            .registerIndicator(masterBizHealthIndicator);
         return masterBizHealthIndicator;
     }
 

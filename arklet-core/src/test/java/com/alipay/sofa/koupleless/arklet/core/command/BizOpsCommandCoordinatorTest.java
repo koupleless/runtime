@@ -118,6 +118,7 @@ public class BizOpsCommandCoordinatorTest {
         executor.shutdown();
         executor.awaitTermination(10, TimeUnit.SECONDS);
 
-        Assert.assertFalse("存在锁异常", BizOpsCommandCoordinator.existBizProcessing("bizName", "bizVersion"));
+        Assert.assertFalse("存在锁异常",
+            BizOpsCommandCoordinator.existBizProcessing("bizName", "bizVersion"));
     }
 }

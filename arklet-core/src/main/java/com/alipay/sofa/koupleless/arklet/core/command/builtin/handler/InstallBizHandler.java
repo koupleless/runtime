@@ -49,11 +49,9 @@ import java.util.Map;
  * @author mingmen
  * @date 2023/6/8
  */
-public class InstallBizHandler
-                              extends
-                              AbstractCommandHandler<InstallBizHandler.Input, InstallBizHandler.InstallBizClientResponse>
-                                                                                                                         implements
-                                                                                                                         ArkBizOps {
+public class InstallBizHandler extends
+                               AbstractCommandHandler<InstallBizHandler.Input, InstallBizHandler.InstallBizClientResponse>
+                               implements ArkBizOps {
     private static final ArkletLogger LOGGER = ArkletLoggerFactory.getDefaultLogger();
 
     @Override
@@ -61,11 +59,11 @@ public class InstallBizHandler
         MemoryPoolMXBean metaSpaceMXBean = getMetaSpaceMXBean();
         long startSpace = metaSpaceMXBean.getUsage().getUsed();
         try {
-            InstallBizClientResponse installBizClientResponse = convertClientResponse(getOperationService()
-                .install(input.getBizName(), input.getBizVersion(), input.getBizUrl(),
-                    input.getArgs(), input.getEnvs()));
-            installBizClientResponse.setElapsedSpace(metaSpaceMXBean.getUsage().getUsed()
-                                                     - startSpace);
+            InstallBizClientResponse installBizClientResponse = convertClientResponse(
+                getOperationService().install(input.getBizName(), input.getBizVersion(),
+                    input.getBizUrl(), input.getArgs(), input.getEnvs()));
+            installBizClientResponse
+                .setElapsedSpace(metaSpaceMXBean.getUsage().getUsed() - startSpace);
             if (ResponseCode.SUCCESS.equals(installBizClientResponse.getCode())) {
                 return Output.ofSuccess(installBizClientResponse);
             } else {
@@ -105,8 +103,8 @@ public class InstallBizHandler
         notBlank(input.getBizUrl(), "bizUrl should not be blank");
 
         if (StringUtils.isEmpty(input.getBizName()) || StringUtils.isEmpty(input.getBizVersion())) {
-            LOGGER
-                .warn("biz name and version should not be empty, or it will reduce the performance.");
+            LOGGER.warn(
+                "biz name and version should not be empty, or it will reduce the performance.");
         }
 
         if (StringUtils.isEmpty(input.getBizName()) && StringUtils.isEmpty(input.getBizVersion())) {
@@ -114,8 +112,8 @@ public class InstallBizHandler
             try {
                 refreshBizInfoFromJar(input);
             } catch (IOException e) {
-                throw new CommandValidationException(String.format(
-                    "refresh biz info from jar failed: %s", e.getMessage()));
+                throw new CommandValidationException(
+                    String.format("refresh biz info from jar failed: %s", e.getMessage()));
             }
         } else if (!StringUtils.isEmpty(input.getBizName())
                    && !StringUtils.isEmpty(input.getBizVersion())) {
