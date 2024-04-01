@@ -19,6 +19,7 @@ package com.alipay.sofa.koupleless.test.suite;
 import com.alipay.sofa.ark.container.model.BizModel;
 import com.alipay.sofa.ark.spi.service.classloader.ClassLoaderService;
 import com.alipay.sofa.koupleless.test.suite.biz.SOFAArkTestClassLoaderHook;
+import com.google.common.base.Preconditions;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -53,6 +54,9 @@ public class SOFAArkTestClassLoaderHookTest {
         artifacts.add("demo-executable");
 
         URL resource = getClass().getClassLoader().getResource("demo-executable.jar");
+        Preconditions.checkState(
+                resource != null, "Resource 'demo-executable.jar' not found in classpath"
+        );
         sofaArkTestClassLoaderHook.putHigherPriorityResourceArtifacts("test:TEST", artifacts);
 
         ClassLoaderService classLoaderService = mock(ClassLoaderService.class);
@@ -60,7 +64,7 @@ public class SOFAArkTestClassLoaderHookTest {
         doReturn(classLoader).when(classLoaderService).getMasterBizClassLoader();
 
         URL url = sofaArkTestClassLoaderHook.preFindResource("META-INF/MANIFEST.MF",
-            classLoaderService, new BizModel().setBizName("test").setBizVersion("TEST"));
+                classLoaderService, new BizModel().setBizName("test").setBizVersion("TEST"));
 
         InputStream inputStream = url.openConnection().getInputStream();
         InputStreamReader reader = new InputStreamReader(inputStream);
@@ -74,18 +78,18 @@ public class SOFAArkTestClassLoaderHookTest {
         artifacts.add("project");
 
         Path dir = Paths.get(
-            new File(this.getClass().getClassLoader().getResource("demo-executable.jar").getPath())
-                .getParent(), "project", "target", "classes");
+                new File(this.getClass().getClassLoader().getResource("demo-executable.jar").getPath())
+                        .getParent(), "project", "target", "classes");
 
         sofaArkTestClassLoaderHook.putHigherPriorityResourceArtifacts("test:TEST", artifacts);
 
         ClassLoaderService classLoaderService = mock(ClassLoaderService.class);
         doReturn(new URLClassLoader(new URL[] { new File(dir.toString()).toURI().toURL() }),
-            Thread.currentThread().getContextClassLoader()).when(classLoaderService)
-            .getMasterBizClassLoader();
+                Thread.currentThread().getContextClassLoader()).when(classLoaderService)
+                .getMasterBizClassLoader();
 
         URL url = sofaArkTestClassLoaderHook.preFindResource("META-INF/MANIFEST.MF",
-            classLoaderService, new BizModel().setBizName("test").setBizVersion("TEST"));
+                classLoaderService, new BizModel().setBizName("test").setBizVersion("TEST"));
 
         InputStream inputStream = url.openConnection().getInputStream();
         InputStreamReader reader = new InputStreamReader(inputStream);
