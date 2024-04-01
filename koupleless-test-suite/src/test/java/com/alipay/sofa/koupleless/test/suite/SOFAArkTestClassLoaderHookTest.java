@@ -71,12 +71,15 @@ public class SOFAArkTestClassLoaderHookTest {
 
     @Test
     public void testLoadResourceInsideBuildDirectory() throws Throwable {
+        SOFAArkTestClassLoaderHook.setBuildDirectory("testtarget/classes");
+
         List<String> artifacts = new ArrayList<>();
         artifacts.add("project");
 
         Path dir = Paths
             .get(new File(getClass().getClassLoader().getResource("demo-executable.jar").getPath())
-                .getParent(), "project", "target", "classes");
+                .getParent(), "project", "testtarget", "classes");
+
 
         sofaArkTestClassLoaderHook.putHigherPriorityResourceArtifacts("test:TEST", artifacts);
 

@@ -21,6 +21,7 @@ import com.alipay.sofa.ark.spi.service.classloader.ClassLoaderService;
 import com.alipay.sofa.ark.support.common.DelegateToMasterBizClassLoaderHook;
 import com.google.common.collect.Maps;
 import edu.emory.mathcs.backport.java.util.Collections;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 
@@ -39,6 +40,9 @@ import java.util.jar.JarFile;
  * @date 2024/3/21
  **/
 public class SOFAArkTestClassLoaderHook extends DelegateToMasterBizClassLoaderHook {
+
+    @Setter
+    private static String                       buildDirectory                  = "target/classes";
 
     private ConcurrentMap<String, List<String>> higherPriorityResourceArtifacts = Maps
         .newConcurrentMap();
@@ -88,7 +92,7 @@ public class SOFAArkTestClassLoaderHook extends DelegateToMasterBizClassLoaderHo
                     }
 
                     // located in a build directory
-                    if (url.toString().contains("target/classes")
+                    if (url.toString().contains(buildDirectory)
                         && url.toString().contains(artifact)) {
                         targetUrl = findResourceInBuildDirectory(new File(url.getFile()), name);
                     }
