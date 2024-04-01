@@ -21,6 +21,8 @@ import com.alipay.sofa.ark.spi.service.classloader.ClassLoaderService;
 import com.alipay.sofa.ark.support.common.DelegateToMasterBizClassLoaderHook;
 import com.google.common.collect.Maps;
 import edu.emory.mathcs.backport.java.util.Collections;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 
@@ -40,8 +42,10 @@ import java.util.jar.JarFile;
  **/
 public class SOFAArkTestClassLoaderHook extends DelegateToMasterBizClassLoaderHook {
 
-    private ConcurrentMap<String, List<String>> higherPriorityResourceArtifacts = Maps
-                                                                                    .newConcurrentMap();
+    private ConcurrentMap<String, List<String>> higherPriorityResourceArtifacts = Maps.newConcurrentMap();
+
+    @Setter
+    private static String BUILD_FILE_PATH = "target/classes"; // for ez testing purposes
 
     public void putHigherPriorityResourceArtifacts(String identity, List<String> artifacts) {
         higherPriorityResourceArtifacts.put(identity, artifacts);
@@ -73,7 +77,7 @@ public class SOFAArkTestClassLoaderHook extends DelegateToMasterBizClassLoaderHo
     public URL preFindResource(String name, ClassLoaderService classLoaderService, Biz biz) {
         String identity = biz.getIdentity();
         List<String> artifacts = higherPriorityResourceArtifacts.getOrDefault(identity,
-            Collections.emptyList());
+                Collections.emptyList());
 
         URL targetUrl = null;
         for (String artifact : artifacts) {
@@ -88,7 +92,7 @@ public class SOFAArkTestClassLoaderHook extends DelegateToMasterBizClassLoaderHo
                     }
 
                     // located in a build directory
-                    if (url.toString().contains("target/classes")
+                    if (url.toString().contains(BUILD_FILE_PATH)
                         && url.toString().contains(artifact)) {
                         targetUrl = findResourceInBuildDirectory(new File(url.getFile()), name);
                     }

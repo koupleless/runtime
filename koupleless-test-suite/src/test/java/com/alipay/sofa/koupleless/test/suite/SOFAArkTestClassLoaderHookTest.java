@@ -78,14 +78,18 @@ public class SOFAArkTestClassLoaderHookTest {
         artifacts.add("project");
 
         Path dir = Paths.get(
-                new File(this.getClass().getClassLoader().getResource("demo-executable.jar").getPath())
-                        .getParent(), "project", "target", "classes");
+                new File(this.
+                        getClass()
+                        .getClassLoader()
+                        .getResource("demo-executable.jar").getPath())
+                        .getParent(), "project", "testtarget", "classes");
 
         sofaArkTestClassLoaderHook.putHigherPriorityResourceArtifacts("test:TEST", artifacts);
+        SOFAArkTestClassLoaderHook.setBUILD_FILE_PATH("testtarget/classes");
 
         ClassLoaderService classLoaderService = mock(ClassLoaderService.class);
-        doReturn(new URLClassLoader(new URL[] { new File(dir.toString()).toURI().toURL() }),
-                Thread.currentThread().getContextClassLoader()).when(classLoaderService)
+        doReturn(new URLClassLoader(new URL[] { new File(dir.toString()).toURI().toURL() }))
+                .when(classLoaderService)
                 .getMasterBizClassLoader();
 
         URL url = sofaArkTestClassLoaderHook.preFindResource("META-INF/MANIFEST.MF",
