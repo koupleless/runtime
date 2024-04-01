@@ -44,7 +44,6 @@ public class SOFAArkTestBiz extends BizModel {
 
         super();
         this.config = config;
-
         List<Pattern> compiledIncludeClassPatterns = CollectionUtils.
                 emptyIfNull(config.getIncludeClassPatterns()).
                 stream().
