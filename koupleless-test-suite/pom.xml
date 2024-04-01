@@ -127,14 +127,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-plugin-plugin</artifactId>
-                <version>3.6.0</version> <!-- Use an appropriate version -->
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>descriptor</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <version>3.5</version> <!-- Use an appropriate version -->
             </plugin>
         </plugins>
     </build>
