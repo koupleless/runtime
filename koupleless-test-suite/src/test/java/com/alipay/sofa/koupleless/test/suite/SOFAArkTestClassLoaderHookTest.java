@@ -57,11 +57,11 @@ public class SOFAArkTestClassLoaderHookTest {
 
         ClassLoaderService classLoaderService = mock(ClassLoaderService.class);
         doReturn(new URLClassLoader(new URL[] { resource }),
-            Thread.currentThread().getContextClassLoader()).when(classLoaderService)
-            .getMasterBizClassLoader();
+                Thread.currentThread().getContextClassLoader()).when(classLoaderService)
+                .getMasterBizClassLoader();
 
         URL url = sofaArkTestClassLoaderHook.preFindResource("META-INF/MANIFEST.MF",
-            classLoaderService, new BizModel().setBizName("test").setBizVersion("TEST"));
+                classLoaderService, new BizModel().setBizName("test").setBizVersion("TEST"));
 
         InputStream inputStream = url.openConnection().getInputStream();
         InputStreamReader reader = new InputStreamReader(inputStream);
@@ -74,19 +74,19 @@ public class SOFAArkTestClassLoaderHookTest {
         List<String> artifacts = new ArrayList<>();
         artifacts.add("project");
 
-        Path dir = Paths.get(new File(getClass().getClassLoader()
-            .getResource("demo-executable.jar").getPath()).getParent(), "project", "target",
-            "classes");
+        Path dir = Paths.get(new File(this.getClass().getClassLoader()
+                        .getResource("demo-executable.jar").getPath()).getParent(), "project", "target",
+                "classes");
 
         sofaArkTestClassLoaderHook.putHigherPriorityResourceArtifacts("test:TEST", artifacts);
 
         ClassLoaderService classLoaderService = mock(ClassLoaderService.class);
         doReturn(new URLClassLoader(new URL[] { new File(dir.toString()).toURI().toURL() }),
-            Thread.currentThread().getContextClassLoader()).when(classLoaderService)
-            .getMasterBizClassLoader();
+                Thread.currentThread().getContextClassLoader()).when(classLoaderService)
+                .getMasterBizClassLoader();
 
         URL url = sofaArkTestClassLoaderHook.preFindResource("META-INF/MANIFEST.MF",
-            classLoaderService, new BizModel().setBizName("test").setBizVersion("TEST"));
+                classLoaderService, new BizModel().setBizName("test").setBizVersion("TEST"));
 
         InputStream inputStream = url.openConnection().getInputStream();
         InputStreamReader reader = new InputStreamReader(inputStream);
