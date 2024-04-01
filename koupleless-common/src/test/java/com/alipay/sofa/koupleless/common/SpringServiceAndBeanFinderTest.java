@@ -26,6 +26,7 @@ import com.alipay.sofa.koupleless.common.api.SpringBeanFinder;
 import com.alipay.sofa.koupleless.common.api.SpringServiceFinder;
 import com.alipay.sofa.koupleless.common.exception.BizRuntimeException;
 import com.alipay.sofa.koupleless.common.service.ArkAutowiredBeanPostProcessor;
+import com.google.common.collect.Lists;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -94,6 +95,9 @@ public class SpringServiceAndBeanFinderTest {
         when(biz1.getBizVersion()).thenReturn("version1");
         BizRuntimeContext bizRuntime = new BizRuntimeContext(biz1, bizCtx);
         BizRuntimeContextRegistry.registerBizRuntimeManager(bizRuntime);
+
+        when(bizManagerService.getBizInOrder())
+            .thenReturn(Lists.asList(masterBiz, new Biz[] { biz1 }));
     }
 
     @Test
@@ -144,6 +148,12 @@ public class SpringServiceAndBeanFinderTest {
             "version1", ModuleBean.class);
         Assert.assertNotNull(moduleBeanMap);
         Assert.assertEquals(1, moduleBeanMap.size());
+
+        Map<Biz, Map<String, ModuleBean>> allModuleBeanMap = SpringServiceFinder
+            .listAllModuleServices(ModuleBean.class);
+        Assert.assertNotNull(allModuleBeanMap);
+        Assert.assertEquals(1, allModuleBeanMap.size());
+        Assert.assertEquals(1, allModuleBeanMap.get(biz1).size());
 
         Assert.assertEquals("base", baseBean.test());
         Assert.assertEquals("module", moduleBean.test());
