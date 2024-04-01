@@ -16,7 +16,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <license.maven.plugin>3.0</license.maven.plugin>
-        <maven.java.formatter.plugin>0.4</maven.java.formatter.plugin>
+        <maven.java.formatter.plugin>2.16.0</maven.java.formatter.plugin>
         <maven.compiler.plugin>3.1</maven.compiler.plugin>
         <maven.source.plugin>3.0.0</maven.source.plugin>
         <maven.javadoc.plugin>3.2.0</maven.javadoc.plugin>
@@ -187,7 +187,6 @@
         </dependencies>
     </dependencyManagement>
 
-
     <build>
         <plugins>
             <plugin>
@@ -218,8 +217,8 @@
             </plugin>
 
             <plugin>
-                <groupId>com.googlecode.maven-java-formatter-plugin</groupId>
-                <artifactId>maven-java-formatter-plugin</artifactId>
+                <groupId>net.revelc.code.formatter</groupId>
+                <artifactId>formatter-maven-plugin</artifactId>
                 <version>${maven.java.formatter.plugin}</version>
                 <executions>
                     <execution>
@@ -231,6 +230,7 @@
                 <configuration>
                     <configFile>${user.dir}/Formatter.xml</configFile>
                     <encoding>${project.encoding}</encoding>
+                    <skip>false</skip>
                 </configuration>
             </plugin>
 
