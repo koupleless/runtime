@@ -80,7 +80,6 @@ public class SOFAArkTestClassLoaderHookTest {
             .get(new File(getClass().getClassLoader().getResource("demo-executable.jar").getPath())
                 .getParent(), "project", "testtarget", "classes");
 
-
         sofaArkTestClassLoaderHook.putHigherPriorityResourceArtifacts("test:TEST", artifacts);
 
         ClassLoaderService classLoaderService = mock(ClassLoaderService.class);
