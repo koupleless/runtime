@@ -82,7 +82,7 @@
         <module>koupleless-base-loader</module>
         <module>koupleless-ext</module>
         <module>koupleless-build-plugin</module>
-        <module>koupleless-e2e-suite</module>
+        <module>koupleless-test-suite</module>
         <module>archetype/koupleless-common-module-archetype</module>
     </modules>
 
