@@ -80,9 +80,10 @@ public class ArkAutowiredBeanPostProcessor implements BeanPostProcessor {
 
             ClassLoader clientClassLoader = Thread.currentThread().getContextClassLoader();
 
-            Object serviceProxy = null;
             try {
+                Object serviceProxy = null;
                 Class<?> fieldType = field.getType();
+
                 if (StringUtils.hasText(name)) {
                     serviceProxy = ServiceProxyFactory.createServiceProxy(bizName, bizVersion, name, fieldType, clientClassLoader);
                 }
@@ -106,33 +107,25 @@ public class ArkAutowiredBeanPostProcessor implements BeanPostProcessor {
 
                     if (Map.class.isAssignableFrom(fieldType)) {
                         serviceProxy = serviceProxyMap;
-                    }
-
-                    if (List.class.isAssignableFrom(fieldType)) {
+                    }else if (List.class.isAssignableFrom(fieldType)) {
                         List list = ArrayList.class.newInstance();
                         list.addAll(serviceProxyMap.values());
                         serviceProxy = list;
-                    }
-
-                    if (Set.class.isAssignableFrom(fieldType)) {
+                    } else if (Set.class.isAssignableFrom(fieldType)) {
                         Set set = HashSet.class.newInstance();
                         set.addAll(serviceProxyMap.values());
                         serviceProxy = set;
                     }
+                }
 
+                if (serviceProxy != null) {
+                    ReflectionUtils.makeAccessible(field);
+                    ReflectionUtils.setField(field, bean, serviceProxy);
+                    LOGGER.info("Finished processing bean [{}], success to inject service proxy to bean [{}] field [{}]", beanName, bean, field);
                 }
             } catch (Exception e) {
-                if (required) {
-                    throw new BeanCreationException(beanName, "Failed processing bean [" + beanName + "], injected object to bean [" + bean + "] field [" + field + "]", e);
-                }
+                throw new BeanCreationException(beanName, "Failed processing bean [" + beanName + "], injected object to bean [" + bean + "] field [" + field + "]", e);
             }
-
-            if (serviceProxy != null) {
-                ReflectionUtils.makeAccessible(field);
-                ReflectionUtils.setField(field, bean, serviceProxy);
-                LOGGER.info("Finished processing bean [{}], success to inject service proxy to bean [{}] field [{}]", beanName, bean, field);
-            }
-
         }, field -> !Modifier.isStatic(field.getModifiers())
                 && (field.isAnnotationPresent(AutowiredFromBase.class) || field.isAnnotationPresent(AutowiredFromBiz.class)));
 
