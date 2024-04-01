@@ -73,8 +73,8 @@ public class HealthServiceImpl implements HealthService {
         try {
             healthBuilder.init();
             AssertUtils.assertNotNull(indicators.get(indicatorId), "indicator not registered");
-            healthBuilder.putAllHealthData(indicators.get(indicatorId)
-                .getHealthModel(healthBuilder));
+            healthBuilder
+                .putAllHealthData(indicators.get(indicatorId).getHealthModel(healthBuilder));
         } catch (Throwable e) {
             healthBuilder.putErrorData(Constants.HEALTH_ERROR, e.getMessage());
         }
@@ -132,8 +132,8 @@ public class HealthServiceImpl implements HealthService {
         healthBuilder.init();
         try {
             if (StringUtils.isEmpty(bizName) && StringUtils.isEmpty(bizVersion)) {
-                List<BizHealthMeta> bizHealthMetaList = BizHealthMeta.createBizMetaList(ArkClient
-                    .getBizManagerService().getBizInOrder());
+                List<BizHealthMeta> bizHealthMetaList = BizHealthMeta
+                    .createBizMetaList(ArkClient.getBizManagerService().getBizInOrder());
                 healthBuilder.putHealthData(Constants.BIZ_LIST_INFO, bizHealthMetaList);
             } else if (StringUtils.isEmpty(bizVersion)) {
                 List<Biz> bizList = ArkClient.getBizManagerService().getBiz(bizName);
@@ -141,8 +141,8 @@ public class HealthServiceImpl implements HealthService {
                 List<BizHealthMeta> bizHealthMetaList = BizHealthMeta.createBizMetaList(bizList);
                 healthBuilder.putHealthData(Constants.BIZ_LIST_INFO, bizHealthMetaList);
             } else {
-                BizHealthMeta bizHealthMeta = BizHealthMeta.createBizMeta(ArkClient
-                    .getBizManagerService().getBiz(bizName, bizVersion));
+                BizHealthMeta bizHealthMeta = BizHealthMeta
+                    .createBizMeta(ArkClient.getBizManagerService().getBiz(bizName, bizVersion));
                 healthBuilder.putHealthData(Constants.BIZ_INFO, bizHealthMeta);
             }
         } catch (Throwable e) {
@@ -161,8 +161,8 @@ public class HealthServiceImpl implements HealthService {
                     .createPluginMetaList(ArkClient.getPluginManagerService().getPluginsInOrder());
                 healthBuilder.putHealthData(Constants.PLUGIN_LIST_INFO, pluginHealthMetaList);
             } else {
-                PluginHealthMeta pluginHealthMeta = PluginHealthMeta.createPluginMeta(ArkClient
-                    .getPluginManagerService().getPluginByName(pluginName));
+                PluginHealthMeta pluginHealthMeta = PluginHealthMeta.createPluginMeta(
+                    ArkClient.getPluginManagerService().getPluginByName(pluginName));
                 healthBuilder.putHealthData(Constants.PLUGIN_INFO, pluginHealthMeta);
             }
         } catch (Throwable e) {
@@ -173,10 +173,8 @@ public class HealthServiceImpl implements HealthService {
 
     @Override
     public Health queryMasterBiz() {
-        return healthBuilder
-            .init()
-            .putHealthData(Constants.MASTER_BIZ_INFO,
-                BizHealthMeta.createBizMeta(ArkClient.getMasterBiz())).build();
+        return healthBuilder.init().putHealthData(Constants.MASTER_BIZ_INFO,
+            BizHealthMeta.createBizMeta(ArkClient.getMasterBiz())).build();
     }
 
     @Override
@@ -187,8 +185,8 @@ public class HealthServiceImpl implements HealthService {
     @Override
     public void registerIndicator(Indicator indicator) {
         this.indicators.put(indicator.getIndicatorId(), indicator);
-        ArkletLoggerFactory.getDefaultLogger().info(
-            "register indicator " + indicator.getIndicatorId());
+        ArkletLoggerFactory.getDefaultLogger()
+            .info("register indicator " + indicator.getIndicatorId());
     }
 
     private void initIndicators() {

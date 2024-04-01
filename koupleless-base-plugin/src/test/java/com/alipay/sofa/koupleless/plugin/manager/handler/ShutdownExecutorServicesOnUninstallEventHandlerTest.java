@@ -61,16 +61,17 @@ public class ShutdownExecutorServicesOnUninstallEventHandlerTest {
     @Test
     public void testManageExecutorServicesWithoutTimeout() {
 
-        ExecutorService executorService1 = manageExecutorService(new ThreadPoolExecutor(10, 10, 10,
-            MILLISECONDS, new ArrayBlockingQueue<>(10)));
-        ExecutorService executorService2 = manageExecutorService(new ScheduledThreadPoolExecutor(10));
+        ExecutorService executorService1 = manageExecutorService(
+            new ThreadPoolExecutor(10, 10, 10, MILLISECONDS, new ArrayBlockingQueue<>(10)));
+        ExecutorService executorService2 = manageExecutorService(
+            new ScheduledThreadPoolExecutor(10));
 
         ClassLoader newClassLoader = new URLClassLoader(new URL[1],
             ShutdownExecutorServicesOnUninstallEventHandler.class.getClassLoader());
         currentThread().setContextClassLoader(newClassLoader);
 
-        ExecutorService executorService3 = manageExecutorService(new ThreadPoolExecutor(20, 20, 20,
-            MILLISECONDS, new ArrayBlockingQueue<>(10)));
+        ExecutorService executorService3 = manageExecutorService(
+            new ThreadPoolExecutor(20, 20, 20, MILLISECONDS, new ArrayBlockingQueue<>(10)));
 
         assertEquals(false, executorService1.isShutdown());
         assertEquals(false, executorService2.isShutdown());
@@ -94,8 +95,8 @@ public class ShutdownExecutorServicesOnUninstallEventHandlerTest {
         BeforeBizRecycleEvent beforeBizRecycleEvent = new BeforeBizRecycleEvent(bizModel);
         new ShutdownExecutorServicesOnUninstallEventHandler().handleEvent(beforeBizRecycleEvent);
 
-        ThreadPoolExecutor executorService = manageExecutorService(new ThreadPoolExecutor(10, 10, 10,
-                MILLISECONDS, new ArrayBlockingQueue<>(10)));
+        ThreadPoolExecutor executorService = manageExecutorService(
+            new ThreadPoolExecutor(10, 10, 10, MILLISECONDS, new ArrayBlockingQueue<>(10)));
 
         executorService.submit(() -> {
             try {

@@ -42,11 +42,11 @@ import org.slf4j.spi.LocationAwareLogger;
 public class Log4jLogger implements LocationAwareLogger, Serializable {
 
     public static final String                               FQCN               = Log4jLogger.class
-                                                                                    .getName();
+        .getName();
 
     private static final long                                serialVersionUID   = 7869000638091304316L;
     private static final Marker                              EVENT_MARKER       = MarkerFactory
-                                                                                    .getMarker("EVENT");
+        .getMarker("EVENT");
     private static final EventDataConverter                  CONVERTER          = createConverter();
 
     private final boolean                                    eventLogger;
@@ -405,7 +405,7 @@ public class Log4jLogger implements LocationAwareLogger, Serializable {
      * the de-serialized object.
      */
     private void readObject(final ObjectInputStream aInputStream) throws ClassNotFoundException,
-                                                                 IOException {
+                                                                  IOException {
         // always perform the default de-serialization first
         aInputStream.defaultReadObject();
     }

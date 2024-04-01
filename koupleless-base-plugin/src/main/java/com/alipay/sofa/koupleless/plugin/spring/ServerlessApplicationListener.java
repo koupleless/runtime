@@ -30,7 +30,7 @@ import static com.alipay.sofa.ark.spi.constant.Constants.PLUGIN_EXPORT_CLASS_ENA
  * @date: 2023/10/30 9:38 下午
  */
 public class ServerlessApplicationListener implements ApplicationListener<SpringApplicationEvent>,
-                                          Ordered {
+                                           Ordered {
 
     @Override
     public void onApplicationEvent(SpringApplicationEvent event) {

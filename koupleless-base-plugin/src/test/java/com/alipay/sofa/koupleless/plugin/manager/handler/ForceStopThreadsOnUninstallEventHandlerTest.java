@@ -50,7 +50,8 @@ public class ForceStopThreadsOnUninstallEventHandlerTest {
     @Test
     public void testManageThreads() {
 
-        ClassLoader newClassLoader = new URLClassLoader(new URL[1], ForceStopThreadsOnUninstallEventHandler.class.getClassLoader());
+        ClassLoader newClassLoader = new URLClassLoader(new URL[1],
+            ForceStopThreadsOnUninstallEventHandler.class.getClassLoader());
         BizModel bizModel = new BizModel();
         bizModel.setClassLoader(newClassLoader);
         BeforeBizRecycleEvent beforeBizRecycleEvent = new BeforeBizRecycleEvent(bizModel);

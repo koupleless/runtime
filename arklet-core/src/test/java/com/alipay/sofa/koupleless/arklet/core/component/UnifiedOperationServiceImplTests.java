@@ -81,9 +81,15 @@ public class UnifiedOperationServiceImplTests {
     public void testInstallWithValidUrl() throws Throwable {
         try (MockedStatic<ArkClient> arkClientMockedStatic = Mockito.mockStatic(ArkClient.class)) {
             ClientResponse clientResponse = Mockito.mock(ClientResponse.class);
-            arkClientMockedStatic.when(() -> ArkClient.installOperation(Mockito.any(BizOperation.class), Mockito.any(String[].class), Mockito.anyMap())).thenReturn(clientResponse);
-            ClientResponse response = unifiedOperationService.install("bizName", "bizVersion", "http://example.com/biz.jar", new String[]{}, new HashMap<>());
-            arkClientMockedStatic.verify(() -> ArkClient.installOperation(Mockito.any(BizOperation.class), Mockito.any(String[].class), Mockito.anyMap()));
+            arkClientMockedStatic
+                .when(() -> ArkClient.installOperation(Mockito.any(BizOperation.class),
+                    Mockito.any(String[].class), Mockito.anyMap()))
+                .thenReturn(clientResponse);
+            ClientResponse response = unifiedOperationService.install("bizName", "bizVersion",
+                "http://example.com/biz.jar", new String[] {}, new HashMap<>());
+            arkClientMockedStatic
+                .verify(() -> ArkClient.installOperation(Mockito.any(BizOperation.class),
+                    Mockito.any(String[].class), Mockito.anyMap()));
             Assert.assertEquals(clientResponse, response);
         }
     }
@@ -95,9 +101,12 @@ public class UnifiedOperationServiceImplTests {
     public void testUninstallWithValidBizNameAndVersion() throws Throwable {
         try (MockedStatic<ArkClient> arkClientMockedStatic = Mockito.mockStatic(ArkClient.class)) {
             ClientResponse clientResponse = Mockito.mock(ClientResponse.class);
-            arkClientMockedStatic.when(() -> ArkClient.uninstallBiz(Mockito.anyString(), Mockito.anyString())).thenReturn(clientResponse);
+            arkClientMockedStatic
+                .when(() -> ArkClient.uninstallBiz(Mockito.anyString(), Mockito.anyString()))
+                .thenReturn(clientResponse);
             ClientResponse response = unifiedOperationService.uninstall("bizName", "1.0.0");
-            arkClientMockedStatic.verify(() -> ArkClient.uninstallBiz(Mockito.anyString(), Mockito.anyString()));
+            arkClientMockedStatic
+                .verify(() -> ArkClient.uninstallBiz(Mockito.anyString(), Mockito.anyString()));
             Assert.assertEquals(clientResponse, response);
         }
     }
@@ -109,9 +118,12 @@ public class UnifiedOperationServiceImplTests {
     public void testSwitchBizWithValidBizNameAndVersion() throws Throwable {
         try (MockedStatic<ArkClient> arkClientMockedStatic = Mockito.mockStatic(ArkClient.class)) {
             ClientResponse clientResponse = Mockito.mock(ClientResponse.class);
-            arkClientMockedStatic.when(() -> ArkClient.switchBiz(Mockito.anyString(), Mockito.anyString())).thenReturn(clientResponse);
+            arkClientMockedStatic
+                .when(() -> ArkClient.switchBiz(Mockito.anyString(), Mockito.anyString()))
+                .thenReturn(clientResponse);
             ClientResponse response = unifiedOperationService.switchBiz("bizName", "1.0.0");
-            arkClientMockedStatic.verify(() -> ArkClient.switchBiz(Mockito.anyString(), Mockito.anyString()));
+            arkClientMockedStatic
+                .verify(() -> ArkClient.switchBiz(Mockito.anyString(), Mockito.anyString()));
             Assert.assertEquals(clientResponse, response);
         }
     }
@@ -130,8 +142,8 @@ public class UnifiedOperationServiceImplTests {
             doReturn(new HashMap<>()).when(batchInstallHelper).getMainAttributes(anyString());
         }
 
-        BatchInstallResponse response = unifiedOperationService.batchInstall(BatchInstallRequest
-            .builder().bizDirAbsolutePath("/path/to/biz").build());
+        BatchInstallResponse response = unifiedOperationService
+            .batchInstall(BatchInstallRequest.builder().bizDirAbsolutePath("/path/to/biz").build());
 
         Assert.assertTrue(response.getBizUrlToResponse().containsKey("/file/a-biz.jar"));
 

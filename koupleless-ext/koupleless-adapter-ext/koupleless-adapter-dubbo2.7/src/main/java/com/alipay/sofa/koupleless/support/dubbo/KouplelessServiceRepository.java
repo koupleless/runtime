@@ -50,7 +50,7 @@ public class KouplelessServiceRepository extends ServiceRepository {
     @Override
     public ServiceDescriptor registerService(Class<?> interfaceClazz) {
         ServiceDescriptor serviceDescriptor = globalClassServices.computeIfAbsent(interfaceClazz,
-                _k -> new ServiceDescriptor(interfaceClazz));
+            _k -> new ServiceDescriptor(interfaceClazz));
         globalPathServices.putIfAbsent(interfaceClazz.getName(), serviceDescriptor);
         return serviceDescriptor;
     }

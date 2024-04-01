@@ -75,8 +75,8 @@ public class ApiClient implements ArkletComponent {
     private static class TunnelGuiceModule extends AbstractModule {
         @Override
         protected void configure() {
-            Multibinder<Tunnel> tunnelMultibinder = Multibinder
-                .newSetBinder(binder(), Tunnel.class);
+            Multibinder<Tunnel> tunnelMultibinder = Multibinder.newSetBinder(binder(),
+                Tunnel.class);
             tunnelMultibinder.addBinding().to(HttpTunnel.class);
         }
     }

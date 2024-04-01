@@ -73,41 +73,30 @@ public class Log4J2LoggingSystem extends Slf4JLoggingSystem {
         LEVELS.map(LogLevel.OFF, Level.OFF);
     }
 
-    private static final Filter           FILTER        = new AbstractFilter() {
+    private static final Filter FILTER = new AbstractFilter() {
 
-                                                            @Override
-                                                            public Result filter(LogEvent event) {
-                                                                return Result.DENY;
-                                                            }
+        @Override
+        public Result filter(LogEvent event) {
+            return Result.DENY;
+        }
 
-                                                            @Override
-                                                            public Result filter(Logger logger,
-                                                                                 Level level,
-                                                                                 Marker marker,
-                                                                                 Message msg,
-                                                                                 Throwable t) {
-                                                                return Result.DENY;
-                                                            }
+        @Override
+        public Result filter(Logger logger, Level level, Marker marker, Message msg, Throwable t) {
+            return Result.DENY;
+        }
 
-                                                            @Override
-                                                            public Result filter(Logger logger,
-                                                                                 Level level,
-                                                                                 Marker marker,
-                                                                                 Object msg,
-                                                                                 Throwable t) {
-                                                                return Result.DENY;
-                                                            }
+        @Override
+        public Result filter(Logger logger, Level level, Marker marker, Object msg, Throwable t) {
+            return Result.DENY;
+        }
 
-                                                            @Override
-                                                            public Result filter(Logger logger,
-                                                                                 Level level,
-                                                                                 Marker marker,
-                                                                                 String msg,
-                                                                                 Object... params) {
-                                                                return Result.DENY;
-                                                            }
+        @Override
+        public Result filter(Logger logger, Level level, Marker marker, String msg,
+                             Object... params) {
+            return Result.DENY;
+        }
 
-                                                        };
+    };
 
     public Log4J2LoggingSystem(ClassLoader classLoader) {
         super(classLoader);
@@ -158,7 +147,8 @@ public class Log4J2LoggingSystem extends Slf4JLoggingSystem {
     }
 
     @Override
-    protected void loadDefaults(LoggingInitializationContext initializationContext, LogFile logFile) {
+    protected void loadDefaults(LoggingInitializationContext initializationContext,
+                                LogFile logFile) {
         if (logFile != null) {
             loadConfiguration(getPackagedConfigFile("log4j2-file.xml"), logFile);
         } else {
@@ -266,8 +256,8 @@ public class Log4J2LoggingSystem extends Slf4JLoggingSystem {
     }
 
     private LoggerContext getLoggerContext() {
-        return (LoggerContext) LogManager.getContext(
-            Thread.currentThread().getContextClassLoader(), false);
+        return (LoggerContext) LogManager.getContext(Thread.currentThread().getContextClassLoader(),
+            false);
     }
 
     private boolean isAlreadyInitialized(LoggerContext loggerContext) {

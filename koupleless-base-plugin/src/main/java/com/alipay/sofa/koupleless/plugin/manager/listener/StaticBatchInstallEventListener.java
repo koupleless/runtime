@@ -41,7 +41,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @version $Id: ApplicationContextEventListener, v 0.1 2023-11-21 11:26 CodeNoobKingKc2 Exp $
  */
 public class StaticBatchInstallEventListener implements
-                                            ApplicationListener<ApplicationContextEvent> {
+                                             ApplicationListener<ApplicationContextEvent> {
 
     // 合并部署是否已经完成，防止重复执行。
     private AtomicBoolean isBatchdDeployed = new AtomicBoolean(false);
@@ -73,8 +73,8 @@ public class StaticBatchInstallEventListener implements
     @Override
     public void onApplicationEvent(ApplicationContextEvent event) {
         // 非基座应用直接跳过
-        if (!Objects.equals(this.getClass().getClassLoader(), Thread.currentThread()
-            .getContextClassLoader())
+        if (!Objects.equals(this.getClass().getClassLoader(),
+            Thread.currentThread().getContextClassLoader())
             || event.getApplicationContext().getParent() != null) {
             return;
         }

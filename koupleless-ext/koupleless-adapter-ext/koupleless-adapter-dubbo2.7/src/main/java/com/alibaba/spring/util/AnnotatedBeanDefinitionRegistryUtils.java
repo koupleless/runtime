@@ -86,10 +86,9 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils {
                 present = nullSafeEquals(targetClass, annotatedClass);
                 if (present) {
                     if (logger.isDebugEnabled()) {
-                        logger
-                            .debug(format(
-                                "The annotatedClass[class : %s , bean name : %s] was present in registry[%s]",
-                                className, beanName, registry));
+                        logger.debug(format(
+                            "The annotatedClass[class : %s , bean name : %s] was present in registry[%s]",
+                            className, beanName, registry));
                     }
                     break;
                 }
@@ -105,7 +104,8 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils {
      * @param registry         {@link BeanDefinitionRegistry}
      * @param annotatedClasses {@link Annotation annotation} class
      */
-    public static void registerBeans(BeanDefinitionRegistry registry, Class<?>... annotatedClasses) {
+    public static void registerBeans(BeanDefinitionRegistry registry,
+                                     Class<?>... annotatedClasses) {
 
         if (ObjectUtils.isEmpty(annotatedClasses)) {
             return;
@@ -126,8 +126,8 @@ public abstract class AnnotatedBeanDefinitionRegistryUtils {
         AnnotatedBeanDefinitionReader reader = new AnnotatedBeanDefinitionReader(registry);
 
         if (logger.isDebugEnabled()) {
-            logger.debug(registry.getClass().getSimpleName()
-                         + " will register annotated classes : " + asList(annotatedClasses) + " .");
+            logger.debug(registry.getClass().getSimpleName() + " will register annotated classes : "
+                         + asList(annotatedClasses) + " .");
         }
 
         reader.register(classesToRegister.toArray(EMPTY_CLASS_ARRAY));

@@ -76,8 +76,8 @@ public class BizDubboBootstrapListener implements ApplicationListener {
 
     private void onContextClosedEvent(ContextClosedEvent event) {
         // DubboBootstrap.unexportServices 会 unexport 所有服务，只需要 unexport 当前 biz 的服务即可
-        Map<String, ServiceConfigBase<?>> exportedServices = ReflectionUtils.getField(
-            dubboBootstrap, DubboBootstrap.class, "exportedServices");
+        Map<String, ServiceConfigBase<?>> exportedServices = ReflectionUtils
+            .getField(dubboBootstrap, DubboBootstrap.class, "exportedServices");
 
         Set<String> bizUnexportServices = new HashSet<>();
         for (Map.Entry<String, ServiceConfigBase<?>> entry : exportedServices.entrySet()) {

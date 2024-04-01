@@ -38,13 +38,16 @@ public class ArkletApplicationListener implements ApplicationListener<Applicatio
     @Override
     public void onApplicationEvent(ApplicationContextEvent event) {
         // 非基座应用直接跳过
-        if (!Objects.equals(this.getClass().getClassLoader(), Thread.currentThread().getContextClassLoader()) || event.getApplicationContext().getParent() != null) {
+        if (!Objects.equals(this.getClass().getClassLoader(),
+            Thread.currentThread().getContextClassLoader())
+            || event.getApplicationContext().getParent() != null) {
             return;
         }
         if (event instanceof ContextRefreshedEvent) {
             List<AbstractCommandHandler> handlers = ArkletComponentRegistry
-                    .getCommandServiceInstance().listAllHandlers();
-            String commands = handlers.stream().map(s -> s.command().getId()).collect(Collectors.joining(", "));
+                .getCommandServiceInstance().listAllHandlers();
+            String commands = handlers.stream().map(s -> s.command().getId())
+                .collect(Collectors.joining(", "));
             ArkletLoggerFactory.getDefaultLogger().info("total supported commands:{}", commands);
         }
     }

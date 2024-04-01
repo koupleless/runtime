@@ -132,10 +132,11 @@ public class ServerlessRuntimeActivatorTest {
 
         serverlessRuntimeActivator.start(pluginContext);
         assertEquals(5, eventhandlers.size());
-        assertEquals(ShutdownExecutorServicesOnUninstallEventHandler.class, eventhandlers.get(2)
-            .getClass());
+        assertEquals(ShutdownExecutorServicesOnUninstallEventHandler.class,
+            eventhandlers.get(2).getClass());
         assertEquals(CancelTimersOnUninstallEventHandler.class, eventhandlers.get(3).getClass());
-        assertEquals(ForceStopThreadsOnUninstallEventHandler.class, eventhandlers.get(4).getClass());
+        assertEquals(ForceStopThreadsOnUninstallEventHandler.class,
+            eventhandlers.get(4).getClass());
     }
 
     @Test
@@ -143,7 +144,8 @@ public class ServerlessRuntimeActivatorTest {
 
         PluginContext pluginContext = mock(PluginContext.class);
         EventAdminService eventAdminService = mock(EventAdminService.class);
-        ServiceReferenceImpl<EventAdminService> impl = new ServiceReferenceImpl<>(eventAdminService);
+        ServiceReferenceImpl<EventAdminService> impl = new ServiceReferenceImpl<>(
+            eventAdminService);
         when(pluginContext.referenceService(EventAdminService.class)).thenReturn((impl));
 
         serverlessRuntimeActivator.start(pluginContext);

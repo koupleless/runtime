@@ -89,7 +89,7 @@ public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProces
         }
         // 模块
         if (ArkClient.getMasterBiz().getBizClassLoader() != Thread.currentThread()
-                .getContextClassLoader()) {
+            .getContextClassLoader()) {
             // 禁用模块 spring.config.location 和 spring.config.additional-location
             String configLocation = System.getProperty(SPRING_CONFIG_LOCATION);
             String additionalLocation = System.getProperty(SPRING_ADDITIONAL_LOCATION);
@@ -100,9 +100,9 @@ public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProces
                 while (iterator.hasNext()) {
                     PropertySource<?> next = iterator.next();
                     String psName = next.getName();
-                    if (!StringUtils.isEmpty(psName) && (psName.contains(
-                            getCanonicalPath(configLocation)) || psName.contains(
-                            getCanonicalPath(additionalLocation)))) {
+                    if (!StringUtils.isEmpty(psName)
+                        && (psName.contains(getCanonicalPath(configLocation))
+                            || psName.contains(getCanonicalPath(additionalLocation)))) {
                         toRemove.add(psName);
                     }
                 }
@@ -113,10 +113,11 @@ public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProces
             // 添加模块 config/${app}/application-${profile}.properties
             List<String> propertiesPaths = inferConfigurationPropertiesPaths(environment);
             for (String propertiesPath : propertiesPaths) {
-                Properties properties = PropertiesUtil.loadProperties(Thread.currentThread().getContextClassLoader(), propertiesPath);
+                Properties properties = PropertiesUtil
+                    .loadProperties(Thread.currentThread().getContextClassLoader(), propertiesPath);
                 if (!properties.isEmpty()) {
                     PropertiesPropertySource newPropertySource = new PropertiesPropertySource(
-                            SOFA_ARK_BIZ_PROPERTY_SOURCE_PREFIX.concat(propertiesPath), properties);
+                        SOFA_ARK_BIZ_PROPERTY_SOURCE_PREFIX.concat(propertiesPath), properties);
                     environment.getPropertySources().addLast(newPropertySource);
                     getLogger().info("customize biz properties: {}", propertiesPath);
                 }
@@ -128,8 +129,8 @@ public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProces
     }
 
     private List<String> inferConfigurationPropertiesPaths(ConfigurableEnvironment environment) {
-        Biz biz = ArkClient.getBizManagerService().getBizByClassLoader(
-            Thread.currentThread().getContextClassLoader());
+        Biz biz = ArkClient.getBizManagerService()
+            .getBizByClassLoader(Thread.currentThread().getContextClassLoader());
         List<String> configurationPropertiesPath = new ArrayList<>();
         String propertyFromSys = System.getProperty(SPRING_ACTIVE_PROFILES);
         String propertyFromDefault = environment.getProperty(SPRING_ACTIVE_PROFILES);
@@ -138,8 +139,8 @@ public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProces
         if (!StringUtils.isEmpty(property)) {
             String[] activeProfiles = property.split(",");
             for (String activeProfile : activeProfiles) {
-                configurationPropertiesPath.add(String.format(ACTIVE_CONFIG_FORMAT,
-                    biz.getBizName(), activeProfile));
+                configurationPropertiesPath
+                    .add(String.format(ACTIVE_CONFIG_FORMAT, biz.getBizName(), activeProfile));
             }
         }
         configurationPropertiesPath.add(String.format(DEFAULT_CONFIG_FORMAT, biz.getBizName()));

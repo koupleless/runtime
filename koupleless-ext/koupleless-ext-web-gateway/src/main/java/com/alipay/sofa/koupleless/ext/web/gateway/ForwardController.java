@@ -41,9 +41,8 @@ public class ForwardController {
     private static final String DOUBLE_SEPARATORS = SEPARATOR + SEPARATOR;
 
     @RequestMapping("/**")
-    public void redirect(HttpServletRequest request, HttpServletResponse response)
-                                                                                  throws ServletException,
-                                                                                  IOException {
+    public void redirect(HttpServletRequest request,
+                         HttpServletResponse response) throws ServletException, IOException {
 
         //定位forward信息
         URI uri = URI.create(request.getRequestURL().toString());

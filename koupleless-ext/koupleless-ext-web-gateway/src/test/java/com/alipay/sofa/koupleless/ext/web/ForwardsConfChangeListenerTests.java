@@ -58,10 +58,10 @@ public class ForwardsConfChangeListenerTests {
 
     @Before
     public void before() {
-        Mockito.when(applicationContext.getBeansOfType(GatewayProperties.class)).thenReturn(
-            Collections.singletonMap("gatewayProperties", gatewayProperties));
-        Mockito.when(applicationContext.getBean(ConfigurableEnvironment.class)).thenReturn(
-            environment);
+        Mockito.when(applicationContext.getBeansOfType(GatewayProperties.class))
+            .thenReturn(Collections.singletonMap("gatewayProperties", gatewayProperties));
+        Mockito.when(applicationContext.getBean(ConfigurableEnvironment.class))
+            .thenReturn(environment);
 
         MutablePropertySources sources = new MutablePropertySources();
 
@@ -74,8 +74,8 @@ public class ForwardsConfChangeListenerTests {
     @Test
     public void testOnChange() {
         ConfigChangeEvent event = Mockito.mock(ConfigChangeEvent.class);
-        Mockito.when(event.changedKeys()).thenReturn(
-            Collections.singleton("koupleless.web.gateway.forwards[0].contextPath"));
+        Mockito.when(event.changedKeys())
+            .thenReturn(Collections.singleton("koupleless.web.gateway.forwards[0].contextPath"));
 
         sourceMap.put("koupleless.web.gateway.forwards[0].contextPath", "a");
         sourceMap.put("koupleless.web.gateway.forwards[0].paths[0].from", "x");

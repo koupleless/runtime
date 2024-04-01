@@ -63,11 +63,12 @@ public class ServerlessEnvironmentPostProcessorTest {
         when(masterEnvironment.getProperty("masterKey")).thenReturn("masterValue");
         when(masterEnvironment.getProperty("logging.file.path")).thenReturn("./logs");
         MutablePropertySources masterPropertySources = new MutablePropertySources();
-        masterPropertySources.addLast(new PropertiesPropertySource("masterProperties",
-            new Properties()));
+        masterPropertySources
+            .addLast(new PropertiesPropertySource("masterProperties", new Properties()));
         when(masterEnvironment.getPropertySources()).thenReturn(masterPropertySources);
 
-        ServerlessEnvironmentPostProcessor serverlessEnvironmentPostProcessor = spy(new ServerlessEnvironmentPostProcessor());
+        ServerlessEnvironmentPostProcessor serverlessEnvironmentPostProcessor = spy(
+            new ServerlessEnvironmentPostProcessor());
         serverlessEnvironmentPostProcessor.postProcessEnvironment(masterEnvironment,
             springApplication);
 
@@ -91,8 +92,8 @@ public class ServerlessEnvironmentPostProcessorTest {
         try {
             Thread.currentThread().setContextClassLoader(new URLClassLoader(new URL[0]));
             System.setProperty(ServerlessEnvironmentPostProcessor.SPRING_CONFIG_LOCATION, "xxxx");
-            System
-                .setProperty(ServerlessEnvironmentPostProcessor.SPRING_ACTIVE_PROFILES, "biz,abc");
+            System.setProperty(ServerlessEnvironmentPostProcessor.SPRING_ACTIVE_PROFILES,
+                "biz,abc");
             serverlessEnvironmentPostProcessor.postProcessEnvironment(otherEnvironment,
                 springApplication);
         } finally {
@@ -104,8 +105,8 @@ public class ServerlessEnvironmentPostProcessorTest {
         PropertySource<?> masterPropertySource = propertySources.get("MasterBiz-Config resource");
         Assert.assertTrue(masterPropertySource instanceof MasterBizPropertySource);
         Assert.assertEquals("masterValue", masterPropertySource.getProperty("masterKey"));
-        Assert.assertEquals("./logs", masterPropertySources.get("compatiblePropertySource")
-            .getProperty("logging.path"));
+        Assert.assertEquals("./logs",
+            masterPropertySources.get("compatiblePropertySource").getProperty("logging.path"));
 
         PropertySource<?> otherPropertySource = propertySources
             .get("Biz-Config resourceconfig/mockbiz/application.properties");

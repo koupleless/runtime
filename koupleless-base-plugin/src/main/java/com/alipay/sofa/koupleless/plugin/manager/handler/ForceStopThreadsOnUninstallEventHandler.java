@@ -32,9 +32,11 @@ import static org.slf4j.LoggerFactory.getLogger;
  *
  * 强制使用 thread.stop 关闭线程 (不推荐), 保险起见监听 AfterBizStopEvent 模块事件
  */
-public class ForceStopThreadsOnUninstallEventHandler implements EventHandler<BeforeBizRecycleEvent> {
+public class ForceStopThreadsOnUninstallEventHandler implements
+                                                     EventHandler<BeforeBizRecycleEvent> {
 
-    private static final Logger                                                LOGGER                      = getLogger(ForceStopThreadsOnUninstallEventHandler.class);
+    private static final Logger                                                LOGGER                      = getLogger(
+        ForceStopThreadsOnUninstallEventHandler.class);
 
     static final ConcurrentHashMap<ClassLoader, ConcurrentLinkedQueue<Thread>> BIZ_CLASS_LOADER_TO_THREADS = new ConcurrentHashMap<>();
 
@@ -55,10 +57,9 @@ public class ForceStopThreadsOnUninstallEventHandler implements EventHandler<Bef
 
         ConcurrentLinkedQueue<Thread> threads = BIZ_CLASS_LOADER_TO_THREADS.get(bizClassLoader);
         if (threads == null) {
-            LOGGER
-                .info(
-                    "[ForceStopThreadsOnUninstallEventHandler] No managed thread found for module: {} , just return. ",
-                    event.getSource().getBizName());
+            LOGGER.info(
+                "[ForceStopThreadsOnUninstallEventHandler] No managed thread found for module: {} , just return. ",
+                event.getSource().getBizName());
             return;
         }
 

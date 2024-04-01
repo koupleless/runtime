@@ -29,12 +29,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class CustomBizManagerService implements BizManagerService {
 
-    private final List<Biz> bizList = Arrays.asList(new Biz[] {
-            new CustomBiz("masterBiz", "masterBizVersion"),
-            new CustomBiz("testBiz1", "testBizVersion1"),
-            new CustomBiz("testBiz1", "testBizVersion2"),
-            new CustomBiz("testBiz2", "testBizVersion2"),
-            new CustomBiz("testBiz3", "testBizVersion3") });
+    private final List<Biz> bizList = Arrays
+        .asList(new Biz[] { new CustomBiz("masterBiz", "masterBizVersion"),
+                            new CustomBiz("testBiz1", "testBizVersion1"),
+                            new CustomBiz("testBiz1", "testBizVersion2"),
+                            new CustomBiz("testBiz2", "testBizVersion2"),
+                            new CustomBiz("testBiz3", "testBizVersion3") });
 
     public Biz getMasterBiz() {
         return bizList.get(0);

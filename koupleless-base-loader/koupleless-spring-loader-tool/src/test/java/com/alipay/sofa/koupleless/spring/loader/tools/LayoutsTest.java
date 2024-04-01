@@ -44,8 +44,8 @@ public class LayoutsTest extends TestCase {
     public void testForFile() throws IOException {
         CustomLayoutFactory customLayoutFactory = new CustomLayoutFactory();
 
-        File appJar = new File(getClass().getClassLoader().getResource("demo-executable.jar")
-            .getFile());
+        File appJar = new File(
+            getClass().getClassLoader().getResource("demo-executable.jar").getFile());
         Layout layout = customLayoutFactory.getLayout(appJar);
         assertTrue(layout instanceof Jar);
         Jar jar = (Jar) layout;

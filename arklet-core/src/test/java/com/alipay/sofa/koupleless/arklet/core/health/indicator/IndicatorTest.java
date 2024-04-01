@@ -28,7 +28,8 @@ public class IndicatorTest {
     public void testCpuIndicator() {
         Indicator indicator = new CpuIndicator();
         final String[] indicatorMetrics = new String[] { "count", "type", "total used (%)",
-                "user used (%)", "system used (%)", "free (%)" };
+                                                         "user used (%)", "system used (%)",
+                                                         "free (%)" };
         final String indicatorId = "cpu";
         Map<String, Object> indicatorData = indicator.getHealthDetails();
         Assert.assertEquals(indicator.getIndicatorId(), indicatorId);
@@ -43,11 +44,18 @@ public class IndicatorTest {
     public void testJvmIndicator() {
         Indicator indicator = new JvmIndicator();
         final String[] indicatorMetrics = new String[] { "java version", "java home",
-                "total memory(M)", "max memory(M)", "free memory(M)", "run time(s)",
-                "init heap memory(M)", "used heap memory(M)", "committed heap memory(M)",
-                "max heap memory(M)", "init non heap memory(M)", "used non heap memory(M)",
-                "committed non heap memory(M)", "max non heap memory(M)", "loaded class count",
-                "unload class count", "total class count" };
+                                                         "total memory(M)", "max memory(M)",
+                                                         "free memory(M)", "run time(s)",
+                                                         "init heap memory(M)",
+                                                         "used heap memory(M)",
+                                                         "committed heap memory(M)",
+                                                         "max heap memory(M)",
+                                                         "init non heap memory(M)",
+                                                         "used non heap memory(M)",
+                                                         "committed non heap memory(M)",
+                                                         "max non heap memory(M)",
+                                                         "loaded class count", "unload class count",
+                                                         "total class count" };
         final String indicatorId = "jvm";
         Map<String, Object> indicatorData = indicator.getHealthDetails();
         Assert.assertEquals(indicator.getIndicatorId(), indicatorId);

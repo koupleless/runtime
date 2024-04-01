@@ -96,25 +96,22 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class LoggingApplicationListener implements GenericApplicationListener {
 
     private static final ConfigurationPropertyName       LOGGING_LEVEL                   = ConfigurationPropertyName
-                                                                                             .of("logging.level");
+        .of("logging.level");
 
     private static final ConfigurationPropertyName       LOGGING_GROUP                   = ConfigurationPropertyName
-                                                                                             .of("logging.group");
+        .of("logging.group");
 
     private static final Bindable<Map<String, String>>   STRING_STRING_MAP               = Bindable
-                                                                                             .mapOf(
-                                                                                                 String.class,
-                                                                                                 String.class);
+        .mapOf(String.class, String.class);
 
     private static final Bindable<Map<String, String[]>> STRING_STRINGS_MAP              = Bindable
-                                                                                             .mapOf(
-                                                                                                 String.class,
-                                                                                                 String[].class);
+        .mapOf(String.class, String[].class);
 
     /**
      * The default order for the LoggingApplicationListener.
      */
-    public static final int                              DEFAULT_ORDER                   = Ordered.HIGHEST_PRECEDENCE + 20;
+    public static final int                              DEFAULT_ORDER                   = Ordered.HIGHEST_PRECEDENCE
+                                                                                           + 20;
 
     /**
      * The name of the Spring property that contains a reference to the logging
@@ -152,7 +149,7 @@ public class LoggingApplicationListener implements GenericApplicationListener {
         DEFAULT_GROUP_LOGGERS = Collections.unmodifiableMap(loggers);
     }
 
-    private static final Map<LogLevel, List<String>>     LOG_LEVEL_LOGGERS;
+    private static final Map<LogLevel, List<String>> LOG_LEVEL_LOGGERS;
     static {
         MultiValueMap<LogLevel, String> loggers = new LinkedMultiValueMap<>();
         loggers.add(LogLevel.DEBUG, "sql");
@@ -166,27 +163,28 @@ public class LoggingApplicationListener implements GenericApplicationListener {
         LOG_LEVEL_LOGGERS = Collections.unmodifiableMap(loggers);
     }
 
-    private static final Class<?>[]                      EVENT_TYPES                     = {
-            ApplicationStartingEvent.class, ApplicationEnvironmentPreparedEvent.class,
-            ApplicationPreparedEvent.class, ContextClosedEvent.class, ApplicationFailedEvent.class };
+    private static final Class<?>[]    EVENT_TYPES            = { ApplicationStartingEvent.class,
+                                                                  ApplicationEnvironmentPreparedEvent.class,
+                                                                  ApplicationPreparedEvent.class,
+                                                                  ContextClosedEvent.class,
+                                                                  ApplicationFailedEvent.class };
 
-    private static final Class<?>[]                      SOURCE_TYPES                    = {
-            SpringApplication.class, ApplicationContext.class                           };
+    private static final Class<?>[]    SOURCE_TYPES           = { SpringApplication.class,
+                                                                  ApplicationContext.class };
 
-    private static final AtomicBoolean                   shutdownHookRegistered          = new AtomicBoolean();
+    private static final AtomicBoolean shutdownHookRegistered = new AtomicBoolean();
 
-    private final Log                                    logger                          = LogFactory
-                                                                                             .getLog(getClass());
+    private final Log                  logger                 = LogFactory.getLog(getClass());
 
-    private LoggingSystem                                loggingSystem;
+    private LoggingSystem              loggingSystem;
 
-    private LogFile                                      logFile;
+    private LogFile                    logFile;
 
-    private int                                          order                           = DEFAULT_ORDER;
+    private int                        order                  = DEFAULT_ORDER;
 
-    private boolean                                      parseArgs                       = true;
+    private boolean                    parseArgs              = true;
 
-    private LogLevel                                     springBootLogging               = null;
+    private LogLevel                   springBootLogging      = null;
 
     @Override
     public boolean supportsEventType(ResolvableType resolvableType) {
@@ -330,7 +328,7 @@ public class LoggingApplicationListener implements GenericApplicationListener {
 
     protected void initializeLogLevel(LoggingSystem system, LogLevel level) {
         LOG_LEVEL_LOGGERS.getOrDefault(level, Collections.emptyList())
-                .forEach((logger) -> initializeLogLevel(system, level, logger));
+            .forEach((logger) -> initializeLogLevel(system, level, logger));
     }
 
     private void initializeLogLevel(LoggingSystem system, LogLevel level, String logger) {
@@ -343,21 +341,23 @@ public class LoggingApplicationListener implements GenericApplicationListener {
     }
 
     private void initalizeThreadContextConfig(ConfigurableEnvironment environment) {
-		Map<String, String> configMap = new ConcurrentHashMap<>();
-		Set<String> configKeys = new HashSet<>();
-		environment.getPropertySources().stream().filter(propertySource -> propertySource instanceof EnumerablePropertySource)
-				.forEach(propertySource -> configKeys.addAll(Arrays.asList(((EnumerablePropertySource<?>)propertySource).getPropertyNames())));
+        Map<String, String> configMap = new ConcurrentHashMap<>();
+        Set<String> configKeys = new HashSet<>();
+        environment.getPropertySources().stream()
+            .filter(propertySource -> propertySource instanceof EnumerablePropertySource)
+            .forEach(propertySource -> configKeys.addAll(
+                Arrays.asList(((EnumerablePropertySource<?>) propertySource).getPropertyNames())));
 
-		configKeys.forEach(key -> {
-			try {
-				configMap.put(key, environment.getProperty(key));
-			} catch (Throwable t) {
-				// ignore, 异常在 AlipayPrintEnvironmentListener 中打印
-			}
-		});
+        configKeys.forEach(key -> {
+            try {
+                configMap.put(key, environment.getProperty(key));
+            } catch (Throwable t) {
+                // ignore, 异常在 AlipayPrintEnvironmentListener 中打印
+            }
+        });
 
-		configMap.forEach(ThreadContext::put);
-	}
+        configMap.forEach(ThreadContext::put);
+    }
 
     protected void setLogLevels(LoggingSystem system, ConfigurableEnvironment environment) {
         if (!(environment instanceof ConfigurableEnvironment)) {
@@ -366,21 +366,22 @@ public class LoggingApplicationListener implements GenericApplicationListener {
         Binder binder = Binder.get(environment);
         Map<String, String[]> groups = getGroups();
         binder.bind(LOGGING_GROUP, STRING_STRINGS_MAP.withExistingValue(groups));
-        Map<String, String> levels = binder.bind(LOGGING_LEVEL, STRING_STRING_MAP).orElseGet(Collections::emptyMap);
+        Map<String, String> levels = binder.bind(LOGGING_LEVEL, STRING_STRING_MAP)
+            .orElseGet(Collections::emptyMap);
         levels.forEach((name, level) -> {
             String[] groupedNames = groups.get(name);
             if (ObjectUtils.isEmpty(groupedNames)) {
                 setLogLevel(system, name, level);
-            }
-            else {
+            } else {
                 setLogLevel(system, groupedNames, level);
             }
         });
-	}
+    }
 
     private Map<String, String[]> getGroups() {
         Map<String, String[]> groups = new LinkedHashMap<>();
-        DEFAULT_GROUP_LOGGERS.forEach((name, loggers) -> groups.put(name, StringUtils.toStringArray(loggers)));
+        DEFAULT_GROUP_LOGGERS
+            .forEach((name, loggers) -> groups.put(name, StringUtils.toStringArray(loggers)));
         return groups;
     }
 

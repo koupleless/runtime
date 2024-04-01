@@ -33,8 +33,8 @@ import com.alipay.sofa.koupleless.arklet.core.common.exception.CommandValidation
  * @author mingmen
  * @date 2023/6/14
  */
-public class UninstallBizHandler extends AbstractCommandHandler<Input, ClientResponse> implements
-                                                                                      ArkBizOps {
+public class UninstallBizHandler extends AbstractCommandHandler<Input, ClientResponse>
+                                 implements ArkBizOps {
 
     @Override
     public Output<ClientResponse> handle(Input input) {

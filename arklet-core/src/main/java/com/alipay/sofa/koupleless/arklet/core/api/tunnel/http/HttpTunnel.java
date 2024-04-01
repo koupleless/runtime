@@ -39,7 +39,7 @@ import com.google.inject.Singleton;
 public class HttpTunnel implements Tunnel {
 
     private static final ArkletLogger LOGGER                   = ArkletLoggerFactory
-                                                                   .getDefaultLogger();
+        .getDefaultLogger();
     private final static String       HTTP_PORT_ATTRIBUTE      = "koupleless.arklet.http.port";
     private int                       port                     = -1;
     private final static int          DEFAULT_HTTP_PORT        = 1238;

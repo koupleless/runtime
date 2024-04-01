@@ -32,8 +32,8 @@ public class ReflectionUtils {
             Object value = filed.get(target);
             return value == null ? null : (T) value;
         } catch (Exception e) {
-            throw new RuntimeException(
-                "get field " + clazz.getName() + "@" + fieldName + " failed", e);
+            throw new RuntimeException("get field " + clazz.getName() + "@" + fieldName + " failed",
+                e);
         }
     }
 
@@ -43,8 +43,8 @@ public class ReflectionUtils {
             filed.setAccessible(true);
             filed.set(target, value);
         } catch (Exception e) {
-            throw new RuntimeException(
-                "set filed " + clazz.getName() + "@" + fieldName + " failed", e);
+            throw new RuntimeException("set filed " + clazz.getName() + "@" + fieldName + " failed",
+                e);
         }
     }
 

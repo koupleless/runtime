@@ -33,7 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class SpringExtensionFactory implements ExtensionFactory {
     private static final Logger                                    logger                  = LoggerFactory
-                                                                                               .getLogger(SpringExtensionFactory.class);
+        .getLogger(SpringExtensionFactory.class);
 
     private static final Map<ClassLoader, Set<ApplicationContext>> contextsWithClassLoader = new ConcurrentHashMap<>();
 
@@ -73,8 +73,7 @@ public class SpringExtensionFactory implements ExtensionFactory {
                 throw multiBeanExe;
             } catch (NoSuchBeanDefinitionException noBeanExe) {
                 if (logger.isDebugEnabled()) {
-                    logger.debug(
-                        "Error when get spring extension(bean) for type:" + type.getName(),
+                    logger.debug("Error when get spring extension(bean) for type:" + type.getName(),
                         noBeanExe);
                 }
             }

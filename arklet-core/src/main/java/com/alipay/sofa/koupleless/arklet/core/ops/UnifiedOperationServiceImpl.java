@@ -79,8 +79,8 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
             return ArkClient.installOperation(bizOperation);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
-            return new ClientResponse().setCode(ResponseCode.FAILED).setMessage(
-                String.format("internal exception: %s", throwable.getMessage()));
+            return new ClientResponse().setCode(ResponseCode.FAILED)
+                .setMessage(String.format("internal exception: %s", throwable.getMessage()));
         }
     }
 
@@ -91,19 +91,22 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
 
     @Override
     public BatchInstallResponse batchInstall(BatchInstallRequest request) throws Throwable {
-        List<String> bizUrls = batchInstallHelper.getBizUrlsFromLocalFileSystem(request.getBizDirAbsolutePath());
+        List<String> bizUrls = batchInstallHelper
+            .getBizUrlsFromLocalFileSystem(request.getBizDirAbsolutePath());
         ThreadPoolExecutor executorService = ExecutorServiceManager.getArkBizOpsExecutor();
         List<CompletableFuture<ClientResponse>> futures = new ArrayList<>();
 
         long startTimestamp = System.currentTimeMillis();
         for (String bizUrl : bizUrls) {
-            futures.add(CompletableFuture.supplyAsync(() -> safeBatchInstall(bizUrl), executorService));
+            futures.add(
+                CompletableFuture.supplyAsync(() -> safeBatchInstall(bizUrl), executorService));
         }
 
         // wait for all install futures done
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).get();
         long endTimestamp = System.currentTimeMillis();
-        ArkletLoggerFactory.getDefaultLogger().info("batch install cost {} ms", endTimestamp - startTimestamp);
+        ArkletLoggerFactory.getDefaultLogger().info("batch install cost {} ms",
+            endTimestamp - startTimestamp);
 
         // analyze install result per bizUrl
         int counter = 0;
@@ -117,11 +120,10 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
             counter++;
         }
 
-        return BatchInstallResponse.builder().
-                code(hasFailed ? ResponseCode.FAILED : ResponseCode.SUCCESS).
-                message(hasFailed ? "batch install failed" : "batch install success").
-                bizUrlToResponse(bizUrlToInstallResult).
-                build();
+        return BatchInstallResponse.builder()
+            .code(hasFailed ? ResponseCode.FAILED : ResponseCode.SUCCESS)
+            .message(hasFailed ? "batch install failed" : "batch install success")
+            .bizUrlToResponse(bizUrlToInstallResult).build();
     }
 
     @Override

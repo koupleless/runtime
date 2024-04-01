@@ -89,8 +89,8 @@ public class PluginHealthMeta {
 
     public static PluginHealthMeta createPluginMeta(Plugin plugin) {
         AssertUtils.assertNotNull(plugin, "can not find plugin");
-        PluginHealthMeta pluginHealthMeta = PluginHealthMeta.createPluginMeta(
-            plugin.getPluginName(), plugin.getVersion());
+        PluginHealthMeta pluginHealthMeta = PluginHealthMeta
+            .createPluginMeta(plugin.getPluginName(), plugin.getVersion());
         pluginHealthMeta.setGroupId(plugin.getGroupId());
         pluginHealthMeta.setArtifactId(plugin.getArtifactId());
         pluginHealthMeta.setPluginActivator(plugin.getPluginActivator());

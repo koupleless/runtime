@@ -43,8 +43,8 @@ public class SerializeUtils {
                 sourceClass = source.getClass();
             }
             if (sourceClass.getClassLoader() == targetClassLoader
-                || targetClassLoader.loadClass(sourceClass.getName()).getClassLoader() == sourceClass
-                    .getClassLoader()) {
+                || targetClassLoader.loadClass(sourceClass.getName())
+                    .getClassLoader() == sourceClass.getClassLoader()) {
                 return source;
             }
         } catch (ClassNotFoundException e) {
@@ -85,8 +85,8 @@ public class SerializeUtils {
         if (originalSource.getClass().isArray()) {
             Object[] sources = (Object[]) originalSource;
             if (sources.length > 0) {
-                Object[] targets = (Object[]) Array.newInstance(sources.getClass()
-                    .getComponentType(), sources.length);
+                Object[] targets = (Object[]) Array
+                    .newInstance(sources.getClass().getComponentType(), sources.length);
 
                 for (int i = 0; i < sources.length; i++) {
                     targets[i] = _serializeTransform(sources[i], targetClassLoader);

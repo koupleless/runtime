@@ -49,8 +49,9 @@ public class ForwardControllerTests {
         Field field = ForwardAutoConfiguration.class.getDeclaredField("gatewayProperties");
         field.setAccessible(true);
         Yaml yaml = new Yaml();
-        JSONArray array = yaml.loadAs(ForwardControllerTests.class.getClassLoader()
-            .getResourceAsStream(confPath), JSONArray.class);
+        JSONArray array = yaml.loadAs(
+            ForwardControllerTests.class.getClassLoader().getResourceAsStream(confPath),
+            JSONArray.class);
         GatewayProperties properties = new GatewayProperties();
         properties.setForwards(array.toJavaList(Forward.class));
         field.set(configuration, properties);
@@ -94,23 +95,24 @@ public class ForwardControllerTests {
             return baseContext;
         });
 
-
-        Mockito.when(request.getRequestURL()).thenReturn(new StringBuffer("http://test1.xxx.com/test2"));
+        Mockito.when(request.getRequestURL())
+            .thenReturn(new StringBuffer("http://test1.xxx.com/test2"));
         controller.redirect(request, response);
         Mockito.verify(dispatcher2, Mockito.times(1)).forward(request, response);
 
-
-        Mockito.when(request.getRequestURL()).thenReturn(new StringBuffer("http://test1.xxx.com/test1/xx"));
+        Mockito.when(request.getRequestURL())
+            .thenReturn(new StringBuffer("http://test1.xxx.com/test1/xx"));
         controller.redirect(request, response);
         Mockito.verify(dispatcher1, Mockito.times(1)).forward(request, response);
 
-
-        Mockito.when(request.getRequestURL()).thenReturn(new StringBuffer("http://test3.xxx.com/test1/xx"));
+        Mockito.when(request.getRequestURL())
+            .thenReturn(new StringBuffer("http://test3.xxx.com/test1/xx"));
         controller.redirect(request, response);
         Mockito.verify(dispatcher3, Mockito.times(1)).forward(request, response);
 
-
-        Mockito.when(request.getRequestURL()).thenReturn(new StringBuffer("http://test4.xxx.com/test1/xx"));
-        Assert.assertThrows(ResponseStatusException.class, () -> controller.redirect(request, response));
+        Mockito.when(request.getRequestURL())
+            .thenReturn(new StringBuffer("http://test4.xxx.com/test1/xx"));
+        Assert.assertThrows(ResponseStatusException.class,
+            () -> controller.redirect(request, response));
     }
 }

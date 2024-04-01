@@ -50,8 +50,10 @@ public class BaseHandlerTest extends BaseTest {
             ArkClient.uninstallBiz(anyString(), anyString());
         }).thenReturn(success);
         arkClient.when(ArkClient::getBizManagerService).thenReturn(new CustomBizManagerService());
-        arkClient.when(ArkClient::getPluginManagerService).thenReturn(new CustomPluginManagerService());
-        arkClient.when(ArkClient::getMasterBiz).thenReturn(new CustomBizManagerService().getMasterBiz());
+        arkClient.when(ArkClient::getPluginManagerService)
+            .thenReturn(new CustomPluginManagerService());
+        arkClient.when(ArkClient::getMasterBiz)
+            .thenReturn(new CustomBizManagerService().getMasterBiz());
     }
 
     @After

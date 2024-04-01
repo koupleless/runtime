@@ -54,7 +54,7 @@ import java.util.regex.Pattern;
 public class ExtensionLoader<T> {
 
     private static final Logger                                                                  logger                                = LoggerFactory
-                                                                                                                                           .getLogger(ExtensionLoader.class);
+        .getLogger(ExtensionLoader.class);
 
     private static final String                                                                  SERVICES_DIRECTORY                    = "META-INF/services/";
 
@@ -64,7 +64,7 @@ public class ExtensionLoader<T> {
                                                                                                                                          + "internal/";
 
     private static final Pattern                                                                 NAME_SEPARATOR                        = Pattern
-                                                                                                                                           .compile("\\s*[,]+\\s*");
+        .compile("\\s*[,]+\\s*");
 
     private static final ConcurrentMap<Class<?>, ExtensionLoader<?>>                             EXTENSION_LOADERS                     = new ConcurrentHashMap<>();
     private static final ConcurrentMap<ClassLoader, ConcurrentMap<Class<?>, ExtensionLoader<?>>> EXTENSION_LOADERS_SUPPORT_CLASSLOADER = new ConcurrentHashMap<>();
@@ -73,33 +73,33 @@ public class ExtensionLoader<T> {
         EXTENSION_LOADERS_SUPPORT_CLASSLOADER.put(findClassLoader(), EXTENSION_LOADERS);
     }
 
-    private static final ConcurrentMap<Class<?>, Object>                                         EXTENSION_INSTANCES                   = new ConcurrentHashMap<Class<?>, Object>();
+    private static final ConcurrentMap<Class<?>, Object> EXTENSION_INSTANCES    = new ConcurrentHashMap<Class<?>, Object>();
 
     // ==============================
 
-    private final Class<?>                                                                       type;
+    private final Class<?>                               type;
 
-    private final ExtensionFactory                                                               objectFactory;
+    private final ExtensionFactory                       objectFactory;
 
-    private final ConcurrentMap<Class<?>, String>                                                cachedNames                           = new ConcurrentHashMap<Class<?>, String>();
+    private final ConcurrentMap<Class<?>, String>        cachedNames            = new ConcurrentHashMap<Class<?>, String>();
 
-    private final Holder<Map<String, Class<?>>>                                                  cachedClasses                         = new Holder<Map<String, Class<?>>>();
+    private final Holder<Map<String, Class<?>>>          cachedClasses          = new Holder<Map<String, Class<?>>>();
 
-    private final Map<String, Activate>                                                          cachedActivates                       = new ConcurrentHashMap<String, Activate>();
-    private final ConcurrentMap<String, Holder<Object>>                                          cachedInstances                       = new ConcurrentHashMap<String, Holder<Object>>();
-    private final Holder<Object>                                                                 cachedAdaptiveInstance                = new Holder<Object>();
-    private volatile Class<?>                                                                    cachedAdaptiveClass                   = null;
-    private String                                                                               cachedDefaultName;
-    private volatile Throwable                                                                   createAdaptiveInstanceError;
+    private final Map<String, Activate>                  cachedActivates        = new ConcurrentHashMap<String, Activate>();
+    private final ConcurrentMap<String, Holder<Object>>  cachedInstances        = new ConcurrentHashMap<String, Holder<Object>>();
+    private final Holder<Object>                         cachedAdaptiveInstance = new Holder<Object>();
+    private volatile Class<?>                            cachedAdaptiveClass    = null;
+    private String                                       cachedDefaultName;
+    private volatile Throwable                           createAdaptiveInstanceError;
 
-    private Set<Class<?>>                                                                        cachedWrapperClasses;
+    private Set<Class<?>>                                cachedWrapperClasses;
 
-    private Map<String, IllegalStateException>                                                   exceptions                            = new ConcurrentHashMap<String, IllegalStateException>();
+    private Map<String, IllegalStateException>           exceptions             = new ConcurrentHashMap<String, IllegalStateException>();
 
     private ExtensionLoader(Class<?> type) {
         this.type = type;
-        objectFactory = (type == ExtensionFactory.class ? null : ExtensionLoader
-            .getExtensionLoader(ExtensionFactory.class).getAdaptiveExtension());
+        objectFactory = (type == ExtensionFactory.class ? null
+            : ExtensionLoader.getExtensionLoader(ExtensionFactory.class).getAdaptiveExtension());
     }
 
     private static <T> boolean withExtensionAnnotation(Class<T> type) {
@@ -114,8 +114,8 @@ public class ExtensionLoader<T> {
             throw new IllegalArgumentException("Extension type(" + type + ") is not interface!");
         }
         if (!withExtensionAnnotation(type)) {
-            throw new IllegalArgumentException("Extension type(" + type
-                                               + ") is not extension, because WITHOUT @"
+            throw new IllegalArgumentException(
+                "Extension type(" + type + ") is not extension, because WITHOUT @"
                                                + SPI.class.getSimpleName() + " Annotation!");
         }
         ClassLoader classLoader = findClassLoader();
@@ -385,8 +385,8 @@ public class ExtensionLoader<T> {
         getExtensionClasses(); // load classes
 
         if (!type.isAssignableFrom(clazz)) {
-            throw new IllegalStateException("Input type " + clazz + "not implement Extension "
-                                            + type);
+            throw new IllegalStateException(
+                "Input type " + clazz + "not implement Extension " + type);
         }
         if (clazz.isInterface()) {
             throw new IllegalStateException("Input type " + clazz + "can not be interface!");
@@ -394,19 +394,20 @@ public class ExtensionLoader<T> {
 
         if (!clazz.isAnnotationPresent(Adaptive.class)) {
             if (StringUtils.isBlank(name)) {
-                throw new IllegalStateException("Extension name is blank (Extension " + type + ")!");
+                throw new IllegalStateException(
+                    "Extension name is blank (Extension " + type + ")!");
             }
             if (cachedClasses.get().containsKey(name)) {
-                throw new IllegalStateException("Extension name " + name
-                                                + " already existed(Extension " + type + ")!");
+                throw new IllegalStateException(
+                    "Extension name " + name + " already existed(Extension " + type + ")!");
             }
 
             cachedNames.put(clazz, name);
             cachedClasses.get().put(name, clazz);
         } else {
             if (cachedAdaptiveClass != null) {
-                throw new IllegalStateException("Adaptive Extension already existed(Extension "
-                                                + type + ")!");
+                throw new IllegalStateException(
+                    "Adaptive Extension already existed(Extension " + type + ")!");
             }
 
             cachedAdaptiveClass = clazz;
@@ -426,8 +427,8 @@ public class ExtensionLoader<T> {
         getExtensionClasses(); // load classes
 
         if (!type.isAssignableFrom(clazz)) {
-            throw new IllegalStateException("Input type " + clazz + "not implement Extension "
-                                            + type);
+            throw new IllegalStateException(
+                "Input type " + clazz + "not implement Extension " + type);
         }
         if (clazz.isInterface()) {
             throw new IllegalStateException("Input type " + clazz + "can not be interface!");
@@ -435,11 +436,12 @@ public class ExtensionLoader<T> {
 
         if (!clazz.isAnnotationPresent(Adaptive.class)) {
             if (StringUtils.isBlank(name)) {
-                throw new IllegalStateException("Extension name is blank (Extension " + type + ")!");
+                throw new IllegalStateException(
+                    "Extension name is blank (Extension " + type + ")!");
             }
             if (!cachedClasses.get().containsKey(name)) {
-                throw new IllegalStateException("Extension name " + name
-                                                + " not existed(Extension " + type + ")!");
+                throw new IllegalStateException(
+                    "Extension name " + name + " not existed(Extension " + type + ")!");
             }
 
             cachedNames.put(clazz, name);
@@ -447,8 +449,8 @@ public class ExtensionLoader<T> {
             cachedInstances.remove(name);
         } else {
             if (cachedAdaptiveClass == null) {
-                throw new IllegalStateException("Adaptive Extension not existed(Extension " + type
-                                                + ")!");
+                throw new IllegalStateException(
+                    "Adaptive Extension not existed(Extension " + type + ")!");
             }
 
             cachedAdaptiveClass = clazz;
@@ -469,14 +471,14 @@ public class ExtensionLoader<T> {
                             cachedAdaptiveInstance.set(instance);
                         } catch (Throwable t) {
                             createAdaptiveInstanceError = t;
-                            throw new IllegalStateException("fail to create adaptive instance: "
-                                                            + t.toString(), t);
+                            throw new IllegalStateException(
+                                "fail to create adaptive instance: " + t.toString(), t);
                         }
                     }
                 }
             } else {
-                throw new IllegalStateException("fail to create adaptive instance: "
-                                                + createAdaptiveInstanceError.toString(),
+                throw new IllegalStateException(
+                    "fail to create adaptive instance: " + createAdaptiveInstanceError.toString(),
                     createAdaptiveInstanceError);
             }
         }
@@ -490,8 +492,8 @@ public class ExtensionLoader<T> {
                 return entry.getValue();
             }
         }
-        StringBuilder buf = new StringBuilder("No such extension " + type.getName() + " by name "
-                                              + name);
+        StringBuilder buf = new StringBuilder(
+            "No such extension " + type.getName() + " by name " + name);
 
         int i = 1;
         for (Map.Entry<String, IllegalStateException> entry : exceptions.entrySet()) {
@@ -525,14 +527,15 @@ public class ExtensionLoader<T> {
             Set<Class<?>> wrapperClasses = cachedWrapperClasses;
             if (wrapperClasses != null && !wrapperClasses.isEmpty()) {
                 for (Class<?> wrapperClass : wrapperClasses) {
-                    instance = injectExtension((T) wrapperClass.getConstructor(type).newInstance(
-                        instance));
+                    instance = injectExtension(
+                        (T) wrapperClass.getConstructor(type).newInstance(instance));
                 }
             }
             return instance;
         } catch (Throwable t) {
             throw new IllegalStateException("Extension instance(name: " + name + ", class: " + type
-                                            + ")  could not be instantiated: " + t.getMessage(), t);
+                                            + ")  could not be instantiated: " + t.getMessage(),
+                t);
         }
     }
 
@@ -540,15 +543,13 @@ public class ExtensionLoader<T> {
         try {
             if (objectFactory != null) {
                 for (Method method : instance.getClass().getMethods()) {
-                    if (method.getName().startsWith("set")
-                        && method.getParameterTypes().length == 1
+                    if (method.getName().startsWith("set") && method.getParameterTypes().length == 1
                         && Modifier.isPublic(method.getModifiers())) {
                         Class<?> pt = method.getParameterTypes()[0];
                         try {
-                            String property = method.getName().length() > 3 ? method.getName()
-                                .substring(3, 4).toLowerCase()
-                                                                              + method.getName()
-                                                                                  .substring(4)
+                            String property = method.getName().length() > 3
+                                ? method.getName().substring(3, 4).toLowerCase()
+                                  + method.getName().substring(4)
                                 : "";
                             Object object = objectFactory.getExtension(pt, property);
                             if (object != null) {
@@ -557,7 +558,8 @@ public class ExtensionLoader<T> {
                         } catch (Exception e) {
                             logger.error(
                                 "fail to inject via method " + method.getName() + " of interface "
-                                        + type.getName() + ": " + e.getMessage(), e);
+                                         + type.getName() + ": " + e.getMessage(),
+                                e);
                         }
                     }
                 }
@@ -575,8 +577,8 @@ public class ExtensionLoader<T> {
             throw new IllegalArgumentException("Extension name == null");
         Class<?> clazz = getExtensionClasses().get(name);
         if (clazz == null)
-            throw new IllegalStateException("No such extension \"" + name + "\" for "
-                                            + type.getName() + "!");
+            throw new IllegalStateException(
+                "No such extension \"" + name + "\" for " + type.getName() + "!");
         return clazz;
     }
 
@@ -604,7 +606,7 @@ public class ExtensionLoader<T> {
                 if (names.length > 1) {
                     throw new IllegalStateException(
                         "more than 1 default extension name on extension " + type.getName() + ": "
-                                + Arrays.toString(names));
+                                                    + Arrays.toString(names));
                 }
                 if (names.length == 1)
                     cachedDefaultName = names[0];
@@ -636,15 +638,16 @@ public class ExtensionLoader<T> {
             }
         } catch (Throwable t) {
             logger.error("Exception when load extension class(interface: " + type
-                         + ", description file: " + fileName + ").", t);
+                         + ", description file: " + fileName + ").",
+                t);
         }
     }
 
     private void loadResource(Map<String, Class<?>> extensionClasses, ClassLoader classLoader,
                               java.net.URL resourceURL) {
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(
-                resourceURL.openStream(), "utf-8"));
+            BufferedReader reader = new BufferedReader(
+                new InputStreamReader(resourceURL.openStream(), "utf-8"));
             try {
                 String line;
                 while ((line = reader.readLine()) != null) {
@@ -667,8 +670,12 @@ public class ExtensionLoader<T> {
                         } catch (Throwable t) {
                             IllegalStateException e = new IllegalStateException(
                                 "Failed to load extension class(interface: " + type
-                                        + ", class line: " + line + ") in " + resourceURL
-                                        + ", cause: " + t.getMessage(), t);
+                                                                                + ", class line: "
+                                                                                + line + ") in "
+                                                                                + resourceURL
+                                                                                + ", cause: "
+                                                                                + t.getMessage(),
+                                t);
                             exceptions.put(line, e);
                         }
                     }
@@ -677,8 +684,9 @@ public class ExtensionLoader<T> {
                 reader.close();
             }
         } catch (Throwable t) {
-            logger.error("Exception when load extension class(interface: " + type
-                         + ", class file: " + resourceURL + ") in " + resourceURL, t);
+            logger.error("Exception when load extension class(interface: " + type + ", class file: "
+                         + resourceURL + ") in " + resourceURL,
+                t);
         }
     }
 
@@ -693,9 +701,9 @@ public class ExtensionLoader<T> {
             if (cachedAdaptiveClass == null) {
                 cachedAdaptiveClass = clazz;
             } else if (!cachedAdaptiveClass.equals(clazz)) {
-                throw new IllegalStateException("More than 1 adaptive class found: "
-                                                + cachedAdaptiveClass.getClass().getName() + ", "
-                                                + clazz.getClass().getName());
+                throw new IllegalStateException(
+                    "More than 1 adaptive class found: " + cachedAdaptiveClass.getClass().getName()
+                                                + ", " + clazz.getClass().getName());
             }
         } else if (isWrapperClass(clazz)) {
             Set<Class<?>> wrappers = cachedWrapperClasses;
@@ -709,9 +717,9 @@ public class ExtensionLoader<T> {
             if (name == null || name.length() == 0) {
                 name = findAnnotationName(clazz);
                 if (name.length() == 0) {
-                    throw new IllegalStateException("No such extension name for the class "
-                                                    + clazz.getName() + " in the config "
-                                                    + resourceURL);
+                    throw new IllegalStateException(
+                        "No such extension name for the class " + clazz.getName()
+                                                    + " in the config " + resourceURL);
                 }
             }
             String[] names = NAME_SEPARATOR.split(name);
@@ -728,9 +736,9 @@ public class ExtensionLoader<T> {
                     if (c == null) {
                         extensionClasses.put(n, clazz);
                     } else if (c != clazz) {
-                        throw new IllegalStateException("Duplicate extension " + type.getName()
-                                                        + " name " + n + " on " + c.getName()
-                                                        + " and " + clazz.getName());
+                        throw new IllegalStateException(
+                            "Duplicate extension " + type.getName() + " name " + n + " on "
+                                                        + c.getName() + " and " + clazz.getName());
                     }
                 }
             }
@@ -765,8 +773,8 @@ public class ExtensionLoader<T> {
         try {
             return injectExtension((T) getAdaptiveExtensionClass().newInstance());
         } catch (Exception e) {
-            throw new IllegalStateException("Can not create adaptive extension " + type
-                                            + ", cause: " + e.getMessage(), e);
+            throw new IllegalStateException(
+                "Can not create adaptive extension " + type + ", cause: " + e.getMessage(), e);
         }
     }
 
@@ -781,8 +789,9 @@ public class ExtensionLoader<T> {
     private Class<?> createAdaptiveExtensionClass() {
         String code = createAdaptiveExtensionClassCode();
         ClassLoader classLoader = findClassLoader();
-        com.alibaba.dubbo.common.compiler.Compiler compiler = ExtensionLoader.getExtensionLoader(
-            com.alibaba.dubbo.common.compiler.Compiler.class).getAdaptiveExtension();
+        com.alibaba.dubbo.common.compiler.Compiler compiler = ExtensionLoader
+            .getExtensionLoader(com.alibaba.dubbo.common.compiler.Compiler.class)
+            .getAdaptiveExtension();
         return compiler.compile(code, classLoader);
     }
 
@@ -828,10 +837,9 @@ public class ExtensionLoader<T> {
                 // found parameter in URL type
                 if (urlTypeIndex != -1) {
                     // Null Point check
-                    String s = String
-                        .format(
-                            "\nif (arg%d == null) throw new IllegalArgumentException(\"url == null\");",
-                            urlTypeIndex);
+                    String s = String.format(
+                        "\nif (arg%d == null) throw new IllegalArgumentException(\"url == null\");",
+                        urlTypeIndex);
                     code.append(s);
 
                     s = String.format("\n%s url = arg%d;", URL.class.getName(), urlTypeIndex);
@@ -859,22 +867,19 @@ public class ExtensionLoader<T> {
                     }
                     if (attribMethod == null) {
                         throw new IllegalStateException(
-                            "fail to create adaptive class for interface "
-                                    + type.getName()
-                                    + ": not found url parameter or url attribute in parameters of method "
-                                    + method.getName());
+                            "fail to create adaptive class for interface " + type
+                                .getName() + ": not found url parameter or url attribute in parameters of method "
+                                                        + method.getName());
                     }
 
                     // Null point check
-                    String s = String
-                        .format(
-                            "\nif (arg%d == null) throw new IllegalArgumentException(\"%s argument == null\");",
-                            urlTypeIndex, pts[urlTypeIndex].getName());
+                    String s = String.format(
+                        "\nif (arg%d == null) throw new IllegalArgumentException(\"%s argument == null\");",
+                        urlTypeIndex, pts[urlTypeIndex].getName());
                     code.append(s);
-                    s = String
-                        .format(
-                            "\nif (arg%d.%s() == null) throw new IllegalArgumentException(\"%s argument %s() == null\");",
-                            urlTypeIndex, attribMethod, pts[urlTypeIndex].getName(), attribMethod);
+                    s = String.format(
+                        "\nif (arg%d.%s() == null) throw new IllegalArgumentException(\"%s argument %s() == null\");",
+                        urlTypeIndex, attribMethod, pts[urlTypeIndex].getName(), attribMethod);
                     code.append(s);
 
                     s = String.format("%s url = arg%d.%s();", URL.class.getName(), urlTypeIndex,
@@ -904,10 +909,9 @@ public class ExtensionLoader<T> {
                 for (int i = 0; i < pts.length; ++i) {
                     if (pts[i].getName().equals("com.alibaba.dubbo.rpc.Invocation")) {
                         // Null Point check
-                        String s = String
-                            .format(
-                                "\nif (arg%d == null) throw new IllegalArgumentException(\"invocation == null\");",
-                                i);
+                        String s = String.format(
+                            "\nif (arg%d == null) throw new IllegalArgumentException(\"invocation == null\");",
+                            i);
                         code.append(s);
                         s = String.format("\nString methodName = arg%d.getMethodName();", i);
                         code.append(s);
@@ -955,17 +959,16 @@ public class ExtensionLoader<T> {
                                 getNameCode = String.format("url.getParameter(\"%s\", %s)",
                                     value[i], getNameCode);
                         else
-                            getNameCode = String
-                                .format("url.getProtocol() == null ? (%s) : url.getProtocol()",
-                                    getNameCode);
+                            getNameCode = String.format(
+                                "url.getProtocol() == null ? (%s) : url.getProtocol()",
+                                getNameCode);
                     }
                 }
                 code.append("\nString extName = ").append(getNameCode).append(";");
                 // check extName == null?
                 String s = String
-                    .format(
-                        "\nif(extName == null) "
-                                + "throw new IllegalStateException(\"Fail to get extension(%s) name from url(\" + url.toString() + \") use keys(%s)\");",
+                    .format("\nif(extName == null) "
+                            + "throw new IllegalStateException(\"Fail to get extension(%s) name from url(\" + url.toString() + \") use keys(%s)\");",
                         type.getName(), Arrays.toString(value));
                 code.append(s);
 

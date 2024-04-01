@@ -63,13 +63,13 @@ public class ProcessRecord {
 
     public enum Status {
 
-        INITIALIZED("INITIALIZED"),
+                        INITIALIZED("INITIALIZED"),
 
-        EXECUTING("EXECUTING"),
+                        EXECUTING("EXECUTING"),
 
-        SUCCEEDED("SUCCEEDED"),
+                        SUCCEEDED("SUCCEEDED"),
 
-        FAILED("FAILED");
+                        FAILED("FAILED");
 
         private String name;
 
@@ -100,24 +100,24 @@ public class ProcessRecord {
     public void start() {
         if (INITIALIZED.equals(getStatus())) {
             setStatus(EXECUTING);
-            ArkletLoggerFactory.getDefaultLogger().info(
-                "Command execution status change: INIT -> EXECUTING");
+            ArkletLoggerFactory.getDefaultLogger()
+                .info("Command execution status change: INIT -> EXECUTING");
         }
     }
 
     public void success() {
         if (EXECUTING.equals(getStatus())) {
             setStatus(SUCCEEDED);
-            ArkletLoggerFactory.getDefaultLogger().info(
-                "Command execution status change: EXECUTING -> SUCCESS");
+            ArkletLoggerFactory.getDefaultLogger()
+                .info("Command execution status change: EXECUTING -> SUCCESS");
         }
     }
 
     public void fail() {
         if (EXECUTING.equals(getStatus())) {
             setStatus(FAILED);
-            ArkletLoggerFactory.getDefaultLogger().info(
-                "Command execution status change: EXECUTING -> FAIL");
+            ArkletLoggerFactory.getDefaultLogger()
+                .info("Command execution status change: EXECUTING -> FAIL");
         }
     }
 

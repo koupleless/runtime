@@ -26,9 +26,9 @@ import java.util.Set;
 
 public class CustomPluginManagerService implements PluginManagerService {
 
-    private final List<Plugin> pluginList = Arrays.asList(new Plugin[] {
-            new CustomPlugin("testPlugin1", "testPluginVersion1"),
-            new CustomPlugin("testPlugin2", "testPluginVersion2") });
+    private final List<Plugin> pluginList = Arrays
+        .asList(new Plugin[] { new CustomPlugin("testPlugin1", "testPluginVersion1"),
+                               new CustomPlugin("testPlugin2", "testPluginVersion2") });
 
     @Override
     public void registerPlugin(Plugin plugin) {

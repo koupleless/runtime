@@ -47,10 +47,11 @@ import static com.alipay.sofa.koupleless.common.service.ServiceProxyFactory.dete
 public class ArkAutowiredBeanPostProcessor implements BeanPostProcessor {
 
     private static final Logger LOGGER = LoggerFactory
-                                           .getLogger(ArkAutowiredBeanPostProcessor.class);
+        .getLogger(ArkAutowiredBeanPostProcessor.class);
 
     @Override
-    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+    public Object postProcessBeforeInitialization(Object bean,
+                                                  String beanName) throws BeansException {
         Class<?> beanClassType = bean.getClass();
 
         ReflectionUtils.doWithFields(beanClassType, field -> {
@@ -85,12 +86,15 @@ public class ArkAutowiredBeanPostProcessor implements BeanPostProcessor {
                 Class<?> fieldType = field.getType();
 
                 if (StringUtils.hasText(name)) {
-                    serviceProxy = ServiceProxyFactory.createServiceProxy(bizName, bizVersion, name, fieldType, clientClassLoader);
+                    serviceProxy = ServiceProxyFactory.createServiceProxy(bizName, bizVersion, name,
+                        fieldType, clientClassLoader);
                 }
 
                 if (serviceProxy == null) {
-                    if (!Collection.class.isAssignableFrom(fieldType) && !Map.class.isAssignableFrom(fieldType)) {
-                        serviceProxy = ServiceProxyFactory.createServiceProxy(bizName, bizVersion, null, fieldType, clientClassLoader);
+                    if (!Collection.class.isAssignableFrom(fieldType)
+                        && !Map.class.isAssignableFrom(fieldType)) {
+                        serviceProxy = ServiceProxyFactory.createServiceProxy(bizName, bizVersion,
+                            null, fieldType, clientClassLoader);
                     }
                 }
 
@@ -103,11 +107,12 @@ public class ArkAutowiredBeanPostProcessor implements BeanPostProcessor {
                         serviceType = (Class<?>) actualTypeArguments[1];
                     }
 
-                    Map<String, ?> serviceProxyMap = ServiceProxyFactory.batchCreateServiceProxy(bizName, bizVersion, serviceType, clientClassLoader);
+                    Map<String, ?> serviceProxyMap = ServiceProxyFactory.batchCreateServiceProxy(
+                        bizName, bizVersion, serviceType, clientClassLoader);
 
                     if (Map.class.isAssignableFrom(fieldType)) {
                         serviceProxy = serviceProxyMap;
-                    }else if (List.class.isAssignableFrom(fieldType)) {
+                    } else if (List.class.isAssignableFrom(fieldType)) {
                         List list = ArrayList.class.newInstance();
                         list.addAll(serviceProxyMap.values());
                         serviceProxy = list;
@@ -121,20 +126,26 @@ public class ArkAutowiredBeanPostProcessor implements BeanPostProcessor {
                 if (serviceProxy != null) {
                     ReflectionUtils.makeAccessible(field);
                     ReflectionUtils.setField(field, bean, serviceProxy);
-                    LOGGER.info("Finished processing bean [{}], success to inject service proxy to bean [{}] field [{}]", beanName, bean, field);
+                    LOGGER.info(
+                        "Finished processing bean [{}], success to inject service proxy to bean [{}] field [{}]",
+                        beanName, bean, field);
                 }
             } catch (Exception e) {
-                throw new BeanCreationException(beanName, "Failed processing bean [" + beanName + "], injected object to bean [" + bean + "] field [" + field + "]", e);
+                throw new BeanCreationException(beanName,
+                    "Failed processing bean [" + beanName + "], injected object to bean [" + bean
+                                                          + "] field [" + field + "]",
+                    e);
             }
         }, field -> !Modifier.isStatic(field.getModifiers())
-                && (field.isAnnotationPresent(AutowiredFromBase.class) || field.isAnnotationPresent(AutowiredFromBiz.class)));
+                    && (field.isAnnotationPresent(AutowiredFromBase.class)
+                        || field.isAnnotationPresent(AutowiredFromBiz.class)));
 
         return bean;
     }
 
     @Override
-    public Object postProcessAfterInitialization(Object bean, String beanName)
-                                                                              throws BeansException {
+    public Object postProcessAfterInitialization(Object bean,
+                                                 String beanName) throws BeansException {
         return bean;
     }
 }

@@ -34,8 +34,7 @@ import org.springframework.core.Ordered;
  * @since 2.7.5
  */
 public class DubboBootstrapApplicationListener extends OnceApplicationContextEventListener
-                                                                                          implements
-                                                                                          Ordered {
+                                               implements Ordered {
 
     /**
      * The bean name of {@link DubboBootstrapApplicationListener}

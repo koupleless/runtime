@@ -74,19 +74,17 @@ public class StaticBatchInstallEventListenerTest {
         BatchInstallResponse response = null;
         ContextRefreshedEvent event = null;
         {
-            componentRegistryMockedStatic.when(ArkletComponentRegistry::getOperationServiceInstance).thenReturn(operationService);
+            componentRegistryMockedStatic.when(ArkletComponentRegistry::getOperationServiceInstance)
+                .thenReturn(operationService);
 
-            response = BatchInstallResponse.builder().
-                    code(ResponseCode.SUCCESS).
-                    bizUrlToResponse(new HashMap<>()).
-                    build();
+            response = BatchInstallResponse.builder().code(ResponseCode.SUCCESS)
+                .bizUrlToResponse(new HashMap<>()).build();
 
             response.getBizUrlToResponse().put("foo", new ClientResponse());
             response.getBizUrlToResponse().get("foo").setCode(ResponseCode.SUCCESS);
 
-            doReturn(response).when(operationService).batchInstall(BatchInstallRequest.builder().
-                    bizDirAbsolutePath("/path/to/dir").
-                    build());
+            doReturn(response).when(operationService).batchInstall(
+                BatchInstallRequest.builder().bizDirAbsolutePath("/path/to/dir").build());
 
             event = mock(ContextRefreshedEvent.class);
             doReturn(mock(ApplicationContext.class)).when(event).getApplicationContext();

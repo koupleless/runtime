@@ -41,25 +41,25 @@ import static com.alipay.sofa.koupleless.common.util.SerializeUtils.serializeTra
 public class SpringServiceInvoker implements MethodInterceptor {
 
     private static final Logger LOGGER          = LoggerFactory
-                                                    .getLogger(SpringServiceInvoker.class);
+        .getLogger(SpringServiceInvoker.class);
 
     private static final String TOSTRING_METHOD = "toString";
     private static final String EQUALS_METHOD   = "equals";
     private static final String HASHCODE_METHOD = "hashCode";
 
-    private Object              target;                                                    // 被调用方目标bean
+    private Object              target;                        // 被调用方目标bean
 
     private String              name;
 
     private Class<?>            clientType;
 
-    private String              bizName;                                                   // 被调用方bizName
+    private String              bizName;                       // 被调用方bizName
 
-    private String              bizVersion;                                                // 被调用方bizVersion
+    private String              bizVersion;                    // 被调用方bizVersion
 
-    private ClassLoader         clientClassLoader;                                         // 调用方classloader
+    private ClassLoader         clientClassLoader;             // 调用方classloader
 
-    private ClassLoader         serviceClassLoader;                                        // 被调用方classloader
+    private ClassLoader         serviceClassLoader;            // 被调用方classloader
 
     public SpringServiceInvoker() {
     }
@@ -81,8 +81,8 @@ public class SpringServiceInvoker implements MethodInterceptor {
         // todo bizVersion = "" 时
         Biz biz = determineMostSuitableBiz(bizName, bizVersion);
         if (biz == null) {
-            throw new BizRuntimeException(E100003, String.format(
-                "biz %s:%s does not exist when called", bizName, bizVersion));
+            throw new BizRuntimeException(E100003,
+                String.format("biz %s:%s does not exist when called", bizName, bizVersion));
         }
         if (BizState.ACTIVATED != biz.getBizState() && BizState.DEACTIVATED != biz.getBizState()) {
             throw new BizRuntimeException(E100004, String.format("biz %s:%s state %s is not valid",
@@ -93,8 +93,8 @@ public class SpringServiceInvoker implements MethodInterceptor {
         if (this.target == null) {
             this.target = getService(bizName, bizVersion, name, clientType);
             if (this.target == null) {
-                throw new BizRuntimeException(E100004, "Cannot find service bean from the biz "
-                                                       + biz.getIdentity());
+                throw new BizRuntimeException(E100004,
+                    "Cannot find service bean from the biz " + biz.getIdentity());
             }
             this.serviceClassLoader = this.target.getClass().getClassLoader();
         }
@@ -114,7 +114,7 @@ public class SpringServiceInvoker implements MethodInterceptor {
     }
 
     protected Object doInvoke(MethodInvocation invocation) throws InvocationTargetException,
-                                                          IllegalAccessException {
+                                                           IllegalAccessException {
         if (isCrossClassLoader(invocation)) {
             return invokeServiceCrossClassLoader(invocation);
         }
@@ -134,9 +134,8 @@ public class SpringServiceInvoker implements MethodInterceptor {
             .getClassLoader();
     }
 
-    private Object invokeServiceCrossClassLoader(MethodInvocation invocation)
-                                                                             throws InvocationTargetException,
-                                                                             IllegalAccessException {
+    private Object invokeServiceCrossClassLoader(MethodInvocation invocation) throws InvocationTargetException,
+                                                                              IllegalAccessException {
         Method clientMethod = invocation.getMethod();
         Object[] clientMethodArguments = invocation.getArguments();
         Class[] clientMethodArgumentTypes = clientMethod.getParameterTypes();
@@ -154,15 +153,15 @@ public class SpringServiceInvoker implements MethodInterceptor {
 
         Object[] serviceMethodArguments = (Object[]) serializeTransform(clientMethodArguments,
             serviceClassLoader);
-        Class[] serviceMethodArgumentTypes = (Class[]) serializeTransform(
-            clientMethodArgumentTypes, serviceClassLoader);
+        Class[] serviceMethodArgumentTypes = (Class[]) serializeTransform(clientMethodArgumentTypes,
+            serviceClassLoader);
         Method serviceMethod = getTargetMethod(clientMethod, serviceMethodArgumentTypes);
         Object retVal = serviceMethod.invoke(target, serviceMethodArguments);
         return serializeTransform(retVal, clientClassLoader);
     }
 
     private Object invokeService(MethodInvocation invocation) throws InvocationTargetException,
-                                                             IllegalAccessException {
+                                                              IllegalAccessException {
         Method method = invocation.getMethod();
         //the method may be not public
         method.setAccessible(true);
@@ -173,8 +172,8 @@ public class SpringServiceInvoker implements MethodInterceptor {
         try {
             return target.getClass().getMethod(method.getName(), argumentTypes);
         } catch (NoSuchMethodException ex) {
-            throw new IllegalStateException(target + " in " + bizName + ":" + bizVersion
-                                            + " don't have the method " + method);
+            throw new IllegalStateException(
+                target + " in " + bizName + ":" + bizVersion + " don't have the method " + method);
         }
     }
 }

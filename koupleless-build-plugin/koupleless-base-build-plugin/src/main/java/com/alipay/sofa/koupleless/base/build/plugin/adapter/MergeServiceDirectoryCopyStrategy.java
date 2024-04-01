@@ -44,8 +44,8 @@ public class MergeServiceDirectoryCopyStrategy implements CopyAdapterStrategy {
             new ByteArrayInputStream(inputContent));
         List<String> adapterLines = IOUtils.readLines(inputReader);
 
-        InputStreamReader outputReader = new InputStreamReader(new ByteArrayInputStream(
-            outputContent));
+        InputStreamReader outputReader = new InputStreamReader(
+            new ByteArrayInputStream(outputContent));
         List<String> originalLines = IOUtils.readLines(outputReader);
 
         mergedLines = new ArrayList<>(originalLines);

@@ -88,41 +88,30 @@ public class Log4J2LoggingSystem extends Slf4JLoggingSystem {
         LEVELS.map(LogLevel.OFF, Level.OFF);
     }
 
-    private static final Filter           FILTER        = new AbstractFilter() {
+    private static final Filter FILTER = new AbstractFilter() {
 
-                                                            @Override
-                                                            public Result filter(LogEvent event) {
-                                                                return Result.DENY;
-                                                            }
+        @Override
+        public Result filter(LogEvent event) {
+            return Result.DENY;
+        }
 
-                                                            @Override
-                                                            public Result filter(Logger logger,
-                                                                                 Level level,
-                                                                                 Marker marker,
-                                                                                 Message msg,
-                                                                                 Throwable t) {
-                                                                return Result.DENY;
-                                                            }
+        @Override
+        public Result filter(Logger logger, Level level, Marker marker, Message msg, Throwable t) {
+            return Result.DENY;
+        }
 
-                                                            @Override
-                                                            public Result filter(Logger logger,
-                                                                                 Level level,
-                                                                                 Marker marker,
-                                                                                 Object msg,
-                                                                                 Throwable t) {
-                                                                return Result.DENY;
-                                                            }
+        @Override
+        public Result filter(Logger logger, Level level, Marker marker, Object msg, Throwable t) {
+            return Result.DENY;
+        }
 
-                                                            @Override
-                                                            public Result filter(Logger logger,
-                                                                                 Level level,
-                                                                                 Marker marker,
-                                                                                 String msg,
-                                                                                 Object... params) {
-                                                                return Result.DENY;
-                                                            }
+        @Override
+        public Result filter(Logger logger, Level level, Marker marker, String msg,
+                             Object... params) {
+            return Result.DENY;
+        }
 
-                                                        };
+    };
 
     public Log4J2LoggingSystem(ClassLoader classLoader) {
         super(classLoader);
@@ -185,7 +174,8 @@ public class Log4J2LoggingSystem extends Slf4JLoggingSystem {
     }
 
     @Override
-    protected void loadDefaults(LoggingInitializationContext initializationContext, LogFile logFile) {
+    protected void loadDefaults(LoggingInitializationContext initializationContext,
+                                LogFile logFile) {
         if (logFile != null) {
             loadConfiguration(getPackagedConfigFile("log4j2-file.xml"), logFile,
                 getOverrides(initializationContext));
@@ -237,7 +227,8 @@ public class Log4J2LoggingSystem extends Slf4JLoggingSystem {
             for (String override : overrides) {
                 configurations.add(load(override, context));
             }
-            Configuration configuration = (configurations.size() > 1) ? createComposite(configurations)
+            Configuration configuration = (configurations.size() > 1)
+                ? createComposite(configurations)
                 : configurations.iterator().next();
             context.start(configuration);
         } catch (Exception ex) {
@@ -261,8 +252,8 @@ public class Log4J2LoggingSystem extends Slf4JLoggingSystem {
     }
 
     private CompositeConfiguration createComposite(List<Configuration> configurations) {
-        return new CompositeConfiguration(
-                configurations.stream().map(AbstractConfiguration.class::cast).collect(Collectors.toList()));
+        return new CompositeConfiguration(configurations.stream()
+            .map(AbstractConfiguration.class::cast).collect(Collectors.toList()));
     }
 
     @Override
@@ -285,8 +276,8 @@ public class Log4J2LoggingSystem extends Slf4JLoggingSystem {
             try {
                 configurations.add((AbstractConfiguration) load(override, context));
             } catch (IOException ex) {
-                throw new RuntimeException("Failed to load overriding configuration from '"
-                                           + override + "'", ex);
+                throw new RuntimeException(
+                    "Failed to load overriding configuration from '" + override + "'", ex);
             }
         }
         CompositeConfiguration composite = new CompositeConfiguration(configurations);
@@ -333,7 +324,8 @@ public class Log4J2LoggingSystem extends Slf4JLoggingSystem {
     @Override
     public List<LoggerConfiguration> getLoggerConfigurations() {
         List<LoggerConfiguration> result = new ArrayList<>();
-        getAllLoggers().forEach((name, loggerConfig) -> result.add(convertLoggerConfig(name, loggerConfig)));
+        getAllLoggers()
+            .forEach((name, loggerConfig) -> result.add(convertLoggerConfig(name, loggerConfig)));
         result.sort(CONFIGURATION_COMPARATOR);
         return result;
     }
@@ -349,7 +341,8 @@ public class Log4J2LoggingSystem extends Slf4JLoggingSystem {
         for (Logger logger : getLoggerContext().getLoggers()) {
             addLogger(loggers, logger.getName());
         }
-        getLoggerContext().getConfiguration().getLoggers().keySet().forEach((name) -> addLogger(loggers, name));
+        getLoggerContext().getConfiguration().getLoggers().keySet()
+            .forEach((name) -> addLogger(loggers, name));
         return loggers;
     }
 
@@ -373,8 +366,8 @@ public class Log4J2LoggingSystem extends Slf4JLoggingSystem {
         if (loggerConfig == null) {
             return null;
         }
-        LevelConfiguration effectiveLevelConfiguration = getLevelConfiguration(loggerConfig
-            .getLevel());
+        LevelConfiguration effectiveLevelConfiguration = getLevelConfiguration(
+            loggerConfig.getLevel());
         if (!StringUtils.hasLength(name) || LogManager.ROOT_LOGGER_NAME.equals(name)) {
             name = ROOT_LOGGER_NAME;
         }
@@ -387,8 +380,8 @@ public class Log4J2LoggingSystem extends Slf4JLoggingSystem {
 
     private LevelConfiguration getLevelConfiguration(Level level) {
         LogLevel logLevel = LEVELS.convertNativeToSystem(level);
-        return (logLevel != null) ? LevelConfiguration.of(logLevel) : LevelConfiguration
-            .ofCustom(level.name());
+        return (logLevel != null) ? LevelConfiguration.of(logLevel)
+            : LevelConfiguration.ofCustom(level.name());
     }
 
     @Override
@@ -418,8 +411,8 @@ public class Log4J2LoggingSystem extends Slf4JLoggingSystem {
     }
 
     private LoggerContext getLoggerContext() {
-        return (LoggerContext) LogManager.getContext(
-            Thread.currentThread().getContextClassLoader(), false);
+        return (LoggerContext) LogManager.getContext(Thread.currentThread().getContextClassLoader(),
+            false);
     }
 
     private boolean isAlreadyInitialized(LoggerContext loggerContext) {
@@ -440,10 +433,9 @@ public class Log4J2LoggingSystem extends Slf4JLoggingSystem {
     @Order(Ordered.LOWEST_PRECEDENCE)
     public static class Factory implements LoggingSystemFactory {
 
-        private static final boolean PRESENT = ClassUtils
-                                                 .isPresent(
-                                                     "org.apache.logging.log4j.core.impl.Log4jContextFactory",
-                                                     Factory.class.getClassLoader());
+        private static final boolean PRESENT = ClassUtils.isPresent(
+            "org.apache.logging.log4j.core.impl.Log4jContextFactory",
+            Factory.class.getClassLoader());
 
         @Override
         public LoggingSystem getLoggingSystem(ClassLoader classLoader) {

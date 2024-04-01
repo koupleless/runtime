@@ -26,14 +26,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class ExecutorServiceManager {
 
-    private static ThreadPoolExecutor ARK_BIZ_OPS_EXECUTOR = new ThreadPoolExecutor(
-                                                               20,
-                                                               50,
-                                                               30,
-                                                               TimeUnit.SECONDS,
-                                                               new ArrayBlockingQueue<>(100),
-                                                               new NamedThreadFactory("ark-biz-ops"),
-                                                               new ThreadPoolExecutor.CallerRunsPolicy());
+    private static ThreadPoolExecutor ARK_BIZ_OPS_EXECUTOR = new ThreadPoolExecutor(20, 50, 30,
+        TimeUnit.SECONDS, new ArrayBlockingQueue<>(100), new NamedThreadFactory("ark-biz-ops"),
+        new ThreadPoolExecutor.CallerRunsPolicy());
 
     public static ThreadPoolExecutor getArkBizOpsExecutor() {
         return ARK_BIZ_OPS_EXECUTOR;

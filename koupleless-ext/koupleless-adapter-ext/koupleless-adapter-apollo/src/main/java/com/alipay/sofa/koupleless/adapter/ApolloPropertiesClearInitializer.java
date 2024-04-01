@@ -34,7 +34,8 @@ public class ApolloPropertiesClearInitializer implements EnvironmentPostProcesso
     private int                   order                 = -1;
 
     private static final String[] NEED_CLEAR_PROPERTIES = { "app.id", "apollo.cacheDir",
-            "apollo.accesskey.secret", "apollo.property.order.enable" };
+                                                            "apollo.accesskey.secret",
+                                                            "apollo.property.order.enable" };
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment,
@@ -66,15 +67,18 @@ public class ApolloPropertiesClearInitializer implements EnvironmentPostProcesso
         MutablePropertySources customPropertySources = new MutablePropertySources();
         sourceEnvironment.getPropertySources().stream().forEach(it -> {
             String name = it.getName();
-            boolean notSystemProp = !StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME.equals(name);
-            boolean notSystemEnv = !StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME.equals(name);
+            boolean notSystemProp = !StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME
+                .equals(name);
+            boolean notSystemEnv = !StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME
+                .equals(name);
             if (notSystemProp && notSystemEnv) {
                 customPropertySources.addLast(it);
             }
         });
 
         // to adaptor SpringBoot 2.1.9: new AbstractEnvironment instance and copy property sources
-        ConfigurableEnvironment targetEnvironment = new AbstractEnvironment(){};
+        ConfigurableEnvironment targetEnvironment = new AbstractEnvironment() {
+        };
         MutablePropertySources envPropertySources = targetEnvironment.getPropertySources();
         customPropertySources.forEach(envPropertySources::addLast);
         return targetEnvironment;

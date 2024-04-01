@@ -63,9 +63,8 @@ public class InstallBizHandlerTest extends BaseHandlerTest {
         Input input = new Input();
         input.setBizUrl("testUrl");
 
-        when(
-            handler.getOperationService().install(input.getBizName(), input.getBizVersion(),
-                input.getBizUrl(), input.getArgs(), input.getEnvs())).thenReturn(success);
+        when(handler.getOperationService().install(input.getBizName(), input.getBizVersion(),
+            input.getBizUrl(), input.getArgs(), input.getEnvs())).thenReturn(success);
 
         Output<InstallBizHandler.InstallBizClientResponse> result = handler.handle(input);
 
@@ -80,9 +79,8 @@ public class InstallBizHandlerTest extends BaseHandlerTest {
         Input input = new Input();
         input.setBizUrl("testUrl");
 
-        when(
-            handler.getOperationService().install(input.getBizName(), input.getBizVersion(),
-                input.getBizUrl(), input.getArgs(), input.getEnvs())).thenReturn(failed);
+        when(handler.getOperationService().install(input.getBizName(), input.getBizVersion(),
+            input.getBizUrl(), input.getArgs(), input.getEnvs())).thenReturn(failed);
 
         Output<InstallBizHandler.InstallBizClientResponse> result = handler.handle(input);
 
@@ -113,7 +111,8 @@ public class InstallBizHandlerTest extends BaseHandlerTest {
     }
 
     @Test
-    public void testValidate_BlankBizName_BlankBizVersion() throws CommandValidationException, IOException {
+    public void testValidate_BlankBizName_BlankBizVersion() throws CommandValidationException,
+                                                            IOException {
         // 准备测试数据
         URL url = this.getClass().getClassLoader().getResource("test-biz.jar");
         String bizName = "sofa-ark-sample-springboot-ark";
@@ -124,10 +123,11 @@ public class InstallBizHandlerTest extends BaseHandlerTest {
         input.setBizVersion("");
         input.setBizUrl("file://" + url.getFile());
 
-
-        when(bizFactoryService.createBiz(any(File.class))).thenReturn(new CustomBiz(bizName, bizVersion));
+        when(bizFactoryService.createBiz(any(File.class)))
+            .thenReturn(new CustomBiz(bizName, bizVersion));
         arkClient.when(ArkClient::getBizFactoryService).thenReturn(bizFactoryService);
-        arkClient.when(() -> ArkClient.createBizSaveFile(anyString(), anyString())).thenReturn(new File(url.getFile()));
+        arkClient.when(() -> ArkClient.createBizSaveFile(anyString(), anyString()))
+            .thenReturn(new File(url.getFile()));
 
         // 执行测试
         handler.validate(input);
@@ -137,7 +137,7 @@ public class InstallBizHandlerTest extends BaseHandlerTest {
 
     @Test(expected = CommandValidationException.class)
     public void testValidate_BizName_BlankBizVersion() throws CommandValidationException,
-                                                      IOException {
+                                                       IOException {
         // 准备测试数据
         URL url = this.getClass().getClassLoader().getResource("test-biz.jar");
         String bizName = "sofa-ark-sample-springboot-ark";

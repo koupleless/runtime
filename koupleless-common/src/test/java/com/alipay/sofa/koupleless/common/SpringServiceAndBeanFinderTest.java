@@ -99,16 +99,19 @@ public class SpringServiceAndBeanFinderTest {
     @Test
     public void testSpringServiceInvoker() {
         ModuleBean moduleBean = SpringServiceFinder.getModuleService("biz1", "version1",
-                "moduleBean", ModuleBean.class);
+            "moduleBean", ModuleBean.class);
         Assert.assertNotNull(moduleBean);
         Mockito.when(bizManagerService.getBiz("biz1", "version1")).thenReturn(null);
-        Exception exception = Assert.assertThrows(BizRuntimeException.class, () -> moduleBean.test());
+        Exception exception = Assert.assertThrows(BizRuntimeException.class,
+            () -> moduleBean.test());
         Assert.assertEquals("biz biz1:version1 does not exist when called", exception.getMessage());
 
         Mockito.when(bizManagerService.getBiz("biz1", "version1")).thenReturn(biz1);
         Mockito.when(biz1.getBizState()).thenReturn(BizState.RESOLVED);
-        Exception exception1 = Assert.assertThrows(BizRuntimeException.class, () -> moduleBean.test());
-        Assert.assertEquals("biz biz1:version1 state resolved is not valid", exception1.getMessage());
+        Exception exception1 = Assert.assertThrows(BizRuntimeException.class,
+            () -> moduleBean.test());
+        Assert.assertEquals("biz biz1:version1 state resolved is not valid",
+            exception1.getMessage());
     }
 
     @Test
@@ -150,8 +153,8 @@ public class SpringServiceAndBeanFinderTest {
         URLClassLoader loader = new URLClassLoader(new URL[] { url }, null);
         Object newModuleBean = null;
         try {
-            Class<?> aClass = loader
-                .loadClass("com.alipay.sofa.koupleless.common.SpringServiceAndBeanFinderTest$ModuleBean");
+            Class<?> aClass = loader.loadClass(
+                "com.alipay.sofa.koupleless.common.SpringServiceAndBeanFinderTest$ModuleBean");
             newModuleBean = aClass.newInstance();
         } catch (Exception e) {
             System.out.println(e);
@@ -177,17 +180,18 @@ public class SpringServiceAndBeanFinderTest {
         Mockito.when(bizManagerService.getBiz("biz1", "version1")).thenReturn(biz1);
         Mockito.when(biz1.getBizState()).thenReturn(BizState.RESOLVED);
         Exception exception1 = Assert.assertThrows(BizRuntimeException.class, () -> {
-            SpringServiceFinder.getModuleService("biz1", "version1",
-                    "moduleBean", ModuleBean.class);
+            SpringServiceFinder.getModuleService("biz1", "version1", "moduleBean",
+                ModuleBean.class);
         });
-        Assert.assertEquals("biz biz1:version1 state resolved is not valid", exception1.getMessage());
+        Assert.assertEquals("biz biz1:version1 state resolved is not valid",
+            exception1.getMessage());
 
         Object newModuleBean = null;
         URL url = SpringServiceAndBeanFinderTest.class.getClassLoader().getResource("");
         URLClassLoader loader = new URLClassLoader(new URL[] { url }, null);
         try {
-            Class<?> aClass = loader
-                    .loadClass("com.alipay.sofa.koupleless.common.SpringServiceAndBeanFinderTest$ModuleBean");
+            Class<?> aClass = loader.loadClass(
+                "com.alipay.sofa.koupleless.common.SpringServiceAndBeanFinderTest$ModuleBean");
             newModuleBean = aClass.newInstance();
         } catch (Exception e) {
             System.out.println(e);
@@ -199,8 +203,8 @@ public class SpringServiceAndBeanFinderTest {
         biz1Runtime.setRootApplicationContext(null);
         BizRuntimeContextRegistry.registerBizRuntimeManager(biz1Runtime);
         Exception exception2 = Assert.assertThrows(BizRuntimeException.class, () -> {
-            SpringServiceFinder.getModuleService("biz1", "version1",
-                    "moduleBean", ModuleBean.class);
+            SpringServiceFinder.getModuleService("biz1", "version1", "moduleBean",
+                ModuleBean.class);
         });
         Assert.assertEquals("biz biz1:version1 spring context is null", exception2.getMessage());
     }
@@ -221,8 +225,8 @@ public class SpringServiceAndBeanFinderTest {
         URLClassLoader loader = new URLClassLoader(new URL[] { url }, null);
         Object newModuleBean = null;
         try {
-            Class<?> aClass = loader
-                .loadClass("com.alipay.sofa.koupleless.common.SpringServiceAndBeanFinderTest$ModuleBean");
+            Class<?> aClass = loader.loadClass(
+                "com.alipay.sofa.koupleless.common.SpringServiceAndBeanFinderTest$ModuleBean");
             newModuleBean = aClass.newInstance();
         } catch (Exception e) {
             System.out.println(e);
@@ -278,8 +282,8 @@ public class SpringServiceAndBeanFinderTest {
         URLClassLoader loader = new URLClassLoader(new URL[] { url }, null);
         Object newModuleBean = null;
         try {
-            Class<?> aClass = loader
-                .loadClass("com.alipay.sofa.koupleless.common.SpringServiceAndBeanFinderTest$ModuleBean");
+            Class<?> aClass = loader.loadClass(
+                "com.alipay.sofa.koupleless.common.SpringServiceAndBeanFinderTest$ModuleBean");
             newModuleBean = aClass.newInstance();
         } catch (Exception e) {
             System.out.println(e);
