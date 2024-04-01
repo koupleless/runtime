@@ -56,9 +56,8 @@ public class SOFAArkTestClassLoaderHookTest {
         sofaArkTestClassLoaderHook.putHigherPriorityResourceArtifacts("test:TEST", artifacts);
 
         ClassLoaderService classLoaderService = mock(ClassLoaderService.class);
-        doReturn(new URLClassLoader(new URL[] { resource }),
-            Thread.currentThread().getContextClassLoader()).when(classLoaderService)
-            .getMasterBizClassLoader();
+        URLClassLoader classLoader = new URLClassLoader(new URL[] { resource });
+        doReturn(classLoader).when(classLoaderService).getMasterBizClassLoader();
 
         URL url = sofaArkTestClassLoaderHook.preFindResource("META-INF/MANIFEST.MF",
             classLoaderService, new BizModel().setBizName("test").setBizVersion("TEST"));
