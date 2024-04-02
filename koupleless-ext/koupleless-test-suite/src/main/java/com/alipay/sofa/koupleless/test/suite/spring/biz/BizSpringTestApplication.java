@@ -20,10 +20,10 @@ import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.spi.event.biz.AfterBizStartupEvent;
 import com.alipay.sofa.ark.spi.event.biz.BeforeBizStartupEvent;
 import com.alipay.sofa.ark.spi.service.event.EventAdminService;
-import com.alipay.sofa.koupleless.test.suite.biz.SOFAArkTestBiz;
-import com.alipay.sofa.koupleless.test.suite.biz.SOFAArkTestBizConfig;
-import com.alipay.sofa.koupleless.test.suite.spring.framwork.KouplelessSpringTestUtils;
-import com.alipay.sofa.koupleless.test.suite.spring.model.KouplelessBizSpringTestConfig;
+import com.alipay.sofa.koupleless.test.suite.biz.TestBizModel;
+import com.alipay.sofa.koupleless.test.suite.biz.TestBizConfig;
+import com.alipay.sofa.koupleless.test.suite.spring.framwork.SpringTestUtils;
+import com.alipay.sofa.koupleless.test.suite.spring.model.BizSpringTestConfig;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.apache.commons.collections4.CollectionUtils;
@@ -43,23 +43,23 @@ import java.util.stream.Collectors;
  * @date 2024/3/6
  */
 @Getter
-public class KouplelessBizSpringTestApplication {
+public class BizSpringTestApplication {
 
-    private SOFAArkTestBiz                 testBiz;
+    private TestBizModel                   testBiz;
 
     private ConfigurableApplicationContext applicationContext;
 
-    private KouplelessBizSpringTestConfig  config;
+    private BizSpringTestConfig            config;
 
     @SneakyThrows
-    public KouplelessBizSpringTestApplication(KouplelessBizSpringTestConfig config) {
+    public BizSpringTestApplication(BizSpringTestConfig config) {
         config.init();
         this.config = config;
     }
 
     public boolean isExcludedDependency(String dependency) {
-        for (String regexp : CollectionUtils.emptyIfNull(
-            KouplelessSpringTestUtils.getConfig().getBiz().getExcludeDependencyRegexps())) {
+        for (String regexp : CollectionUtils
+            .emptyIfNull(SpringTestUtils.getConfig().getBiz().getExcludeDependencyRegexps())) {
             if (dependency.matches(".*" + regexp + ".*")) {
                 return true;
             }
@@ -85,7 +85,7 @@ public class KouplelessBizSpringTestApplication {
             }
         }
 
-        testBiz = new SOFAArkTestBiz(SOFAArkTestBizConfig.builder().bootstrapClassName("")
+        testBiz = new TestBizModel(TestBizConfig.builder().bootstrapClassName("")
             .bizName(config.getBizName()).bizVersion("TEST").testClassNames(new ArrayList<>())
             .includeClassPatterns(includeClassPatterns)
             .baseClassLoader(new URLClassLoader(excludedUrls.toArray(new URL[0]), tccl.getParent()))

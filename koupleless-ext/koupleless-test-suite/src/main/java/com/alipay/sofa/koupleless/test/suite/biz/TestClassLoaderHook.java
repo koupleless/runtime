@@ -39,7 +39,7 @@ import java.util.jar.JarFile;
  * @author CodeNoobKing
  * @date 2024/3/21
  **/
-public class SOFAArkTestClassLoaderHook extends DelegateToMasterBizClassLoaderHook {
+public class TestClassLoaderHook extends DelegateToMasterBizClassLoaderHook {
 
     @Setter
     private static String                       buildDirectory                  = "target/classes";

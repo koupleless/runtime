@@ -18,7 +18,7 @@ package com.alipay.sofa.koupleless.test.suite;
 
 import com.alipay.sofa.ark.container.model.BizModel;
 import com.alipay.sofa.ark.spi.service.classloader.ClassLoaderService;
-import com.alipay.sofa.koupleless.test.suite.biz.SOFAArkTestClassLoaderHook;
+import com.alipay.sofa.koupleless.test.suite.biz.TestClassLoaderHook;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -43,9 +43,9 @@ import static org.mockito.Mockito.mock;
  * @date 2024/3/21
  **/
 @RunWith(MockitoJUnitRunner.class)
-public class SOFAArkTestClassLoaderHookTest {
+public class TestClassLoaderHookTest {
 
-    private SOFAArkTestClassLoaderHook sofaArkTestClassLoaderHook = new SOFAArkTestClassLoaderHook();
+    private TestClassLoaderHook testClassLoaderHook = new TestClassLoaderHook();
 
     @Test
     public void testLoadResourceInsideJar() throws Throwable {
@@ -53,15 +53,15 @@ public class SOFAArkTestClassLoaderHookTest {
         artifacts.add("demo-executable");
 
         URL resource = getClass().getClassLoader().getResource("demo-executable.jar");
-        sofaArkTestClassLoaderHook.putHigherPriorityResourceArtifacts("test:TEST", artifacts);
+        testClassLoaderHook.putHigherPriorityResourceArtifacts("test:TEST", artifacts);
 
         ClassLoaderService classLoaderService = mock(ClassLoaderService.class);
         doReturn(new URLClassLoader(new URL[] { resource }),
             Thread.currentThread().getContextClassLoader()).when(classLoaderService)
                 .getMasterBizClassLoader();
 
-        URL url = sofaArkTestClassLoaderHook.preFindResource("META-INF/MANIFEST.MF",
-            classLoaderService, new BizModel().setBizName("test").setBizVersion("TEST"));
+        URL url = testClassLoaderHook.preFindResource("META-INF/MANIFEST.MF", classLoaderService,
+            new BizModel().setBizName("test").setBizVersion("TEST"));
 
         InputStream inputStream = url.openConnection().getInputStream();
         InputStreamReader reader = new InputStreamReader(inputStream);
@@ -71,7 +71,7 @@ public class SOFAArkTestClassLoaderHookTest {
 
     @Test
     public void testLoadResourceInsideBuildDirectory() throws Throwable {
-        SOFAArkTestClassLoaderHook.setBuildDirectory("testtarget/classes");
+        TestClassLoaderHook.setBuildDirectory("testtarget/classes");
 
         List<String> artifacts = new ArrayList<>();
         artifacts.add("project");
@@ -80,15 +80,15 @@ public class SOFAArkTestClassLoaderHookTest {
             .get(new File(getClass().getClassLoader().getResource("demo-executable.jar").getPath())
                 .getParent(), "project", "testtarget", "classes");
 
-        sofaArkTestClassLoaderHook.putHigherPriorityResourceArtifacts("test:TEST", artifacts);
+        testClassLoaderHook.putHigherPriorityResourceArtifacts("test:TEST", artifacts);
 
         ClassLoaderService classLoaderService = mock(ClassLoaderService.class);
         doReturn(new URLClassLoader(new URL[] { new File(dir.toString()).toURI().toURL() }),
             Thread.currentThread().getContextClassLoader()).when(classLoaderService)
                 .getMasterBizClassLoader();
 
-        URL url = sofaArkTestClassLoaderHook.preFindResource("META-INF/MANIFEST.MF",
-            classLoaderService, new BizModel().setBizName("test").setBizVersion("TEST"));
+        URL url = testClassLoaderHook.preFindResource("META-INF/MANIFEST.MF", classLoaderService,
+            new BizModel().setBizName("test").setBizVersion("TEST"));
 
         InputStream inputStream = url.openConnection().getInputStream();
         InputStreamReader reader = new InputStreamReader(inputStream);

@@ -16,7 +16,6 @@
  */
 package com.alipay.sofa.koupleless.test.suite.mojo;
 
-import com.alipay.sofa.koupleless.test.suite.mock.TestJunit4Class;
 import org.apache.maven.model.Build;
 import org.apache.maven.project.MavenProject;
 import org.junit.Assert;
@@ -33,11 +32,11 @@ import java.net.URL;
  * @date 2024/2/20
  */
 @RunWith(MockitoJUnitRunner.class)
-public class KouplelessCompatibleTestMojoTest {
+public class CompatibleTestMojoTest {
     @InjectMocks
-    private KouplelessCompatibleTestMojo mojo;
+    private CompatibleTestMojo mojo;
 
-    MavenProject                         project = new MavenProject();
+    MavenProject               project = new MavenProject();
 
     @Before
     public void setUpProject() {

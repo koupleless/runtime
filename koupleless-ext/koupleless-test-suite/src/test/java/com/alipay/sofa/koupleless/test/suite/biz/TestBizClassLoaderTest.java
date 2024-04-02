@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
  * @author CodeNoobKing
  * @date 2024/2/20
  */
-public class SOFAArkTestBizClassLoaderTest {
+public class TestBizClassLoaderTest {
 
     private URLClassLoader baseClassLoader = new URLClassLoader(
         ((URLClassLoader) Thread.currentThread().getContextClassLoader()).getURLs(),
@@ -38,7 +38,7 @@ public class SOFAArkTestBizClassLoaderTest {
 
     @Test
     public void testResolveLocalClass() throws Throwable {
-        SOFAArkTestBootstrap.init(baseClassLoader);
+        TestBootstrap.init(baseClassLoader);
 
         String bizIdentity = "bizIdentity";
         List<String> includeClassNames = new ArrayList<>();
@@ -46,7 +46,7 @@ public class SOFAArkTestBizClassLoaderTest {
         List<Pattern> includeClassPatterns = new ArrayList<>();
         includeClassPatterns.add(Pattern.compile(".*mock\\.LoadByTestBizClassB.*"));
 
-        SOFAArkTestBizClassLoader testBizClassLoader = new SOFAArkTestBizClassLoader(bizIdentity,
+        TestBizClassLoader testBizClassLoader = new TestBizClassLoader(bizIdentity,
             includeClassNames, includeClassPatterns, baseClassLoader);
         Assert.assertNull(testBizClassLoader.resolveLocalClass(LoadByBaseClass.class.getName()));
 

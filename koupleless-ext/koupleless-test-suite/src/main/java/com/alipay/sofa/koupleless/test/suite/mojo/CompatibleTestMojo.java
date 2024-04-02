@@ -16,9 +16,9 @@
  */
 package com.alipay.sofa.koupleless.test.suite.mojo;
 
-import com.alipay.sofa.koupleless.test.suite.biz.SOFAArkTestBizConfig;
-import com.alipay.sofa.koupleless.test.suite.biz.SOFAArkTestBootstrap;
-import com.alipay.sofa.koupleless.test.suite.biz.SOFAArkTestBiz;
+import com.alipay.sofa.koupleless.test.suite.biz.TestBizConfig;
+import com.alipay.sofa.koupleless.test.suite.biz.TestBootstrap;
+import com.alipay.sofa.koupleless.test.suite.biz.TestBizModel;
 import com.alipay.sofa.koupleless.test.suite.model.CompatibleTestBizConfig;
 import com.alipay.sofa.koupleless.test.suite.model.CompatibleTestConfig;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -35,7 +35,6 @@ import org.apache.maven.plugins.annotations.*;
 import org.apache.maven.project.MavenProject;
 
 import java.io.File;
-import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Paths;
@@ -50,7 +49,7 @@ import org.junit.runner.Result;
  * @date 2024/1/15
  */
 @Mojo(name = "compatible-test", defaultPhase = LifecyclePhase.INTEGRATION_TEST, requiresDependencyResolution = ResolutionScope.COMPILE)
-public class KouplelessCompatibleTestMojo extends AbstractMojo {
+public class CompatibleTestMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${project}", readonly = true)
     MavenProject         project;
@@ -89,7 +88,7 @@ public class KouplelessCompatibleTestMojo extends AbstractMojo {
             });
     }
 
-    private List<SOFAArkTestBiz> buildTestBiz(URLClassLoader baseClassLoader) {
+    private List<TestBizModel> buildTestBiz(URLClassLoader baseClassLoader) {
         CompatibleTestConfig configs = loadConfigs();
 
         // if root project classes is not configured to include by class loader
@@ -101,12 +100,12 @@ public class KouplelessCompatibleTestMojo extends AbstractMojo {
         rootProjectClasses.add(
             Paths.get(project.getBuild().getTestOutputDirectory()).toAbsolutePath().toString());
 
-        List<SOFAArkTestBiz> result = new ArrayList<>();
+        List<TestBizModel> result = new ArrayList<>();
         for (CompatibleTestBizConfig config : CollectionUtils
             .emptyIfNull(configs.getTestBizConfigs())) {
 
-            SOFAArkTestBiz testBiz = new SOFAArkTestBiz(
-                SOFAArkTestBizConfig.builder().bootstrapClassName(config.getBootstrapClass())
+            TestBizModel testBiz = new TestBizModel(
+                TestBizConfig.builder().bootstrapClassName(config.getBootstrapClass())
                     .bizName(config.getName()).bizVersion(project.getVersion())
                     .testClassNames(ListUtils.emptyIfNull(config.getTestClasses()))
                     .includeClassPatterns(ListUtils.union(
@@ -122,10 +121,10 @@ public class KouplelessCompatibleTestMojo extends AbstractMojo {
     @SneakyThrows
     public void executeJunit4() {
         URLClassLoader baseClassLoader = buildURLClassLoader();
-        SOFAArkTestBootstrap.init(baseClassLoader);
-        SOFAArkTestBootstrap.registerMasterBiz();
-        List<SOFAArkTestBiz> sofaArkTestBizs = buildTestBiz(baseClassLoader);
-        for (SOFAArkTestBiz sofaArkTestBiz : sofaArkTestBizs) {
+        TestBootstrap.init(baseClassLoader);
+        TestBootstrap.registerMasterBiz();
+        List<TestBizModel> sofaArkTestBizs = buildTestBiz(baseClassLoader);
+        for (TestBizModel sofaArkTestBiz : sofaArkTestBizs) {
             getLog().info(String.format("%s, CompatibleTestStarted", sofaArkTestBiz.getIdentity()));
 
             sofaArkTestBiz.executeTest(new Runnable() {

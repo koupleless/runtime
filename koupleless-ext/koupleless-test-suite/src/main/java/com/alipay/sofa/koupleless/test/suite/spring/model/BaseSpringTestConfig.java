@@ -23,10 +23,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.sisu.wire.ParameterKeys;
 
 import java.net.URL;
-import java.util.List;
 
 /**
  * @author CodeNoobKing
@@ -36,7 +34,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Builder
-public class KouplelessBaseSpringTestConfig {
+public class BaseSpringTestConfig {
 
     private Class<?> mainClass;
 

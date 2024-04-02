@@ -32,7 +32,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Builder
-public class SOFAArkTestBizConfig {
+public class TestBizConfig {
     private String         bootstrapClassName;
     private String         bizName;
     private String         bizVersion;

@@ -36,11 +36,11 @@ import java.util.stream.Collectors;
 /**
  * SOFAArk 的测试 BIZ 类。
  */
-public class SOFAArkTestBiz extends BizModel {
+public class TestBizModel extends BizModel {
 
-    private SOFAArkTestBizConfig config;
+    private TestBizConfig config;
 
-    public SOFAArkTestBiz(SOFAArkTestBizConfig config) {
+    public TestBizModel(TestBizConfig config) {
 
         super();
         this.config = config;
@@ -59,9 +59,8 @@ public class SOFAArkTestBiz extends BizModel {
             .setDenyImportPackages("").setPluginClassPath(pluginUrls.toArray(new URL[0]));
         registerBiz();
 
-        SOFAArkTestBizClassLoader testBizClassLoader = new SOFAArkTestBizClassLoader(
-            config.getBizName(), config.getTestClassNames(), compiledIncludeClassPatterns,
-            config.getBaseClassLoader());
+        TestBizClassLoader testBizClassLoader = new TestBizClassLoader(config.getBizName(),
+            config.getTestClassNames(), compiledIncludeClassPatterns, config.getBaseClassLoader());
         testBizClassLoader.setBizModel(this);
         testBizClassLoader.setBizIdentity(this.getIdentity());
         this.setClassLoader(testBizClassLoader);

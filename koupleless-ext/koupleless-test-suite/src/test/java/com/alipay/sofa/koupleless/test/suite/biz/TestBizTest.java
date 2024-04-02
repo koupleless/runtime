@@ -28,24 +28,24 @@ import java.util.List;
  * @author CodeNoobKing
  * @date 2024/2/20
  */
-public class SOFAArkTestBizTest {
+public class TestBizTest {
 
-    private static SOFAArkTestBiz testBiz;
+    private static TestBizModel testBiz;
 
     @BeforeClass
     public static void setUp() {
-        SOFAArkTestBootstrap.init(SOFAArkTestBizTest.class.getClassLoader());
+        TestBootstrap.init(TestBizTest.class.getClassLoader());
 
         List<String> testClassNames = new ArrayList<>();
         testClassNames.add("com.alipay.sofa.koupleless.test.suite.mock.LoadByTestBizClassA");
         testClassNames.add("com.alipay.sofa.koupleless.test.suite.mock.LoadByTestBizClassB");
         List<String> includeClassPatterns = new ArrayList<>();
 
-        testBiz = new SOFAArkTestBiz(SOFAArkTestBizConfig.builder()
+        testBiz = new TestBizModel(TestBizConfig.builder()
             .bootstrapClassName("com.alipay.sofa.koupleless.test.suite.mock.BootStrapClass")
             .bizName("test").bizVersion("1.0.0").testClassNames(testClassNames)
             .includeClassPatterns(includeClassPatterns)
-            .baseClassLoader((URLClassLoader) SOFAArkTestBizTest.class.getClassLoader()).build());
+            .baseClassLoader((URLClassLoader) TestBizTest.class.getClassLoader()).build());
     }
 
     @Test
@@ -59,8 +59,8 @@ public class SOFAArkTestBizTest {
         Assert.assertEquals(2, testBiz.getTestClasses().size());
 
         testBiz.executeTest(() -> {
-            Assert.assertTrue(Thread.currentThread()
-                .getContextClassLoader() instanceof SOFAArkTestBizClassLoader);
+            Assert.assertTrue(
+                Thread.currentThread().getContextClassLoader() instanceof TestBizClassLoader);
         });
     }
 }

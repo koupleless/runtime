@@ -21,14 +21,30 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author CodeNoobKing
  * @date 2024/3/11
  */
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @Data
-public class KouplelessSpringTestConfig {
-    private KouplelessSpringTestBizConfig biz;
+@Builder
+public class MultiSpringTestConfig {
+
+    private BaseSpringTestConfig      baseConfig;
+
+    private List<BizSpringTestConfig> bizConfigs;
+
+    public void init() {
+        baseConfig.init();
+        if (bizConfigs == null) {
+            bizConfigs = new ArrayList<>();
+        }
+        for (BizSpringTestConfig bizConfig : bizConfigs) {
+            bizConfig.init();
+        }
+    }
 }

@@ -21,11 +21,11 @@ package com.alipay.sofa.koupleless.test.suite.spring.multi;
  * @date 2024/3/11
  */
 
-import com.alipay.sofa.koupleless.test.suite.biz.SOFAArkTestBootstrap;
-import com.alipay.sofa.koupleless.test.suite.spring.base.KouplelessBaseSpringTestApplication;
-import com.alipay.sofa.koupleless.test.suite.spring.biz.KouplelessBizSpringTestApplication;
-import com.alipay.sofa.koupleless.test.suite.spring.model.KouplelessBizSpringTestConfig;
-import com.alipay.sofa.koupleless.test.suite.spring.model.KouplelessMultiSpringTestConfig;
+import com.alipay.sofa.koupleless.test.suite.biz.TestBootstrap;
+import com.alipay.sofa.koupleless.test.suite.spring.base.BaseSpringTestApplication;
+import com.alipay.sofa.koupleless.test.suite.spring.biz.BizSpringTestApplication;
+import com.alipay.sofa.koupleless.test.suite.spring.model.BizSpringTestConfig;
+import com.alipay.sofa.koupleless.test.suite.spring.model.MultiSpringTestConfig;
 import lombok.Getter;
 
 import java.util.*;
@@ -34,22 +34,22 @@ import java.util.*;
  * @author CodeNoobKing
  * @date 2024/3/7
  */
-public class KouplelessTestMultiSpringApplication {
+public class TestMultiSpringApplication {
 
     @Getter
-    private KouplelessBaseSpringTestApplication             baseApplication;
+    private BaseSpringTestApplication             baseApplication;
 
-    private Map<String, KouplelessBizSpringTestApplication> bizApplications = new HashMap<>();
+    private Map<String, BizSpringTestApplication> bizApplications = new HashMap<>();
 
-    public KouplelessBizSpringTestApplication getBizApplication(String bizName) {
+    public BizSpringTestApplication getBizApplication(String bizName) {
         return bizApplications.get(bizName);
     }
 
-    public KouplelessTestMultiSpringApplication(KouplelessMultiSpringTestConfig config) {
-        this.baseApplication = new KouplelessBaseSpringTestApplication(config.getBaseConfig());
-        for (KouplelessBizSpringTestConfig bizConfig : config.getBizConfigs()) {
+    public TestMultiSpringApplication(MultiSpringTestConfig config) {
+        this.baseApplication = new BaseSpringTestApplication(config.getBaseConfig());
+        for (BizSpringTestConfig bizConfig : config.getBizConfigs()) {
             this.bizApplications.put(bizConfig.getBizName(),
-                new KouplelessBizSpringTestApplication(bizConfig));
+                new BizSpringTestApplication(bizConfig));
         }
     }
 
@@ -67,15 +67,14 @@ public class KouplelessTestMultiSpringApplication {
     }
 
     public void bootStrapTest() {
-        SOFAArkTestBootstrap.init(baseApplication.getBaseClassLoader());
-        for (Map.Entry<String, KouplelessBizSpringTestApplication> entry : bizApplications
-            .entrySet()) {
-            KouplelessBizSpringTestApplication app = entry.getValue();
+        TestBootstrap.init(baseApplication.getBaseClassLoader());
+        for (Map.Entry<String, BizSpringTestApplication> entry : bizApplications.entrySet()) {
+            BizSpringTestApplication app = entry.getValue();
             String bizIdentity = app.getConfig().getBizName() + ":TEST";
             String artifactId = app.getConfig().getArtifactId();
             List<String> artifacts = Arrays.asList(artifactId, app.getConfig().getBizName());
-            SOFAArkTestBootstrap.getClassLoaderHook()
-                .putHigherPriorityResourceArtifacts(bizIdentity, artifacts);
+            TestBootstrap.getClassLoaderHook().putHigherPriorityResourceArtifacts(bizIdentity,
+                artifacts);
         }
     }
 

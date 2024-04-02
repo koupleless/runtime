@@ -15,5 +15,6 @@
     <modules>
         <module>koupleless-ext-web-gateway</module>
         <module>koupleless-adapter-ext</module>
+        <module>koupleless-test-suite</module>
     </modules>
 </project>

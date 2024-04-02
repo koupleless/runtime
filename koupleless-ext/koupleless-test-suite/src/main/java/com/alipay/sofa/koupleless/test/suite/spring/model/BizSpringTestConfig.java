@@ -37,7 +37,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Builder
-public class KouplelessBizSpringTestConfig {
+public class BizSpringTestConfig {
     /**
      * 包名。
      */

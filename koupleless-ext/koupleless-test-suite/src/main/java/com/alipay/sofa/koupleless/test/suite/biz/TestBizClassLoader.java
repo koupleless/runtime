@@ -27,7 +27,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
-public class SOFAArkTestBizClassLoader extends BizClassLoader {
+public class TestBizClassLoader extends BizClassLoader {
 
     private List<Object> resolveByClassLoaderPatterns;
 
@@ -35,7 +35,7 @@ public class SOFAArkTestBizClassLoader extends BizClassLoader {
     private void initHook() {
         Field bizClassLoaderHookField = BizClassLoader.class.getDeclaredField("bizClassLoaderHook");
         bizClassLoaderHookField.setAccessible(true);
-        bizClassLoaderHookField.set(this, SOFAArkTestBootstrap.getClassLoaderHook());
+        bizClassLoaderHookField.set(this, TestBootstrap.getClassLoaderHook());
         bizClassLoaderHookField.setAccessible(false);
 
         Field bizClassLoaderIsHookLoadedField = BizClassLoader.class
@@ -46,9 +46,8 @@ public class SOFAArkTestBizClassLoader extends BizClassLoader {
 
     }
 
-    public SOFAArkTestBizClassLoader(String bizIdentity, List<String> includeClassNames,
-                                     List<Pattern> includeClassPatterns,
-                                     URLClassLoader baseClassLoader) {
+    public TestBizClassLoader(String bizIdentity, List<String> includeClassNames,
+                              List<Pattern> includeClassPatterns, URLClassLoader baseClassLoader) {
         super(bizIdentity, baseClassLoader.getURLs());
         initHook();
         this.resolveByClassLoaderPatterns = new ArrayList<>();

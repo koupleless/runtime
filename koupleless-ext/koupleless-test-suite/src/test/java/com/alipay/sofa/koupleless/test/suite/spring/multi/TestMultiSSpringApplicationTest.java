@@ -16,11 +16,10 @@
  */
 package com.alipay.sofa.koupleless.test.suite.spring.multi;
 
-import com.alipay.sofa.koupleless.test.suite.spring.mock.biz.Application;
 import com.alipay.sofa.koupleless.test.suite.spring.mock.common.HelloService;
-import com.alipay.sofa.koupleless.test.suite.spring.model.KouplelessBaseSpringTestConfig;
-import com.alipay.sofa.koupleless.test.suite.spring.model.KouplelessBizSpringTestConfig;
-import com.alipay.sofa.koupleless.test.suite.spring.model.KouplelessMultiSpringTestConfig;
+import com.alipay.sofa.koupleless.test.suite.spring.model.BaseSpringTestConfig;
+import com.alipay.sofa.koupleless.test.suite.spring.model.BizSpringTestConfig;
+import com.alipay.sofa.koupleless.test.suite.spring.model.MultiSpringTestConfig;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -31,22 +30,21 @@ import java.util.List;
  * @author CodeNoobKing
  * @date 2024/3/11
  */
-public class KouplelessTestMultiSSpringApplicationTest {
+public class TestMultiSSpringApplicationTest {
 
     @Test
     public void testMultiApplicationLaunched() throws Throwable {
-        KouplelessBaseSpringTestConfig baseConfig = KouplelessBaseSpringTestConfig.builder()
+        BaseSpringTestConfig baseConfig = BaseSpringTestConfig.builder()
             .mainClass(com.alipay.sofa.koupleless.test.suite.spring.mock.base.Application.class)
             .build();
 
-        List<KouplelessBizSpringTestConfig> bizConfigs = new ArrayList<>();
-        bizConfigs.add(KouplelessBizSpringTestConfig.builder().bizName("biz0")
+        List<BizSpringTestConfig> bizConfigs = new ArrayList<>();
+        bizConfigs.add(BizSpringTestConfig.builder().bizName("biz0")
             .mainClass(com.alipay.sofa.koupleless.test.suite.spring.mock.biz.Application.class)
             .build());
 
-        KouplelessTestMultiSpringApplication application = new KouplelessTestMultiSpringApplication(
-            KouplelessMultiSpringTestConfig.builder().baseConfig(baseConfig).bizConfigs(bizConfigs)
-                .build());
+        TestMultiSpringApplication application = new TestMultiSpringApplication(
+            MultiSpringTestConfig.builder().baseConfig(baseConfig).bizConfigs(bizConfigs).build());
 
         application.run();
         Thread.sleep(1_000);

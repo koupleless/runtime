@@ -32,19 +32,7 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 @Builder
-public class KouplelessMultiSpringTestConfig {
-
-    private KouplelessBaseSpringTestConfig      baseConfig;
-
-    private List<KouplelessBizSpringTestConfig> bizConfigs;
-
-    public void init() {
-        baseConfig.init();
-        if (bizConfigs == null) {
-            bizConfigs = new ArrayList<>();
-        }
-        for (KouplelessBizSpringTestConfig bizConfig : bizConfigs) {
-            bizConfig.init();
-        }
-    }
+public class SpringTestBizConfig {
+    @Builder.Default
+    private List<String> excludeDependencyRegexps = new ArrayList<>();
 }

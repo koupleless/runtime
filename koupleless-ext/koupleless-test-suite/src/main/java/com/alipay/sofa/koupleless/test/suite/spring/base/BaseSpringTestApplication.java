@@ -20,22 +20,19 @@ import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.api.ArkConfigs;
 import com.alipay.sofa.koupleless.common.BizRuntimeContext;
 import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
-import com.alipay.sofa.koupleless.test.suite.biz.SOFAArkTestBootstrap;
-import com.alipay.sofa.koupleless.test.suite.spring.model.KouplelessBaseSpringTestConfig;
+import com.alipay.sofa.koupleless.test.suite.biz.TestBootstrap;
+import com.alipay.sofa.koupleless.test.suite.spring.model.BaseSpringTestConfig;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.codehaus.plexus.util.StringUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.DefaultResourceLoader;
 
-import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import static com.alipay.sofa.ark.spi.constant.Constants.MASTER_BIZ;
@@ -45,9 +42,9 @@ import static com.alipay.sofa.ark.spi.constant.Constants.MASTER_BIZ;
  * @date 2024/3/8
  */
 @Getter
-public class KouplelessBaseSpringTestApplication {
+public class BaseSpringTestApplication {
 
-    private KouplelessBaseSpringTestConfig config;
+    private BaseSpringTestConfig           config;
 
     private ConfigurableApplicationContext applicationContext;
 
@@ -60,7 +57,7 @@ public class KouplelessBaseSpringTestApplication {
             baseClassLoader);
     }
 
-    public KouplelessBaseSpringTestApplication(KouplelessBaseSpringTestConfig config) {
+    public BaseSpringTestApplication(BaseSpringTestConfig config) {
         config.init();
         this.config = config;
     }
@@ -81,8 +78,7 @@ public class KouplelessBaseSpringTestApplication {
             @Override
             public void setListeners(Collection<? extends ApplicationListener<?>> listeners) {
                 super.setListeners(listeners.stream()
-                    .filter(
-                        KouplelessBaseSpringTestApplication.this::isNotArkApplicationStartListener)
+                    .filter(BaseSpringTestApplication.this::isNotArkApplicationStartListener)
                     .collect(Collectors.toList()));
             }
         };
@@ -92,7 +88,7 @@ public class KouplelessBaseSpringTestApplication {
             .addListeners(new ApplicationListener<ApplicationEnvironmentPreparedEvent>() {
                 @Override
                 public void onApplicationEvent(ApplicationEnvironmentPreparedEvent event) {
-                    SOFAArkTestBootstrap.registerMasterBiz();
+                    TestBootstrap.registerMasterBiz();
                     ArkConfigs.setSystemProperty(MASTER_BIZ, ArkClient.getMasterBiz().getBizName());
                     BizRuntimeContext bizRuntimeContext = new BizRuntimeContext(
                         ArkClient.getMasterBiz());

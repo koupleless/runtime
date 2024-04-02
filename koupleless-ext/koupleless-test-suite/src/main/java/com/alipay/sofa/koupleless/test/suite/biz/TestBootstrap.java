@@ -17,7 +17,6 @@
 package com.alipay.sofa.koupleless.test.suite.biz;
 
 import com.alipay.sofa.ark.api.ArkClient;
-import com.alipay.sofa.ark.api.ArkConfigs;
 import com.alipay.sofa.ark.container.model.BizModel;
 import com.alipay.sofa.ark.container.registry.ContainerServiceProvider;
 import com.alipay.sofa.ark.container.service.ArkServiceContainer;
@@ -48,22 +47,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.alipay.sofa.ark.spi.constant.Constants.MASTER_BIZ;
-
-public class SOFAArkTestBootstrap {
+public class TestBootstrap {
 
     @Getter
-    private static URLClassLoader             baseClassLoader;
+    private static URLClassLoader      baseClassLoader;
 
-    private static ArkServiceContainer        INSTANCE            = new ArkServiceContainer(
-        new String[0]);
-    private static AtomicBoolean              started             = new AtomicBoolean();
-    private static AtomicBoolean              masterBizRegistered = new AtomicBoolean();
+    private static ArkServiceContainer INSTANCE            = new ArkServiceContainer(new String[0]);
+    private static AtomicBoolean       started             = new AtomicBoolean();
+    private static AtomicBoolean       masterBizRegistered = new AtomicBoolean();
 
-    private static List<String>               pluginDependencies  = new ArrayList<>();
+    private static List<String>        pluginDependencies  = new ArrayList<>();
 
     @Getter
-    private static SOFAArkTestClassLoaderHook classLoaderHook     = new SOFAArkTestClassLoaderHook();
+    private static TestClassLoaderHook classLoaderHook     = new TestClassLoaderHook();
 
     private static boolean isPluginDependency(String path) {
         return pluginDependencies.stream().anyMatch(plugin -> StringUtils.contains(path, plugin));
@@ -75,7 +71,7 @@ public class SOFAArkTestBootstrap {
         pluginDependencies.add("koupleless-base-plugin");
 
         ArkServiceContainer container = ArkServiceContainerHolder.getContainer();
-        for (URL url : SOFAArkTestBootstrap.getBaseClassLoader().getURLs()) {
+        for (URL url : TestBootstrap.getBaseClassLoader().getURLs()) {
             String path = url.getPath();
             if (isPluginDependency(path)) {
                 JarFileArchive archive = new JarFileArchive(new File(url.getFile()));
@@ -121,7 +117,7 @@ public class SOFAArkTestBootstrap {
 
     public static void init(ClassLoader baseClassLoader) {
         if (started.compareAndSet(false, true)) {
-            SOFAArkTestBootstrap.baseClassLoader = (URLClassLoader) baseClassLoader;
+            TestBootstrap.baseClassLoader = (URLClassLoader) baseClassLoader;
             INSTANCE.start();
             publicService();
             setUpPlugins();
