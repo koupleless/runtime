@@ -25,6 +25,7 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.sisu.wire.ParameterKeys;
 
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -39,13 +40,14 @@ public class KouplelessBaseSpringTestConfig {
 
     private Class<?> mainClass;
 
-    private String   artifactId;
+    private String artifactId;
 
     public void init() {
         Preconditions.checkState(mainClass != null, "mainClass must not be blank");
         if (StringUtils.isBlank(artifactId)) {
-            artifactId = JarUtils.parseArtifactId(
-                mainClass.getProtectionDomain().getCodeSource().getLocation().toString());
+            URL location = mainClass.getProtectionDomain().getCodeSource().getLocation();
+            Preconditions.checkNotNull(location, "Code source location must not be null");
+            artifactId = JarUtils.parseArtifactId(location.toString());
         }
     }
 }

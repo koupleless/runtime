@@ -26,7 +26,6 @@ import com.alipay.sofa.koupleless.test.suite.spring.base.KouplelessBaseSpringTes
 import com.alipay.sofa.koupleless.test.suite.spring.biz.KouplelessBizSpringTestApplication;
 import com.alipay.sofa.koupleless.test.suite.spring.model.KouplelessBizSpringTestConfig;
 import com.alipay.sofa.koupleless.test.suite.spring.model.KouplelessMultiSpringTestConfig;
-import com.google.common.collect.Lists;
 import lombok.Getter;
 
 import java.util.*;
@@ -74,7 +73,7 @@ public class KouplelessTestMultiSpringApplication {
             KouplelessBizSpringTestApplication app = entry.getValue();
             String bizIdentity = app.getConfig().getBizName() + ":TEST";
             String artifactId = app.getConfig().getArtifactId();
-            List<String> artifacts = Lists.newArrayList(artifactId, app.getConfig().getBizName());
+            List<String> artifacts = Arrays.asList(artifactId, app.getConfig().getBizName());
             SOFAArkTestBootstrap.getClassLoaderHook()
                 .putHigherPriorityResourceArtifacts(bizIdentity, artifacts);
         }
