@@ -59,7 +59,6 @@ public class TestMultiSSpringApplicationTest {
         HelloService sampleBizService = application.getBizApplication("biz0")
             .getApplicationContext().getBean(HelloService.class);
 
-        Assert.assertEquals(TestBizClassLoader.class.getName(),
-            sampleBizService.helloWorld());
+        Assert.assertEquals(TestBizClassLoader.class.getName(), sampleBizService.helloWorld());
     }
 }
