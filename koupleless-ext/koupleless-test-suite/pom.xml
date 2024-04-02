@@ -10,7 +10,6 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-
     <artifactId>koupleless-test-suite</artifactId>
     <packaging>maven-plugin</packaging>
 
