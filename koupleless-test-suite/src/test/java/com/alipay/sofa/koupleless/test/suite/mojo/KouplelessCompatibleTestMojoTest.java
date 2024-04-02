@@ -37,7 +37,7 @@ public class KouplelessCompatibleTestMojoTest {
     @InjectMocks
     private KouplelessCompatibleTestMojo mojo;
 
-    MavenProject project = new MavenProject();
+    MavenProject                         project = new MavenProject();
 
     @Before
     public void setUpProject() {

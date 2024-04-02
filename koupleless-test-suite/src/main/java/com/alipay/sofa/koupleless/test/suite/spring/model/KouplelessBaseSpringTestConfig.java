@@ -40,7 +40,7 @@ public class KouplelessBaseSpringTestConfig {
 
     private Class<?> mainClass;
 
-    private String artifactId;
+    private String   artifactId;
 
     public void init() {
         Preconditions.checkState(mainClass != null, "mainClass must not be blank");

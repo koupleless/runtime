@@ -34,7 +34,7 @@ public class KouplelessSpringTestUtils {
     public static void init() {
         if (initialized.compareAndSet(false, true)) {
             try (InputStream is = KouplelessSpringTestUtils.class.getClassLoader()
-                    .getResourceAsStream("config/koupleless-test-framework-config.yaml")) {
+                .getResourceAsStream("config/koupleless-test-framework-config.yaml")) {
                 ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
                 config = mapper.readValue(is, KouplelessSpringTestConfig.class);
             } catch (Throwable t) {
