@@ -135,15 +135,15 @@ public class ServerlessEnvironmentPostProcessorTest {
 
             Thread.currentThread().setContextClassLoader(new URLClassLoader(new URL[0]));
             BizRuntimeContext otherBizRuntimeContext = new BizRuntimeContext(otherBiz);
-            otherBizRuntimeContext.setAppClassLoader(Thread.currentThread().getContextClassLoader());
-
+            otherBizRuntimeContext
+                .setAppClassLoader(Thread.currentThread().getContextClassLoader());
 
             BizRuntimeContextRegistry.registerBizRuntimeManager(otherBizRuntimeContext);
             BizRuntimeContextRegistry.registerBizRuntimeManager(masterBizRuntimeContext);
 
             SkipInitializerListener listener = new SkipInitializerListener();
             listener.onApplicationEvent(new ApplicationStartingEvent(
-                    mock(ConfigurableBootstrapContext.class), springApplication, new String[0]));
+                mock(ConfigurableBootstrapContext.class), springApplication, new String[0]));
             Assert.assertEquals(7, springApplication.getInitializers().size());
         } finally {
             Thread.currentThread().setContextClassLoader(tccl);

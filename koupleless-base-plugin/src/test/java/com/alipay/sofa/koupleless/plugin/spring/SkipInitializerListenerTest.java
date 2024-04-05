@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.alipay.sofa.koupleless.plugin.spring;
 
 import com.alipay.sofa.ark.api.ArkClient;
@@ -40,15 +56,19 @@ public class SkipInitializerListenerTest {
         masterBizRuntimeContext.setAppClassLoader(ClassLoader.getSystemClassLoader());
         ApplicationContext masterApplicationContext = mock(ApplicationContext.class);
         Environment environment = mock(ConfigurableEnvironment.class);
-        when(environment.getProperty(MODULE_INITIALIZER_SKIP)).thenReturn(
-                "org.springframework.boot.context.config.DelegatingApplicationContextInitializer," + "org.springframework.boot.autoconfigure.SharedMetadataReaderFactoryContextInitializer," + "org.springframework.boot.context.ContextIdApplicationContextInitializer," + "org.springframework.boot.context.ConfigurationWarningsApplicationContextInitializer");
+        when(environment.getProperty(MODULE_INITIALIZER_SKIP))
+            .thenReturn(
+                "org.springframework.boot.context.config.DelegatingApplicationContextInitializer,"
+                        + "org.springframework.boot.autoconfigure.SharedMetadataReaderFactoryContextInitializer,"
+                        + "org.springframework.boot.context.ContextIdApplicationContextInitializer,"
+                        + "org.springframework.boot.context.ConfigurationWarningsApplicationContextInitializer");
         when(masterApplicationContext.getEnvironment()).thenReturn(environment);
         masterBizRuntimeContext.setRootApplicationContext(masterApplicationContext);
         BizRuntimeContextRegistry.registerBizRuntimeManager(masterBizRuntimeContext);
 
         BizManagerService bizManagerService = mock(BizManagerServiceImpl.class);
-        when(bizManagerService.getBizByClassLoader(ClassLoader.getSystemClassLoader())).thenReturn(
-                masterBiz);
+        when(bizManagerService.getBizByClassLoader(ClassLoader.getSystemClassLoader()))
+            .thenReturn(masterBiz);
 
         ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         try {
@@ -59,16 +79,17 @@ public class SkipInitializerListenerTest {
             otherBiz.setBizName("otherBiz");
 
             BizRuntimeContext otherBizRuntimeContext = new BizRuntimeContext(otherBiz);
-            otherBizRuntimeContext.setAppClassLoader(
-                    Thread.currentThread().getContextClassLoader());
-            when(bizManagerService.getBizByClassLoader(
-                    Thread.currentThread().getContextClassLoader())).thenReturn(otherBiz);
+            otherBizRuntimeContext
+                .setAppClassLoader(Thread.currentThread().getContextClassLoader());
+            when(bizManagerService
+                .getBizByClassLoader(Thread.currentThread().getContextClassLoader()))
+                    .thenReturn(otherBiz);
             ArkClient.setBizManagerService(bizManagerService);
 
             BizRuntimeContextRegistry.registerBizRuntimeManager(otherBizRuntimeContext);
 
             SpringApplicationBuilder builder = new SpringApplicationBuilder(TestConfiguration.class,
-                    BaseRuntimeAutoConfiguration.class);
+                BaseRuntimeAutoConfiguration.class);
             SpringApplication springApplication = builder.build();
 
             assertEquals(7, springApplication.getInitializers().size());

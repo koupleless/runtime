@@ -36,7 +36,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class SkipInitializerListener implements ApplicationListener<SpringApplicationEvent> {
     private static final Logger LOGGER                  = getLogger(SkipInitializerListener.class);
 
-    public static final String MODULE_INITIALIZER_SKIP = "koupleless.module.initializer.skip";
+    public static final String  MODULE_INITIALIZER_SKIP = "koupleless.module.initializer.skip";
 
     @Override
     public void onApplicationEvent(SpringApplicationEvent event) {
