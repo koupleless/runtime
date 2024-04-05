@@ -20,18 +20,26 @@ import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.container.service.biz.BizManagerServiceImpl;
 import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.ark.spi.service.biz.BizManagerService;
+import com.alipay.sofa.koupleless.common.BizRuntimeContext;
+import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.boot.ConfigurableBootstrapContext;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.context.event.ApplicationStartingEvent;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
+import org.springframework.mock.env.MockEnvironment;
 
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Properties;
 
+import static com.alipay.sofa.koupleless.plugin.spring.SkipInitializerListener.MODULE_INITIALIZER_SKIP;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -115,5 +123,30 @@ public class ServerlessEnvironmentPostProcessorTest {
         PropertySource<?> otherBizPropertySource = propertySources
             .get("Biz-Config resourceconfig/mockbiz/application-biz.properties");
         Assert.assertEquals("abc-biz", otherBizPropertySource.getProperty("kay1"));
+
+        try {
+            BizRuntimeContext masterBizRuntimeContext = new BizRuntimeContext(masterBiz);
+            masterBizRuntimeContext.setAppClassLoader(ClassLoader.getSystemClassLoader());
+            ApplicationContext masterApplicationContext = mock(ApplicationContext.class);
+            Environment environment = mock(Environment.class);
+            when(environment.getProperty(MODULE_INITIALIZER_SKIP)).thenReturn("");
+            when(masterApplicationContext.getEnvironment()).thenReturn(environment);
+            masterBizRuntimeContext.setRootApplicationContext(masterApplicationContext);
+
+            Thread.currentThread().setContextClassLoader(new URLClassLoader(new URL[0]));
+            BizRuntimeContext otherBizRuntimeContext = new BizRuntimeContext(otherBiz);
+            otherBizRuntimeContext.setAppClassLoader(Thread.currentThread().getContextClassLoader());
+
+
+            BizRuntimeContextRegistry.registerBizRuntimeManager(otherBizRuntimeContext);
+            BizRuntimeContextRegistry.registerBizRuntimeManager(masterBizRuntimeContext);
+
+            SkipInitializerListener listener = new SkipInitializerListener();
+            listener.onApplicationEvent(new ApplicationStartingEvent(
+                    mock(ConfigurableBootstrapContext.class), springApplication, new String[0]));
+            Assert.assertEquals(7, springApplication.getInitializers().size());
+        } finally {
+            Thread.currentThread().setContextClassLoader(tccl);
+        }
     }
 }

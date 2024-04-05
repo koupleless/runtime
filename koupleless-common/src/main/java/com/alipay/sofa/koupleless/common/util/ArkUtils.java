@@ -16,33 +16,17 @@
  */
 package com.alipay.sofa.koupleless.common.util;
 
-import com.alipay.sofa.ark.common.util.StringUtils;
+import com.alipay.sofa.ark.api.ArkClient;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-import java.util.Set;
-
-/**
- * @author gaosaroma@gmail.com
- * @version $Id: PropertiesUtil.java, v 0.1 2024年02月26日 17:34 lipeng Exp $
- */
-public class PropertiesUtil {
-
-    public static Properties loadProperties(ClassLoader classLoader, String resource) {
-        Properties properties = new Properties();
-        try {
-            InputStream inputStream = classLoader.getResourceAsStream(resource);
-            if (inputStream != null) {
-                properties.load(inputStream);
-            }
-            return properties;
-        } catch (IOException e) {
-            return properties;
+public class ArkUtils {
+    /**
+     * 判断是否是ark模块
+     * @return
+     */
+    public static boolean isModuleBiz() {
+        if (ArkClient.getMasterBiz() == null) {
+            return false;
         }
-    }
-
-    public static Set<String> formatPropertyValues(String value) {
-        return StringUtils.strToSet(value, ",");
+        return ArkClient.getMasterBiz().getBizClassLoader() != Thread.currentThread().getContextClassLoader();
     }
 }
