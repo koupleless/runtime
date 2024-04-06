@@ -10,7 +10,6 @@
 
   <groupId>com.alipay.sofa.koupleless</groupId>
   <artifactId>koupleless-common-module-archetype</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
   <packaging>maven-archetype</packaging>
 
   <build>
