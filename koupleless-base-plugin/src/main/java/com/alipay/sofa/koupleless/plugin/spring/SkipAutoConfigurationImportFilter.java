@@ -31,10 +31,10 @@ import java.util.Set;
 public class SkipAutoConfigurationImportFilter implements AutoConfigurationImportFilter,
                                                EnvironmentAware {
 
-    private static final String MODULE_AUTO_CONFIGURATION_EXCLUDE = "koupleless.module.autoconfigure.exclude";
-    private static final String MODULE_AUTO_CONFIGURATION_INCLUDE = "koupleless.module.autoconfigure.include";
+    public static final String MODULE_AUTO_CONFIGURATION_EXCLUDE = "koupleless.module.autoconfigure.exclude";
+    public static final String MODULE_AUTO_CONFIGURATION_INCLUDE = "koupleless.module.autoconfigure.include";
 
-    private Environment         environment;
+    private Environment        environment;
 
     @Override
     public boolean[] match(String[] autoConfigurationClasses,

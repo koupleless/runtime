@@ -19,6 +19,7 @@ package com.alipay.sofa.koupleless.plugin.spring;
 import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.container.model.BizModel;
 import com.alipay.sofa.ark.container.service.biz.BizManagerServiceImpl;
+import com.alipay.sofa.ark.container.service.classloader.BizClassLoader;
 import com.alipay.sofa.ark.spi.service.biz.BizManagerService;
 import com.alipay.sofa.koupleless.common.BizRuntimeContext;
 import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
@@ -34,16 +35,20 @@ import org.springframework.core.env.Environment;
 
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 
-import static com.alipay.sofa.koupleless.plugin.spring.SkipInitializerListener.MODULE_INITIALIZER_SKIP;
+import static com.alipay.sofa.koupleless.plugin.spring.SkipAutoConfigurationImportFilter.MODULE_AUTO_CONFIGURATION_EXCLUDE;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class SkipInitializerListenerTest {
+public class SkipAutoConfigurationTest {
 
     @Test
-    public void testOnApplicationEvent() {
+    public void testMatch() {
         // init master biz
         BizModel masterBiz = new BizModel();
         masterBiz.setBizName("masterBiz");
@@ -54,12 +59,8 @@ public class SkipInitializerListenerTest {
         masterBizRuntimeContext.setAppClassLoader(ClassLoader.getSystemClassLoader());
         ApplicationContext masterApplicationContext = mock(ApplicationContext.class);
         Environment environment = mock(ConfigurableEnvironment.class);
-        when(environment.getProperty(MODULE_INITIALIZER_SKIP))
-            .thenReturn(
-                "org.springframework.boot.context.config.DelegatingApplicationContextInitializer,"
-                        + "org.springframework.boot.autoconfigure.SharedMetadataReaderFactoryContextInitializer,"
-                        + "org.springframework.boot.context.ContextIdApplicationContextInitializer,"
-                        + "org.springframework.boot.context.ConfigurationWarningsApplicationContextInitializer");
+        when(environment.getProperty(MODULE_AUTO_CONFIGURATION_EXCLUDE)).thenReturn(
+            "class com.alipay.sofa.koupleless.plugin.spring.SkipAutoConfigurationTest$TestConfiguration1");
         when(masterApplicationContext.getEnvironment()).thenReturn(environment);
         masterBizRuntimeContext.setRootApplicationContext(masterApplicationContext);
         BizRuntimeContextRegistry.registerBizRuntimeManager(masterBizRuntimeContext);
@@ -71,7 +72,13 @@ public class SkipInitializerListenerTest {
         ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
         try {
             // init biz
-            Thread.currentThread().setContextClassLoader(new URLClassLoader(new URL[0]));
+            List<URL> urlList = new ArrayList<>();
+            Enumeration<URL> baseUrls = ClassLoader.getSystemClassLoader().getResources("");
+            while (baseUrls.hasMoreElements()) {
+                urlList.add(baseUrls.nextElement());
+            }
+            Thread.currentThread()
+                .setContextClassLoader(new URLClassLoader(urlList.toArray(new URL[0])));
 
             BizModel otherBiz = new BizModel();
             otherBiz.setBizName("otherBiz");
@@ -86,11 +93,10 @@ public class SkipInitializerListenerTest {
 
             BizRuntimeContextRegistry.registerBizRuntimeManager(otherBizRuntimeContext);
 
-            SpringApplicationBuilder builder = new SpringApplicationBuilder(TestConfiguration.class,
+            SpringApplicationBuilder builder = new SpringApplicationBuilder(
+                TestConfiguration1.class, TestConfiguration2.class,
                 BaseRuntimeAutoConfiguration.class);
             SpringApplication springApplication = builder.build();
-
-            assertEquals(7, springApplication.getInitializers().size());
 
             try {
                 springApplication.run();
@@ -98,17 +104,32 @@ public class SkipInitializerListenerTest {
                 // skip exception
             }
 
-            assertEquals(3, springApplication.getInitializers().size());
+            String[] autoConfigurationClasses = springApplication.getAllSources().stream()
+                .map(Object::toString).toArray(String[]::new);
+            SkipAutoConfigurationImportFilter filter = new SkipAutoConfigurationImportFilter();
+            filter.setEnvironment(environment);
+            assertArrayEquals(new boolean[] { false, true, true },
+                filter.match(autoConfigurationClasses, null));
+        } catch (Exception e) {
+
         } finally {
             Thread.currentThread().setContextClassLoader(oldClassLoader);
         }
     }
 
     @Configuration
-    static class TestConfiguration {
+    static class TestConfiguration1 {
         @Bean
         public SkipInitializerListener skipInitializerListener() {
             return new SkipInitializerListener();
+        }
+    }
+
+    @Configuration
+    static class TestConfiguration2 {
+        @Bean
+        public SkipAutoConfigurationImportFilter skipAutoConfigurationImportFilter() {
+            return new SkipAutoConfigurationImportFilter();
         }
     }
 }
