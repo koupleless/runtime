@@ -16,6 +16,7 @@
  */
 package com.alipay.sofa.koupleless.common;
 
+import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.koupleless.common.exception.BizRuntimeException;
 import com.alipay.sofa.koupleless.common.exception.ErrorCodes;
@@ -56,6 +57,11 @@ public class BizRuntimeContextRegistry {
 
         throw new BizRuntimeException(ErrorCodes.SpringContextManager.E100002,
             "No BizRuntimeContext found for biz: " + biz.getBizName());
+    }
+
+    public static BizRuntimeContext getMasterBizRuntimeContext() {
+        Biz masterBiz = ArkClient.getMasterBiz();
+        return getBizRuntimeContext(masterBiz);
     }
 
     public static BizRuntimeContext getBizRuntimeContextByClassLoader(ClassLoader classLoader) {
