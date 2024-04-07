@@ -37,8 +37,6 @@ public class ApolloPropertiesClearInitializerTests {
     @Before
     public void before() {
         MutablePropertySources propertySources = new MutablePropertySources();
-        propertySources.addLast(new PropertiesPropertySource(
-            StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, System.getProperties()));
         propertySources.addLast(new SystemEnvironmentPropertySource(
             StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME, (Map) System.getenv()));
         propertySources.addLast(new PropertiesPropertySource("bizProperties", bizProperties));

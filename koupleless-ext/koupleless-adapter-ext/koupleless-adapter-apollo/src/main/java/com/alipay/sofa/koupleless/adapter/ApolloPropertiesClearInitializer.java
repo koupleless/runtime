@@ -45,7 +45,7 @@ public class ApolloPropertiesClearInitializer implements EnvironmentPostProcesso
         if (classLoader == null) {
             return;
         }
-        environment = excludeSystemProperties(environment);
+        environment = excludeSystemEnv(environment);
         for (String key : NEED_CLEAR_PROPERTIES) {
             String value = environment.getProperty(key);
             if (value != null) {
@@ -63,15 +63,13 @@ public class ApolloPropertiesClearInitializer implements EnvironmentPostProcesso
         this.order = order;
     }
 
-    private ConfigurableEnvironment excludeSystemProperties(ConfigurableEnvironment sourceEnvironment) {
+    private ConfigurableEnvironment excludeSystemEnv(ConfigurableEnvironment sourceEnvironment) {
         MutablePropertySources customPropertySources = new MutablePropertySources();
         sourceEnvironment.getPropertySources().stream().forEach(it -> {
             String name = it.getName();
-            boolean notSystemProp = !StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME
-                .equals(name);
             boolean notSystemEnv = !StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME
                 .equals(name);
-            if (notSystemProp && notSystemEnv) {
+            if (notSystemEnv) {
                 customPropertySources.addLast(it);
             }
         });
