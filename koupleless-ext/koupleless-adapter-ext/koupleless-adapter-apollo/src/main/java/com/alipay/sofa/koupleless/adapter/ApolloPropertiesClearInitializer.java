@@ -17,6 +17,8 @@
 package com.alipay.sofa.koupleless.adapter;
 
 import com.alipay.sofa.koupleless.common.util.MultiBizProperties;
+import com.ctrip.framework.apollo.core.utils.StringUtils;
+import com.google.common.collect.Lists;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -26,6 +28,8 @@ import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.StandardEnvironment;
+
+import java.util.List;
 
 @ConditionalOnBean(type = "com.ctrip.framework.apollo.spring.boot.ApolloApplicationContextInitializer")
 @ConditionalOnClass(name = "com.ctrip.framework.apollo.spring.boot.ApolloApplicationContextInitializer")
@@ -42,16 +46,12 @@ public class ApolloPropertiesClearInitializer implements EnvironmentPostProcesso
                                        SpringApplication application) {
         MultiBizProperties properties = MultiBizProperties.initSystem();
         ClassLoader classLoader = properties.getBizClassLoader();
+        // 是基座
         if (classLoader == null) {
             return;
         }
-        environment = excludeSystemEnv(environment);
-        for (String key : NEED_CLEAR_PROPERTIES) {
-            String value = environment.getProperty(key);
-            if (value != null) {
-                System.clearProperty(key);
-            }
-        }
+        // 是模块
+        clearApolloSystemProperties(environment);
     }
 
     @Override
@@ -63,13 +63,37 @@ public class ApolloPropertiesClearInitializer implements EnvironmentPostProcesso
         this.order = order;
     }
 
-    private ConfigurableEnvironment excludeSystemEnv(ConfigurableEnvironment sourceEnvironment) {
+    /**
+     * 如果模块配置了 apollo 系统属性，则清理模块原本读取的基座 apollo 系统属性。该方法的效果是：
+     * 1. 如果模块配置了 apollo 系统属性，如 app.id，则模块会读到模块配置的该属性。如：模块配置了 app.id=biz1，则模块会读到 app.id=biz1
+     * 2. 如果模块没配置 apollo 系统属性，如 app.id，则模块的属性会使用基座的属性。如：模块没配置 app.id，基座配置了 app.id=base，则模块会读到 app.id=base
+     */
+    private void clearApolloSystemProperties(ConfigurableEnvironment environment) {
+        List<String> propertiesToClear = apolloPropertiesConfiguredInBizEnvironment(environment);
+        propertiesToClear.forEach(System::clearProperty);
+    }
+
+    private List<String> apolloPropertiesConfiguredInBizEnvironment(ConfigurableEnvironment environment) {
+        List<String> properties = Lists.newArrayList();
+        ConfigurableEnvironment tmpEnvironment = bizEnvironmentWithoutSystemProperties(environment);
+        for (String key : NEED_CLEAR_PROPERTIES) {
+            String value = tmpEnvironment.getProperty(key);
+            if (!StringUtils.isEmpty(value)) {
+                properties.add(key);
+            }
+        }
+        return properties;
+    }
+
+    private ConfigurableEnvironment bizEnvironmentWithoutSystemProperties(ConfigurableEnvironment sourceEnvironment) {
         MutablePropertySources customPropertySources = new MutablePropertySources();
         sourceEnvironment.getPropertySources().stream().forEach(it -> {
             String name = it.getName();
+            boolean notSystemProp = !StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME
+                .equals(name);
             boolean notSystemEnv = !StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME
                 .equals(name);
-            if (notSystemEnv) {
+            if (notSystemProp && notSystemEnv) {
                 customPropertySources.addLast(it);
             }
         });
