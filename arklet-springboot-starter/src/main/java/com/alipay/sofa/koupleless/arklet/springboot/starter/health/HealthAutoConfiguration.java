@@ -32,20 +32,20 @@ import static com.alipay.sofa.koupleless.arklet.springboot.starter.health.BaseSt
 public class HealthAutoConfiguration {
 
     @Bean
-    public ArkInfoContributor arkInfoContributor() {
-        return new ArkInfoContributor();
+    public AppInfoContributor arkInfoContributor() {
+        return new AppInfoContributor();
     }
 
-    @Bean("masterBizStartUpHealthIndicator")
-    public BaseStartUpHealthIndicator arkBizStartUpHealthIndicator() {
+    @Bean("baseStartUpHealthIndicator")
+    public BaseStartUpHealthIndicator baseStartUpHealthIndicator() {
         BaseStartUpHealthIndicator indicator = new BaseStartUpHealthIndicator(
             Boolean.parseBoolean(EnvironmentUtils.getProperty(WITH_ALL_BIZ_READINESS, "false")));
         ArkClient.getEventAdminService().register(indicator);
         return indicator;
     }
 
-    @Bean("arkBizAggregateHealthIndicator")
-    public CompositeAllBizHealthIndicator arkBizAggregateHealthIndicator() {
+    @Bean("compositeAllBizHealthIndicator")
+    public CompositeAllBizHealthIndicator compositeAllBizHealthIndicator() {
         return new CompositeAllBizHealthIndicator();
     }
 }

@@ -41,7 +41,7 @@ import static org.mockito.Mockito.mockStatic;
  * @author lianglipeng.llp@alibaba-inc.com
  * @version $Id: ArkInfoContributorTest.java, v 0.1 2024年03月22日 10:07 立蓬 Exp $
  */
-public class ArkInfoContributorTest {
+public class AppInfoContributorTest {
     @Test
     public void test() {
         try (MockedStatic<ArkClient> arkClient = mockStatic(ArkClient.class)) {
@@ -56,7 +56,7 @@ public class ArkInfoContributorTest {
             arkClient.when(ArkClient::getBizManagerService).thenReturn(bizManagerService);
             arkClient.when(ArkClient::getPluginManagerService).thenReturn(pluginManagerService);
 
-            ArkInfoContributor contributor = new ArkInfoContributor();
+            AppInfoContributor contributor = new AppInfoContributor();
             Info.Builder builder = new Info.Builder();
             contributor.contribute(builder);
             Map<String, Object> details = builder.build().getDetails();

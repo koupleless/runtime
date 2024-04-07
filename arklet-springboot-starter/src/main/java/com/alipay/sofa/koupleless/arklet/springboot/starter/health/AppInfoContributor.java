@@ -30,7 +30,7 @@ import java.util.List;
  * @author lianglipeng.llp@alibaba-inc.com
  * @version $Id: ArkBizInfoContributor.java, v 0.1 2024年03月19日 11:03 立蓬 Exp $
  */
-public class ArkInfoContributor implements InfoContributor {
+public class AppInfoContributor implements InfoContributor {
     @Override
     public void contribute(Info.Builder builder) {
         List<Biz> bizList = ArkClient.getBizManagerService().getBizInOrder();
