@@ -23,7 +23,7 @@ import com.alipay.sofa.ark.spi.service.biz.BizManagerService;
 import com.alipay.sofa.koupleless.common.BizRuntimeContext;
 import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
 import com.alipay.sofa.koupleless.plugin.BaseRuntimeAutoConfiguration;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationContext;
@@ -36,7 +36,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 import static com.alipay.sofa.koupleless.plugin.spring.SkipInitializerListener.MODULE_INITIALIZER_SKIP;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -86,7 +86,7 @@ public class SkipInitializerListenerTest {
 
             BizRuntimeContextRegistry.registerBizRuntimeManager(otherBizRuntimeContext);
 
-            SpringApplicationBuilder builder = new SpringApplicationBuilder(TestConfiguration.class,
+            SpringApplicationBuilder builder = new SpringApplicationBuilder(
                 BaseRuntimeAutoConfiguration.class);
             SpringApplication springApplication = builder.build();
 
@@ -101,14 +101,6 @@ public class SkipInitializerListenerTest {
             assertEquals(3, springApplication.getInitializers().size());
         } finally {
             Thread.currentThread().setContextClassLoader(oldClassLoader);
-        }
-    }
-
-    @Configuration
-    static class TestConfiguration {
-        @Bean
-        public SkipInitializerListener skipInitializerListener() {
-            return new SkipInitializerListener();
         }
     }
 }

@@ -19,12 +19,11 @@ package com.alipay.sofa.koupleless.plugin.spring;
 import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.container.model.BizModel;
 import com.alipay.sofa.ark.container.service.biz.BizManagerServiceImpl;
-import com.alipay.sofa.ark.container.service.classloader.BizClassLoader;
 import com.alipay.sofa.ark.spi.service.biz.BizManagerService;
 import com.alipay.sofa.koupleless.common.BizRuntimeContext;
 import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
 import com.alipay.sofa.koupleless.plugin.BaseRuntimeAutoConfiguration;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationContext;
@@ -40,8 +39,7 @@ import java.util.Enumeration;
 import java.util.List;
 
 import static com.alipay.sofa.koupleless.plugin.spring.SkipAutoConfigurationImportFilter.MODULE_AUTO_CONFIGURATION_EXCLUDE;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.Assert.assertArrayEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
