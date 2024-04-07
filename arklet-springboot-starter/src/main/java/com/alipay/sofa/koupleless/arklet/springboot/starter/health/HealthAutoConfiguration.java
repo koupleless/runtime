@@ -40,8 +40,8 @@ public class HealthAutoConfiguration {
     @Bean("masterBizStartUpHealthIndicator")
     public MasterBizStartUpHealthIndicator arkBizStartUpHealthIndicator() {
         MasterBizStartUpHealthIndicator indicator = new MasterBizStartUpHealthIndicator(
-            Boolean.parseBoolean(EnvironmentUtils.getProperty(
-                ASSOCIATE_WITH_ARK_BIZ_STARTUP_STATUS, "true")));
+            Boolean.parseBoolean(
+                EnvironmentUtils.getProperty(ASSOCIATE_WITH_ARK_BIZ_STARTUP_STATUS, "true")));
         ArkClient.getEventAdminService().register(indicator);
         return indicator;
     }

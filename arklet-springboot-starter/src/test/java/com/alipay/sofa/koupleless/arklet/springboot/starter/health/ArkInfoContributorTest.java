@@ -43,7 +43,7 @@ import static org.mockito.Mockito.mockStatic;
  */
 public class ArkInfoContributorTest {
     @Test
-    public void test(){
+    public void test() {
         try (MockedStatic<ArkClient> arkClient = mockStatic(ArkClient.class)) {
 
             BizManagerServiceImpl bizManagerService = new BizManagerServiceImpl();
@@ -61,8 +61,8 @@ public class ArkInfoContributorTest {
             contributor.contribute(builder);
             Map<String, Object> details = builder.build().getDetails();
 
-            assertEquals(2, ((List)details.get("arkBizInfo")).size());
-            assertEquals(1, ((List)details.get("arkPluginInfo")).size());
+            assertEquals(2, ((List) details.get("arkBizInfo")).size());
+            assertEquals(1, ((List) details.get("arkPluginInfo")).size());
         }
 
     }

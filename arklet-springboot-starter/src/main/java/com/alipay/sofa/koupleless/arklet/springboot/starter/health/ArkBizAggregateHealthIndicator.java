@@ -41,38 +41,42 @@ public class ArkBizAggregateHealthIndicator extends AbstractHealthIndicator {
 
         builder.up().withDetails(bizHealthMap);
 
-        if(bizHealthMap.values().stream().map(Health::getStatus).anyMatch(Status.DOWN::equals)){
+        if (bizHealthMap.values().stream().map(Health::getStatus).anyMatch(Status.DOWN::equals)) {
             builder.down();
-        } else if(bizHealthMap.values().stream().map(Health::getStatus).anyMatch(Status.UNKNOWN::equals)){
+        } else if (bizHealthMap.values().stream().map(Health::getStatus)
+            .anyMatch(Status.UNKNOWN::equals)) {
             builder.unknown();
         }
     }
 
-    private HashMap<String, Health> aggregateBizHealth(){
+    private HashMap<String, Health> aggregateBizHealth() {
         HashMap<String, Health> bizHealthMap = new HashMap<>();
 
-        ConcurrentHashMap<ClassLoader, BizRuntimeContext> runtimeMap =  BizRuntimeContextRegistry.getRuntimeMap();
+        ConcurrentHashMap<ClassLoader, BizRuntimeContext> runtimeMap = BizRuntimeContextRegistry
+            .getRuntimeMap();
         runtimeMap.forEach((classLoader, bizRuntimeContext) -> {
-            if(classLoader == ArkClient.getMasterBiz().getBizClassLoader()){
+            if (classLoader == ArkClient.getMasterBiz().getBizClassLoader()) {
                 return; // only skips this iteration.
             }
 
             Biz biz = ArkClient.getBizManagerService().getBizByClassLoader(classLoader);
-            Map<String, HealthIndicator> bizIndicators = bizRuntimeContext.getRootApplicationContext().getBeansOfType(HealthIndicator.class);
+            Map<String, HealthIndicator> bizIndicators = bizRuntimeContext
+                .getRootApplicationContext().getBeansOfType(HealthIndicator.class);
             Health.Builder bizBuilder = new Health.Builder().up();
 
             bizIndicators.forEach((bizIndicatorBeanName, bizIndicator) -> {
-                String bizIndicatorName = bizIndicatorBeanName.substring(0,bizIndicatorBeanName.length()-"HealthIndicator".length());
+                String bizIndicatorName = bizIndicatorBeanName.substring(0,
+                    bizIndicatorBeanName.length() - "HealthIndicator".length());
                 Health bizIndicatorHealth = bizIndicator.health();
 
                 Map<String, Object> bizIndicatorDetails = new HashMap<>();
-                bizIndicatorDetails.put("details",bizIndicatorHealth.getDetails());
-                bizIndicatorDetails.put("status",bizIndicatorHealth.getStatus());
+                bizIndicatorDetails.put("details", bizIndicatorHealth.getDetails());
+                bizIndicatorDetails.put("status", bizIndicatorHealth.getStatus());
 
                 bizBuilder.withDetail(bizIndicatorName, bizIndicatorDetails);
-                if(bizIndicatorHealth.getStatus().equals(Status.DOWN)) {
+                if (bizIndicatorHealth.getStatus().equals(Status.DOWN)) {
                     bizBuilder.down();
-                }else if(bizIndicatorHealth.getStatus().equals(Status.UNKNOWN)){
+                } else if (bizIndicatorHealth.getStatus().equals(Status.UNKNOWN)) {
                     bizBuilder.unknown();
                 }
             });

@@ -44,7 +44,7 @@ public class MasterBizStartUpHealthIndicatorTest {
         doReturn("biz1-v1").when(biz1).getIdentity();
         doReturn("masterBiz").when(masterBiz).getIdentity();
 
-        try(MockedStatic<ArkClient> arkClient = Mockito.mockStatic(ArkClient.class)){
+        try (MockedStatic<ArkClient> arkClient = Mockito.mockStatic(ArkClient.class)) {
             arkClient.when(ArkClient::getMasterBiz).thenReturn(masterBiz);
 
             MasterBizStartUpHealthIndicator indicator = new MasterBizStartUpHealthIndicator(true);
@@ -70,7 +70,7 @@ public class MasterBizStartUpHealthIndicatorTest {
             assertEquals(Status.UP, indicator.health().getStatus());
 
             // case2-4: base started && biz failed:
-            indicator.handleEvent(new AfterBizFailedEvent(biz1,new Throwable()));
+            indicator.handleEvent(new AfterBizFailedEvent(biz1, new Throwable()));
             assertEquals(Status.DOWN, indicator.health().getStatus());
 
             // case2-5: base started && biz stop:
@@ -86,7 +86,7 @@ public class MasterBizStartUpHealthIndicatorTest {
         doReturn("biz1-v1").when(biz1).getIdentity();
         doReturn("masterBiz").when(masterBiz).getIdentity();
 
-        try(MockedStatic<ArkClient> arkClient = Mockito.mockStatic(ArkClient.class)){
+        try (MockedStatic<ArkClient> arkClient = Mockito.mockStatic(ArkClient.class)) {
             arkClient.when(ArkClient::getMasterBiz).thenReturn(masterBiz);
 
             MasterBizStartUpHealthIndicator indicator = new MasterBizStartUpHealthIndicator(false);
@@ -112,7 +112,7 @@ public class MasterBizStartUpHealthIndicatorTest {
             assertEquals(Status.UP, indicator.health().getStatus());
 
             // case2-4: base started && biz failed:
-            indicator.handleEvent(new AfterBizFailedEvent(biz1,new Throwable()));
+            indicator.handleEvent(new AfterBizFailedEvent(biz1, new Throwable()));
             assertEquals(Status.UP, indicator.health().getStatus());
 
             // case2-5: base started && biz stop:

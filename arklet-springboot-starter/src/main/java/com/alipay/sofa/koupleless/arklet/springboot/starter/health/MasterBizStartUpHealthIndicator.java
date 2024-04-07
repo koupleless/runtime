@@ -40,9 +40,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 
 public class MasterBizStartUpHealthIndicator extends AbstractHealthIndicator
-                                                                            implements
-                                                                            EventHandler<AbstractArkEvent>,
-                                                                            ApplicationListener<SpringApplicationEvent> {
+                                             implements EventHandler<AbstractArkEvent>,
+                                             ApplicationListener<SpringApplicationEvent> {
     private Status                                  baseStartUpStatus                     = Status.UNKNOWN;
 
     private final ConcurrentHashMap<String, Status> bizStartUpStatus                      = new ConcurrentHashMap<>();
@@ -92,23 +91,25 @@ public class MasterBizStartUpHealthIndicator extends AbstractHealthIndicator
     }
 
     @Override
-    protected void doHealthCheck(Health.Builder builder){
-        builder.withDetail(ArkClient.getMasterBiz().getIdentity(),baseStartUpStatus)
-                .withDetails(bizStartUpStatus);
+    protected void doHealthCheck(Health.Builder builder) {
+        builder.withDetail(ArkClient.getMasterBiz().getIdentity(), baseStartUpStatus)
+            .withDetails(bizStartUpStatus);
 
-        if(!associateWithArkBizStartUpStatus){
+        if (!associateWithArkBizStartUpStatus) {
             builder.status(baseStartUpStatus);
             return;
         }
 
         // 健康的情况：基座和模块都启动成功
-        if(baseStartUpStatus == Status.UP && bizStartUpStatus.values().stream().allMatch(Status.UP::equals)){
+        if (baseStartUpStatus == Status.UP
+            && bizStartUpStatus.values().stream().allMatch(Status.UP::equals)) {
             builder.status(Status.UP);
             return;
         }
 
         // UNKNOWN 的情况：基座或模块在启动过程中
-        if(baseStartUpStatus == Status.UNKNOWN || bizStartUpStatus.values().stream().anyMatch(Status.UNKNOWN::equals)){
+        if (baseStartUpStatus == Status.UNKNOWN
+            || bizStartUpStatus.values().stream().anyMatch(Status.UNKNOWN::equals)) {
             builder.status(Status.UNKNOWN);
             return;
         }

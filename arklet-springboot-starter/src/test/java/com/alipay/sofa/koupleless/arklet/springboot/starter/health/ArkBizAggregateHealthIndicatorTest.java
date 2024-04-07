@@ -48,7 +48,8 @@ public class ArkBizAggregateHealthIndicatorTest {
 
     @Test
     public void test() {
-        try (MockedStatic<BizRuntimeContextRegistry> registry = mockStatic(BizRuntimeContextRegistry.class)) {
+        try (MockedStatic<BizRuntimeContextRegistry> registry = mockStatic(
+            BizRuntimeContextRegistry.class)) {
             ConcurrentHashMap<ClassLoader, BizRuntimeContext> runtimeMap = new ConcurrentHashMap<>();
             registry.when(BizRuntimeContextRegistry::getRuntimeMap).thenReturn(runtimeMap);
 
@@ -63,9 +64,10 @@ public class ArkBizAggregateHealthIndicatorTest {
             BizRuntimeContext biz1RuntimeContext = new BizRuntimeContext(biz1);
             ApplicationContext biz1ApplicationContext = mock(ApplicationContext.class);
             HealthIndicator biz1HealthIndicator = mock(HealthIndicator.class);
-            Map<String,HealthIndicator> biz1HealthIndicatorMap = new HashMap<>();
-            biz1HealthIndicatorMap.put("biz1DiskSpaceHealthIndicator",biz1HealthIndicator);
-            doReturn(biz1HealthIndicatorMap).when(biz1ApplicationContext).getBeansOfType(HealthIndicator.class);
+            Map<String, HealthIndicator> biz1HealthIndicatorMap = new HashMap<>();
+            biz1HealthIndicatorMap.put("biz1DiskSpaceHealthIndicator", biz1HealthIndicator);
+            doReturn(biz1HealthIndicatorMap).when(biz1ApplicationContext)
+                .getBeansOfType(HealthIndicator.class);
             biz1RuntimeContext.setRootApplicationContext(biz1ApplicationContext);
 
             runtimeMap.put(biz1.getBizClassLoader(), biz1RuntimeContext);
@@ -74,13 +76,16 @@ public class ArkBizAggregateHealthIndicatorTest {
                 arkClient.when(ArkClient::getMasterBiz).thenReturn(masterBiz);
                 arkClient.when(ArkClient::getBizManagerService).thenReturn(bizManagerService);
 
-                doReturn(new Health.Builder().up().withDetail("cpuCount",1).build()).when(biz1HealthIndicator).health();
+                doReturn(new Health.Builder().up().withDetail("cpuCount", 1).build())
+                    .when(biz1HealthIndicator).health();
                 assertEquals(Status.UP, indicator.health().getStatus());
 
-                doReturn(new Health.Builder().down().withDetail("cpuCount",1).build()).when(biz1HealthIndicator).health();
+                doReturn(new Health.Builder().down().withDetail("cpuCount", 1).build())
+                    .when(biz1HealthIndicator).health();
                 assertEquals(Status.DOWN, indicator.health().getStatus());
 
-                doReturn(new Health.Builder().unknown().withDetail("cpuCount",1).build()).when(biz1HealthIndicator).health();
+                doReturn(new Health.Builder().unknown().withDetail("cpuCount", 1).build())
+                    .when(biz1HealthIndicator).health();
                 assertEquals(Status.UNKNOWN, indicator.health().getStatus());
             }
         }
