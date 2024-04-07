@@ -36,7 +36,7 @@ import static org.mockito.Mockito.doReturn;
  * @author lianglipeng.llp@alibaba-inc.com
  * @version $Id: MasterBizStartUpHealthIndictor.java, v 0.1 2024年03月21日 15:05 立蓬 Exp $
  */
-public class MasterBizStartUpHealthIndicatorTest {
+public class BaseStartUpHealthIndicatorTest {
     @Test
     public void testMasterBizStartUpHealthWithArkBiz() {
         Biz masterBiz = Mockito.mock(Biz.class);
@@ -47,7 +47,7 @@ public class MasterBizStartUpHealthIndicatorTest {
         try (MockedStatic<ArkClient> arkClient = Mockito.mockStatic(ArkClient.class)) {
             arkClient.when(ArkClient::getMasterBiz).thenReturn(masterBiz);
 
-            MasterBizStartUpHealthIndicator indicator = new MasterBizStartUpHealthIndicator(true);
+            BaseStartUpHealthIndicator indicator = new BaseStartUpHealthIndicator(true);
 
             // case1-1: base starting:
             assertEquals(Status.UNKNOWN, indicator.health().getStatus());
@@ -89,7 +89,7 @@ public class MasterBizStartUpHealthIndicatorTest {
         try (MockedStatic<ArkClient> arkClient = Mockito.mockStatic(ArkClient.class)) {
             arkClient.when(ArkClient::getMasterBiz).thenReturn(masterBiz);
 
-            MasterBizStartUpHealthIndicator indicator = new MasterBizStartUpHealthIndicator(false);
+            BaseStartUpHealthIndicator indicator = new BaseStartUpHealthIndicator(false);
 
             // case1-1: base starting:
             assertEquals(Status.UNKNOWN, indicator.health().getStatus());

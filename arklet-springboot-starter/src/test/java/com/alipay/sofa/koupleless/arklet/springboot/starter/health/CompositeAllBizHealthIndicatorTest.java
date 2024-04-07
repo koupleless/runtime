@@ -43,8 +43,8 @@ import static org.mockito.Mockito.mockStatic;
  * @author lianglipeng.llp@alibaba-inc.com
  * @version $Id: ArkBizAggregateHealthIndicatorTest.java, v 0.1 2024年03月21日 15:04 立蓬 Exp $
  */
-public class ArkBizAggregateHealthIndicatorTest {
-    private ArkBizAggregateHealthIndicator indicator = new ArkBizAggregateHealthIndicator();
+public class CompositeAllBizHealthIndicatorTest {
+    private CompositeAllBizHealthIndicator indicator = new CompositeAllBizHealthIndicator();
 
     @Test
     public void test() {

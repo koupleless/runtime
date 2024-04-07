@@ -35,25 +35,29 @@ import org.springframework.context.ApplicationListener;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * 基座启动健康指标，可以通过 koupleless.healthcheck.base.readiness.withAllBizReadiness 配置该健康指标是否和模块启动健康指标关联，默认为 false，即不关联。
+ * 如：为 true 时，如果模块安装失败，则基座启动健康指标为 DOWN；
+ * 如：为 false 时，无论模块安装成功或失败，基座启动健康指标仅和基座启动成功相关。
+ * 注意：后续做主动基座回放时，可以参考该类实现。
  * @author lianglipeng.llp@alibaba-inc.com
- * @version $Id: MasterBizStartUpHealthIndicator.java, v 0.1 2024年03月21日 10:50 立蓬 Exp $
+ * @version $Id: BaseStartUpHealthIndicator.java, v 0.1 2024年03月21日 10:50 立蓬 Exp $
+ * @since 1.1.0
  */
 
-public class MasterBizStartUpHealthIndicator extends AbstractHealthIndicator
-                                             implements EventHandler<AbstractArkEvent>,
-                                             ApplicationListener<SpringApplicationEvent> {
-    private Status                                  baseStartUpStatus                     = Status.UNKNOWN;
+public class BaseStartUpHealthIndicator extends AbstractHealthIndicator
+                                        implements EventHandler<AbstractArkEvent>,
+                                        ApplicationListener<SpringApplicationEvent> {
+    private Status                                  baseStartUpStatus      = Status.UNKNOWN;
 
-    private final ConcurrentHashMap<String, Status> bizStartUpStatus                      = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Status> bizStartUpStatus       = new ConcurrentHashMap<>();
 
-    private boolean                                 associateWithArkBizStartUpStatus;
+    private boolean                                 associateWithAllBizReadiness;
 
-    public static final String                      ASSOCIATE_WITH_ARK_BIZ_STARTUP_STATUS = "koupleless.arklet.health.associateWithArkBizStartUpStatus";
+    public static final String                      WITH_ALL_BIZ_READINESS = "koupleless.healthcheck.base.readiness.withAllBizReadiness";
 
-    public MasterBizStartUpHealthIndicator(boolean withBizStartUpStatus) {
+    public BaseStartUpHealthIndicator(boolean withAllBizReadiness) {
         super("ark biz start up health check failed");
-        this.associateWithArkBizStartUpStatus = withBizStartUpStatus;
-
+        this.associateWithAllBizReadiness = withAllBizReadiness;
     }
 
     @Override
@@ -95,7 +99,7 @@ public class MasterBizStartUpHealthIndicator extends AbstractHealthIndicator
         builder.withDetail(ArkClient.getMasterBiz().getIdentity(), baseStartUpStatus)
             .withDetails(bizStartUpStatus);
 
-        if (!associateWithArkBizStartUpStatus) {
+        if (!associateWithAllBizReadiness) {
             builder.status(baseStartUpStatus);
             return;
         }

@@ -31,13 +31,15 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * 整合所有 Biz 的健康指标
  * @author lianglipeng.llp@alibaba-inc.com
- * @version $Id: ArkBizAggregateHealthIndicator.java, v 0.1 2024年03月21日 11:56 立蓬 Exp $
+ * @version $Id: CompositeAllBizHealthIndicator.java, v 1.1.0 2024年03月21日 11:56 立蓬 Exp $
+ * @since 1.1.0
  */
-public class ArkBizAggregateHealthIndicator extends AbstractHealthIndicator {
+public class CompositeAllBizHealthIndicator extends AbstractHealthIndicator {
     @Override
     protected void doHealthCheck(Builder builder) throws Exception {
-        HashMap<String, Health> bizHealthMap = aggregateBizHealth();
+        Map<String, Health> bizHealthMap = aggregateBizHealth();
 
         builder.up().withDetails(bizHealthMap);
 

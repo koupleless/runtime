@@ -18,12 +18,11 @@ package com.alipay.sofa.koupleless.arklet.springboot.starter.health;
 
 import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.common.util.EnvironmentUtils;
-import com.alipay.sofa.ark.spi.service.event.EventAdminService;
 import com.alipay.sofa.koupleless.common.environment.ConditionalOnMasterBiz;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static com.alipay.sofa.koupleless.arklet.springboot.starter.health.MasterBizStartUpHealthIndicator.ASSOCIATE_WITH_ARK_BIZ_STARTUP_STATUS;
+import static com.alipay.sofa.koupleless.arklet.springboot.starter.health.BaseStartUpHealthIndicator.WITH_ALL_BIZ_READINESS;
 
 /**
  * @author Lunarscave
@@ -38,16 +37,15 @@ public class HealthAutoConfiguration {
     }
 
     @Bean("masterBizStartUpHealthIndicator")
-    public MasterBizStartUpHealthIndicator arkBizStartUpHealthIndicator() {
-        MasterBizStartUpHealthIndicator indicator = new MasterBizStartUpHealthIndicator(
-            Boolean.parseBoolean(
-                EnvironmentUtils.getProperty(ASSOCIATE_WITH_ARK_BIZ_STARTUP_STATUS, "true")));
+    public BaseStartUpHealthIndicator arkBizStartUpHealthIndicator() {
+        BaseStartUpHealthIndicator indicator = new BaseStartUpHealthIndicator(
+            Boolean.parseBoolean(EnvironmentUtils.getProperty(WITH_ALL_BIZ_READINESS, "false")));
         ArkClient.getEventAdminService().register(indicator);
         return indicator;
     }
 
     @Bean("arkBizAggregateHealthIndicator")
-    public ArkBizAggregateHealthIndicator arkBizAggregateHealthIndicator() {
-        return new ArkBizAggregateHealthIndicator();
+    public CompositeAllBizHealthIndicator arkBizAggregateHealthIndicator() {
+        return new CompositeAllBizHealthIndicator();
     }
 }

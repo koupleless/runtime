@@ -47,7 +47,7 @@ public class ArkInfoContributorTest {
         try (MockedStatic<ArkClient> arkClient = mockStatic(ArkClient.class)) {
 
             BizManagerServiceImpl bizManagerService = new BizManagerServiceImpl();
-            bizManagerService.registerBiz(mockMastertBiz());
+            bizManagerService.registerBiz(mockMasterBiz());
             bizManagerService.registerBiz(mockBiz1());
 
             PluginManagerServiceImpl pluginManagerService = new PluginManagerServiceImpl();
@@ -67,7 +67,7 @@ public class ArkInfoContributorTest {
 
     }
 
-    private Biz mockMastertBiz() {
+    private Biz mockMasterBiz() {
         ClassLoader masterBizClassLoader = mock(ClassLoader.class);
         BizModel masterBiz = new BizModel();
         masterBiz.setClassLoader(masterBizClassLoader);
