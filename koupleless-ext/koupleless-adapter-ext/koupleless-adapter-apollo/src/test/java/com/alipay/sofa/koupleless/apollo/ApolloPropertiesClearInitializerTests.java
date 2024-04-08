@@ -16,23 +16,36 @@
  */
 package com.alipay.sofa.koupleless.apollo;
 
+import com.alipay.sofa.ark.api.ArkClient;
+import com.alipay.sofa.ark.container.model.BizModel;
 import com.alipay.sofa.ark.container.service.classloader.BizClassLoader;
+import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.koupleless.adapter.ApolloPropertiesClearInitializer;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.boot.SpringApplication;
-import org.springframework.core.env.*;
+import org.springframework.core.env.AbstractEnvironment;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertiesPropertySource;
+import org.springframework.core.env.StandardEnvironment;
+import org.springframework.core.env.SystemEnvironmentPropertySource;
 
 import java.util.Map;
 import java.util.Properties;
+
+import static org.mockito.Mockito.mockStatic;
 
 public class ApolloPropertiesClearInitializerTests {
     private ApolloPropertiesClearInitializer initializer   = new ApolloPropertiesClearInitializer();
     private ConfigurableEnvironment          environment;
 
     private Properties                       bizProperties = new Properties();
+
+    private MockedStatic<ArkClient> arkClient;
 
     @Before
     public void before() {
@@ -42,6 +55,10 @@ public class ApolloPropertiesClearInitializerTests {
         propertySources.addLast(new PropertiesPropertySource("bizProperties", bizProperties));
         environment = new AbstractEnvironment(propertySources) {
         };
+
+        arkClient = mockStatic(ArkClient.class);
+        Biz masterBiz = mockMasterBiz();
+        arkClient.when(ArkClient::getMasterBiz).thenReturn(masterBiz);
     }
 
     @Test
@@ -59,5 +76,11 @@ public class ApolloPropertiesClearInitializerTests {
         Assert.assertEquals(systemAppId, System.getProperty(appIdKey));
         initializer.postProcessEnvironment(environment, application);
         Assert.assertNull(System.getProperty(appIdKey));
+    }
+
+    private BizModel mockMasterBiz(){
+        BizModel biz = new BizModel();
+        biz.setClassLoader(Mockito.mock(BizClassLoader.class));
+        return biz;
     }
 }
