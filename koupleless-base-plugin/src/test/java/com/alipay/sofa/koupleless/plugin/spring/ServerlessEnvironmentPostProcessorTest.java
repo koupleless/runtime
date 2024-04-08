@@ -23,10 +23,12 @@ import com.alipay.sofa.ark.spi.service.biz.BizManagerService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.env.OriginTrackedMapPropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
+import org.springframework.mock.env.MockEnvironment;
 
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -46,7 +48,7 @@ public class ServerlessEnvironmentPostProcessorTest {
 
     private final ConfigurableEnvironment masterEnvironment = mock(ConfigurableEnvironment.class);
 
-    private final ConfigurableEnvironment otherEnvironment  = mock(ConfigurableEnvironment.class);
+    private final ConfigurableEnvironment otherEnvironment  = new MockEnvironment();
 
     private final SpringApplication       springApplication = mock(SpringApplication.class);
 
@@ -77,11 +79,15 @@ public class ServerlessEnvironmentPostProcessorTest {
         when(masterBiz.getBizClassLoader()).thenReturn(ClassLoader.getSystemClassLoader());
         //        Thread.currentThread().setContextClassLoader(new URLClassLoader(new URL[0]));
 
-        MutablePropertySources propertySources = new MutablePropertySources();
+        MutablePropertySources propertySources = otherEnvironment.getPropertySources();
         PropertiesPropertySource propertySource = new PropertiesPropertySource("xxxx111",
             new Properties());
         propertySources.addLast(propertySource);
-        when(otherEnvironment.getPropertySources()).thenReturn(propertySources);
+
+        Properties properties = new Properties();
+        properties.setProperty("kay", "kay_in_biz_application_properties");
+        propertySources.addLast(new OriginTrackedMapPropertySource("mock application.properties in biz",
+                properties));
 
         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         ArkClient.setBizManagerService(bizManagerService);
@@ -94,11 +100,14 @@ public class ServerlessEnvironmentPostProcessorTest {
             System.setProperty(ServerlessEnvironmentPostProcessor.SPRING_CONFIG_LOCATION, "xxxx");
             System.setProperty(ServerlessEnvironmentPostProcessor.SPRING_ACTIVE_PROFILES,
                 "biz,abc");
+            System.setProperty(ServerlessEnvironmentPostProcessor.SPRING_ADDITIONAL_LOCATION,
+                "additional-location");
             serverlessEnvironmentPostProcessor.postProcessEnvironment(otherEnvironment,
                 springApplication);
         } finally {
             System.clearProperty(ServerlessEnvironmentPostProcessor.SPRING_CONFIG_LOCATION);
             System.clearProperty(ServerlessEnvironmentPostProcessor.SPRING_ACTIVE_PROFILES);
+            System.clearProperty(ServerlessEnvironmentPostProcessor.SPRING_ADDITIONAL_LOCATION);
             Thread.currentThread().setContextClassLoader(tccl);
         }
 
@@ -108,6 +117,8 @@ public class ServerlessEnvironmentPostProcessorTest {
         Assert.assertEquals("./logs",
             masterPropertySources.get("compatiblePropertySource").getProperty("logging.path"));
 
+        // testBizApplicationPropertyInBizMultiDeployment
+        Assert.assertEquals("abc", otherEnvironment.getProperty("kay"));
         PropertySource<?> otherPropertySource = propertySources
             .get("Biz-Config resourceconfig/mockbiz/application.properties");
         Assert.assertEquals("abc", otherPropertySource.getProperty("kay"));

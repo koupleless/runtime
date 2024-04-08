@@ -119,23 +119,28 @@ public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProces
                     PropertiesPropertySource newPropertySource = new PropertiesPropertySource(
                         SOFA_ARK_BIZ_PROPERTY_SOURCE_PREFIX.concat(propertiesPath), properties);
 
-                    PropertySource originPropertySourceInBiz = environment.getPropertySources().stream()
-                        .filter(ps -> ps instanceof OriginTrackedMapPropertySource).findFirst()
-                        .orElse(null);
-                    if (originPropertySourceInBiz != null) {
-                        // 放在模块 application.properties 前面
-                        environment.getPropertySources().addBefore(originPropertySourceInBiz.getName(),
-                            newPropertySource);
-                    } else {
-                        // 否则放最后面
-                        environment.getPropertySources().addLast(newPropertySource);
-                    }
+                    addBizPropertySourceBeforeApplicationPropertySource(environment, newPropertySource);
                     getLogger().info("customize biz properties: {}", propertiesPath);
                 }
             }
 
             // 添加基座共享的 environment
             registerMasterBizPropertySource(MASTER_ENV.get(), environment);
+        }
+    }
+
+    /**
+     * 把模块的多部署单元的配置源（config/${app}/application-${profile}.properties）放在模块原本的配置源（application-${profile}.properties）前面
+     */
+    private void addBizPropertySourceBeforeApplicationPropertySource(ConfigurableEnvironment environment, PropertiesPropertySource bizPropertySource){
+        PropertySource applicationPropertySourceInBiz = environment.getPropertySources().stream()
+                .filter(ps -> ps instanceof OriginTrackedMapPropertySource).findFirst()
+                .orElse(null);
+        if (applicationPropertySourceInBiz != null) {
+            environment.getPropertySources().addBefore(applicationPropertySourceInBiz.getName(),
+                    bizPropertySource);
+        } else {
+            environment.getPropertySources().addLast(bizPropertySource);
         }
     }
 
