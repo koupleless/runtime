@@ -16,63 +16,36 @@
  */
 package com.alipay.sofa.koupleless.arklet.springboot.starter.health;
 
-import com.alipay.sofa.koupleless.arklet.core.ArkletComponentRegistry;
-import com.alipay.sofa.koupleless.arklet.springboot.starter.health.endpoint.ArkHealthCodeEndpoint;
-import com.alipay.sofa.koupleless.arklet.springboot.starter.health.endpoint.ArkHealthEndpoint;
-import com.alipay.sofa.koupleless.arklet.springboot.starter.health.extension.indicator.MasterBizHealthIndicator;
+import com.alipay.sofa.ark.api.ArkClient;
+import com.alipay.sofa.ark.common.util.EnvironmentUtils;
 import com.alipay.sofa.koupleless.common.environment.ConditionalOnMasterBiz;
-import org.springframework.beans.BeansException;
-import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnAvailableEndpoint;
-import org.springframework.boot.actuate.autoconfigure.endpoint.web.WebEndpointProperties;
-import org.springframework.boot.availability.ApplicationAvailability;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Set;
+import static com.alipay.sofa.koupleless.arklet.springboot.starter.health.BaseStartUpHealthIndicator.WITH_ALL_BIZ_READINESS;
 
 /**
  * @author Lunarscave
  */
 @Configuration
 @ConditionalOnMasterBiz
-public class HealthAutoConfiguration implements ApplicationContextAware {
-
-    private ApplicationContext context;
+public class HealthAutoConfiguration {
 
     @Bean
-    @ConditionalOnAvailableEndpoint
-    public ArkHealthEndpoint arkHealthEndpoint() {
-        return new ArkHealthEndpoint();
+    public BizInfoContributor bizInfoContributor() {
+        return new BizInfoContributor();
     }
 
-    @Bean
-    @ConditionalOnAvailableEndpoint
-    public ArkHealthCodeEndpoint arkHealthCodeEndpoint() {
-        return new ArkHealthCodeEndpoint();
+    @Bean("baseStartUpHealthIndicator")
+    public BaseStartUpHealthIndicator baseStartUpHealthIndicator() {
+        BaseStartUpHealthIndicator indicator = new BaseStartUpHealthIndicator(
+            Boolean.parseBoolean(EnvironmentUtils.getProperty(WITH_ALL_BIZ_READINESS, "false")));
+        ArkClient.getEventAdminService().register(indicator);
+        return indicator;
     }
 
-    @Bean
-    public MasterBizHealthIndicator masterBizHealthIndicator() {
-        MasterBizHealthIndicator masterBizHealthIndicator = new MasterBizHealthIndicator();
-        masterBizHealthIndicator
-            .setApplicationAvailability(context.getBean(ApplicationAvailability.class));
-        ArkletComponentRegistry.getHealthServiceInstance()
-            .registerIndicator(masterBizHealthIndicator);
-        return masterBizHealthIndicator;
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        WebEndpointProperties webEndpointProperties = applicationContext
-            .getBean(WebEndpointProperties.class);
-        WebEndpointProperties.Exposure exposure = webEndpointProperties.getExposure();
-        Set<String> includePath = exposure.getInclude();
-        includePath.add("*");
-        webEndpointProperties.getExposure().setInclude(includePath);
-        webEndpointProperties.setBasePath("/");
-
-        this.context = applicationContext;
+    @Bean("compositeAllBizHealthIndicator")
+    public CompositeAllBizHealthIndicator compositeAllBizHealthIndicator() {
+        return new CompositeAllBizHealthIndicator();
     }
 }

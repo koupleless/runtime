@@ -68,7 +68,7 @@ for TEST_DIR in $(find $(pwd) -name "$suiteReg");do
 #        exit 1
 #      fi
     else
-      if ! bash $ROOTDir/.github/workflows/ccbin/healthcheck.sh 8080;then
+      if ! bash $ROOTDir/.github/workflows/ccbin/healthcheck.sh 8080/actuator;then
         echo "基座健康检查失败！"
         exit 1
       fi
