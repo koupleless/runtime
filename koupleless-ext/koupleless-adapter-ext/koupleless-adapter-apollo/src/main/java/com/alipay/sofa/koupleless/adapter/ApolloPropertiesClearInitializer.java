@@ -79,19 +79,20 @@ public class ApolloPropertiesClearInitializer implements EnvironmentPostProcesso
         List<String> properties = Lists.newArrayList();
 
         // 过滤出模块 environment 的 非系统PropertySource
-        List<PropertySource> notSystemPropertySources = environment.getPropertySources().stream().filter(it -> {
-            String name = it.getName();
-            boolean notSystemProp = !StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME
+        List<PropertySource> notSystemPropertySources = environment.getPropertySources().stream()
+            .filter(it -> {
+                String name = it.getName();
+                boolean notSystemProp = !StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME
                     .equals(name);
-            boolean notSystemEnv = !StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME
+                boolean notSystemEnv = !StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME
                     .equals(name);
-            return notSystemProp && notSystemEnv;
-        }).collect(Collectors.toList());
+                return notSystemProp && notSystemEnv;
+            }).collect(Collectors.toList());
 
         // 获取非系统PropertySource 中配置的 apollo 系统属性
-        notSystemPropertySources.forEach(it->{
+        notSystemPropertySources.forEach(it -> {
             for (String key : NEED_CLEAR_PROPERTIES) {
-                if(it.containsProperty(key)){
+                if (it.containsProperty(key)) {
                     properties.add(key);
                 }
             }
