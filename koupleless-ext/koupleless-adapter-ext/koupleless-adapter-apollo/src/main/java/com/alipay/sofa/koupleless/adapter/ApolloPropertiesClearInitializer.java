@@ -24,13 +24,12 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.core.Ordered;
-import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertySource;
 import org.springframework.core.env.StandardEnvironment;
-import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ConditionalOnBean(type = "com.ctrip.framework.apollo.spring.boot.ApolloApplicationContextInitializer")
 @ConditionalOnClass(name = "com.ctrip.framework.apollo.spring.boot.ApolloApplicationContextInitializer")
@@ -73,44 +72,30 @@ public class ApolloPropertiesClearInitializer implements EnvironmentPostProcesso
     }
 
     /**
-     * 模块在 environment 中配置的 apollo 系统属性（如 app.id），
+     * 过滤出模块在非系统PropertySource 的 environment 中配置的 apollo 系统属性（如 app.id）
      * @return java.util.List<java.lang.String>
      */
     private List<String> apolloPropertiesConfiguredInBizEnvironment(ConfigurableEnvironment environment) {
         List<String> properties = Lists.newArrayList();
-        ConfigurableEnvironment tmpEnvironment = bizEnvironmentWithoutSystemProperties(environment);
-        for (String key : NEED_CLEAR_PROPERTIES) {
-            String value = tmpEnvironment.getProperty(key);
-            if (!StringUtils.isEmpty(value)) {
-                properties.add(key);
-            }
-        }
-        return properties;
-    }
 
-    /**
-     * 由于基座初始化后，apollo 会将基座配置的 apollo 系统变量（如：app.id）设置为系统变量，因此此时模块 environment 中会读到基座的 apollo 系统变量。
-     * 为了获取模块在配置中自行定义的 apollo 系统变量，需要排除基座的 apollo 系统变量，即：把模块 environment 中的系统配置源排除。
-     * 新创建的 environment 将只包含模块自身配置的属性。
-     */
-    private ConfigurableEnvironment bizEnvironmentWithoutSystemProperties(ConfigurableEnvironment sourceEnvironment) {
-        MutablePropertySources customPropertySources = new MutablePropertySources();
-        sourceEnvironment.getPropertySources().stream().forEach(it -> {
+        // 过滤出模块 environment 的 非系统PropertySource
+        List<PropertySource> notSystemPropertySources = environment.getPropertySources().stream().filter(it -> {
             String name = it.getName();
             boolean notSystemProp = !StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME
-                .equals(name);
+                    .equals(name);
             boolean notSystemEnv = !StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME
-                .equals(name);
-            if (notSystemProp && notSystemEnv) {
-                customPropertySources.addLast(it);
+                    .equals(name);
+            return notSystemProp && notSystemEnv;
+        }).collect(Collectors.toList());
+
+        // 获取非系统PropertySource 中配置的 apollo 系统属性
+        notSystemPropertySources.forEach(it->{
+            for (String key : NEED_CLEAR_PROPERTIES) {
+                if(it.containsProperty(key)){
+                    properties.add(key);
+                }
             }
         });
-
-        // to adaptor SpringBoot 2.1.9: new AbstractEnvironment instance and copy property sources
-        ConfigurableEnvironment targetEnvironment = new AbstractEnvironment() {
-        };
-        MutablePropertySources envPropertySources = targetEnvironment.getPropertySources();
-        customPropertySources.forEach(envPropertySources::addLast);
-        return targetEnvironment;
+        return properties;
     }
 }
