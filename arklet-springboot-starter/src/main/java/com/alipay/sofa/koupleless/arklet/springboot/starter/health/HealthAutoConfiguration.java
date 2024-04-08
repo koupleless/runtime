@@ -32,8 +32,8 @@ import static com.alipay.sofa.koupleless.arklet.springboot.starter.health.BaseSt
 public class HealthAutoConfiguration {
 
     @Bean
-    public AppInfoContributor arkInfoContributor() {
-        return new AppInfoContributor();
+    public BizInfoContributor bizInfoContributor() {
+        return new BizInfoContributor();
     }
 
     @Bean("baseStartUpHealthIndicator")
