@@ -75,8 +75,10 @@ public class ApolloPropertiesClearInitializerTests {
         bizProperties.setProperty(appIdKey, bizAppId);
 
         Assert.assertEquals(systemAppId, System.getProperty(appIdKey));
+        Properties properties = System.getProperties();
         initializer.postProcessEnvironment(environment, application);
         Assert.assertNull(System.getProperty(appIdKey));
+        System.setProperties(properties);
     }
 
     private BizModel mockMasterBiz() {
