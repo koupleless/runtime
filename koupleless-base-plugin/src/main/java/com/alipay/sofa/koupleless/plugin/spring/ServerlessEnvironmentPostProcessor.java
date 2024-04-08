@@ -22,9 +22,9 @@ import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.koupleless.common.util.PropertiesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.env.EnvironmentPostProcessor;
+import org.springframework.boot.env.OriginTrackedMapPropertySource;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
@@ -118,7 +118,18 @@ public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProces
                 if (!properties.isEmpty()) {
                     PropertiesPropertySource newPropertySource = new PropertiesPropertySource(
                         SOFA_ARK_BIZ_PROPERTY_SOURCE_PREFIX.concat(propertiesPath), properties);
-                    environment.getPropertySources().addLast(newPropertySource);
+
+                    PropertySource originPropertySourceInBiz = environment.getPropertySources().stream()
+                        .filter(ps -> ps instanceof OriginTrackedMapPropertySource).findFirst()
+                        .orElse(null);
+                    if (originPropertySourceInBiz != null) {
+                        // 放在模块 application.properties 前面
+                        environment.getPropertySources().addBefore(originPropertySourceInBiz.getName(),
+                            newPropertySource);
+                    } else {
+                        // 否则放最后面
+                        environment.getPropertySources().addLast(newPropertySource);
+                    }
                     getLogger().info("customize biz properties: {}", propertiesPath);
                 }
             }
