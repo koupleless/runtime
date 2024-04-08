@@ -62,9 +62,9 @@ public class ApolloPropertiesClearInitializer implements EnvironmentPostProcesso
     }
 
     /**
-     * 如果模块配置了 apollo 系统属性，则清理模块原本读取的基座 apollo 系统属性。该方法的效果是：
-     * 1. 如果模块配置了 apollo 系统属性，如 app.id，则模块会读到模块配置的该属性。如：模块配置了 app.id=biz1，则模块会读到 app.id=biz1
-     * 2. 如果模块没配置 apollo 系统属性，如 app.id，则模块的属性会使用基座的属性。如：模块没配置 app.id，基座配置了 app.id=base，则模块会读到 app.id=base
+     * 如果模块在 environment 中配置了 apollo 系统属性（如 app.id），则清理模块原本读取的基座 apollo 系统属性。该方法的效果是：
+     * 1. 如果模块配置了 apollo 系统属性，则模块会读到模块配置的该属性。如：模块配置了 app.id=biz1，则模块会读到 app.id=biz1
+     * 2. 如果模块没配置 apollo 系统属性，则模块的属性会使用基座的属性。如：模块没配置 app.id，基座配置了 app.id=base，则模块会读到 app.id=base
      */
     private void clearApolloSystemProperties(ConfigurableEnvironment environment) {
         List<String> propertiesToClear = apolloPropertiesConfiguredInBizEnvironment(environment);
@@ -83,6 +83,11 @@ public class ApolloPropertiesClearInitializer implements EnvironmentPostProcesso
         return properties;
     }
 
+    /**
+     * 由于基座初始化后，apollo 会将基座配置的 apollo 系统变量（如：app.id）设置为系统变量，因此此时模块 environment 中会读到基座的 apollo 系统变量。
+     * 为了获取模块在配置中自行定义的 apollo 系统变量，需要排除基座的 apollo 系统变量，即：把模块 environment 中的系统配置源排除。
+     * 新创建的 environment 将只包含模块自身配置的属性。
+     */
     private ConfigurableEnvironment bizEnvironmentWithoutSystemProperties(ConfigurableEnvironment sourceEnvironment) {
         MutablePropertySources customPropertySources = new MutablePropertySources();
         sourceEnvironment.getPropertySources().stream().forEach(it -> {
