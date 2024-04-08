@@ -53,7 +53,7 @@ public class CompositeAllBizHealthIndicatorTest {
             ConcurrentHashMap<ClassLoader, BizRuntimeContext> runtimeMap = new ConcurrentHashMap<>();
             registry.when(BizRuntimeContextRegistry::getRuntimeMap).thenReturn(runtimeMap);
 
-            Biz masterBiz = mockMastertBiz();
+            Biz masterBiz = mockMasterBiz();
             Biz biz1 = mockBiz1();
             runtimeMap.put(masterBiz.getBizClassLoader(), new BizRuntimeContext(masterBiz));
 
@@ -91,7 +91,7 @@ public class CompositeAllBizHealthIndicatorTest {
         }
     }
 
-    private Biz mockMastertBiz() {
+    private Biz mockMasterBiz() {
         ClassLoader masterBizClassLoader = mock(ClassLoader.class);
         BizModel masterBiz = new BizModel();
         masterBiz.setClassLoader(masterBizClassLoader);
