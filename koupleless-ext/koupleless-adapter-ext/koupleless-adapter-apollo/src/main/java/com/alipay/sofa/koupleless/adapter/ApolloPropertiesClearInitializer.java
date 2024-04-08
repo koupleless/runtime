@@ -16,8 +16,8 @@
  */
 package com.alipay.sofa.koupleless.adapter;
 
+import com.alipay.sofa.koupleless.common.util.ArkUtils;
 import com.alipay.sofa.koupleless.common.util.MultiBizProperties;
-import com.ctrip.framework.apollo.core.utils.StringUtils;
 import com.google.common.collect.Lists;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -28,6 +28,7 @@ import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.StandardEnvironment;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -44,14 +45,11 @@ public class ApolloPropertiesClearInitializer implements EnvironmentPostProcesso
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment,
                                        SpringApplication application) {
-        MultiBizProperties properties = MultiBizProperties.initSystem();
-        ClassLoader classLoader = properties.getBizClassLoader();
-        // 是基座
-        if (classLoader == null) {
-            return;
+        MultiBizProperties.initSystem();
+
+        if(ArkUtils.isModuleBiz()){
+            clearApolloSystemProperties(environment);
         }
-        // 是模块
-        clearApolloSystemProperties(environment);
     }
 
     @Override
