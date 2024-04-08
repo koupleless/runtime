@@ -119,7 +119,8 @@ public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProces
                     PropertiesPropertySource newPropertySource = new PropertiesPropertySource(
                         SOFA_ARK_BIZ_PROPERTY_SOURCE_PREFIX.concat(propertiesPath), properties);
 
-                    addBizPropertySourceBeforeApplicationPropertySource(environment, newPropertySource);
+                    addBizPropertySourceBeforeApplicationPropertySource(environment,
+                        newPropertySource);
                     getLogger().info("customize biz properties: {}", propertiesPath);
                 }
             }
@@ -132,13 +133,13 @@ public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProces
     /**
      * 把模块的多部署单元的配置源（config/${app}/application-${profile}.properties）放在模块原本的配置源（application-${profile}.properties）前面
      */
-    private void addBizPropertySourceBeforeApplicationPropertySource(ConfigurableEnvironment environment, PropertiesPropertySource bizPropertySource){
+    private void addBizPropertySourceBeforeApplicationPropertySource(ConfigurableEnvironment environment,
+                                                                     PropertiesPropertySource bizPropertySource) {
         PropertySource applicationPropertySourceInBiz = environment.getPropertySources().stream()
-                .filter(ps -> ps instanceof OriginTrackedMapPropertySource).findFirst()
-                .orElse(null);
+            .filter(ps -> ps instanceof OriginTrackedMapPropertySource).findFirst().orElse(null);
         if (applicationPropertySourceInBiz != null) {
             environment.getPropertySources().addBefore(applicationPropertySourceInBiz.getName(),
-                    bizPropertySource);
+                bizPropertySource);
         } else {
             environment.getPropertySources().addLast(bizPropertySource);
         }

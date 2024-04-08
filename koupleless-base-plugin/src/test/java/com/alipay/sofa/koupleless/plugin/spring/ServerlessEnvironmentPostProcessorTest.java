@@ -86,8 +86,8 @@ public class ServerlessEnvironmentPostProcessorTest {
 
         Properties properties = new Properties();
         properties.setProperty("kay", "kay_in_biz_application_properties");
-        propertySources.addLast(new OriginTrackedMapPropertySource("mock application.properties in biz",
-                properties));
+        propertySources.addLast(
+            new OriginTrackedMapPropertySource("mock application.properties in biz", properties));
 
         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         ArkClient.setBizManagerService(bizManagerService);
