@@ -62,7 +62,8 @@ public class ApolloPropertiesClearInitializer implements EnvironmentPostProcesso
     }
 
     /**
-     * 如果模块在 environment 中配置了 apollo 系统属性（如 app.id），则清理模块原本读取的基座 apollo 系统属性。该方法的效果是：
+     * 如果模块在 environment 中配置了 apollo 系统属性（如 app.id），则清理模块原本读取的基座 apollo 系统属性，否则模块会始终读到基座的 apollo 系统属性。
+     * 该方法的效果是：
      * 1. 如果模块配置了 apollo 系统属性，则模块会读到模块配置的该属性。如：模块配置了 app.id=biz1，则模块会读到 app.id=biz1
      * 2. 如果模块没配置 apollo 系统属性，则模块的属性会使用基座的属性。如：模块没配置 app.id，基座配置了 app.id=base，则模块会读到 app.id=base
      */
@@ -71,6 +72,10 @@ public class ApolloPropertiesClearInitializer implements EnvironmentPostProcesso
         propertiesToClear.forEach(System::clearProperty);
     }
 
+    /**
+     * 模块在 environment 中配置的 apollo 系统属性（如 app.id），
+     * @return java.util.List<java.lang.String>
+     */
     private List<String> apolloPropertiesConfiguredInBizEnvironment(ConfigurableEnvironment environment) {
         List<String> properties = Lists.newArrayList();
         ConfigurableEnvironment tmpEnvironment = bizEnvironmentWithoutSystemProperties(environment);
