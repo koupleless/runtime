@@ -47,7 +47,7 @@ public class ApolloPropertiesClearInitializer implements EnvironmentPostProcesso
                                        SpringApplication application) {
         MultiBizProperties.initSystem();
 
-        if(ArkUtils.isModuleBiz()){
+        if (ArkUtils.isModuleBiz()) {
             clearApolloSystemProperties(environment);
         }
     }
