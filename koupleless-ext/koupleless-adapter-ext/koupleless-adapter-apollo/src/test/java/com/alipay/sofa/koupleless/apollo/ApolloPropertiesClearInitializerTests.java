@@ -21,6 +21,7 @@ import com.alipay.sofa.ark.container.model.BizModel;
 import com.alipay.sofa.ark.container.service.classloader.BizClassLoader;
 import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.koupleless.adapter.ApolloPropertiesClearInitializer;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -82,5 +83,10 @@ public class ApolloPropertiesClearInitializerTests {
         BizModel biz = new BizModel();
         biz.setClassLoader(Mockito.mock(BizClassLoader.class));
         return biz;
+    }
+
+    @After
+    public void destroyApolloPropertiesClearInitializerTest() {
+        arkClient.close();
     }
 }
