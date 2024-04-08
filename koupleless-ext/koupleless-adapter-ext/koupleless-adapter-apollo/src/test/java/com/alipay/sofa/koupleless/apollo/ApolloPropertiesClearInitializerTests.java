@@ -46,7 +46,7 @@ public class ApolloPropertiesClearInitializerTests {
 
     private Properties                       bizProperties = new Properties();
 
-    private MockedStatic<ArkClient> arkClient;
+    private MockedStatic<ArkClient>          arkClient;
 
     @Before
     public void before() {
@@ -79,7 +79,7 @@ public class ApolloPropertiesClearInitializerTests {
         Assert.assertNull(System.getProperty(appIdKey));
     }
 
-    private BizModel mockMasterBiz(){
+    private BizModel mockMasterBiz() {
         BizModel biz = new BizModel();
         biz.setClassLoader(Mockito.mock(BizClassLoader.class));
         return biz;
