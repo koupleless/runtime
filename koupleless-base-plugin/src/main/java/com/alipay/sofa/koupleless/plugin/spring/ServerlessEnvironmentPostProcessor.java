@@ -22,9 +22,9 @@ import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.koupleless.common.util.PropertiesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.env.EnvironmentPostProcessor;
+import org.springframework.boot.env.OriginTrackedMapPropertySource;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
@@ -118,13 +118,30 @@ public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProces
                 if (!properties.isEmpty()) {
                     PropertiesPropertySource newPropertySource = new PropertiesPropertySource(
                         SOFA_ARK_BIZ_PROPERTY_SOURCE_PREFIX.concat(propertiesPath), properties);
-                    environment.getPropertySources().addLast(newPropertySource);
+
+                    addBizPropertySourceBeforeApplicationPropertySource(environment,
+                        newPropertySource);
                     getLogger().info("customize biz properties: {}", propertiesPath);
                 }
             }
 
             // 添加基座共享的 environment
             registerMasterBizPropertySource(MASTER_ENV.get(), environment);
+        }
+    }
+
+    /**
+     * 把模块的多部署单元的配置源（config/${app}/application-${profile}.properties）放在模块原本的配置源（application-${profile}.properties）前面
+     */
+    private void addBizPropertySourceBeforeApplicationPropertySource(ConfigurableEnvironment environment,
+                                                                     PropertiesPropertySource bizPropertySource) {
+        PropertySource applicationPropertySourceInBiz = environment.getPropertySources().stream()
+            .filter(ps -> ps instanceof OriginTrackedMapPropertySource).findFirst().orElse(null);
+        if (applicationPropertySourceInBiz != null) {
+            environment.getPropertySources().addBefore(applicationPropertySourceInBiz.getName(),
+                bizPropertySource);
+        } else {
+            environment.getPropertySources().addLast(bizPropertySource);
         }
     }
 
