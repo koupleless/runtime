@@ -93,7 +93,7 @@ public class ApolloPropertiesClearInitializer implements EnvironmentPostProcesso
         // 获取非系统PropertySource 中配置的 apollo 系统属性
         notSystemPropertySources.forEach(it -> {
             for (String key : NEED_CLEAR_PROPERTIES) {
-                if(!StringUtils.isEmpty(it.getProperty(key))){
+                if (!StringUtils.isEmpty(it.getProperty(key))) {
                     properties.add(key);
                 }
             }
