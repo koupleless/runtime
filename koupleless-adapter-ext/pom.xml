@@ -18,6 +18,7 @@
         <module>koupleless-adapter-log4j2-springboot2.1.9</module>
         <module>koupleless-adapter-dubbo2.6</module>
         <module>koupleless-adapter-dubbo2.7</module>
+        <module>koupleless-adapter-springboot2.3.x</module>
     </modules>
 
 <!--    <build>-->
