@@ -16,17 +16,29 @@
  */
 package com.alipay.sofa.koupleless.apollo;
 
+import com.alipay.sofa.ark.api.ArkClient;
+import com.alipay.sofa.ark.container.model.BizModel;
 import com.alipay.sofa.ark.container.service.classloader.BizClassLoader;
+import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.koupleless.adapter.ApolloPropertiesClearInitializer;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.boot.SpringApplication;
-import org.springframework.core.env.*;
+import org.springframework.core.env.AbstractEnvironment;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertiesPropertySource;
+import org.springframework.core.env.StandardEnvironment;
+import org.springframework.core.env.SystemEnvironmentPropertySource;
 
 import java.util.Map;
 import java.util.Properties;
+
+import static org.mockito.Mockito.mockStatic;
 
 public class ApolloPropertiesClearInitializerTests {
     private ApolloPropertiesClearInitializer initializer   = new ApolloPropertiesClearInitializer();
@@ -34,16 +46,20 @@ public class ApolloPropertiesClearInitializerTests {
 
     private Properties                       bizProperties = new Properties();
 
+    private MockedStatic<ArkClient>          arkClient;
+
     @Before
     public void before() {
         MutablePropertySources propertySources = new MutablePropertySources();
-        propertySources.addLast(new PropertiesPropertySource(
-            StandardEnvironment.SYSTEM_PROPERTIES_PROPERTY_SOURCE_NAME, System.getProperties()));
         propertySources.addLast(new SystemEnvironmentPropertySource(
             StandardEnvironment.SYSTEM_ENVIRONMENT_PROPERTY_SOURCE_NAME, (Map) System.getenv()));
         propertySources.addLast(new PropertiesPropertySource("bizProperties", bizProperties));
         environment = new AbstractEnvironment(propertySources) {
         };
+
+        arkClient = mockStatic(ArkClient.class);
+        Biz masterBiz = mockMasterBiz();
+        arkClient.when(ArkClient::getMasterBiz).thenReturn(masterBiz);
     }
 
     @Test
@@ -59,7 +75,20 @@ public class ApolloPropertiesClearInitializerTests {
         bizProperties.setProperty(appIdKey, bizAppId);
 
         Assert.assertEquals(systemAppId, System.getProperty(appIdKey));
+        Properties properties = System.getProperties();
         initializer.postProcessEnvironment(environment, application);
         Assert.assertNull(System.getProperty(appIdKey));
+        System.setProperties(properties);
+    }
+
+    private BizModel mockMasterBiz() {
+        BizModel biz = new BizModel();
+        biz.setClassLoader(Mockito.mock(BizClassLoader.class));
+        return biz;
+    }
+
+    @After
+    public void destroyApolloPropertiesClearInitializerTest() {
+        arkClient.close();
     }
 }
