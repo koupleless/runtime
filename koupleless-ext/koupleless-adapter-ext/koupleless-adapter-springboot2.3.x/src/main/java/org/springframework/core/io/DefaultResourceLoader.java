@@ -63,6 +63,7 @@ public class DefaultResourceLoader implements ResourceLoader {
      * @see Thread#getContextClassLoader()
      */
     public DefaultResourceLoader() {
+        // adaptor for springboot 2.3.x remove impl content
     }
 
     /**
