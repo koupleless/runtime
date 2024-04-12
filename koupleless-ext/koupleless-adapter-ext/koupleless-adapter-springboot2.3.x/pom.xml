@@ -14,7 +14,7 @@
     <version>${revision}</version>
 
     <properties>
-        <spring.boot.version>2.3.5.RELEASE</spring.boot.version>
+        <spring.boot.version>2.7.18</spring.boot.version>
     </properties>
 
     <dependencies>
