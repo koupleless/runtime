@@ -1,4 +1,4 @@
-version: 1.0.2-SNAPSHOT
+version: 1.2.0-SNAPSHOT
 adapterMappings:
   - matcher:
       regexp: ".*com\\.ctrip\\.framework\\.apollo:apollo-client.*"
