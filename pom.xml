@@ -471,6 +471,7 @@
                                 </goals>
                                 <configuration>
                                     <additionalparam>-Xdoclint:none</additionalparam>
+                                    <skip>true</skip>
                                 </configuration>
                             </execution>
                         </executions>
