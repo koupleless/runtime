@@ -31,6 +31,15 @@ jobs:
           images: |
             node:14
 
+      - name: Checkout adapter Repository
+        uses: actions/checkout@v3
+        with:
+          repository: 'koupleless/adapter'
+          path: 'adapters'
+
+      - name: Build adapter and install
+        run: cd adapter && ./script/ci_build.sh 1.8 install
+
 
       - name: get koupleless-runtime version & update koupleless-runtime version for all test sample app
         run: |
