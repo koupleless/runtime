@@ -47,7 +47,7 @@ for TEST_DIR in $(find $(pwd) -name "$suiteReg");do
     echo "start clean old java processes"
     kill_java_process
 
-    baseJar=$(find . -name "*[base|bootstrap]*.jar"|grep -v facade|grep -v sources)
+    baseJar=$(find . -name "*[base|bootstrap]*.jar"|grep -v facade|grep -v sources|grep -v lib)
     echo "Deployed base app $baseJar"
     if [[ "$baseJar" == "" ]];then
       echo "找不到基座jar包！"

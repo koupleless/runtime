@@ -48,6 +48,15 @@ jobs:
           repository: 'koupleless/samples'
           path: 'samples'
 
+      - name: Checkout adapter Repository
+        uses: actions/checkout@v3
+        with:
+          repository: 'koupleless/adapter'
+          path: 'adapter'
+
+      - name: Build adapter and install
+        run: cd adapter && ./script/ci_build.sh 1.8 install
+
       - name: get koupleless-runtime version & update koupleless-runtime version for all test sample app
         run: |
           koupleless_runtime_version=$(find ./koupleless-common -name "*.jar" |grep -v source |sed "s/.*koupleless-common-\(.*\).jar/\1/")

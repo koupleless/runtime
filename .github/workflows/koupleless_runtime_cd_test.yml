@@ -13,7 +13,7 @@ permissions:
   contents: read
 
 jobs:
-  ci_test:
+  cd_test:
     runs-on: ubuntu-latest
 
     steps:
@@ -30,6 +30,15 @@ jobs:
         with:
           images: |
             node:14
+
+      - name: Checkout adapter Repository
+        uses: actions/checkout@v3
+        with:
+          repository: 'koupleless/adapter'
+          path: 'adapter'
+
+      - name: Build adapter and install
+        run: cd adapter && ./script/ci_build.sh 1.8 install
 
 
       - name: get koupleless-runtime version & update koupleless-runtime version for all test sample app
