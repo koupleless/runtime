@@ -33,12 +33,21 @@ jobs:
       - name: Build with Maven
         run: mvn clean install -DskipTests -B -U -e && sh ./check_format.sh
 
+      - name: Checkout sampletest Repository
+        uses: actions/checkout@v3
+        with:
+          repository: 'koupleless/adapter'
+          path: 'adapter'
+
+      - name: Build with Maven
+        run: cd adapter && ./script/ci_build.sh 1.8
+
       - name: Set up Docker
         uses: docker/metadata-action@v3
         with:
           images: |
             node:14
-
+            
       - name: Checkout sampletest Repository
         uses: actions/checkout@v3
         with:

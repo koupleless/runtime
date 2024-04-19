@@ -30,6 +30,7 @@ import java.util.List;
 @Builder
 @Data
 public class KouplelessAdapterConfig {
+    String                              version;           // 依赖包的版本。
 
     /**
      * 存在一些通用的依赖，需要用户引入。

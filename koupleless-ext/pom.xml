@@ -14,7 +14,6 @@
 
     <modules>
         <module>koupleless-ext-web-gateway</module>
-        <module>koupleless-adapter-ext</module>
         <module>koupleless-test-suite</module>
         <module>koupleless-base-loader</module>
         <module>koupleless-build-plugin</module>

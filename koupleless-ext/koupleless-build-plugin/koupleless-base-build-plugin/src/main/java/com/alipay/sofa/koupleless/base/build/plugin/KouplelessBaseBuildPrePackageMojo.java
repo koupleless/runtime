@@ -134,20 +134,21 @@ public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
 
         Collection<MavenDependencyAdapterMapping> adapterMappings = CollectionUtils
             .emptyIfNull(kouplelessAdapterConfig.getAdapterMappings());
-        for (MavenDependencyAdapterMapping adapterMapping : adapterMappings) {
-            MavenDependencyMatcher matcher = adapterMapping.getMatcher();
 
-            if (matcher != null && matcher.getRegexp() != null) {
-                String regexp = matcher.getRegexp();
-                for (Dependency dependency : project.getDependencies()) {
+        for (Dependency dependency : project.getDependencies()) {
+            for (MavenDependencyAdapterMapping adapterMapping : adapterMappings) {
+                MavenDependencyMatcher matcher = adapterMapping.getMatcher();
+                if (matcher != null && matcher.getRegexp() != null) {
+                    String regexp = matcher.getRegexp();
                     String dependencyId = getDependencyId(dependency);
                     if (Pattern.compile(regexp).matcher(dependencyId).matches()) {
                         adapterDependencies.add(adapterMapping.getAdapter());
+                        break;
                     }
                 }
             }
-
         }
+
         return adapterDependencies;
     }
 
@@ -161,7 +162,7 @@ public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
         for (Dependency dependency : dependencies) {
             try {
                 if (StringUtils.isBlank(dependency.getVersion())) {
-                    dependency.setVersion(defaultVersion);
+                    dependency.setVersion(kouplelessAdapterConfig.getVersion());
                 }
                 if (StringUtils.isBlank(dependency.getGroupId())) {
                     dependency.setGroupId(defaultGroupId);
