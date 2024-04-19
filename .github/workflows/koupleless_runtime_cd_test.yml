@@ -13,7 +13,7 @@ permissions:
   contents: read
 
 jobs:
-  ci_test:
+  cd_test:
     runs-on: ubuntu-latest
 
     steps:
@@ -35,7 +35,7 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: 'koupleless/adapter'
-          path: 'adapters'
+          path: 'adapter'
 
       - name: Build adapter and install
         run: cd adapter && ./script/ci_build.sh 1.8 install
