@@ -17,7 +17,7 @@ adapterMappings:
     adapter:
       artifactId: koupleless-adapter-log4j2-spring-starter-3.0
   - matcher:
-      regexp: ".*spring-boot-starter-log4j2:3\\.*"
+      regexp: ".*spring-boot-starter-log4j2:3.*"
     adapter:
       artifactId: koupleless-adapter-log4j2-spring-starter-3.2
   - matcher:
@@ -32,6 +32,14 @@ adapterMappings:
       regexp: ".*spring-boot-starter-log4j2.*"
     adapter:
       artifactId: koupleless-adapter-log4j2-spring-starter-2.7
+  - matcher:
+      regexp: ".*spring-boot-starter-logging:3\\.(0|1).*"
+    adapter:
+      artifactId: koupleless-adapter-logback-spring-starter-3.0
+  - matcher:
+      regexp: ".*spring-boot-starter-logging:3.*"
+    adapter:
+      artifactId: koupleless-adapter-logback-spring-starter-3.2
   - matcher:
       regexp: ".*spring-boot-starter-logging:.*"
     adapter:
