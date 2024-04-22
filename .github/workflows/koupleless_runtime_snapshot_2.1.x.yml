@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: '2.1.x'
+          ref: 'runtime-2.1.x'
 
       - name: Set up Docker
         uses: docker/metadata-action@v3
@@ -36,6 +36,7 @@ jobs:
       - name: Checkout sampletest Repository
         uses: actions/checkout@v3
         with:
+          ref: 'ci_fix'
           repository: 'koupleless/samples'
           path: 'samples'
 
@@ -87,7 +88,7 @@ jobs:
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
-          ref: '2.1.x'
+          ref: 'runtime-2.1.x'
           java-version: '17'
           distribution: 'temurin'
           cache: maven
@@ -113,7 +114,7 @@ jobs:
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
-          ref: '2.1.x'
+          ref: 'runtime-2.1.x'
           java-version: '17'
           distribution: 'temurin'
           cache: maven
