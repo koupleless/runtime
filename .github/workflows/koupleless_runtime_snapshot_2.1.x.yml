@@ -36,6 +36,7 @@ jobs:
       - name: Checkout sampletest Repository
         uses: actions/checkout@v3
         with:
+          ref: 'ci_fix'
           repository: 'koupleless/samples'
           path: 'samples'
 
