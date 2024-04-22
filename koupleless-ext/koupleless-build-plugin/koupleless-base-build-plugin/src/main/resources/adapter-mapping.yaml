@@ -1,0 +1,46 @@
+version: 1.2.0-SNAPSHOT
+adapterMappings:
+  - matcher:
+      regexp: ".*com\\.ctrip\\.framework\\.apollo:apollo-client.*"
+    adapter:
+      artifactId: koupleless-adapter-apollo-1.6
+  - matcher:
+      regexp: ".*(com\\.alibaba:dubbo-dependencies-bom:2\\.6|com\\.alibaba:dubbo:2\\.6).*"
+    adapter:
+      artifactId: koupleless-adapter-dubbo-2.6
+  - matcher:
+      regexp: ".*(dubbo-spring-boot-starter:2\\.7|com\\.alibaba:dubbo:2\\.7).*"
+    adapter:
+      artifactId: koupleless-adapter-dubbo-2.7
+  - matcher:
+      regexp: ".*spring-boot-starter-log4j2:3\\.(0|1).*"
+    adapter:
+      artifactId: koupleless-adapter-log4j2-spring-starter-3.0
+  - matcher:
+      regexp: ".*spring-boot-starter-log4j2:3.*"
+    adapter:
+      artifactId: koupleless-adapter-log4j2-spring-starter-3.2
+  - matcher:
+      regexp: ".*spring-boot-starter-log4j2:2\\.(1|2|3).*"
+    adapter:
+      artifactId: koupleless-adapter-log4j2-spring-starter-2.1
+  - matcher:
+      regexp: ".*spring-boot-starter-log4j2:2\\.(4|5|6).*"
+    adapter:
+      artifactId: koupleless-adapter-log4j2-spring-starter-2.4
+  - matcher:
+      regexp: ".*spring-boot-starter-log4j2.*"
+    adapter:
+      artifactId: koupleless-adapter-log4j2-spring-starter-2.7
+  - matcher:
+      regexp: ".*spring-boot-starter-logging:3\\.(0|1).*"
+    adapter:
+      artifactId: koupleless-adapter-logback-spring-starter-3.0
+  - matcher:
+      regexp: ".*spring-boot-starter-logging:3.*"
+    adapter:
+      artifactId: koupleless-adapter-logback-spring-starter-3.2
+  - matcher:
+      regexp: ".*spring-boot-starter-logging:.*"
+    adapter:
+      artifactId: koupleless-adapter-logback
