@@ -1,0 +1,5 @@
+key0=org.example.0
+key2=\
+  org.example.1
+key1=org.example.3, org.example.4
+hello=world
