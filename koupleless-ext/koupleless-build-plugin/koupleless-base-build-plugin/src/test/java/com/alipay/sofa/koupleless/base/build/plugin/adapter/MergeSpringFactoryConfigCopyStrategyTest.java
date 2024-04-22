@@ -36,22 +36,22 @@ public class MergeSpringFactoryConfigCopyStrategyTest {
 
     @Test
     public void testCopy() throws Throwable {
-        File buildTemplate = new File(
-            getClass().getClassLoader().getResource("testcopy/services0/spring.factory").toURI());
+        File buildTemplate = new File(getClass().getClassLoader()
+            .getResource("testcopy/services0/spring.factory").toURI());
         File buildDir = Files.createTempDirectory("test").toFile();
         MergeSpringFactoryConfigCopyStrategy copyStrategy = new MergeSpringFactoryConfigCopyStrategy();
         copyStrategy.copy(buildDir, "META-INF/spring.factory",
             Files.readAllBytes(buildTemplate.toPath()));
 
-        File adapterFile = new File(
-            getClass().getClassLoader().getResource("testcopy/services1/spring.factory").toURI());
+        File adapterFile = new File(getClass().getClassLoader()
+            .getResource("testcopy/services1/spring.factory").toURI());
 
         copyStrategy.copy(buildDir, "META-INF/spring.factories",
             Files.readAllBytes(adapterFile.toPath()));
 
-        Map<String, List<String>> properties = SpringUtils.INSTANCE()
-            .parseSpringFactoryConfig(Files.newInputStream(
-                Paths.get(buildDir.toPath().toString(), "META-INF", "spring.factories")));
+        Map<String, List<String>> properties = SpringUtils.INSTANCE().parseSpringFactoryConfig(
+            Files.newInputStream(Paths.get(buildDir.toPath().toString(), "META-INF",
+                "spring.factories")));
 
         Assert.assertEquals(properties.get("just"), Lists.newArrayList("keep"));
 

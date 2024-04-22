@@ -31,15 +31,15 @@ public class CopyAdapterStrategyTest {
 
     @Test
     public void testDirectCopy() throws Throwable {
-        File adapterFile = new File(
-            getClass().getClassLoader().getResource("testcopy/file0").toURI());
+        File adapterFile = new File(getClass().getClassLoader().getResource("testcopy/file0")
+            .toURI());
         File buildDir = Files.createTempDirectory("test").toFile();
         ClassCopyStrategy directCopyStrategy = new ClassCopyStrategy();
-        directCopyStrategy.copy(buildDir, "example/file0",
-            Files.readAllBytes(adapterFile.toPath()));
+        directCopyStrategy
+            .copy(buildDir, "example/file0", Files.readAllBytes(adapterFile.toPath()));
 
-        byte[] bytes = Files
-            .readAllBytes(Paths.get(buildDir.toPath().toString(), "example", "file0"));
+        byte[] bytes = Files.readAllBytes(Paths.get(buildDir.toPath().toString(), "example",
+            "file0"));
         Assert.assertEquals("hello world!", new String(bytes));
     }
 }

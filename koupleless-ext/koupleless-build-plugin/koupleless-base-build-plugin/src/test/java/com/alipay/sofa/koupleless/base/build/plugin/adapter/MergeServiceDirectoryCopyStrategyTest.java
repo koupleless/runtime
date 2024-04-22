@@ -36,13 +36,12 @@ public class MergeServiceDirectoryCopyStrategyTest {
     @Test
     public void testMergeServiceDirectory() throws Throwable {
         File buildDir = Files.createTempDirectory("testDir").toFile();
-        File buildDirMETA = Files
-            .createDirectories(Paths.get(buildDir.getAbsolutePath(), "META-INF", "services"))
-            .toFile();
-        File buildDirTemplate = new File(
-            getClass().getClassLoader().getResource("testcopy/services0").toURI());
-        File adapterDir = new File(
-            getClass().getClassLoader().getResource("testcopy/services1").toURI());
+        File buildDirMETA = Files.createDirectories(
+            Paths.get(buildDir.getAbsolutePath(), "META-INF", "services")).toFile();
+        File buildDirTemplate = new File(getClass().getClassLoader()
+            .getResource("testcopy/services0").toURI());
+        File adapterDir = new File(getClass().getClassLoader().getResource("testcopy/services1")
+            .toURI());
         MergeServiceDirectoryCopyStrategy strategy = new MergeServiceDirectoryCopyStrategy();
         List<String> fileNames = Arrays.asList(buildDirTemplate.list());
         for (String fileName : fileNames) {
@@ -72,8 +71,8 @@ public class MergeServiceDirectoryCopyStrategyTest {
 
         Assert.assertEquals(expected, lines);
 
-        lines = Files
-            .readAllLines(Paths.get(buildDirMETA.getAbsolutePath(), "org.apache.dubbo.rpc.Filter"));
+        lines = Files.readAllLines(Paths.get(buildDirMETA.getAbsolutePath(),
+            "org.apache.dubbo.rpc.Filter"));
         expected.clear();
         expected.add("com.alipay.sofa.koupleless.support.dubbo.ConsumerRedefinePathFilter0");
         expected.add("com.alipay.sofa.koupleless.support.dubbo.ConsumerRedefinePathFilter1");

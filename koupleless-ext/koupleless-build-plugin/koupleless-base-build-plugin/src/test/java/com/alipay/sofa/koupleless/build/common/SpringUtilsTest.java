@@ -35,8 +35,8 @@ public class SpringUtilsTest {
 
     @Test
     public void testParseSpringFactoryConfig() {
-        InputStream inputStream = getClass().getClassLoader()
-            .getResourceAsStream("spring.factory.example");
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(
+            "spring.factory.example");
         Map<String, List<String>> keyToImpls = INSTANCE.parseSpringFactoryConfig(inputStream);
 
         ArrayList<String> expectedImpls = new ArrayList<>();

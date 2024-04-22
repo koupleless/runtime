@@ -77,19 +77,19 @@ public class MergeSpringFactoryConfigCopyStrategy implements CopyAdapterStrategy
     /** {@inheritDoc} */
     @Override
     public void copy(File buildDir, String entryName, byte[] content) throws Throwable {
-        File factoryFile = new File(
-            Paths.get(buildDir.getAbsolutePath(), "META-INF", "spring.factories").toUri());
+        File factoryFile = new File(Paths.get(buildDir.getAbsolutePath(), "META-INF",
+            "spring.factories").toUri());
         if (!factoryFile.exists()) {
             Files.createDirectories(factoryFile.toPath().getParent());
             Files.createFile(factoryFile.toPath());
         }
 
-        Map<String, List<String>> adapterConfig = SpringUtils.INSTANCE()
-            .parseSpringFactoryConfig(new ByteArrayInputStream(content));
+        Map<String, List<String>> adapterConfig = SpringUtils.INSTANCE().parseSpringFactoryConfig(
+            new ByteArrayInputStream(content));
 
         InputStream buildIS = Files.newInputStream(factoryFile.toPath());
-        Map<String, List<String>> buildConfig = SpringUtils.INSTANCE()
-            .parseSpringFactoryConfig(buildIS);
+        Map<String, List<String>> buildConfig = SpringUtils.INSTANCE().parseSpringFactoryConfig(
+            buildIS);
 
         mergeSpringFactories(adapterConfig, buildConfig);
         List<String> lines = formatSpringFactoryConfig(buildConfig);
