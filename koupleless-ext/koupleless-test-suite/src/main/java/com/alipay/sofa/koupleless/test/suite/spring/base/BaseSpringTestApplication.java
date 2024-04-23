@@ -98,8 +98,7 @@ public class BaseSpringTestApplication {
             }, new ApplicationListener<ApplicationContextInitializedEvent>() {
                 @Override
                 public void onApplicationEvent(ApplicationContextInitializedEvent event) {
-                    BizRuntimeContextRegistry
-                            .getMasterBizRuntimeContext()
+                    BizRuntimeContextRegistry.getMasterBizRuntimeContext()
                         .setRootApplicationContext(event.getApplicationContext());
                 }
             });
