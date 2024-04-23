@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          ref: 'noob/runtime-2.0.x'
+          ref: 'runtime-2.0.x'
 
       - name: Set up Docker
         uses: docker/metadata-action@v3
