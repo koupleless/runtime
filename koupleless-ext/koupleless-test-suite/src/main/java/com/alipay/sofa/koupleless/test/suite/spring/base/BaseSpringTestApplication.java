@@ -26,6 +26,7 @@ import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.context.event.ApplicationContextInitializedEvent;
 import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -93,6 +94,13 @@ public class BaseSpringTestApplication {
                     BizRuntimeContext bizRuntimeContext = new BizRuntimeContext(
                         ArkClient.getMasterBiz());
                     BizRuntimeContextRegistry.registerBizRuntimeManager(bizRuntimeContext);
+                }
+            }, new ApplicationListener<ApplicationContextInitializedEvent>() {
+                @Override
+                public void onApplicationEvent(ApplicationContextInitializedEvent event) {
+                    BizRuntimeContextRegistry
+                            .getMasterBizRuntimeContext()
+                        .setRootApplicationContext(event.getApplicationContext());
                 }
             });
 
