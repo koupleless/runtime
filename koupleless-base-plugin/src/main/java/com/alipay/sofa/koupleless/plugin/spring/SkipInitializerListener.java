@@ -58,8 +58,9 @@ public class SkipInitializerListener implements ApplicationListener<SpringApplic
     protected void skipInitializers(SpringApplication application) {
         BizRuntimeContext bizRuntimeContext = BizRuntimeContextRegistry
             .getMasterBizRuntimeContext();
-        Set<String> moduleInitializerSkips = PropertiesUtil.formatPropertyValues(bizRuntimeContext
-            .getRootApplicationContext().getEnvironment().getProperty(MODULE_INITIALIZER_SKIP));
+        Set<String> moduleInitializerSkips = PropertiesUtil.formatPropertyValues(
+            bizRuntimeContext.getRootApplicationContext().getEnvironment(),
+            MODULE_INITIALIZER_SKIP);
 
         application.setInitializers(application.getInitializers().stream()
             .filter(

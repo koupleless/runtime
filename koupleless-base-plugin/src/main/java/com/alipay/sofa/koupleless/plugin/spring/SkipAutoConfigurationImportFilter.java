@@ -52,18 +52,18 @@ public class SkipAutoConfigurationImportFilter implements AutoConfigurationImpor
         // 1. getting the exclude and include configs from base
         BizRuntimeContext bizRuntimeContext = BizRuntimeContextRegistry
             .getMasterBizRuntimeContext();
-        Set<String> excludeConfigInBase = PropertiesUtil
-            .formatPropertyValues(bizRuntimeContext.getRootApplicationContext().getEnvironment()
-                .getProperty(MODULE_AUTO_CONFIGURATION_EXCLUDE));
-        Set<String> includeConfigInBase = PropertiesUtil
-            .formatPropertyValues(bizRuntimeContext.getRootApplicationContext().getEnvironment()
-                .getProperty(MODULE_AUTO_CONFIGURATION_INCLUDE));
+        Set<String> excludeConfigInBase = PropertiesUtil.formatPropertyValues(
+            bizRuntimeContext.getRootApplicationContext().getEnvironment(),
+            MODULE_AUTO_CONFIGURATION_EXCLUDE);
+        Set<String> includeConfigInBase = PropertiesUtil.formatPropertyValues(
+            bizRuntimeContext.getRootApplicationContext().getEnvironment(),
+            MODULE_AUTO_CONFIGURATION_INCLUDE);
 
         // 2. gettting the exclude and include configs from current biz
-        Set<String> excludeConfigInBiz = PropertiesUtil
-            .formatPropertyValues(this.environment.getProperty(MODULE_AUTO_CONFIGURATION_EXCLUDE));
-        Set<String> includeConfigInBiz = PropertiesUtil
-            .formatPropertyValues(this.environment.getProperty(MODULE_AUTO_CONFIGURATION_INCLUDE));
+        Set<String> excludeConfigInBiz = PropertiesUtil.formatPropertyValues(this.environment,
+            MODULE_AUTO_CONFIGURATION_EXCLUDE);
+        Set<String> includeConfigInBiz = PropertiesUtil.formatPropertyValues(this.environment,
+            MODULE_AUTO_CONFIGURATION_INCLUDE);
 
         for (int i = 0; i < autoConfigurationClasses.length; i++) {
             result[i] = true;
