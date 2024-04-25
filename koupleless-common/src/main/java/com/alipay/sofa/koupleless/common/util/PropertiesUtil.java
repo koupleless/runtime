@@ -17,9 +17,11 @@
 package com.alipay.sofa.koupleless.common.util;
 
 import com.alipay.sofa.ark.common.util.StringUtils;
+import org.springframework.core.env.Environment;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
@@ -42,7 +44,24 @@ public class PropertiesUtil {
         }
     }
 
-    public static Set<String> formatPropertyValues(String value) {
+    private static Set<String> formatPropertyValues(String value) {
         return StringUtils.strToSet(value, ",");
+    }
+
+    public static Set<String> formatPropertyValues(Environment environment, String key) {
+        String value = environment.getProperty(key);
+        if (!StringUtils.isEmpty(value)) {
+            return formatPropertyValues(value);
+        }
+
+        int i = 0;
+        String value_with_index = environment.getProperty(key + "[" + i + "]");
+        Set<String> values = new HashSet<>();
+        while (!StringUtils.isEmpty(value_with_index)) {
+            values.addAll(formatPropertyValues(value_with_index));
+            i++;
+            value_with_index = environment.getProperty(key + "[" + i + "]");
+        }
+        return values;
     }
 }
