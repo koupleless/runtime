@@ -20,6 +20,7 @@ import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.koupleless.common.exception.BizRuntimeException;
 import com.alipay.sofa.koupleless.common.exception.ErrorCodes;
+import org.springframework.context.ApplicationContext;
 
 import java.util.Collections;
 import java.util.Set;
@@ -71,5 +72,17 @@ public class BizRuntimeContextRegistry {
 
         throw new BizRuntimeException(ErrorCodes.SpringContextManager.E100002,
             "No BizRuntimeContext found for classLoader: " + classLoader);
+    }
+
+    public static BizRuntimeContext getBizRuntimeContextByApplicationContext(ApplicationContext applicationContext) {
+        for (BizRuntimeContext bizRuntimeContext : BizRuntimeContextRegistry.getRuntimeSet()) {
+            if (bizRuntimeContext.getRootApplicationContext() != null
+                && bizRuntimeContext.getRootApplicationContext().equals(applicationContext)) {
+                return bizRuntimeContext;
+            }
+        }
+
+        throw new BizRuntimeException(ErrorCodes.SpringContextManager.E100002,
+            "No BizRuntimeContext found for applicationContext: " + applicationContext);
     }
 }
