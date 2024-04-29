@@ -68,6 +68,8 @@ public class TestBootstrap {
     @SneakyThrows
     public static void setUpPlugins() {
         pluginDependencies.add("web-ark-plugin");
+        pluginDependencies.add("netty-ark-plugin");
+        pluginDependencies.add("config-ark-plugin");
         pluginDependencies.add("koupleless-base-plugin");
 
         ArkServiceContainer container = ArkServiceContainerHolder.getContainer();
