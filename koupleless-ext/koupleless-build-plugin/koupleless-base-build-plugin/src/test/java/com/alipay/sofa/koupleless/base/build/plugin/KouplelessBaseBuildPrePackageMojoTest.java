@@ -27,6 +27,7 @@ import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResult;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -64,6 +65,11 @@ public class KouplelessBaseBuildPrePackageMojoTest {
 
     @Mock
     RepositorySystem                          repositorySystem;
+
+    @Before
+    public void setUp() {
+        mojo.MAPPING_FILE = "adapter-mapping-ext.yml";
+    }
 
     @Test
     public void testLazyInitKouplelessAdapterConfig() throws Exception {

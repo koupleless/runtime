@@ -13,11 +13,11 @@ adapterMappings:
     adapter:
       artifactId: koupleless-adapter-dubbo-2.7
   - matcher:
-      regexp: ".*org\\.apache\\.dubbo:dubbo.*:3\\.2).*"
+      regexp: ".*(org\\.apache\\.dubbo:dubbo.*:3\\.2).*"
     adapter:
       artifactId: koupleless-adapter-dubbo-3.2
   - matcher:
-      regexp: ".*org\\.apache\\.dubbo:dubbo.*:3\\.1).*"
+      regexp: ".*(org\\.apache\\.dubbo:dubbo.*:3\\.1).*"
     adapter:
       artifactId: koupleless-adapter-dubbo-3.1
   - matcher:
