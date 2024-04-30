@@ -73,6 +73,8 @@ import java.util.regex.Pattern;
 @Mojo(name = "add-patch", defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
 
+    String MAPPING_FILE = "adapter-mapping.yaml";
+
     @Parameter(defaultValue = "${project.build.directory}", readonly = true)
     File                    outputDirectory;
 
@@ -97,15 +99,10 @@ public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
     void initKouplelessAdapterConfig() throws Exception {
         if (kouplelessAdapterConfig == null) {
             InputStream mappingConfigIS = this.getClass().getClassLoader()
-                .getResourceAsStream("adapter-mapping.yaml");
+                .getResourceAsStream(MAPPING_FILE);
 
             kouplelessAdapterConfig = yamlMapper.readValue(mappingConfigIS,
                 KouplelessAdapterConfig.class);
-
-            for (MavenDependencyAdapterMapping mappings : CollectionUtils
-                .emptyIfNull(kouplelessAdapterConfig.getAdapterMappings())) {
-
-            }
         }
 
         Properties properties = new Properties();

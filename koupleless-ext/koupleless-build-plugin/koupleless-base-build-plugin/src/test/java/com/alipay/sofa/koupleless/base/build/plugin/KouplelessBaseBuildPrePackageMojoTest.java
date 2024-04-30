@@ -27,6 +27,7 @@ import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResult;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -54,16 +55,21 @@ public class KouplelessBaseBuildPrePackageMojoTest {
     private KouplelessBaseBuildPrePackageMojo mojo;
 
     // create a tmp directory using os tmp
-    private File                              outputDirectory = null;
+    private File outputDirectory = null;
 
     @Mock
-    MavenProject                              project;
+    MavenProject project;
 
     @Mock
-    MavenSession                              session;
+    MavenSession session;
 
     @Mock
-    RepositorySystem                          repositorySystem;
+    RepositorySystem repositorySystem;
+
+    @Before
+    public void setUp() {
+        mojo.MAPPING_FILE = "adapter-mapping-ext.yml";
+    }
 
     @Test
     public void testLazyInitKouplelessAdapterConfig() throws Exception {
@@ -77,11 +83,11 @@ public class KouplelessBaseBuildPrePackageMojoTest {
 
         List<MavenDependencyAdapterMapping> mappings = new ArrayList<>();
         mappings.add(MavenDependencyAdapterMapping.builder().adapter(mockDependency)
-            .matcher(MavenDependencyMatcher.builder().regexp(".*").build()).build());
+                .matcher(MavenDependencyMatcher.builder().regexp(".*").build()).build());
 
         mojo.initKouplelessAdapterConfig();
         KouplelessAdapterConfig expected = KouplelessAdapterConfig.builder()
-            .commonDependencies(commonDependencies).adapterMappings(mappings).build();
+                .commonDependencies(commonDependencies).adapterMappings(mappings).build();
 
         Assert.assertEquals(expected.toString(), mojo.kouplelessAdapterConfig.toString());
     }
@@ -100,10 +106,10 @@ public class KouplelessBaseBuildPrePackageMojoTest {
 
             List<MavenDependencyAdapterMapping> mappings = new ArrayList<>();
             mappings.add(MavenDependencyAdapterMapping.builder().adapter(mockDependency)
-                .matcher(MavenDependencyMatcher.builder().regexp(".*A:B:C.*").build()).build());
+                    .matcher(MavenDependencyMatcher.builder().regexp(".*A:B:C.*").build()).build());
 
             mojo.kouplelessAdapterConfig = KouplelessAdapterConfig.builder()
-                .commonDependencies(commonDependencies).adapterMappings(mappings).build();
+                    .commonDependencies(commonDependencies).adapterMappings(mappings).build();
         }
 
         {
@@ -138,8 +144,8 @@ public class KouplelessBaseBuildPrePackageMojoTest {
 
         {
             Assert.assertTrue(Paths
-                .get(mojo.outputDirectory.getAbsolutePath(), "classes", "com", "example", "demo")
-                .toFile().exists());
+                    .get(mojo.outputDirectory.getAbsolutePath(), "classes", "com", "example", "demo")
+                    .toFile().exists());
         }
     }
 
