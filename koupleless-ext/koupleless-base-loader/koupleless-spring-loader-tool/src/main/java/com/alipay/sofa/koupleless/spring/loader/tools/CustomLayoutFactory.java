@@ -23,11 +23,13 @@ import org.springframework.boot.loader.tools.LayoutFactory;
 
 /**
  * CustomLayoutFactory
+ *
  * @author zjulbj
- * @daye 2023/12/26
+ * @since 2023/12/26
  * @version CustomLayoutFactory.java, v 0.1 2023年12月26日 14:45 syd
  */
 public class CustomLayoutFactory implements LayoutFactory {
+    /** {@inheritDoc} */
     @Override
     public Layout getLayout(File source) {
         return Layouts.forFile(source);

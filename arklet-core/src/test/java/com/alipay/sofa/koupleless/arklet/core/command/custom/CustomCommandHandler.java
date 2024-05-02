@@ -25,7 +25,7 @@ import com.alipay.sofa.koupleless.arklet.core.util.AssertUtils;
 
 /**
  * @author mingmen
- * @date 2023/8/6
+ * @since 2023/8/6
  */
 public class CustomCommandHandler extends AbstractCommandHandler<Input, String> {
 

@@ -37,24 +37,30 @@ import com.alipay.sofa.koupleless.common.util.OSUtils;
 import com.google.inject.Singleton;
 
 /**
+ * <p>UnifiedOperationServiceImpl class.</p>
+ *
  * @author mingmen
- * @date 2023/6/14
+ * @since 2023/6/14
+ * @version 1.0.0
  */
 @Singleton
 public class UnifiedOperationServiceImpl implements UnifiedOperationService {
 
     private BatchInstallHelper batchInstallHelper = new BatchInstallHelper();
 
+    /** {@inheritDoc} */
     @Override
     public void init() {
 
     }
 
+    /** {@inheritDoc} */
     @Override
     public void destroy() {
 
     }
 
+    /** {@inheritDoc} */
     @Override
     public ClientResponse install(String bizName, String bizVersion, String bizUrl, String[] args,
                                   Map<String, String> envs) throws Throwable {
@@ -66,6 +72,12 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
         return ArkClient.installOperation(bizOperation, args, envs);
     }
 
+    /**
+     * <p>safeBatchInstall.</p>
+     *
+     * @param bizUrl a {@link java.lang.String} object
+     * @return a {@link com.alipay.sofa.ark.api.ClientResponse} object
+     */
     public ClientResponse safeBatchInstall(String bizUrl) {
         try {
             BizOperation bizOperation = new BizOperation()
@@ -84,11 +96,13 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public ClientResponse uninstall(String bizName, String bizVersion) throws Throwable {
         return ArkClient.uninstallBiz(bizName, bizVersion);
     }
 
+    /** {@inheritDoc} */
     @Override
     public BatchInstallResponse batchInstall(BatchInstallRequest request) throws Throwable {
         List<String> bizUrls = batchInstallHelper
@@ -126,11 +140,13 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
             .bizUrlToResponse(bizUrlToInstallResult).build();
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<Biz> queryBizList() {
         return ArkClient.getBizManagerService().getBizInOrder();
     }
 
+    /** {@inheritDoc} */
     @Override
     public ClientResponse switchBiz(String bizName, String bizVersion) throws Throwable {
         return ArkClient.switchBiz(bizName, bizVersion);

@@ -47,7 +47,7 @@ import static org.mockito.Mockito.mock;
 
 /**
  * @author CodeNoobKing
- * @date 2024/2/19
+ * @since 2024/2/19
  */
 @RunWith(MockitoJUnitRunner.class)
 public class KouplelessBaseBuildPrePackageMojoTest {

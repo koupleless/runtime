@@ -40,7 +40,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * <p>HealthServiceImpl class.</p>
+ *
  * @author Lunarscave
+ * @version 1.0.0
  */
 @Singleton
 public class HealthServiceImpl implements HealthService {
@@ -49,16 +52,19 @@ public class HealthServiceImpl implements HealthService {
 
     private final Map<String, Indicator> indicators    = new ConcurrentHashMap<>(3);
 
+    /** {@inheritDoc} */
     @Override
     public void init() {
         initIndicators();
         healthBuilder.init();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void destroy() {
     }
 
+    /** {@inheritDoc} */
     @Override
     public Health getHealth() {
         HealthBuilder builder = new HealthBuilder();
@@ -68,6 +74,7 @@ public class HealthServiceImpl implements HealthService {
         return builder.build();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Health getHealth(String indicatorId) {
         try {
@@ -81,6 +88,7 @@ public class HealthServiceImpl implements HealthService {
         return healthBuilder.build();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Health getHealth(String[] indicatorIds) {
         HealthBuilder builder = new HealthBuilder();
@@ -94,6 +102,7 @@ public class HealthServiceImpl implements HealthService {
         return builder.build();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Health queryModuleInfo() {
         HealthBuilder builder = new HealthBuilder();
@@ -102,6 +111,7 @@ public class HealthServiceImpl implements HealthService {
             .putAllHealthData(queryModuleInfo(new PluginInfo())).build();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Health queryModuleInfo(String type, String name, String version) {
         HealthBuilder builder = new HealthBuilder();
@@ -126,6 +136,7 @@ public class HealthServiceImpl implements HealthService {
         return builder.build();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Health queryModuleInfo(BizInfo bizInfo) {
         String bizName = bizInfo.getBizName(), bizVersion = bizInfo.getBizVersion();
@@ -151,6 +162,7 @@ public class HealthServiceImpl implements HealthService {
         return healthBuilder.build();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Health queryModuleInfo(PluginInfo pluginInfo) {
         String pluginName = pluginInfo.getPluginName();
@@ -171,17 +183,20 @@ public class HealthServiceImpl implements HealthService {
         return healthBuilder.build();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Health queryMasterBiz() {
         return healthBuilder.init().putHealthData(Constants.MASTER_BIZ_INFO,
             BizHealthMeta.createBizMeta(ArkClient.getMasterBiz())).build();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Indicator getIndicator(String indicatorId) {
         return indicators.get(indicatorId);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void registerIndicator(Indicator indicator) {
         this.indicators.put(indicator.getIndicatorId(), indicator);

@@ -31,8 +31,11 @@ import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
 import com.google.inject.Singleton;
 
 /**
+ * <p>HttpTunnel class.</p>
+ *
  * @author mingmen
- * @date 2023/6/8
+ * @since 2023/6/8
+ * @version 1.0.0
  */
 
 @Singleton
@@ -50,6 +53,7 @@ public class HttpTunnel implements Tunnel {
     private final AtomicBoolean       run                      = new AtomicBoolean(false);
     private CommandService            commandService;
 
+    /** {@inheritDoc} */
     @Override
     public void init(CommandService commandService) {
         if (init.compareAndSet(false, true)) {
@@ -69,6 +73,7 @@ public class HttpTunnel implements Tunnel {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void run() {
         if (run.compareAndSet(false, true)) {
@@ -84,6 +89,7 @@ public class HttpTunnel implements Tunnel {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void shutdown() {
         if (shutdown.compareAndSet(false, true)) {

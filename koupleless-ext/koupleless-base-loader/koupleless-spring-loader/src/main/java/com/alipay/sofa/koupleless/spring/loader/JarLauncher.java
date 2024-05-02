@@ -27,14 +27,21 @@ import java.net.URL;
  * A JarLauncher to load classes with CachedLaunchedURLClassLoader
  *
  * @author zjulbj
- * @daye 2023/12/26
  * @author bingjie.lbj
+ * @since 2023/12/26
  */
 public class JarLauncher extends org.springframework.boot.loader.JarLauncher {
+    /**
+     * <p>main.</p>
+     *
+     * @param args an array of {@link java.lang.String} objects
+     * @throws java.lang.Exception if any.
+     */
     public static void main(String[] args) throws Exception {
         new JarLauncher().launch(args);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected ClassLoader createClassLoader(URL[] urls) throws Exception {
         return new CachedLaunchedURLClassLoader(isExploded(), getArchive(), urls,

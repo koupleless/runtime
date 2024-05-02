@@ -24,8 +24,8 @@ import org.springframework.boot.context.event.ApplicationStartingEvent;
 import static org.mockito.Mockito.mock;
 
 /**
- * @author: yuanyuan
- * @date: 2023/11/2 9:39 下午
+ * @author yuanyuan
+ * @since 2023/11/2 9:39 下午
  */
 public class ServerlessApplicationListenerTest {
 

@@ -28,9 +28,12 @@ import java.util.List;
 import java.util.jar.JarFile;
 
 /**
+ * <p>BaseClassLoader class.</p>
+ *
  * @author CodeNoobKing
- * @date 2024/3/22
- **/
+ * @since 2024/3/22
+ * @version 1.0.0
+ */
 public class BaseClassLoader extends URLClassLoader {
 
     private URLClassLoader parent;
@@ -38,6 +41,12 @@ public class BaseClassLoader extends URLClassLoader {
 
     private URL[]          parentUrls;
 
+    /**
+     * <p>getUrlsFromSurefireManifest.</p>
+     *
+     * @param url a {@link java.net.URL} object
+     * @return a {@link java.util.List} object
+     */
     @SneakyThrows
     public static List<URL> getUrlsFromSurefireManifest(URL url) {
         List<URL> urls = Lists.newArrayList();
@@ -57,6 +66,12 @@ public class BaseClassLoader extends URLClassLoader {
         return urls;
     }
 
+    /**
+     * <p>getUrls.</p>
+     *
+     * @param classLoader a {@link java.net.URLClassLoader} object
+     * @return a {@link java.util.List} object
+     */
     @SneakyThrows
     public static List<URL> getUrls(URLClassLoader classLoader) {
         List<URL> urls = Lists.newArrayList();
@@ -71,6 +86,12 @@ public class BaseClassLoader extends URLClassLoader {
         return urls;
     }
 
+    /**
+     * <p>Constructor for BaseClassLoader.</p>
+     *
+     * @param higherPriorityArtifacts a {@link java.util.List} object
+     * @param parent a {@link java.lang.ClassLoader} object
+     */
     public BaseClassLoader(List<String> higherPriorityArtifacts, ClassLoader parent) {
         // add an interception layer to the parent classloader
         // in this way we can control the classloading process
@@ -87,11 +108,13 @@ public class BaseClassLoader extends URLClassLoader {
         this.higherPriorityClassLoader = new URLClassLoader(urls.toArray(new URL[0]));
     }
 
+    /** {@inheritDoc} */
     @Override
     public URL[] getURLs() {
         return parentUrls;
     }
 
+    /** {@inheritDoc} */
     @Override
     public URL getResource(String name) {
         URL resource = higherPriorityClassLoader.getResource(name);
@@ -99,6 +122,7 @@ public class BaseClassLoader extends URLClassLoader {
         return resource;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object obj) {
         if (obj.equals(this)) {

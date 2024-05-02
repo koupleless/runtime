@@ -39,11 +39,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * 如：为 true 时，如果模块安装失败，则基座启动健康指标为 DOWN；
  * 如：为 false 时，无论模块安装成功或失败，基座启动健康指标仅和基座启动成功相关。
  * 注意：后续做主动基座回放时，可以参考该类实现。
+ *
  * @author lianglipeng.llp@alibaba-inc.com
  * @version $Id: BaseStartUpHealthIndicator.java, v 0.1 2024年03月21日 10:50 立蓬 Exp $
  * @since 1.1.0
  */
-
 public class BaseStartUpHealthIndicator extends AbstractHealthIndicator
                                         implements EventHandler<AbstractArkEvent>,
                                         ApplicationListener<SpringApplicationEvent> {
@@ -53,13 +53,20 @@ public class BaseStartUpHealthIndicator extends AbstractHealthIndicator
 
     private boolean                                 associateWithAllBizReadiness;
 
+    /** Constant <code>WITH_ALL_BIZ_READINESS="koupleless.healthcheck.base.readiness.w"{trunked}</code> */
     public static final String                      WITH_ALL_BIZ_READINESS = "koupleless.healthcheck.base.readiness.withAllBizReadiness";
 
+    /**
+     * <p>Constructor for BaseStartUpHealthIndicator.</p>
+     *
+     * @param withAllBizReadiness a boolean
+     */
     public BaseStartUpHealthIndicator(boolean withAllBizReadiness) {
         super("ark biz start up health check failed");
         this.associateWithAllBizReadiness = withAllBizReadiness;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void handleEvent(AbstractArkEvent event) {
         Object obj = event.getSource();
@@ -85,6 +92,7 @@ public class BaseStartUpHealthIndicator extends AbstractHealthIndicator
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void onApplicationEvent(SpringApplicationEvent event) {
         if (event instanceof ApplicationReadyEvent) {
@@ -94,6 +102,7 @@ public class BaseStartUpHealthIndicator extends AbstractHealthIndicator
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void doHealthCheck(Health.Builder builder) {
         builder.withDetail(ArkClient.getMasterBiz().getIdentity(), baseStartUpStatus)
@@ -122,6 +131,7 @@ public class BaseStartUpHealthIndicator extends AbstractHealthIndicator
         builder.status(Status.DOWN);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int getPriority() {
         return LOWEST_PRECEDENCE;

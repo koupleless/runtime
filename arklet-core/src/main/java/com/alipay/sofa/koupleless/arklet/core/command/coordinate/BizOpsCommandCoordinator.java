@@ -23,13 +23,24 @@ import com.alipay.sofa.ark.common.util.BizIdentityUtils;
 import com.alipay.sofa.koupleless.arklet.core.command.meta.Command;
 
 /**
+ * <p>BizOpsCommandCoordinator class.</p>
+ *
  * @author mingmen
- * @date 2023/6/14
+ * @since 2023/6/14
+ * @version 1.0.0
  */
 public class BizOpsCommandCoordinator {
 
     private static final Map<String, Command> bizIdentityLockMap = new ConcurrentHashMap<>(16);
 
+    /**
+     * <p>checkAndLock.</p>
+     *
+     * @param bizName a {@link java.lang.String} object
+     * @param bizVersion a {@link java.lang.String} object
+     * @param command a {@link com.alipay.sofa.koupleless.arklet.core.command.meta.Command} object
+     * @return a boolean
+     */
     public synchronized static boolean checkAndLock(String bizName, String bizVersion,
                                                     Command command) {
         String identity = BizIdentityUtils.generateBizIdentity(bizName, bizVersion);
@@ -40,25 +51,54 @@ public class BizOpsCommandCoordinator {
         return true;
     }
 
+    /**
+     * <p>unlock.</p>
+     *
+     * @param bizName a {@link java.lang.String} object
+     * @param bizVersion a {@link java.lang.String} object
+     */
     public static void unlock(String bizName, String bizVersion) {
         String identity = BizIdentityUtils.generateBizIdentity(bizName, bizVersion);
         bizIdentityLockMap.remove(identity);
     }
 
+    /**
+     * <p>existBizProcessing.</p>
+     *
+     * @param bizName a {@link java.lang.String} object
+     * @param bizVersion a {@link java.lang.String} object
+     * @return a boolean
+     */
     public static boolean existBizProcessing(String bizName, String bizVersion) {
         String identity = BizIdentityUtils.generateBizIdentity(bizName, bizVersion);
         return bizIdentityLockMap.containsKey(identity);
     }
 
+    /**
+     * <p>existBizProcessing.</p>
+     *
+     * @param identity a {@link java.lang.String} object
+     * @return a boolean
+     */
     public static boolean existBizProcessing(String identity) {
         return bizIdentityLockMap.containsKey(identity);
     }
 
+    /**
+     * <p>getCurrentProcessingCommand.</p>
+     *
+     * @param bizName a {@link java.lang.String} object
+     * @param bizVersion a {@link java.lang.String} object
+     * @return a {@link com.alipay.sofa.koupleless.arklet.core.command.meta.Command} object
+     */
     public static Command getCurrentProcessingCommand(String bizName, String bizVersion) {
         String identity = BizIdentityUtils.generateBizIdentity(bizName, bizVersion);
         return bizIdentityLockMap.get(identity);
     }
 
+    /**
+     * <p>clear.</p>
+     */
     public static void clear() {
         bizIdentityLockMap.clear();
     }

@@ -28,14 +28,23 @@ import org.springframework.core.env.Environment;
 import java.util.Arrays;
 import java.util.Set;
 
+/**
+ * <p>SkipAutoConfigurationImportFilter class.</p>
+ *
+ * @author zzl_i
+ * @version 1.0.0
+ */
 public class SkipAutoConfigurationImportFilter implements AutoConfigurationImportFilter,
                                                EnvironmentAware {
 
+    /** Constant <code>MODULE_AUTO_CONFIGURATION_EXCLUDE="koupleless.module.autoconfigure.exclude"</code> */
     public static final String MODULE_AUTO_CONFIGURATION_EXCLUDE = "koupleless.module.autoconfigure.exclude";
+    /** Constant <code>MODULE_AUTO_CONFIGURATION_INCLUDE="koupleless.module.autoconfigure.include"</code> */
     public static final String MODULE_AUTO_CONFIGURATION_INCLUDE = "koupleless.module.autoconfigure.include";
 
     private Environment        environment;
 
+    /** {@inheritDoc} */
     @Override
     public boolean[] match(String[] autoConfigurationClasses,
                            AutoConfigurationMetadata autoConfigurationMetadata) {
@@ -86,6 +95,7 @@ public class SkipAutoConfigurationImportFilter implements AutoConfigurationImpor
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void setEnvironment(Environment environment) {
         this.environment = environment;

@@ -19,8 +19,11 @@ package com.alipay.sofa.koupleless.arklet.core.api.model;
 import com.alipay.sofa.koupleless.arklet.core.command.meta.Output;
 
 /**
+ * <p>Response class.</p>
+ *
  * @author mingmen
- * @date 2023/6/26
+ * @since 2023/6/26
+ * @version 1.0.0
  */
 public class Response {
 
@@ -44,6 +47,12 @@ public class Response {
      */
     private String       errorStackTrace;
 
+    /**
+     * <p>fromCommandOutput.</p>
+     *
+     * @param output a {@link com.alipay.sofa.koupleless.arklet.core.command.meta.Output} object
+     * @return a {@link com.alipay.sofa.koupleless.arklet.core.api.model.Response} object
+     */
     public static Response fromCommandOutput(Output output) {
         Response response = new Response();
         response.code = output.getCode();
@@ -52,6 +61,12 @@ public class Response {
         return response;
     }
 
+    /**
+     * <p>success.</p>
+     *
+     * @param data a {@link java.lang.Object} object
+     * @return a {@link com.alipay.sofa.koupleless.arklet.core.api.model.Response} object
+     */
     public static Response success(Object data) {
         Response response = new Response();
         response.code = ResponseCode.SUCCESS;
@@ -59,6 +74,12 @@ public class Response {
         return response;
     }
 
+    /**
+     * <p>failed.</p>
+     *
+     * @param message a {@link java.lang.String} object
+     * @return a {@link com.alipay.sofa.koupleless.arklet.core.api.model.Response} object
+     */
     public static Response failed(String message) {
         Response response = new Response();
         response.code = ResponseCode.FAILED;
@@ -66,6 +87,11 @@ public class Response {
         return response;
     }
 
+    /**
+     * <p>notFound.</p>
+     *
+     * @return a {@link com.alipay.sofa.koupleless.arklet.core.api.model.Response} object
+     */
     public static Response notFound() {
         Response response = new Response();
         response.code = ResponseCode.CMD_NOT_FOUND;
@@ -73,6 +99,13 @@ public class Response {
         return response;
     }
 
+    /**
+     * <p>internalError.</p>
+     *
+     * @param message a {@link java.lang.String} object
+     * @param errorStackTrace a {@link java.lang.String} object
+     * @return a {@link com.alipay.sofa.koupleless.arklet.core.api.model.Response} object
+     */
     public static Response internalError(String message, String errorStackTrace) {
         Response response = new Response();
         response.code = ResponseCode.CMD_PROCESS_INTERNAL_ERROR;
@@ -81,34 +114,74 @@ public class Response {
         return response;
     }
 
+    /**
+     * <p>Getter for the field <code>message</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getMessage() {
         return message;
     }
 
+    /**
+     * <p>Setter for the field <code>message</code>.</p>
+     *
+     * @param message a {@link java.lang.String} object
+     */
     public void setMessage(String message) {
         this.message = message;
     }
 
+    /**
+     * <p>Getter for the field <code>data</code>.</p>
+     *
+     * @return a {@link java.lang.Object} object
+     */
     public Object getData() {
         return data;
     }
 
+    /**
+     * <p>Setter for the field <code>data</code>.</p>
+     *
+     * @param data a {@link java.lang.Object} object
+     */
     public void setData(Object data) {
         this.data = data;
     }
 
+    /**
+     * <p>Getter for the field <code>code</code>.</p>
+     *
+     * @return a {@link com.alipay.sofa.koupleless.arklet.core.api.model.ResponseCode} object
+     */
     public ResponseCode getCode() {
         return code;
     }
 
+    /**
+     * <p>Setter for the field <code>code</code>.</p>
+     *
+     * @param code a {@link com.alipay.sofa.koupleless.arklet.core.api.model.ResponseCode} object
+     */
     public void setCode(ResponseCode code) {
         this.code = code;
     }
 
+    /**
+     * <p>Getter for the field <code>errorStackTrace</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getErrorStackTrace() {
         return errorStackTrace;
     }
 
+    /**
+     * <p>Setter for the field <code>errorStackTrace</code>.</p>
+     *
+     * @param errorStackTrace a {@link java.lang.String} object
+     */
     public void setErrorStackTrace(String errorStackTrace) {
         this.errorStackTrace = errorStackTrace;
     }

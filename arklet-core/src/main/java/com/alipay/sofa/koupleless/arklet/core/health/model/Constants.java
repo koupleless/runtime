@@ -17,42 +17,71 @@
 package com.alipay.sofa.koupleless.arklet.core.health.model;
 
 /**
+ * <p>Constants class.</p>
+ *
  * @author Lunarscave
+ * @version 1.0.0
  */
 public class Constants {
 
+    /** Constant <code>SYSTEM="system"</code> */
     public static final String SYSTEM                = "system";
 
+    /** Constant <code>BIZ="biz"</code> */
     public static final String BIZ                   = "biz";
 
+    /** Constant <code>PLUGIN="plugin"</code> */
     public static final String PLUGIN                = "plugin";
 
+    /** Constant <code>CPU="cpu"</code> */
     public static final String CPU                   = "cpu";
 
+    /** Constant <code>JVM="jvm"</code> */
     public static final String JVM                   = "jvm";
 
+    /** Constant <code>MASTER_BIZ_HEALTH="masterBizHealth"</code> */
     public static final String MASTER_BIZ_HEALTH     = "masterBizHealth";
 
+    /** Constant <code>MASTER_BIZ_INFO="masterBizInfo"</code> */
     public static final String MASTER_BIZ_INFO       = "masterBizInfo";
 
+    /** Constant <code>HEALTH_ERROR="error"</code> */
     public static final String HEALTH_ERROR          = "error";
 
+    /** Constant <code>HEALTH_ENDPOINT_ERROR="endpointError"</code> */
     public static final String HEALTH_ENDPOINT_ERROR = "endpointError";
 
+    /** Constant <code>BIZ_INFO="bizInfo"</code> */
     public static final String BIZ_INFO              = "bizInfo";
 
+    /** Constant <code>BIZ_LIST_INFO="bizListInfo"</code> */
     public static final String BIZ_LIST_INFO         = "bizListInfo";
 
+    /** Constant <code>PLUGIN_INFO="pluginInfo"</code> */
     public static final String PLUGIN_INFO           = "pluginInfo";
 
+    /** Constant <code>PLUGIN_LIST_INFO="pluginListInfo"</code> */
     public static final String PLUGIN_LIST_INFO      = "pluginListInfo";
 
+    /** Constant <code>READINESS_HEALTHY="ACCEPTING_TRAFFIC"</code> */
     public static final String READINESS_HEALTHY     = "ACCEPTING_TRAFFIC";
 
+    /**
+     * <p>typeOfQuery.</p>
+     *
+     * @param type a {@link java.lang.String} object
+     * @return a boolean
+     */
     public static boolean typeOfQuery(String type) {
         return SYSTEM.equals(type) || BIZ.equals(type) || PLUGIN.equals(type);
     }
 
+    /**
+     * <p>typeOfInfo.</p>
+     *
+     * @param type a {@link java.lang.String} object
+     * @return a boolean
+     */
     public static boolean typeOfInfo(String type) {
         return Constants.BIZ.equals(type) || Constants.PLUGIN.equals(type);
     }

@@ -22,6 +22,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.List;
 
+/**
+ * <p>GatewayProperties class.</p>
+ *
+ * @author zzl_i
+ * @version 1.0.0
+ */
 @ConfigurationProperties(prefix = "koupleless.web.gateway")
 @Data
 public class GatewayProperties {

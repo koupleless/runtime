@@ -23,18 +23,23 @@ import com.alipay.sofa.koupleless.arklet.core.command.builtin.model.BizInfo;
 import com.alipay.sofa.koupleless.arklet.core.command.builtin.model.PluginInfo;
 
 /**
+ * <p>HealthService interface.</p>
+ *
  * @author Lunarscave
+ * @version 1.0.0
  */
 public interface HealthService extends ArkletComponent {
 
     /**
      * get system health with all indicators
+     *
      * @return health with all details of indicators
      */
     Health getHealth();
 
     /**
      * get system health with indicator id
+     *
      * @param indicatorId indicator ids
      * @return health with indicator detail
      */
@@ -42,6 +47,7 @@ public interface HealthService extends ArkletComponent {
 
     /**
      * get system health with indicator ids
+     *
      * @param indicatorIds indicator ids
      * @return health with indicator detail(s)
      */
@@ -49,12 +55,14 @@ public interface HealthService extends ArkletComponent {
 
     /**
      * query all module info
+     *
      * @return health with module infos
      */
     Health queryModuleInfo();
 
     /**
      * query module info with type, name and version
+     *
      * @param type module type, must in ("biz", "plugin")
      * @param name module name
      * @param version module version
@@ -64,6 +72,7 @@ public interface HealthService extends ArkletComponent {
 
     /**
      * query biz info
+     *
      * @param bizInfo input plugin info
      * @return health with biz info(list)
      */
@@ -71,6 +80,7 @@ public interface HealthService extends ArkletComponent {
 
     /**
      * query plugin info
+     *
      * @param pluginInfo input plugin info
      * @return health with plugin info(list)
      */
@@ -78,12 +88,14 @@ public interface HealthService extends ArkletComponent {
 
     /**
      * query master biz info
+     *
      * @return health with master biz
      */
     Health queryMasterBiz();
 
     /**
      * get indicator by indicator id
+     *
      * @param indicatorId indicator id
      * @return indicator or null
      */
@@ -91,6 +103,7 @@ public interface HealthService extends ArkletComponent {
 
     /**
      * register indicator
+     *
      * @param indicator input indicator
      */
     void registerIndicator(Indicator indicator);

@@ -17,34 +17,77 @@
 package com.alipay.sofa.koupleless.arklet.core.common.exception;
 
 /**
+ * <p>Abstract ArkletException class.</p>
+ *
  * @author mingmen
- * @date 2023/6/14
+ * @since 2023/6/14
+ * @version 1.0.0
  */
 public abstract class ArkletException extends RuntimeException {
+    /**
+     * <p>Constructor for ArkletException.</p>
+     */
     public ArkletException() {
     }
 
+    /**
+     * <p>Constructor for ArkletException.</p>
+     *
+     * @param message a {@link java.lang.String} object
+     */
     public ArkletException(String message) {
         super(message);
     }
 
+    /**
+     * <p>Constructor for ArkletException.</p>
+     *
+     * @param message a {@link java.lang.String} object
+     * @param cause a {@link java.lang.Throwable} object
+     */
     public ArkletException(String message, Throwable cause) {
         super(message, cause);
     }
 
+    /**
+     * <p>Constructor for ArkletException.</p>
+     *
+     * @param cause a {@link java.lang.Throwable} object
+     */
     public ArkletException(Throwable cause) {
         super(cause);
     }
 
+    /**
+     * <p>Constructor for ArkletException.</p>
+     *
+     * @param message a {@link java.lang.String} object
+     * @param cause a {@link java.lang.Throwable} object
+     * @param enableSuppression a boolean
+     * @param writableStackTrace a boolean
+     */
     public ArkletException(String message, Throwable cause, boolean enableSuppression,
                            boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 
+    /**
+     * <p>Constructor for ArkletException.</p>
+     *
+     * @param format a {@link java.lang.String} object
+     * @param args a {@link java.lang.Object} object
+     */
     public ArkletException(String format, Object... args) {
         super(String.format(format, args));
     }
 
+    /**
+     * <p>Constructor for ArkletException.</p>
+     *
+     * @param cause a {@link java.lang.Throwable} object
+     * @param format a {@link java.lang.String} object
+     * @param args a {@link java.lang.Object} object
+     */
     public ArkletException(Throwable cause, String format, Object... args) {
         super(String.format(format, args), cause);
     }

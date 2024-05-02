@@ -31,6 +31,8 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
+ * <p>ShutdownExecutorServicesOnUninstallEventHandler class.</p>
+ *
  * @author lylingzhen
  * @version ShutdownExecutorServicesOnUninstallEventHandler.java
  *
@@ -42,10 +44,18 @@ public class ShutdownExecutorServicesOnUninstallEventHandler implements
     private static final Logger                                                         LOGGER                                = getLogger(
         ShutdownExecutorServicesOnUninstallEventHandler.class);
 
+    /** Constant <code>EXECUTOR_CLEANUP_TIMEOUT_SECONDS="com.alipay.koupleless.executor.cleanup."{trunked}</code> */
     public static final String                                                          EXECUTOR_CLEANUP_TIMEOUT_SECONDS      = "com.alipay.koupleless.executor.cleanup.timeout.seconds";
 
     static final ConcurrentHashMap<ClassLoader, ConcurrentLinkedQueue<ExecutorService>> BIZ_CLASS_LOADER_TO_EXECUTOR_SERVICES = new ConcurrentHashMap<>();
 
+    /**
+     * <p>manageExecutorService.</p>
+     *
+     * @param actualExecutorService a T object
+     * @param <T> a T class
+     * @return a T object
+     */
     public static <T extends ExecutorService> T manageExecutorService(T actualExecutorService) {
         ClassLoader contextClassLoader = currentThread().getContextClassLoader();
         BIZ_CLASS_LOADER_TO_EXECUTOR_SERVICES.putIfAbsent(contextClassLoader,
@@ -54,6 +64,7 @@ public class ShutdownExecutorServicesOnUninstallEventHandler implements
         return actualExecutorService;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void handleEvent(BeforeBizRecycleEvent event) {
 
@@ -91,6 +102,7 @@ public class ShutdownExecutorServicesOnUninstallEventHandler implements
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public int getPriority() {
         return HIGHEST_PRECEDENCE + 1;

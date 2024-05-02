@@ -30,12 +30,16 @@ import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletRuntimeExce
 import com.alipay.sofa.koupleless.arklet.core.common.exception.CommandValidationException;
 
 /**
+ * <p>UninstallBizHandler class.</p>
+ *
  * @author mingmen
- * @date 2023/6/14
+ * @since 2023/6/14
+ * @version 1.0.0
  */
 public class UninstallBizHandler extends AbstractCommandHandler<Input, ClientResponse>
                                  implements ArkBizOps {
 
+    /** {@inheritDoc} */
     @Override
     public Output<ClientResponse> handle(Input input) {
         try {
@@ -51,11 +55,13 @@ public class UninstallBizHandler extends AbstractCommandHandler<Input, ClientRes
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public Command command() {
         return BuiltinCommand.UNINSTALL_BIZ;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void validate(Input input) throws CommandValidationException {
         notBlank(input.getBizName(), "bizName should not be blank");

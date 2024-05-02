@@ -18,6 +18,12 @@ package com.alipay.sofa.koupleless.ext.web.gateway;
 
 import lombok.Data;
 
+/**
+ * <p>ForwardPath class.</p>
+ *
+ * @author zzl_i
+ * @version 1.0.0
+ */
 @Data
 public class ForwardPath {
     private String from;

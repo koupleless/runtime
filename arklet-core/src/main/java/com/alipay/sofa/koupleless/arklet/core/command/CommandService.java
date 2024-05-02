@@ -25,20 +25,25 @@ import com.alipay.sofa.koupleless.arklet.core.command.meta.Command;
 import com.alipay.sofa.koupleless.arklet.core.command.meta.Output;
 
 /**
+ * <p>CommandService interface.</p>
+ *
  * @author mingmen
- * @date 2023/6/14
+ * @since 2023/6/14
+ * @version 1.0.0
  */
 @SuppressWarnings("rawtypes")
 public interface CommandService extends ArkletComponent {
 
     /**
      * register command handler
+     *
      * @param handler handler
      */
     void registerCommandHandler(AbstractCommandHandler handler);
 
     /**
      * get command handler
+     *
      * @param command command
      * @return handler
      */
@@ -46,6 +51,7 @@ public interface CommandService extends ArkletComponent {
 
     /**
      * get command handler
+     *
      * @param commandId commandId
      * @return handler
      */
@@ -53,14 +59,17 @@ public interface CommandService extends ArkletComponent {
 
     /**
      * core method
+     *
      * @param cmd command handler
      * @param content detail for this command
      * @return process result
+     * @throws java.lang.InterruptedException if any.
      */
     Output<?> process(String cmd, Map content) throws InterruptedException;
 
     /**
      * if the cmd supported
+     *
      * @param cmd command handler
      * @return whether supported
      */
@@ -68,6 +77,7 @@ public interface CommandService extends ArkletComponent {
 
     /**
      * get all handlers
+     *
      * @return handlers
      */
     List<AbstractCommandHandler> listAllHandlers();

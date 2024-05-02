@@ -29,14 +29,19 @@ import org.springframework.boot.loader.archive.Archive;
 
 /**
  * A cached LaunchedURLClassLoader to accelerate load classes and resources
+ *
  * @author zjulbj
- * @daye 2023/12/26
+ * @since 2023/12/26
  * @version CachedLaunchedURLClassLoader.java, v 0.1 2023年12月26日 14:45 syd
  */
 public class CachedLaunchedURLClassLoader extends LaunchedURLClassLoader {
     private static final int                   ENTRY_CACHE_SIZE  = Integer
         .getInteger("serverless.class.cache.size", 6000);
     private static final Object                NOT_FOUND         = new Object();
+
+    /**
+     * cache class to speed up
+     */
     protected final Map<String, Object>        classCache        = Collections
         .synchronizedMap(new LinkedHashMap<String, Object>(ENTRY_CACHE_SIZE, 0.75f, true) {
                                                                          @Override
@@ -44,6 +49,10 @@ public class CachedLaunchedURLClassLoader extends LaunchedURLClassLoader {
                                                                              return size() >= ENTRY_CACHE_SIZE;
                                                                          }
                                                                      });
+
+    /**
+     * cache resource url
+     */
     protected final Map<String, Optional<URL>> resourceUrlCache  = Collections
         .synchronizedMap(new LinkedHashMap<String, Optional<URL>>(ENTRY_CACHE_SIZE, 0.75f, true) {
                                                                          @Override
@@ -63,16 +72,26 @@ public class CachedLaunchedURLClassLoader extends LaunchedURLClassLoader {
         ClassLoader.registerAsParallelCapable();
     }
 
+    /**
+     * <p>Constructor for CachedLaunchedURLClassLoader.</p>
+     *
+     * @param exploded a boolean
+     * @param rootArchive a {@link org.springframework.boot.loader.archive.Archive} object
+     * @param urls an array of {@link java.net.URL} objects
+     * @param parent a {@link java.lang.ClassLoader} object
+     */
     public CachedLaunchedURLClassLoader(boolean exploded, Archive rootArchive, URL[] urls,
                                         ClassLoader parent) {
         super(exploded, rootArchive, urls, parent);
     }
 
+    /** {@inheritDoc} */
     @Override
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
         return loadClassWithCache(name, resolve);
     }
 
+    /** {@inheritDoc} */
     @Override
     public URL findResource(String name) {
         Optional<URL> urlOptional = resourceUrlCache.get(name);
@@ -84,6 +103,7 @@ public class CachedLaunchedURLClassLoader extends LaunchedURLClassLoader {
         return url;
     }
 
+    /** {@inheritDoc} */
     @Override
     public Enumeration<URL> findResources(String name) throws IOException {
         Optional<Enumeration<URL>> urlOptional = resourcesUrlCache.get(name);
@@ -101,10 +121,10 @@ public class CachedLaunchedURLClassLoader extends LaunchedURLClassLoader {
      * NOTE: Only cache ClassNotFoundException when class not found.
      * If class found, do not cache, and just use parent class loader cache.
      *
-     * @param name
-     * @param resolve
-     * @return
-     * @throws ClassNotFoundException
+     * @param name a {@link java.lang.String} object
+     * @param resolve a boolean
+     * @throws java.lang.ClassNotFoundException throw classNotFoundException
+     * @return a {@link java.lang.Class} object
      */
     protected Class<?> loadClassWithCache(String name,
                                           boolean resolve) throws ClassNotFoundException {
@@ -124,6 +144,7 @@ public class CachedLaunchedURLClassLoader extends LaunchedURLClassLoader {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void clearCache() {
         super.clearCache();

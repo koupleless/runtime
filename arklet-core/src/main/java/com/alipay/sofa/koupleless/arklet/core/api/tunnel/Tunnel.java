@@ -19,14 +19,28 @@ package com.alipay.sofa.koupleless.arklet.core.api.tunnel;
 import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
 
 /**
+ * <p>Tunnel interface.</p>
+ *
  * @author mingmen
- * @date 2023/6/8
+ * @since 2023/6/8
+ * @version 1.0.0
  */
 public interface Tunnel {
 
+    /**
+     * <p>init.</p>
+     *
+     * @param commandService a {@link com.alipay.sofa.koupleless.arklet.core.command.CommandService} object
+     */
     void init(CommandService commandService);
 
+    /**
+     * <p>run.</p>
+     */
     void run();
 
+    /**
+     * <p>shutdown.</p>
+     */
     void shutdown();
 }
