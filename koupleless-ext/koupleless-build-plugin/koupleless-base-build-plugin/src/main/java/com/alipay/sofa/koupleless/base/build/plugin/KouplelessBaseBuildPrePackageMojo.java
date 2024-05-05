@@ -67,8 +67,6 @@ import java.util.regex.Pattern;
 /**
  * Goal which touches a timestamp file.
  *
- * @goal touch
- * @phase process-sources
  * @author zzl_i
  * @version 1.0.0
  */
