@@ -19,9 +19,20 @@ package com.alipay.sofa.koupleless.base.build.plugin.adapter;
 import java.io.File;
 
 /**
+ * <p>CopyAdapterStrategy interface.</p>
+ *
  * @author CodeNoobKing
- * @date 2024/3/18
- **/
+ * @since 2024/3/18
+ * @version 1.0.0
+ */
 public interface CopyAdapterStrategy {
+    /**
+     * <p>copy.</p>
+     *
+     * @param buildDir a {@link java.io.File} object
+     * @param entryName a {@link java.lang.String} object
+     * @param content an array of {@link byte} objects
+     * @throws java.lang.Throwable if any.
+     */
     void copy(File buildDir, String entryName, byte[] content) throws Throwable;
 }

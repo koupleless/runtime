@@ -20,8 +20,12 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * @author: yuanyuan
- * @date: 2023/9/1 12:02 下午
+ * <p>NamedThreadFactory class.</p>
+ *
+ * @author yuanyuan
+ * @author zzl_i
+ * @since 2023/9/1 12:02 下午
+ * @version 1.0.0
  */
 public class NamedThreadFactory implements ThreadFactory {
 
@@ -74,6 +78,7 @@ public class NamedThreadFactory implements ThreadFactory {
         isDaemon = daemon;
     }
 
+    /** {@inheritDoc} */
     @Override
     public Thread newThread(Runnable r) {
         Thread t = new Thread(group, r, namePrefix + threadCount.getAndIncrement(), 0);

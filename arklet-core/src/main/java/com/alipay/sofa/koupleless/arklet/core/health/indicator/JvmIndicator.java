@@ -29,7 +29,10 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
+ * <p>JvmIndicator class.</p>
+ *
  * @author Lunarscave
+ * @version 1.0.0
  */
 public class JvmIndicator extends Indicator {
 
@@ -37,11 +40,15 @@ public class JvmIndicator extends Indicator {
 
     private static final String       JVM_INDICATOR_ID = Constants.JVM;
 
+    /**
+     * <p>Constructor for JvmIndicator.</p>
+     */
     public JvmIndicator() {
         super(JVM_INDICATOR_ID);
         jvmIndicatorHandler = new JvmIndicatorHandler();
     }
 
+    /** {@inheritDoc} */
     @Override
     protected Map<String, Object> getHealthDetails() {
         Map<String, Object> jvmHealthDetails = new HashMap<>(6);

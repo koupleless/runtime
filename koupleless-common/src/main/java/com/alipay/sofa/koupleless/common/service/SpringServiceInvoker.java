@@ -35,8 +35,12 @@ import static com.alipay.sofa.koupleless.common.service.ServiceProxyFactory.getS
 import static com.alipay.sofa.koupleless.common.util.SerializeUtils.serializeTransform;
 
 /**
- * @author: yuanyuan
- * @date: 2023/9/21 9:57 下午
+ * <p>SpringServiceInvoker class.</p>
+ *
+ * @author yuanyuan
+ * @author zzl_i
+ * @since 2023/9/21 9:57 下午
+ * @version 1.0.0
  */
 public class SpringServiceInvoker implements MethodInterceptor {
 
@@ -61,9 +65,23 @@ public class SpringServiceInvoker implements MethodInterceptor {
 
     private ClassLoader         serviceClassLoader;            // 被调用方classloader
 
+    /**
+     * <p>Constructor for SpringServiceInvoker.</p>
+     */
     public SpringServiceInvoker() {
     }
 
+    /**
+     * <p>Constructor for SpringServiceInvoker.</p>
+     *
+     * @param target a {@link java.lang.Object} object
+     * @param name a {@link java.lang.String} object
+     * @param clientType a {@link java.lang.Class} object
+     * @param bizName a {@link java.lang.String} object
+     * @param bizVersion a {@link java.lang.String} object
+     * @param clientClassLoader a {@link java.lang.ClassLoader} object
+     * @param serviceClassLoader a {@link java.lang.ClassLoader} object
+     */
     public SpringServiceInvoker(Object target, String name, Class<?> clientType, String bizName,
                                 String bizVersion, ClassLoader clientClassLoader,
                                 ClassLoader serviceClassLoader) {
@@ -76,6 +94,7 @@ public class SpringServiceInvoker implements MethodInterceptor {
         this.serviceClassLoader = serviceClassLoader;
     }
 
+    /** {@inheritDoc} */
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
         // todo bizVersion = "" 时
@@ -113,6 +132,14 @@ public class SpringServiceInvoker implements MethodInterceptor {
         }
     }
 
+    /**
+     * <p>doInvoke.</p>
+     *
+     * @param invocation a {@link org.aopalliance.intercept.MethodInvocation} object
+     * @return a {@link java.lang.Object} object
+     * @throws java.lang.reflect.InvocationTargetException if any.
+     * @throws java.lang.IllegalAccessException if any.
+     */
     protected Object doInvoke(MethodInvocation invocation) throws InvocationTargetException,
                                                            IllegalAccessException {
         if (isCrossClassLoader(invocation)) {
@@ -121,10 +148,23 @@ public class SpringServiceInvoker implements MethodInterceptor {
         return invokeService(invocation);
     }
 
+    /**
+     * <p>doCatch.</p>
+     *
+     * @param invocation a {@link org.aopalliance.intercept.MethodInvocation} object
+     * @param e a {@link java.lang.Throwable} object
+     * @param startTime a long
+     */
     protected void doCatch(MethodInvocation invocation, Throwable e, long startTime) {
         // log
     }
 
+    /**
+     * <p>doFinally.</p>
+     *
+     * @param invocation a {@link org.aopalliance.intercept.MethodInvocation} object
+     * @param startTime a long
+     */
     protected void doFinally(MethodInvocation invocation, long startTime) {
         // log、metrics
     }

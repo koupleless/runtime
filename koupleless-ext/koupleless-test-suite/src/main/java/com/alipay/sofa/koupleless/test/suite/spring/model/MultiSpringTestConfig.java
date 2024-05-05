@@ -25,8 +25,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * <p>MultiSpringTestConfig class.</p>
+ *
  * @author CodeNoobKing
- * @date 2024/3/11
+ * @since 2024/3/11
+ * @version 1.0.0
  */
 @NoArgsConstructor
 @AllArgsConstructor
@@ -38,6 +41,9 @@ public class MultiSpringTestConfig {
 
     private List<BizSpringTestConfig> bizConfigs;
 
+    /**
+     * <p>init.</p>
+     */
     public void init() {
         baseConfig.init();
         if (bizConfigs == null) {

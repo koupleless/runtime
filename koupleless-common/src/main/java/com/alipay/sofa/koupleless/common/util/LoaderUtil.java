@@ -23,6 +23,8 @@ package com.alipay.sofa.koupleless.common.util;
  * @see RuntimePermission
  * @see Thread#getContextClassLoader()
  * @see ClassLoader#getSystemClassLoader()
+ * @author zzl_i
+ * @version 1.0.0
  */
 public final class LoaderUtil {
     private LoaderUtil() {
@@ -31,7 +33,7 @@ public final class LoaderUtil {
     /**
      * Gets the current Thread ClassLoader. Returns the system ClassLoader if the TCCL is {@code null}. If the system
      * ClassLoader is {@code null} as well, then the ClassLoader for this class is returned. If running with a
-     * {@link SecurityManager} that does not allow access to the Thread ClassLoader or system ClassLoader, then the
+     * {@link java.lang.SecurityManager} that does not allow access to the Thread ClassLoader or system ClassLoader, then the
      * ClassLoader for this class is returned.
      *
      * @return the current ThreadContextClassLoader.
@@ -46,9 +48,11 @@ public final class LoaderUtil {
     }
 
     /**
+     * <p>loadClass.</p>
+     *
      * @param className The class name.
      * @return the Class for the given name.
-     * @throws ClassNotFoundException if the specified class name could not be found
+     * @throws java.lang.ClassNotFoundException if the specified class name could not be found
      * @since 2.1
      */
     public static Class<?> loadClass(final String className) throws ClassNotFoundException {

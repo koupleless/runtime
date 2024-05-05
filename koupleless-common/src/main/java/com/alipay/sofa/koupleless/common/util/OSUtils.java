@@ -17,8 +17,11 @@
 package com.alipay.sofa.koupleless.common.util;
 
 /**
+ * <p>OSUtils class.</p>
+ *
  * @author CodeNoobKing
- * @data 2024/1/22
+ * @since 2024/1/22
+ * @version 1.0.0
  */
 public class OSUtils {
 

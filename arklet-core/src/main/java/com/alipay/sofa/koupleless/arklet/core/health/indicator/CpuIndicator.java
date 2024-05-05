@@ -27,7 +27,10 @@ import java.util.Set;
 import java.util.Arrays;
 
 /**
+ * <p>CpuIndicator class.</p>
+ *
  * @author Lunarscave
+ * @version 1.0.0
  */
 public class CpuIndicator extends Indicator {
 
@@ -35,11 +38,15 @@ public class CpuIndicator extends Indicator {
 
     private static final String       CPU_INDICATOR_ID = Constants.CPU;
 
+    /**
+     * <p>Constructor for CpuIndicator.</p>
+     */
     public CpuIndicator() {
         super(CPU_INDICATOR_ID);
         cpuIndicatorHandler = new CpuIndicatorHandler();
     }
 
+    /** {@inheritDoc} */
     @Override
     protected Map<String, Object> getHealthDetails() {
         Map<String, Object> cpuHealthDetails = new HashMap<>(6);

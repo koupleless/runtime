@@ -29,7 +29,7 @@ import java.net.URL;
 
 /**
  * @author CodeNoobKing
- * @date 2024/2/20
+ * @since 2024/2/20
  */
 @RunWith(MockitoJUnitRunner.class)
 public class CompatibleTestMojoTest {

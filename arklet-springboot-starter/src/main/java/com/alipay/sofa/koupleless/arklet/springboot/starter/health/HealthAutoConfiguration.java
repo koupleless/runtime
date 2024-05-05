@@ -25,17 +25,30 @@ import org.springframework.context.annotation.Configuration;
 import static com.alipay.sofa.koupleless.arklet.springboot.starter.health.BaseStartUpHealthIndicator.WITH_ALL_BIZ_READINESS;
 
 /**
+ * <p>HealthAutoConfiguration class.</p>
+ *
  * @author Lunarscave
+ * @version 1.0.0
  */
 @Configuration
 @ConditionalOnMasterBiz
 public class HealthAutoConfiguration {
 
+    /**
+     * <p>bizInfoContributor.</p>
+     *
+     * @return a {@link com.alipay.sofa.koupleless.arklet.springboot.starter.health.BizInfoContributor} object
+     */
     @Bean
     public BizInfoContributor bizInfoContributor() {
         return new BizInfoContributor();
     }
 
+    /**
+     * <p>baseStartUpHealthIndicator.</p>
+     *
+     * @return a {@link com.alipay.sofa.koupleless.arklet.springboot.starter.health.BaseStartUpHealthIndicator} object
+     */
     @Bean("baseStartUpHealthIndicator")
     public BaseStartUpHealthIndicator baseStartUpHealthIndicator() {
         BaseStartUpHealthIndicator indicator = new BaseStartUpHealthIndicator(
@@ -44,6 +57,11 @@ public class HealthAutoConfiguration {
         return indicator;
     }
 
+    /**
+     * <p>compositeAllBizHealthIndicator.</p>
+     *
+     * @return a {@link com.alipay.sofa.koupleless.arklet.springboot.starter.health.CompositeAllBizHealthIndicator} object
+     */
     @Bean("compositeAllBizHealthIndicator")
     public CompositeAllBizHealthIndicator compositeAllBizHealthIndicator() {
         return new CompositeAllBizHealthIndicator();

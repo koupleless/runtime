@@ -19,8 +19,12 @@ package com.alipay.sofa.koupleless.common.util;
 import java.lang.reflect.Method;
 
 /**
- * @author: yuanyuan
- * @date: 2023/9/25 5:06 下午
+ * <p>ReflectionUtils class.</p>
+ *
+ * @author yuanyuan
+ * @author zzl_i
+ * @since 2023/9/25 5:06 下午
+ * @version 1.0.0
  */
 public class ReflectionUtils {
 
@@ -36,6 +40,12 @@ public class ReflectionUtils {
         }
     }
 
+    /**
+     * <p>getEquivalentStackTraceElement.</p>
+     *
+     * @param depth a int
+     * @return a {@link java.lang.StackTraceElement} object
+     */
     public static StackTraceElement getEquivalentStackTraceElement(final int depth) {
         // (MS) I tested the difference between using Throwable.getStackTrace() and Thread.getStackTrace(), and
         // the version using Throwable was surprisingly faster! at least on Java 1.8. See ReflectionBenchmark.
@@ -52,6 +62,12 @@ public class ReflectionUtils {
         throw new IndexOutOfBoundsException(Integer.toString(depth));
     }
 
+    /**
+     * <p>isValid.</p>
+     *
+     * @param element a {@link java.lang.StackTraceElement} object
+     * @return a boolean
+     */
     public static boolean isValid(final StackTraceElement element) {
         // ignore native methods (oftentimes are repeated frames)
         if (element.isNativeMethod()) {
@@ -87,6 +103,12 @@ public class ReflectionUtils {
         return true;
     }
 
+    /**
+     * <p>executeReflectionLogic.</p>
+     *
+     * @param realFramesToSkip a int
+     * @return a {@link java.lang.Class} object
+     */
     public static Class<?> executeReflectionLogic(int realFramesToSkip) {
         // 在 JDK 8 下执行的方法逻辑
         if (method == null)
@@ -99,6 +121,12 @@ public class ReflectionUtils {
         }
     }
 
+    /**
+     * <p>executeStackTraceLogic.</p>
+     *
+     * @param depth a int
+     * @return a {@link java.lang.Class} object
+     */
     public static Class<?> executeStackTraceLogic(int depth) {
         // 在 JDK 17 下执行的方法逻辑
         // 解除注释，编译成Class 并且放置到 META-INF/versions/17/com/alipay/sofa/serverless/common/util 下面
@@ -112,6 +140,12 @@ public class ReflectionUtils {
         return null;
     }
 
+    /**
+     * <p>getCallerClass.</p>
+     *
+     * @param realFramesToSkip a int
+     * @return a {@link java.lang.Class} object
+     */
     public static Class<?> getCallerClass(int realFramesToSkip) {
         try {
             return executeReflectionLogic(realFramesToSkip);

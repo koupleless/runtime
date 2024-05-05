@@ -23,6 +23,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * 合并部署请求。
+ *
  * @author CodeNoobKingKc2
  * @version $Id: BatchInstallRequest, v 0.1 2023-11-20 15:21 CodeNoobKingKc2 Exp $
  */

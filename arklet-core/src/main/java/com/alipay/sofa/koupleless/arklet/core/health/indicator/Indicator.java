@@ -22,24 +22,34 @@ import com.alipay.sofa.koupleless.arklet.core.health.model.Health.HealthBuilder;
 import java.util.Map;
 
 /**
+ * <p>Abstract Indicator class.</p>
+ *
  * @author Lunarscave
+ * @version 1.0.0
  */
 public abstract class Indicator {
 
     private final String indicatorId;
 
+    /**
+     * <p>Constructor for Indicator.</p>
+     *
+     * @param indicatorId a {@link java.lang.String} object
+     */
     public Indicator(String indicatorId) {
         this.indicatorId = indicatorId;
     }
 
     /**
      * get health details
+     *
      * @return a map of health details
      */
     protected abstract Map<String, Object> getHealthDetails();
 
     /**
      * get indicator id
+     *
      * @return indicator id
      */
     public String getIndicatorId() {
@@ -48,6 +58,7 @@ public abstract class Indicator {
 
     /**
      * get health model
+     *
      * @param builder input health builder
      * @return health model
      */

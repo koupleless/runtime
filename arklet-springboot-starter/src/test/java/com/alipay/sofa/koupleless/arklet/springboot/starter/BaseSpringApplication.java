@@ -23,7 +23,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * @author mingmen
- * @date 2023/6/26
+ * @since 2023/6/26
  */
 @SpringBootApplication
 public class BaseSpringApplication {

@@ -17,9 +17,11 @@
 package com.alipay.sofa.koupleless.arklet.core.util;
 
 /**
+ * <p>AssertUtils class.</p>
  *
  * @author ruoshan
  * @since 0.1.0
+ * @version 1.0.0
  */
 public class AssertUtils {
 
@@ -28,7 +30,7 @@ public class AssertUtils {
      *
      * @param instance object instance
      * @param msg error message
-     * @throws IllegalArgumentException if object instance is null
+     * @throws java.lang.IllegalArgumentException if object instance is null
      */
     public static void assertNotNull(Object instance, String msg) {
         if (instance == null) {
@@ -41,7 +43,7 @@ public class AssertUtils {
      *
      * @param instance object instance
      * @param msg error message
-     * @throws IllegalArgumentException if object instance is null
+     * @throws java.lang.IllegalArgumentException if object instance is null
      */
     public static void assertNull(Object instance, String msg) {
         if (instance != null) {
@@ -56,9 +58,9 @@ public class AssertUtils {
      * primitive number or using your own custom validation expression.</p>
      *
      * @param expression  the boolean expression to check
-     * @param message  the {@link String#format(String, Object...)} exception message if invalid, not null
+     * @param message  the {@link java.lang.String#format(String, Object...)} exception message if invalid, not null
      * @param values  the optional values for the formatted exception message, null array not recommended
-     * @throws IllegalArgumentException if expression is {@code false}
+     * @throws java.lang.IllegalArgumentException if expression is {@code false}
      */
     public static void isTrue(final boolean expression, final String message,
                               final Object... values) {
@@ -74,9 +76,9 @@ public class AssertUtils {
      * primitive number or using your own custom validation expression.</p>
      *
      * @param expression  the boolean expression to check
-     * @param message  the {@link String#format(String, Object...)} exception message if invalid, not null
+     * @param message  the {@link java.lang.String#format(String, Object...)} exception message if invalid, not null
      * @param values  the optional values for the formatted exception message, null array not recommended
-     * @throws IllegalArgumentException if expression is {@code false}
+     * @throws java.lang.IllegalArgumentException if expression is {@code false}
      */
     public static void isFalse(final boolean expression, final String message,
                                final Object... values) {

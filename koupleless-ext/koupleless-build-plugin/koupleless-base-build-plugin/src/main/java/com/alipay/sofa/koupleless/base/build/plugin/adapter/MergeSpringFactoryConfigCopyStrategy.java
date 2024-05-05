@@ -28,11 +28,20 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * <p>MergeSpringFactoryConfigCopyStrategy class.</p>
+ *
  * @author CodeNoobKing
- * @date 2024/3/18
- **/
+ * @since 2024/3/18
+ * @version 1.0.0
+ */
 public class MergeSpringFactoryConfigCopyStrategy implements CopyAdapterStrategy {
 
+    /**
+     * <p>mergeSpringFactories.</p>
+     *
+     * @param adapterConfig a {@link java.util.Map} object
+     * @param buildConfig a {@link java.util.Map} object
+     */
     public void mergeSpringFactories(Map<String, List<String>> adapterConfig,
                                      Map<String, List<String>> buildConfig) {
         for (Map.Entry<String, List<String>> entry : adapterConfig.entrySet()) {
@@ -49,6 +58,12 @@ public class MergeSpringFactoryConfigCopyStrategy implements CopyAdapterStrategy
         }
     }
 
+    /**
+     * <p>formatSpringFactoryConfig.</p>
+     *
+     * @param config a {@link java.util.Map} object
+     * @return a {@link java.util.List} object
+     */
     public List<String> formatSpringFactoryConfig(Map<String, List<String>> config) {
         List<String> result = new ArrayList<>();
         for (Map.Entry<String, List<String>> entry : config.entrySet()) {
@@ -59,6 +74,7 @@ public class MergeSpringFactoryConfigCopyStrategy implements CopyAdapterStrategy
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void copy(File buildDir, String entryName, byte[] content) throws Throwable {
         File factoryFile = new File(

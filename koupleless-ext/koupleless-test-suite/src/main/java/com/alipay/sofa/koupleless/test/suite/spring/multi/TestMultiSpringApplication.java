@@ -18,7 +18,7 @@ package com.alipay.sofa.koupleless.test.suite.spring.multi;
 
 /**
  * @author CodeNoobKing
- * @date 2024/3/11
+ * @since 2024/3/11
  */
 
 import com.alipay.sofa.koupleless.test.suite.biz.TestBootstrap;
@@ -31,8 +31,16 @@ import lombok.Getter;
 import java.util.*;
 
 /**
+ * <p>TestMultiSpringApplication class.</p>
+ *
  * @author CodeNoobKing
- * @date 2024/3/7
+ * @author CodeNoobKing
+ * @author CodeNoobKing
+ * @author CodeNoobKing
+ * @author CodeNoobKing
+ * @author CodeNoobKing
+ * @since 2024/3/7
+ * @version 1.0.0
  */
 public class TestMultiSpringApplication {
 
@@ -41,10 +49,21 @@ public class TestMultiSpringApplication {
 
     private Map<String, BizSpringTestApplication> bizApplications = new HashMap<>();
 
+    /**
+     * <p>getBizApplication.</p>
+     *
+     * @param bizName a {@link java.lang.String} object
+     * @return a {@link com.alipay.sofa.koupleless.test.suite.spring.biz.BizSpringTestApplication} object
+     */
     public BizSpringTestApplication getBizApplication(String bizName) {
         return bizApplications.get(bizName);
     }
 
+    /**
+     * <p>Constructor for TestMultiSpringApplication.</p>
+     *
+     * @param config a {@link com.alipay.sofa.koupleless.test.suite.spring.model.MultiSpringTestConfig} object
+     */
     public TestMultiSpringApplication(MultiSpringTestConfig config) {
         this.baseApplication = new BaseSpringTestApplication(config.getBaseConfig());
         for (BizSpringTestConfig bizConfig : config.getBizConfigs()) {
@@ -53,19 +72,33 @@ public class TestMultiSpringApplication {
         }
     }
 
+    /**
+     * <p>runBase.</p>
+     */
     public void runBase() {
         baseApplication.run();
     }
 
+    /**
+     * <p>runBiz.</p>
+     *
+     * @param bizName a {@link java.lang.String} object
+     */
     public void runBiz(String bizName) {
         bizApplications.get(bizName).initBiz(); // register biz to ark container
         bizApplications.get(bizName).run(); // run biz
     }
 
+    /**
+     * <p>bootStrapBase.</p>
+     */
     public void bootStrapBase() {
         baseApplication.initBaseClassLoader();
     }
 
+    /**
+     * <p>bootStrapTest.</p>
+     */
     public void bootStrapTest() {
         TestBootstrap.init(baseApplication.getBaseClassLoader());
         for (Map.Entry<String, BizSpringTestApplication> entry : bizApplications.entrySet()) {
@@ -78,6 +111,9 @@ public class TestMultiSpringApplication {
         }
     }
 
+    /**
+     * <p>run.</p>
+     */
     public void run() {
         bootStrapBase();
         bootStrapTest();

@@ -26,8 +26,11 @@ import com.alipay.sofa.koupleless.arklet.core.common.exception.CommandValidation
 import com.alipay.sofa.koupleless.arklet.core.ops.UnifiedOperationService;
 
 /**
+ * <p>Abstract AbstractCommandHandler class.</p>
+ *
  * @author mingmen
- * @date 2023/6/8
+ * @since 2023/6/8
+ * @version 1.0.0
  */
 
 @SuppressWarnings("unchecked")
@@ -40,29 +43,73 @@ public abstract class AbstractCommandHandler<P extends InputMeta, Q> {
     private final HealthService           healthService           = ArkletComponentRegistry
         .getHealthServiceInstance();
 
+    /**
+     * <p>validate.</p>
+     *
+     * @param p a P object
+     * @throws com.alipay.sofa.koupleless.arklet.core.common.exception.CommandValidationException if any.
+     */
     public abstract void validate(P p) throws CommandValidationException;
 
+    /**
+     * <p>handle.</p>
+     *
+     * @param p a P object
+     * @return a {@link com.alipay.sofa.koupleless.arklet.core.command.meta.Output} object
+     */
     public abstract Output<Q> handle(P p);
 
+    /**
+     * <p>command.</p>
+     *
+     * @return a {@link com.alipay.sofa.koupleless.arklet.core.command.meta.Command} object
+     */
     public abstract Command command();
 
+    /**
+     * <p>getOperationService.</p>
+     *
+     * @return a {@link com.alipay.sofa.koupleless.arklet.core.ops.UnifiedOperationService} object
+     */
     public UnifiedOperationService getOperationService() {
         return unifiedOperationService;
     }
 
+    /**
+     * <p>Getter for the field <code>commandService</code>.</p>
+     *
+     * @return a {@link com.alipay.sofa.koupleless.arklet.core.command.CommandService} object
+     */
     public CommandService getCommandService() {
         return commandService;
     }
 
+    /**
+     * <p>Getter for the field <code>healthService</code>.</p>
+     *
+     * @return a {@link com.alipay.sofa.koupleless.arklet.core.health.HealthService} object
+     */
     public HealthService getHealthService() {
         return healthService;
     }
 
+    /**
+     * <p>getInputClass.</p>
+     *
+     * @return a {@link java.lang.Class} object
+     */
     public Class<P> getInputClass() {
         ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
         return (Class<P>) parameterizedType.getActualTypeArguments()[0];
     }
 
+    /**
+     * <p>isTrue.</p>
+     *
+     * @param expression a boolean
+     * @param message a {@link java.lang.String} object
+     * @param values a {@link java.lang.Object} object
+     */
     public static void isTrue(final boolean expression, final String message,
                               final Object... values) {
         if (!expression) {
@@ -70,12 +117,26 @@ public abstract class AbstractCommandHandler<P extends InputMeta, Q> {
         }
     }
 
+    /**
+     * <p>notBlank.</p>
+     *
+     * @param check a {@link java.lang.String} object
+     * @param message a {@link java.lang.String} object
+     * @param values a {@link java.lang.Object} object
+     */
     public static void notBlank(final String check, final String message, final Object... values) {
         if (StringUtil.isBlank(check)) {
             throw new CommandValidationException(String.format(message, values));
         }
     }
 
+    /**
+     * <p>notNull.</p>
+     *
+     * @param check a {@link java.lang.Object} object
+     * @param message a {@link java.lang.String} object
+     * @param values a {@link java.lang.Object} object
+     */
     public static void notNull(final Object check, final String message, final Object... values) {
         if (null == check) {
             throw new CommandValidationException(String.format(message, values));

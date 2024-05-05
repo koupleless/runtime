@@ -34,6 +34,7 @@ import java.util.function.Function;
  * </code>
  *
  * @author qq290584697
+ * @version 1.0.0
  */
 public class MultiBizProperties extends Properties {
 
@@ -52,25 +53,34 @@ public class MultiBizProperties extends Properties {
         this.bizClassLoaderName = bizClassLoaderName;
     }
 
+    /**
+     * <p>Constructor for MultiBizProperties.</p>
+     *
+     * @param bizClassLoaderName a {@link java.lang.String} object
+     */
     public MultiBizProperties(String bizClassLoaderName) {
         this(bizClassLoaderName, new Properties());
     }
 
+    /** {@inheritDoc} */
     public synchronized Object setProperty(String key, String value) {
         addModifiedKey(key);
         return getWriteProperties().setProperty(key, value);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getProperty(String key) {
         return getReadProperties().getProperty(key);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getProperty(String key, String defaultValue) {
         return getReadProperties().getProperty(key, defaultValue);
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized void load(Reader reader) throws IOException {
         Properties properties = new Properties();
@@ -79,6 +89,7 @@ public class MultiBizProperties extends Properties {
         addModifiedKeys(properties.stringPropertyNames());
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized void load(InputStream inStream) throws IOException {
         Properties properties = new Properties();
@@ -87,34 +98,40 @@ public class MultiBizProperties extends Properties {
         addModifiedKeys(properties.stringPropertyNames());
     }
 
+    /** {@inheritDoc} */
     @Override
     public void list(PrintStream out) {
         getWriteProperties().list(out);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void list(PrintWriter out) {
         getWriteProperties().list(out);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void save(OutputStream out, String comments) {
         Properties properties = getWriteProperties();
         properties.save(out, comments);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void store(Writer writer, String comments) throws IOException {
         Properties properties = getReadProperties();
         properties.store(writer, comments);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void store(OutputStream out, String comments) throws IOException {
         Properties properties = getReadProperties();
         properties.store(out, comments);
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized void loadFromXML(InputStream in) throws IOException {
         Properties properties = new Properties();
@@ -123,28 +140,33 @@ public class MultiBizProperties extends Properties {
         addModifiedKeys(properties.stringPropertyNames());
     }
 
+    /** {@inheritDoc} */
     @Override
     public void storeToXML(OutputStream os, String comment) throws IOException {
         Properties properties = getReadProperties();
         properties.storeToXML(os, comment);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void storeToXML(OutputStream os, String comment, String encoding) throws IOException {
         Properties properties = getReadProperties();
         properties.storeToXML(os, comment, encoding);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Enumeration<?> propertyNames() {
         return getReadProperties().propertyNames();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Set<String> stringPropertyNames() {
         return getReadProperties().stringPropertyNames();
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized boolean remove(Object key, Object value) {
         boolean success = getWriteProperties().remove(key, value);
@@ -154,11 +176,13 @@ public class MultiBizProperties extends Properties {
         return success;
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized Object get(Object key) {
         return getReadProperties().get(key);
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized Object remove(Object key) {
         if (key != null) {
@@ -167,6 +191,7 @@ public class MultiBizProperties extends Properties {
         return getWriteProperties().remove(key);
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized Object put(Object key, Object value) {
         String text = key == null ? null : key.toString();
@@ -174,26 +199,31 @@ public class MultiBizProperties extends Properties {
         return getWriteProperties().put(key, value);
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized boolean equals(Object o) {
         return getReadProperties().equals(o);
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized String toString() {
         return getReadProperties().toString();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Collection<Object> values() {
         return getReadProperties().values();
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized int hashCode() {
         return getReadProperties().hashCode();
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized void clear() {
         Set<String> keys = baseProperties.stringPropertyNames();
@@ -201,6 +231,7 @@ public class MultiBizProperties extends Properties {
         addModifiedKeys(keys);
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized Object clone() {
         MultiBizProperties mbp = new MultiBizProperties(bizClassLoaderName, baseProperties);
@@ -212,6 +243,7 @@ public class MultiBizProperties extends Properties {
         return mbp;
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized boolean replace(Object key, Object oldValue, Object newValue) {
         Object curValue = get(key);
@@ -222,11 +254,13 @@ public class MultiBizProperties extends Properties {
         return true;
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized boolean isEmpty() {
         return getReadProperties().isEmpty();
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized Object replace(Object key, Object value) {
         Object curValue;
@@ -236,16 +270,19 @@ public class MultiBizProperties extends Properties {
         return curValue;
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized boolean containsKey(Object key) {
         return getReadProperties().containsKey(key);
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized boolean contains(Object value) {
         return getReadProperties().contains(value);
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized void replaceAll(BiFunction<? super Object, ? super Object, ?> function) {
         Map map = new HashMap();
@@ -258,16 +295,19 @@ public class MultiBizProperties extends Properties {
         putAll(map);
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized int size() {
         return getReadProperties().size();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Set<Map.Entry<Object, Object>> entrySet() {
         return getReadProperties().entrySet();
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized void putAll(Map map) {
         Set<String> keys = new HashSet<>();
@@ -279,6 +319,7 @@ public class MultiBizProperties extends Properties {
         getWriteProperties().putAll(map);
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized Object computeIfAbsent(Object key,
                                                Function<? super Object, ?> mappingFunction) {
@@ -293,16 +334,19 @@ public class MultiBizProperties extends Properties {
         return value;
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized Enumeration<Object> elements() {
         return getReadProperties().elements();
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized void forEach(BiConsumer<? super Object, ? super Object> action) {
         getReadProperties().forEach(action);
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized Object putIfAbsent(Object key, Object value) {
         Object v = get(key);
@@ -312,26 +356,31 @@ public class MultiBizProperties extends Properties {
         return v;
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized Enumeration<Object> keys() {
         return getReadProperties().keys();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Set<Object> keySet() {
         return getReadProperties().keySet();
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean containsValue(Object value) {
         return getReadProperties().containsValue(value);
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized Object getOrDefault(Object key, Object defaultValue) {
         return getReadProperties().getOrDefault(key, defaultValue);
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized Object computeIfPresent(Object key,
                                                 BiFunction<? super Object, ? super Object, ?> remappingFunction) {
@@ -348,6 +397,7 @@ public class MultiBizProperties extends Properties {
         return null;
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized Object compute(Object key,
                                        BiFunction<? super Object, ? super Object, ?> remappingFunction) {
@@ -363,6 +413,7 @@ public class MultiBizProperties extends Properties {
         return newValue;
     }
 
+    /** {@inheritDoc} */
     @Override
     public synchronized Object merge(Object key, Object value,
                                      BiFunction<? super Object, ? super Object, ?> remappingFunction) {
@@ -465,6 +516,9 @@ public class MultiBizProperties extends Properties {
     /**
      * replace the system properties to multi biz properties<br/>
      * if you want to use, you need invoke the method in base application
+     *
+     * @param bizClassLoaderName a {@link java.lang.String} object
+     * @return a {@link com.alipay.sofa.koupleless.common.util.MultiBizProperties} object
      */
     public static MultiBizProperties initSystem(String bizClassLoaderName) {
         Properties properties = System.getProperties();
@@ -480,6 +534,11 @@ public class MultiBizProperties extends Properties {
         return multiBizProperties;
     }
 
+    /**
+     * <p>initSystem.</p>
+     *
+     * @return a {@link com.alipay.sofa.koupleless.common.util.MultiBizProperties} object
+     */
     public static MultiBizProperties initSystem() {
         return initSystem(BIZ_CLASS_LOADER);
     }

@@ -28,6 +28,8 @@ import static java.lang.Thread.currentThread;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
+ * <p>CancelTimersOnUninstallEventHandler class.</p>
+ *
  * @author lylingzhen
  * @version CancelTimersOnUninstallEventHandler.java
  *
@@ -40,6 +42,13 @@ public class CancelTimersOnUninstallEventHandler implements EventHandler<BeforeB
 
     static final ConcurrentHashMap<ClassLoader, ConcurrentLinkedQueue<Timer>> BIZ_CLASS_LOADER_TO_TIMERS = new ConcurrentHashMap<>();
 
+    /**
+     * <p>manageTimer.</p>
+     *
+     * @param timer a T object
+     * @param <T> a T class
+     * @return a T object
+     */
     public static <T extends Timer> T manageTimer(T timer) {
         ClassLoader contextClassLoader = currentThread().getContextClassLoader();
         BIZ_CLASS_LOADER_TO_TIMERS.putIfAbsent(contextClassLoader, new ConcurrentLinkedQueue<>());
@@ -47,6 +56,7 @@ public class CancelTimersOnUninstallEventHandler implements EventHandler<BeforeB
         return timer;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void handleEvent(BeforeBizRecycleEvent event) {
 
@@ -72,6 +82,7 @@ public class CancelTimersOnUninstallEventHandler implements EventHandler<BeforeB
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public int getPriority() {
         return HIGHEST_PRECEDENCE;

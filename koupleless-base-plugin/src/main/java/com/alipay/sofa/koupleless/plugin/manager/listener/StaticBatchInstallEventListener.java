@@ -36,6 +36,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
+ * <p>StaticBatchInstallEventListener class.</p>
  *
  * @author CodeNoobKingKc2
  * @version $Id: ApplicationContextEventListener, v 0.1 2023-11-21 11:26 CodeNoobKingKc2 Exp $
@@ -46,6 +47,9 @@ public class StaticBatchInstallEventListener implements
     // 合并部署是否已经完成，防止重复执行。
     private AtomicBoolean isBatchdDeployed = new AtomicBoolean(false);
 
+    /**
+     * <p>batchDeployFromLocalDir.</p>
+     */
     @SneakyThrows
     public void batchDeployFromLocalDir() {
         String absolutePath = System.getProperty("com.alipay.sofa.ark.static.biz.dir");
@@ -70,6 +74,7 @@ public class StaticBatchInstallEventListener implements
             "batch deploy failed!");
     }
 
+    /** {@inheritDoc} */
     @Override
     public void onApplicationEvent(ApplicationContextEvent event) {
         // 非基座应用直接跳过

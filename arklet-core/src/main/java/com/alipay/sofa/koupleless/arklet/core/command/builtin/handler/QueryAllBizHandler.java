@@ -30,13 +30,17 @@ import java.util.List;
 import java.util.Objects;
 
 /**
+ * <p>QueryAllBizHandler class.</p>
+ *
  * @author mingmen
- * @date 2023/6/14
+ * @since 2023/6/14
+ * @version 1.0.0
  */
 public class QueryAllBizHandler extends AbstractCommandHandler<InputMeta, List<BizInfo>> {
 
     private static final String BASE_ARK_MAIN_CLASS = "embed main";
 
+    /** {@inheritDoc} */
     @Override
     public Output<List<BizInfo>> handle(InputMeta inputMeta) {
         List<Biz> bizList = getOperationService().queryBizList();
@@ -58,11 +62,13 @@ public class QueryAllBizHandler extends AbstractCommandHandler<InputMeta, List<B
         return Output.ofSuccess(bizInfos);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Command command() {
         return BuiltinCommand.QUERY_ALL_BIZ;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void validate(InputMeta input) throws CommandValidationException {
         // no need

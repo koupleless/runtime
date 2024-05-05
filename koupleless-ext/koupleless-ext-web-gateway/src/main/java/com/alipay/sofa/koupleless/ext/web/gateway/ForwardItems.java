@@ -25,6 +25,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * <p>ForwardItems class.</p>
+ *
+ * @author zzl_i
+ * @version 1.0.0
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ForwardItems {
     private static final String EMPTY               = "";
@@ -32,6 +38,12 @@ public class ForwardItems {
 
     private static final String PATH_PREFIX         = "/";
 
+    /**
+     * <p>init.</p>
+     *
+     * @param bean a {@link com.alipay.sofa.koupleless.ext.web.gateway.Forwards} object
+     * @param gatewayProperties a {@link com.alipay.sofa.koupleless.ext.web.gateway.GatewayProperties} object
+     */
     public static void init(Forwards bean, GatewayProperties gatewayProperties) {
         //load conf
         List<Forward> forwards = gatewayProperties.getForwards();

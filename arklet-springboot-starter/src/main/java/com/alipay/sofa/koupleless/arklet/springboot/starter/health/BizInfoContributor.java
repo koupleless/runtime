@@ -27,10 +27,13 @@ import org.springframework.boot.actuate.info.InfoContributor;
 import java.util.List;
 
 /**
+ * <p>BizInfoContributor class.</p>
+ *
  * @author lianglipeng.llp@alibaba-inc.com
  * @version $Id: ArkBizInfoContributor.java, v 0.1 2024年03月19日 11:03 立蓬 Exp $
  */
 public class BizInfoContributor implements InfoContributor {
+    /** {@inheritDoc} */
     @Override
     public void contribute(Info.Builder builder) {
         List<Biz> bizList = ArkClient.getBizManagerService().getBizInOrder();

@@ -22,11 +22,20 @@ import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
 import java.util.Set;
 
 /**
- * @author: yuanyuan
- * @date: 2023/9/25 11:52 下午
+ * <p>ServiceProxyCacheCleaner class.</p>
+ *
+ * @author yuanyuan
+ * @author zzl_i
+ * @since 2023/9/25 11:52 下午
+ * @version 1.0.0
  */
 public class ServiceProxyCacheCleaner {
 
+    /**
+     * <p>clean.</p>
+     *
+     * @param classLoader a {@link java.lang.ClassLoader} object
+     */
     public static void clean(ClassLoader classLoader) {
         Set<BizRuntimeContext> runtimeSet = BizRuntimeContextRegistry.getRuntimeSet();
         for (BizRuntimeContext bizRuntimeContext : runtimeSet) {

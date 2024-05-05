@@ -18,10 +18,17 @@ package com.alipay.sofa.koupleless.common.util;
 
 import com.alipay.sofa.ark.api.ArkClient;
 
+/**
+ * <p>ArkUtils class.</p>
+ *
+ * @author zzl_i
+ * @version 1.0.0
+ */
 public class ArkUtils {
     /**
      * 判断是否是ark模块
-     * @return
+     *
+     * @return a boolean
      */
     public static boolean isModuleBiz() {
         if (ArkClient.getMasterBiz() == null) {

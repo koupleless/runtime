@@ -69,6 +69,8 @@ import java.util.regex.Pattern;
  *
  * @goal touch
  * @phase process-sources
+ * @author zzl_i
+ * @version 1.0.0
  */
 @Mojo(name = "add-patch", defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
@@ -208,6 +210,7 @@ public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
 
     }
 
+    /** {@inheritDoc} */
     @Override
     public void execute() throws MojoExecutionException {
         try {
