@@ -66,6 +66,11 @@ public class BizRuntimeContextRegistry {
     }
 
     public static BizRuntimeContext getBizRuntimeContextByClassLoader(ClassLoader classLoader) {
+        if (classLoader == null) {
+            throw new BizRuntimeException(ErrorCodes.SpringContextManager.E100002,
+                "Can't find BizRuntimeContext for null classLoader");
+        }
+
         if (BizRuntimeContextRegistry.getRuntimeMap().containsKey(classLoader)) {
             return BizRuntimeContextRegistry.getRuntimeMap().get(classLoader);
         }
