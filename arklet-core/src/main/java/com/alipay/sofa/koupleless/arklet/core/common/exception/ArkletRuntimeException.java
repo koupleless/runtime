@@ -17,34 +17,77 @@
 package com.alipay.sofa.koupleless.arklet.core.common.exception;
 
 /**
+ * <p>ArkletRuntimeException class.</p>
+ *
  * @author mingmen
  * @date 2023/6/14
+ * @version 1.0.0
  */
 public class ArkletRuntimeException extends ArkletException {
+    /**
+     * <p>Constructor for ArkletRuntimeException.</p>
+     */
     public ArkletRuntimeException() {
     }
 
+    /**
+     * <p>Constructor for ArkletRuntimeException.</p>
+     *
+     * @param message a {@link java.lang.String} object
+     */
     public ArkletRuntimeException(String message) {
         super(message);
     }
 
+    /**
+     * <p>Constructor for ArkletRuntimeException.</p>
+     *
+     * @param message a {@link java.lang.String} object
+     * @param cause a {@link java.lang.Throwable} object
+     */
     public ArkletRuntimeException(String message, Throwable cause) {
         super(message, cause);
     }
 
+    /**
+     * <p>Constructor for ArkletRuntimeException.</p>
+     *
+     * @param cause a {@link java.lang.Throwable} object
+     */
     public ArkletRuntimeException(Throwable cause) {
         super(cause);
     }
 
+    /**
+     * <p>Constructor for ArkletRuntimeException.</p>
+     *
+     * @param message a {@link java.lang.String} object
+     * @param cause a {@link java.lang.Throwable} object
+     * @param enableSuppression a boolean
+     * @param writableStackTrace a boolean
+     */
     public ArkletRuntimeException(String message, Throwable cause, boolean enableSuppression,
                                   boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 
+    /**
+     * <p>Constructor for ArkletRuntimeException.</p>
+     *
+     * @param format a {@link java.lang.String} object
+     * @param args a {@link java.lang.Object} object
+     */
     public ArkletRuntimeException(String format, Object... args) {
         super(format, args);
     }
 
+    /**
+     * <p>Constructor for ArkletRuntimeException.</p>
+     *
+     * @param cause a {@link java.lang.Throwable} object
+     * @param format a {@link java.lang.String} object
+     * @param args a {@link java.lang.Object} object
+     */
     public ArkletRuntimeException(Throwable cause, String format, Object... args) {
         super(cause, format, args);
     }

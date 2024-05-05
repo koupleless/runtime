@@ -45,8 +45,11 @@ import org.junit.runner.JUnitCore;
 import org.junit.runner.Result;
 
 /**
+ * <p>CompatibleTestMojo class.</p>
+ *
  * @author CodeNoobKing
  * @date 2024/1/15
+ * @version 1.0.0
  */
 @Mojo(name = "compatible-test", defaultPhase = LifecyclePhase.INTEGRATION_TEST, requiresDependencyResolution = ResolutionScope.COMPILE)
 public class CompatibleTestMojo extends AbstractMojo {
@@ -60,6 +63,11 @@ public class CompatibleTestMojo extends AbstractMojo {
     private ObjectMapper yamlObjectMapper         = new ObjectMapper(new YAMLFactory())
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
+    /**
+     * <p>buildURLClassLoader.</p>
+     *
+     * @return a {@link java.net.URLClassLoader} object
+     */
     @SneakyThrows
     public URLClassLoader buildURLClassLoader() {
         List<URL> urls = new ArrayList<>();
@@ -118,6 +126,9 @@ public class CompatibleTestMojo extends AbstractMojo {
         return result;
     }
 
+    /**
+     * <p>executeJunit4.</p>
+     */
     @SneakyThrows
     public void executeJunit4() {
         URLClassLoader baseClassLoader = buildURLClassLoader();
@@ -143,6 +154,9 @@ public class CompatibleTestMojo extends AbstractMojo {
         }
     }
 
+    /**
+     * <p>execute.</p>
+     */
     public void execute() {
         executeJunit4();
     }

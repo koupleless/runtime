@@ -31,6 +31,12 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
 
+/**
+ * <p>ForwardController class.</p>
+ *
+ * @author zzl_i
+ * @version 1.0.0
+ */
 @Controller
 @RequestMapping
 public class ForwardController {
@@ -40,6 +46,14 @@ public class ForwardController {
     private static final String SEPARATOR         = "/";
     private static final String DOUBLE_SEPARATORS = SEPARATOR + SEPARATOR;
 
+    /**
+     * <p>redirect.</p>
+     *
+     * @param request a {@link javax.servlet.http.HttpServletRequest} object
+     * @param response a {@link javax.servlet.http.HttpServletResponse} object
+     * @throws javax.servlet.ServletException if any.
+     * @throws java.io.IOException if any.
+     */
     @RequestMapping("/**")
     public void redirect(HttpServletRequest request,
                          HttpServletResponse response) throws ServletException, IOException {

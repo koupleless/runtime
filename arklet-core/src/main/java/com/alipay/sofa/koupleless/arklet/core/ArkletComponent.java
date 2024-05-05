@@ -19,8 +19,10 @@ package com.alipay.sofa.koupleless.arklet.core;
 /**
  *  * Arklet component interface, managed by registry
  *  * @see ArkletComponentRegistry
+ *
  * @author mingmen
  * @date 2023/6/8
+ * @version 1.0.0
  */
 public interface ArkletComponent {
 

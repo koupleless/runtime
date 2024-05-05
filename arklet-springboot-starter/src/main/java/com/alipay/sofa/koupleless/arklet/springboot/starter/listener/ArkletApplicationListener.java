@@ -29,12 +29,16 @@ import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 
 /**
+ * <p>ArkletApplicationListener class.</p>
+ *
  * @author mingmen
  * @date 2023/6/14
+ * @version 1.0.0
  */
 @SuppressWarnings("rawtypes")
 public class ArkletApplicationListener implements ApplicationListener<ApplicationContextEvent> {
 
+    /** {@inheritDoc} */
     @Override
     public void onApplicationEvent(ApplicationContextEvent event) {
         // 非基座应用直接跳过

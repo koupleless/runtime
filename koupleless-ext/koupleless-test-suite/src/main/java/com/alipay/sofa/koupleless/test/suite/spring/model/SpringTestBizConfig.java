@@ -25,8 +25,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * <p>SpringTestBizConfig class.</p>
+ *
  * @author CodeNoobKing
  * @date 2024/3/11
+ * @version 1.0.0
  */
 @NoArgsConstructor
 @AllArgsConstructor

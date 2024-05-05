@@ -17,10 +17,12 @@
 package com.alipay.sofa.koupleless.arklet.core.api.model;
 
 /**
+ * <p>ResponseCode class.</p>
+ *
  * @author mingmen
  * @date 2023/6/26
+ * @version 1.0.0
  */
-
 public enum ResponseCode {
                           SUCCESS(200), FAILED(400), CMD_NOT_FOUND(404), CMD_PROCESS_INTERNAL_ERROR(500);
 
@@ -30,6 +32,11 @@ public enum ResponseCode {
         this.code = code;
     }
 
+    /**
+     * <p>Getter for the field <code>code</code>.</p>
+     *
+     * @return a int
+     */
     public int getCode() {
         return code;
     }

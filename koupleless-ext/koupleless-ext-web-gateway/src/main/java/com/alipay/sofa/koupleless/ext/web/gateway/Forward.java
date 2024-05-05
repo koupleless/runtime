@@ -20,6 +20,12 @@ import lombok.Data;
 
 import java.util.Set;
 
+/**
+ * <p>Forward class.</p>
+ *
+ * @author zzl_i
+ * @version 1.0.0
+ */
 @Data
 public class Forward {
     private String           contextPath;

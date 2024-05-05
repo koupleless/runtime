@@ -35,11 +35,19 @@ import java.util.stream.Collectors;
 
 /**
  * SOFAArk 的测试 BIZ 类。
+ *
+ * @author zzl_i
+ * @version 1.0.0
  */
 public class TestBizModel extends BizModel {
 
     private TestBizConfig config;
 
+    /**
+     * <p>Constructor for TestBizModel.</p>
+     *
+     * @param config a {@link com.alipay.sofa.koupleless.test.suite.biz.TestBizConfig} object
+     */
     public TestBizModel(TestBizConfig config) {
 
         super();
@@ -66,27 +74,36 @@ public class TestBizModel extends BizModel {
         this.setClassLoader(testBizClassLoader);
     }
 
+    /**
+     * <p>registerBiz.</p>
+     */
     public void registerBiz() {
         // firstly, we need to register the biz into ark container.
         ArkClient.getBizManagerService().registerBiz(this);
     }
 
     /**
+     * {@inheritDoc}
+     *
      * due to the complexity of mock a BizClassLoader environment, we just return true here.
      * we should control the class loading behaviour by other more controlled way.
-     *
-     * @return true
      */
     @Override
     public boolean isDeclared(URL url, String resourceName) {
         return true;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isDeclaredMode() {
         return true;
     }
 
+    /**
+     * <p>getTestClasses.</p>
+     *
+     * @return a {@link java.util.List} object
+     */
     @SneakyThrows
     public List<Class<?>> getTestClasses() {
         List<Class<?>> classInBizLoader = new ArrayList<>();
@@ -96,6 +113,12 @@ public class TestBizModel extends BizModel {
         return classInBizLoader;
     }
 
+    /**
+     * <p>executeTest.</p>
+     *
+     * @param runnable a {@link java.lang.Runnable} object
+     * @return a {@link java.util.concurrent.CompletableFuture} object
+     */
     @SneakyThrows
     public CompletableFuture<Void> executeTest(Runnable runnable) {
         if (StringUtils.isNoneBlank(config.getBootstrapClassName())) {

@@ -32,11 +32,22 @@ import java.util.List;
 import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 
 /**
+ * <p>MergeServiceDirectoryCopyStrategy class.</p>
+ *
  * @author CodeNoobKing
  * @date 2024/3/18
- **/
+ * @version 1.0.0
+ */
 public class MergeServiceDirectoryCopyStrategy implements CopyAdapterStrategy {
 
+    /**
+     * <p>mergeContent.</p>
+     *
+     * @param inputContent an array of {@link byte} objects
+     * @param outputContent an array of {@link byte} objects
+     * @return a {@link java.util.List} object
+     * @throws java.lang.Throwable if any.
+     */
     public List<String> mergeContent(byte[] inputContent, byte[] outputContent) throws Throwable {
         // convert byte[] to Reader
         List<String> mergedLines = null;
@@ -54,6 +65,7 @@ public class MergeServiceDirectoryCopyStrategy implements CopyAdapterStrategy {
         return mergedLines;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void copy(File buildDir, String entryName, byte[] content) throws Throwable {
         File serviceDir = Paths.get(buildDir.getAbsolutePath(), "META-INF", "services").toFile();

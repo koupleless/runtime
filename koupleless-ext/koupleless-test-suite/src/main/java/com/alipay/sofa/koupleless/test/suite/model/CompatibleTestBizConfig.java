@@ -24,8 +24,11 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 /**
+ * <p>CompatibleTestBizConfig class.</p>
+ *
  * @author CodeNoobKing
  * @date 2024/1/15
+ * @version 1.0.0
  */
 @Data
 @NoArgsConstructor

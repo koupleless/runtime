@@ -26,8 +26,12 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 
 /**
+ * <p>SerializeUtils class.</p>
+ *
  * @author: yuanyuan
  * @date: 2023/9/25 8:22 下午
+ * @author zzl_i
+ * @version 1.0.0
  */
 public class SerializeUtils {
 
@@ -78,6 +82,13 @@ public class SerializeUtils {
         return target;
     }
 
+    /**
+     * <p>serializeTransform.</p>
+     *
+     * @param originalSource a {@link java.lang.Object} object
+     * @param targetClassLoader a {@link java.lang.ClassLoader} object
+     * @return a {@link java.lang.Object} object
+     */
     public static Object serializeTransform(Object originalSource, ClassLoader targetClassLoader) {
         if (originalSource == null) {
             return null;

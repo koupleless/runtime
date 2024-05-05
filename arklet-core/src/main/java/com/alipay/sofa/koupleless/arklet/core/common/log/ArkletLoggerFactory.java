@@ -19,17 +19,28 @@ package com.alipay.sofa.koupleless.arklet.core.common.log;
 import com.alipay.sofa.common.log.LoggerSpaceManager;
 
 /**
+ * <p>ArkletLoggerFactory class.</p>
+ *
  * @author mingmen
  * @date 2023/6/14
+ * @version 1.0.0
  */
 public class ArkletLoggerFactory {
 
+    /** Constant <code>ARKLET_LOGGER_SPACE="com.alipay.sofa.arklet"</code> */
     public static final String  ARKLET_LOGGER_SPACE        = "com.alipay.sofa.arklet";
 
     private static final String ARKLET_DEFAULT_LOGGER_NAME = "com.alipay.sofa.arklet";
 
+    /** Constant <code>defaultLogger</code> */
     public static ArkletLogger  defaultLogger;
 
+    /**
+     * <p>getLogger.</p>
+     *
+     * @param clazz a {@link java.lang.Class} object
+     * @return a {@link com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger} object
+     */
     public static ArkletLogger getLogger(Class<?> clazz) {
         if (clazz == null) {
             return null;
@@ -37,6 +48,12 @@ public class ArkletLoggerFactory {
         return getLogger(clazz.getCanonicalName());
     }
 
+    /**
+     * <p>getLogger.</p>
+     *
+     * @param name a {@link java.lang.String} object
+     * @return a {@link com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger} object
+     */
     public static ArkletLogger getLogger(String name) {
         if (name == null || name.isEmpty()) {
             return null;
@@ -44,6 +61,11 @@ public class ArkletLoggerFactory {
         return new ArkletLogger(LoggerSpaceManager.getLoggerBySpace(name, ARKLET_LOGGER_SPACE));
     }
 
+    /**
+     * <p>Getter for the field <code>defaultLogger</code>.</p>
+     *
+     * @return a {@link com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger} object
+     */
     public static ArkletLogger getDefaultLogger() {
         if (defaultLogger == null) {
             defaultLogger = getLogger(ARKLET_DEFAULT_LOGGER_NAME);

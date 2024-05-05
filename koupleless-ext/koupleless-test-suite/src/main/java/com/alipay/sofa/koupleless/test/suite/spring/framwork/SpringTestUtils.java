@@ -24,13 +24,19 @@ import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
+ * <p>SpringTestUtils class.</p>
+ *
  * @author CodeNoobKing
  * @date 2024/3/11
+ * @version 1.0.0
  */
 public class SpringTestUtils {
     private static AtomicBoolean    initialized = new AtomicBoolean(false);
     private static SpringTestConfig config;
 
+    /**
+     * <p>init.</p>
+     */
     public static void init() {
         if (initialized.compareAndSet(false, true)) {
             try (InputStream is = SpringTestUtils.class.getClassLoader()
@@ -44,6 +50,11 @@ public class SpringTestUtils {
         }
     }
 
+    /**
+     * <p>Getter for the field <code>config</code>.</p>
+     *
+     * @return a {@link com.alipay.sofa.koupleless.test.suite.spring.model.SpringTestConfig} object
+     */
     public static SpringTestConfig getConfig() {
         init();
         return config;

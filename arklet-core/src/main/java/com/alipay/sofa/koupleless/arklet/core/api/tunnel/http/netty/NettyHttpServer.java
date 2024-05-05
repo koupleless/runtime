@@ -59,8 +59,11 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.CharsetUtil;
 
 /**
+ * <p>NettyHttpServer class.</p>
+ *
  * @author mingmen
  * @date 2023/6/8
+ * @version 1.0.0
  */
 
 @SuppressWarnings("unchecked")
@@ -74,6 +77,12 @@ public class NettyHttpServer {
     private final CommandService      commandService;
     private static final ArkletLogger LOGGER = ArkletLoggerFactory.getDefaultLogger();
 
+    /**
+     * <p>Constructor for NettyHttpServer.</p>
+     *
+     * @param port a int
+     * @param commandService a {@link com.alipay.sofa.koupleless.arklet.core.command.CommandService} object
+     */
     public NettyHttpServer(int port, CommandService commandService) {
         this.port = port;
         bossGroup = new NioEventLoopGroup(1);
@@ -81,10 +90,20 @@ public class NettyHttpServer {
         this.commandService = commandService;
     }
 
+    /**
+     * <p>Getter for the field <code>channel</code>.</p>
+     *
+     * @return a {@link io.netty.channel.Channel} object
+     */
     public Channel getChannel() {
         return channel;
     }
 
+    /**
+     * <p>open.</p>
+     *
+     * @throws java.lang.InterruptedException if any.
+     */
     public void open() throws InterruptedException {
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         serverBootstrap.option(ChannelOption.SO_BACKLOG, 1024);
@@ -94,6 +113,9 @@ public class NettyHttpServer {
         channel = serverBootstrap.bind(port).sync().channel();
     }
 
+    /**
+     * <p>close.</p>
+     */
     public void close() {
         channel.close();
         bossGroup.shutdownGracefully();

@@ -28,49 +28,60 @@ import com.alipay.sofa.koupleless.arklet.core.common.model.BatchInstallResponse;
 
 /**
  * Unified operation service interface, mainly interacts with the sofa-ark container
+ *
  * @author mingmen
  * @date 2023/6/14
+ * @version 1.0.0
  */
 public interface UnifiedOperationService extends ArkletComponent {
 
     /**
      * install biz
+     *
      * @param bizUrl biz URL
      * @return response
-     * @throws Throwable error
+     * @throws java.lang.Throwable error
+     * @param bizName a {@link java.lang.String} object
+     * @param bizVersion a {@link java.lang.String} object
+     * @param args an array of {@link java.lang.String} objects
+     * @param envs a {@link java.util.Map} object
      */
     ClientResponse install(String bizName, String bizVersion, String bizUrl, String[] args,
                            Map<String, String> envs) throws Throwable;
 
     /**
      * uninstall biz
+     *
      * @param bizName bizName
      * @param bizVersion bizVersion
      * @return response
-     * @throws Throwable error
+     * @throws java.lang.Throwable error
      */
     ClientResponse uninstall(String bizName, String bizVersion) throws Throwable;
 
     /**
      * Batch install multiple biz.
+     *
      * @param request 请求。
      * @return response 相应。
-     * @throws Throwable error
+     * @throws java.lang.Throwable error
      */
     BatchInstallResponse batchInstall(BatchInstallRequest request) throws Throwable;
 
     /**
      * query biz list
+     *
      * @return biz list
      */
     List<Biz> queryBizList();
 
     /**
      * switch biz
+     *
      * @param bizName bizName
      * @param bizVersion bizVersion
      * @return response
-     * @throws Throwable error
+     * @throws java.lang.Throwable error
      */
     ClientResponse switchBiz(String bizName, String bizVersion) throws Throwable;
 

@@ -29,18 +29,24 @@ import lombok.Setter;
 import static com.alipay.sofa.koupleless.arklet.core.command.builtin.BuiltinCommand.QUERY_BIZ_OPS;
 
 /**
+ * <p>QueryBizOpsHandler class.</p>
+ *
  * @author: yuanyuan
  * @date: 2023/9/4 9:50 下午
+ * @author zzl_i
+ * @version 1.0.0
  */
 public class QueryBizOpsHandler extends
                                 AbstractCommandHandler<QueryBizOpsHandler.Input, ProcessRecord> {
 
+    /** {@inheritDoc} */
     @Override
     public void validate(Input input) throws CommandValidationException {
         notNull(input, "request is null");
         notBlank(input.getRequestId(), "requestId is blank");
     }
 
+    /** {@inheritDoc} */
     @Override
     public Output<ProcessRecord> handle(Input input) {
         String requestId = input.getRequestId();
@@ -51,6 +57,7 @@ public class QueryBizOpsHandler extends
         return Output.ofSuccess(processRecord);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Command command() {
         return QUERY_BIZ_OPS;

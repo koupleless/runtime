@@ -27,6 +27,12 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
+/**
+ * <p>TestBizClassLoader class.</p>
+ *
+ * @author zzl_i
+ * @version 1.0.0
+ */
 public class TestBizClassLoader extends BizClassLoader {
 
     private List<Object> resolveByClassLoaderPatterns;
@@ -46,6 +52,14 @@ public class TestBizClassLoader extends BizClassLoader {
 
     }
 
+    /**
+     * <p>Constructor for TestBizClassLoader.</p>
+     *
+     * @param bizIdentity a {@link java.lang.String} object
+     * @param includeClassNames a {@link java.util.List} object
+     * @param includeClassPatterns a {@link java.util.List} object
+     * @param baseClassLoader a {@link java.net.URLClassLoader} object
+     */
     public TestBizClassLoader(String bizIdentity, List<String> includeClassNames,
                               List<Pattern> includeClassPatterns, URLClassLoader baseClassLoader) {
         super(bizIdentity, baseClassLoader.getURLs());
@@ -57,6 +71,8 @@ public class TestBizClassLoader extends BizClassLoader {
     }
 
     /**
+     * {@inheritDoc}
+     *
      * 重写 resolveLocalClass 方法，根据 resolveByClassLoaderPatterns 判断是否需要使用 baseClassLoader 加载类。
      * 这是因为，当我们做集成测试兼容的时候，我们需要区分地加载同一个包里的哪些类在 baseClassLoader 加载，哪些类在 bizClassLoader 加载。
      * 这个能力在正常的 ark 使用场景下是不具备的，因为正常 sofa-ark 是包粒度的。

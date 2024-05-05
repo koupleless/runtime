@@ -17,22 +17,41 @@
 package com.alipay.sofa.koupleless.arklet.core.command.builtin.model;
 
 /**
+ * <p>CommandModel class.</p>
+ *
  * @author mingmen
  * @date 2023/6/14
+ * @version 1.0.0
  */
 public class CommandModel {
     private String id;
     private String desc;
 
+    /**
+     * <p>Constructor for CommandModel.</p>
+     *
+     * @param id a {@link java.lang.String} object
+     * @param desc a {@link java.lang.String} object
+     */
     public CommandModel(String id, String desc) {
         this.id = id;
         this.desc = desc;
     }
 
+    /**
+     * <p>Getter for the field <code>id</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * <p>Getter for the field <code>desc</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getDesc() {
         return desc;
     }

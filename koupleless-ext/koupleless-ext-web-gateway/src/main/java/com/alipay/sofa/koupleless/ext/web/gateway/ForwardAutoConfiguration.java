@@ -21,12 +21,23 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 
+/**
+ * <p>ForwardAutoConfiguration class.</p>
+ *
+ * @author zzl_i
+ * @version 1.0.0
+ */
 @EnableConfigurationProperties(GatewayProperties.class)
 @ComponentScan(basePackages = "com.alipay.sofa.koupleless.ext.web")
 public class ForwardAutoConfiguration {
     @Autowired
     private GatewayProperties gatewayProperties;
 
+    /**
+     * <p>forwards.</p>
+     *
+     * @return a {@link com.alipay.sofa.koupleless.ext.web.gateway.Forwards} object
+     */
     @Bean
     public Forwards forwards() {
         Forwards bean = new Forwards();

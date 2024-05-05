@@ -18,6 +18,12 @@ package com.alipay.sofa.koupleless.ext.web.gateway;
 
 import lombok.Getter;
 
+/**
+ * <p>ForwardItem class.</p>
+ *
+ * @author zzl_i
+ * @version 1.0.0
+ */
 public class ForwardItem {
 
     @Getter
@@ -30,6 +36,14 @@ public class ForwardItem {
     @Getter
     private final String to;
 
+    /**
+     * <p>Constructor for ForwardItem.</p>
+     *
+     * @param contextPath a {@link java.lang.String} object
+     * @param host a {@link java.lang.String} object
+     * @param from a {@link java.lang.String} object
+     * @param to a {@link java.lang.String} object
+     */
     public ForwardItem(String contextPath, String host, String from, String to) {
         this.contextPath = contextPath;
         this.host = host;

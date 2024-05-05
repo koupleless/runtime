@@ -26,12 +26,17 @@ import org.springframework.core.Ordered;
 import static com.alipay.sofa.ark.spi.constant.Constants.PLUGIN_EXPORT_CLASS_ENABLE;
 
 /**
+ * <p>ServerlessApplicationListener class.</p>
+ *
  * @author: yuanyuan
  * @date: 2023/10/30 9:38 下午
+ * @author zzl_i
+ * @version 1.0.0
  */
 public class ServerlessApplicationListener implements ApplicationListener<SpringApplicationEvent>,
                                            Ordered {
 
+    /** {@inheritDoc} */
     @Override
     public void onApplicationEvent(SpringApplicationEvent event) {
         if (ArkClient.class.getClassLoader() == Thread.currentThread().getContextClassLoader()) {
@@ -45,6 +50,8 @@ public class ServerlessApplicationListener implements ApplicationListener<Spring
     }
 
     /**
+     * {@inheritDoc}
+     *
      * 优先级要高于 ArkApplicationStartListener 否则，会提前进入 ark 1.0 分支
      */
     @Override

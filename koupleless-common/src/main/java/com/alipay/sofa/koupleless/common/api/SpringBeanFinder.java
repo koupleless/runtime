@@ -22,13 +22,23 @@ import com.alipay.sofa.koupleless.common.BizRuntimeContext;
 import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
 
 /**
+ * <p>SpringBeanFinder class.</p>
+ *
  * @author: yuanyuan
  * @date: 2023/12/8 5:26 下午
  *
  * SpringBeanFinder 查找基座bean工具类，无跨classloader支持
+ * @author zzl_i
+ * @version 1.0.0
  */
 public class SpringBeanFinder {
 
+    /**
+     * <p>getBaseBean.</p>
+     *
+     * @param name a {@link java.lang.String} object
+     * @return a {@link java.lang.Object} object
+     */
     public static Object getBaseBean(String name) {
         Biz masterBiz = ArkClient.getMasterBiz();
         BizRuntimeContext bizRuntimeContext = BizRuntimeContextRegistry
@@ -36,6 +46,13 @@ public class SpringBeanFinder {
         return bizRuntimeContext.getRootApplicationContext().getBean(name);
     }
 
+    /**
+     * <p>getBaseBean.</p>
+     *
+     * @param type a {@link java.lang.Class} object
+     * @param <T> a T class
+     * @return a T object
+     */
     public static <T> T getBaseBean(Class<T> type) {
         Biz masterBiz = ArkClient.getMasterBiz();
         BizRuntimeContext bizRuntimeContext = BizRuntimeContextRegistry

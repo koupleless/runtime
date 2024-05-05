@@ -39,8 +39,11 @@ import java.util.stream.Collectors;
 import static com.alipay.sofa.ark.spi.constant.Constants.MASTER_BIZ;
 
 /**
+ * <p>BaseSpringTestApplication class.</p>
+ *
  * @author CodeNoobKing
  * @date 2024/3/8
+ * @version 1.0.0
  */
 @Getter
 public class BaseSpringTestApplication {
@@ -51,6 +54,9 @@ public class BaseSpringTestApplication {
 
     private URLClassLoader                 baseClassLoader;
 
+    /**
+     * <p>initBaseClassLoader.</p>
+     */
     public void initBaseClassLoader() {
         URLClassLoader baseClassLoader = (URLClassLoader) Thread.currentThread()
             .getContextClassLoader();
@@ -58,6 +64,11 @@ public class BaseSpringTestApplication {
             baseClassLoader);
     }
 
+    /**
+     * <p>Constructor for BaseSpringTestApplication.</p>
+     *
+     * @param config a {@link com.alipay.sofa.koupleless.test.suite.spring.model.BaseSpringTestConfig} object
+     */
     public BaseSpringTestApplication(BaseSpringTestConfig config) {
         config.init();
         this.config = config;
@@ -68,6 +79,9 @@ public class BaseSpringTestApplication {
             .equals("com.alipay.sofa.ark.springboot.listener.ArkApplicationStartListener");
     }
 
+    /**
+     * <p>run.</p>
+     */
     @SneakyThrows
     public void run() {
         Class<?> mainClass = baseClassLoader.loadClass(config.getMainClass().getName());

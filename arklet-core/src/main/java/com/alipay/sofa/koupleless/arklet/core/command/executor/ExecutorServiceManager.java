@@ -21,8 +21,12 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * <p>ExecutorServiceManager class.</p>
+ *
  * @author: yuanyuan
  * @date: 2023/8/31 4:12 下午
+ * @author zzl_i
+ * @version 1.0.0
  */
 public class ExecutorServiceManager {
 
@@ -30,6 +34,11 @@ public class ExecutorServiceManager {
         TimeUnit.SECONDS, new ArrayBlockingQueue<>(100), new NamedThreadFactory("ark-biz-ops"),
         new ThreadPoolExecutor.CallerRunsPolicy());
 
+    /**
+     * <p>getArkBizOpsExecutor.</p>
+     *
+     * @return a {@link java.util.concurrent.ThreadPoolExecutor} object
+     */
     public static ThreadPoolExecutor getArkBizOpsExecutor() {
         return ARK_BIZ_OPS_EXECUTOR;
     }

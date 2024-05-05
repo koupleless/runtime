@@ -22,11 +22,15 @@ import com.alipay.sofa.ark.spi.service.event.EventAdminService;
 import com.alipay.sofa.koupleless.plugin.manager.handler.*;
 
 /**
+ * <p>ServerlessRuntimeActivator class.</p>
+ *
  * @author qilong.zql
  * @since 2.5.0
+ * @version 1.0.0
  */
 public class ServerlessRuntimeActivator implements PluginActivator {
 
+    /** {@inheritDoc} */
     @Override
     public void start(PluginContext context) {
         registerEventHandler(context);
@@ -46,6 +50,7 @@ public class ServerlessRuntimeActivator implements PluginActivator {
         eventAdminService.register(new ForceStopThreadsOnUninstallEventHandler());
     }
 
+    /** {@inheritDoc} */
     @Override
     public void stop(PluginContext context) {
         // no op

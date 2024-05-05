@@ -37,8 +37,11 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.Multibinder;
 
 /**
+ * <p>ArkletComponentRegistry class.</p>
+ *
  * @author mingmen
  * @date 2023/6/14
+ * @version 1.0.0
  */
 public class ArkletComponentRegistry {
 
@@ -75,18 +78,38 @@ public class ArkletComponentRegistry {
         ArkletLoggerFactory.getDefaultLogger().info("finish destroy components");
     }
 
+    /**
+     * <p>getOperationServiceInstance.</p>
+     *
+     * @return a {@link com.alipay.sofa.koupleless.arklet.core.ops.UnifiedOperationService} object
+     */
     public static UnifiedOperationService getOperationServiceInstance() {
         return componentInjector.getInstance(UnifiedOperationService.class);
     }
 
+    /**
+     * <p>getCommandServiceInstance.</p>
+     *
+     * @return a {@link com.alipay.sofa.koupleless.arklet.core.command.CommandService} object
+     */
     public static CommandService getCommandServiceInstance() {
         return componentInjector.getInstance(CommandService.class);
     }
 
+    /**
+     * <p>getHealthServiceInstance.</p>
+     *
+     * @return a {@link com.alipay.sofa.koupleless.arklet.core.health.HealthService} object
+     */
     public static HealthService getHealthServiceInstance() {
         return componentInjector.getInstance(HealthService.class);
     }
 
+    /**
+     * <p>getApiClientInstance.</p>
+     *
+     * @return a {@link com.alipay.sofa.koupleless.arklet.core.api.ApiClient} object
+     */
     public static ApiClient getApiClientInstance() {
         return componentInjector.getInstance(ApiClient.class);
     }

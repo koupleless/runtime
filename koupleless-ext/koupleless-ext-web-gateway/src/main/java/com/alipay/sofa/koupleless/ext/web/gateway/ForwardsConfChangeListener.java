@@ -34,6 +34,12 @@ import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
+/**
+ * <p>ForwardsConfChangeListener class.</p>
+ *
+ * @author zzl_i
+ * @version 1.0.0
+ */
 @Component
 @ConditionalOnClass(ConfigChangeListener.class)
 public class ForwardsConfChangeListener implements ConfigChangeListener, InitializingBean {
@@ -49,6 +55,7 @@ public class ForwardsConfChangeListener implements ConfigChangeListener, Initial
     private ApplicationContext  applicationContext;
     private static final String WATCH_KEY_PREFIX = "koupleless.web.gateway";
 
+    /** {@inheritDoc} */
     @Override
     public void afterPropertiesSet() throws Exception {
         String[] array = namespaces.split(",");
@@ -57,6 +64,7 @@ public class ForwardsConfChangeListener implements ConfigChangeListener, Initial
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void onChange(ConfigChangeEvent event) {
         Set<String> keys = event.changedKeys();

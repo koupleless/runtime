@@ -24,14 +24,25 @@ import org.springframework.util.StringUtils;
 import java.util.Set;
 
 /**
+ * <p>MasterBizPropertySource class.</p>
+ *
  * @author: yuanyuan
  * @date: 2023/10/30 9:52 下午
+ * @author zzl_i
+ * @version 1.0.0
  */
 public class MasterBizPropertySource extends EnumerablePropertySource<Set<String>> {
 
     private final Set<String> keys;
     private final Environment environment;
 
+    /**
+     * <p>Constructor for MasterBizPropertySource.</p>
+     *
+     * @param name a {@link java.lang.String} object
+     * @param environment a {@link org.springframework.core.env.Environment} object
+     * @param keys a {@link java.util.Set} object
+     */
     public MasterBizPropertySource(String name, @NonNull Environment environment,
                                    @NonNull Set<String> keys) {
         super(name, keys);
@@ -39,11 +50,13 @@ public class MasterBizPropertySource extends EnumerablePropertySource<Set<String
         this.keys = keys;
     }
 
+    /** {@inheritDoc} */
     @Override
     public Object getProperty(String name) {
         return keys.contains(name) ? environment.getProperty(name) : null;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getPropertyNames() {
         return StringUtils.toStringArray(keys);

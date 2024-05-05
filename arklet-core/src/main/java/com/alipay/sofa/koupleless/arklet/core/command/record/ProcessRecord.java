@@ -30,8 +30,12 @@ import static com.alipay.sofa.koupleless.arklet.core.command.record.ProcessRecor
 import static com.alipay.sofa.koupleless.arklet.core.command.record.ProcessRecord.Status.SUCCEEDED;
 
 /**
+ * <p>ProcessRecord class.</p>
+ *
  * @author: yuanyuan
  * @date: 2023/8/31 3:27 下午
+ * @author zzl_i
+ * @version 1.0.0
  */
 @Getter
 @Setter
@@ -86,6 +90,9 @@ public class ProcessRecord {
         }
     }
 
+    /**
+     * <p>markFinishTime.</p>
+     */
     public void markFinishTime() {
         Date date = new Date();
         setEndTime(date);
@@ -93,10 +100,18 @@ public class ProcessRecord {
         setElapsedTime(date.getTime() - startTimestamp);
     }
 
+    /**
+     * <p>finished.</p>
+     *
+     * @return a boolean
+     */
     public boolean finished() {
         return SUCCEEDED.equals(getStatus()) || FAILED.equals(getStatus());
     }
 
+    /**
+     * <p>start.</p>
+     */
     public void start() {
         if (INITIALIZED.equals(getStatus())) {
             setStatus(EXECUTING);
@@ -105,6 +120,9 @@ public class ProcessRecord {
         }
     }
 
+    /**
+     * <p>success.</p>
+     */
     public void success() {
         if (EXECUTING.equals(getStatus())) {
             setStatus(SUCCEEDED);
@@ -113,6 +131,9 @@ public class ProcessRecord {
         }
     }
 
+    /**
+     * <p>fail.</p>
+     */
     public void fail() {
         if (EXECUTING.equals(getStatus())) {
             setStatus(FAILED);
@@ -121,11 +142,22 @@ public class ProcessRecord {
         }
     }
 
+    /**
+     * <p>fail.</p>
+     *
+     * @param message a {@link java.lang.String} object
+     */
     public void fail(String message) {
         fail();
         setMessage(message);
     }
 
+    /**
+     * <p>fail.</p>
+     *
+     * @param message a {@link java.lang.String} object
+     * @param throwable a {@link java.lang.Throwable} object
+     */
     public void fail(String message, Throwable throwable) {
         fail();
         setMessage(message);

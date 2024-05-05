@@ -30,6 +30,7 @@ import org.springframework.boot.loader.tools.LoaderClassesWriter;
 
 /**
  * Custom Layouts
+ *
  * @author zjulbj
  * @daye 2023/12/26
  * @version Layouts.java, v 0.1 2023年12月26日 14:45 syd
@@ -42,7 +43,7 @@ public class Layouts {
      * Return a layout for the given source file.
      *
      * @param file the source file
-     * @return a {@link Layout}
+     * @return a {@link org.springframework.boot.loader.tools.Layout}
      */
     public static Layout forFile(File file) {
         if (file == null) {

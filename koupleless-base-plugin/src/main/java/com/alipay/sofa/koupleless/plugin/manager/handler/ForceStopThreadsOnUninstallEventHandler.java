@@ -27,6 +27,8 @@ import static java.lang.Thread.currentThread;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
+ * <p>ForceStopThreadsOnUninstallEventHandler class.</p>
+ *
  * @author lylingzhen
  * @version ForceStopThreadsOnUninstallEventHandler.java
  *
@@ -40,6 +42,13 @@ public class ForceStopThreadsOnUninstallEventHandler implements
 
     static final ConcurrentHashMap<ClassLoader, ConcurrentLinkedQueue<Thread>> BIZ_CLASS_LOADER_TO_THREADS = new ConcurrentHashMap<>();
 
+    /**
+     * <p>manageThread.</p>
+     *
+     * @param thread a T object
+     * @param <T> a T class
+     * @return a T object
+     */
     public static <T extends Thread> T manageThread(T thread) {
         ClassLoader contextClassLoader = currentThread().getContextClassLoader();
         BIZ_CLASS_LOADER_TO_THREADS.putIfAbsent(contextClassLoader, new ConcurrentLinkedQueue<>());
@@ -47,6 +56,7 @@ public class ForceStopThreadsOnUninstallEventHandler implements
         return thread;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void handleEvent(BeforeBizRecycleEvent event) {
 
@@ -72,6 +82,7 @@ public class ForceStopThreadsOnUninstallEventHandler implements
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public int getPriority() {
         return LOWEST_PRECEDENCE;

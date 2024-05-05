@@ -33,8 +33,11 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.Multibinder;
 
 /**
+ * <p>ApiClient class.</p>
+ *
  * @author mingmen
  * @date 2023/6/8
+ * @version 1.0.0
  */
 
 @Singleton
@@ -53,6 +56,7 @@ public class ApiClient implements ArkletComponent {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void init() {
         for (Tunnel tunnel : tunnelList) {
@@ -61,6 +65,7 @@ public class ApiClient implements ArkletComponent {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void destroy() {
         for (Tunnel tunnel : tunnelList) {
@@ -68,6 +73,11 @@ public class ApiClient implements ArkletComponent {
         }
     }
 
+    /**
+     * <p>getTunnels.</p>
+     *
+     * @return a {@link java.util.List} object
+     */
     public List<Tunnel> getTunnels() {
         return tunnelList;
     }

@@ -16,19 +16,44 @@
  */
 package com.alipay.sofa.koupleless.common.exception;
 
+/**
+ * <p>BizRuntimeException class.</p>
+ *
+ * @author zzl_i
+ * @version 1.0.0
+ */
 public class BizRuntimeException extends RuntimeException {
     private String errorCode;
 
+    /**
+     * <p>Constructor for BizRuntimeException.</p>
+     *
+     * @param errorCode a {@link java.lang.String} object
+     * @param message a {@link java.lang.String} object
+     */
     public BizRuntimeException(String errorCode, String message) {
         super(message);
         this.errorCode = errorCode;
     }
 
+    /**
+     * <p>Constructor for BizRuntimeException.</p>
+     *
+     * @param errorCode a {@link java.lang.String} object
+     * @param cause a {@link java.lang.Throwable} object
+     */
     public BizRuntimeException(String errorCode, Throwable cause) {
         super(cause);
         this.errorCode = errorCode;
     }
 
+    /**
+     * <p>Constructor for BizRuntimeException.</p>
+     *
+     * @param errorCode a {@link java.lang.String} object
+     * @param message a {@link java.lang.String} object
+     * @param cause a {@link java.lang.Throwable} object
+     */
     public BizRuntimeException(String errorCode, String message, Throwable cause) {
         super(message, cause);
         this.errorCode = errorCode;

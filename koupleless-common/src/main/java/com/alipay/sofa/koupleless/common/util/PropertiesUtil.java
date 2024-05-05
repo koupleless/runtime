@@ -26,11 +26,20 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
+ * <p>PropertiesUtil class.</p>
+ *
  * @author gaosaroma@gmail.com
  * @version $Id: PropertiesUtil.java, v 0.1 2024年02月26日 17:34 lipeng Exp $
  */
 public class PropertiesUtil {
 
+    /**
+     * <p>loadProperties.</p>
+     *
+     * @param classLoader a {@link java.lang.ClassLoader} object
+     * @param resource a {@link java.lang.String} object
+     * @return a {@link java.util.Properties} object
+     */
     public static Properties loadProperties(ClassLoader classLoader, String resource) {
         Properties properties = new Properties();
         try {
@@ -48,6 +57,13 @@ public class PropertiesUtil {
         return StringUtils.strToSet(value, ",");
     }
 
+    /**
+     * <p>formatPropertyValues.</p>
+     *
+     * @param environment a {@link org.springframework.core.env.Environment} object
+     * @param key a {@link java.lang.String} object
+     * @return a {@link java.util.Set} object
+     */
     public static Set<String> formatPropertyValues(Environment environment, String key) {
         String value = environment.getProperty(key);
         if (!StringUtils.isEmpty(value)) {

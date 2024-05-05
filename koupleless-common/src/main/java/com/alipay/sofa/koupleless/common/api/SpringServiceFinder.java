@@ -29,47 +29,108 @@ import java.util.stream.Collectors;
 import static com.alipay.sofa.koupleless.common.service.ServiceProxyFactory.determineMostSuitableBiz;
 
 /**
+ * <p>SpringServiceFinder class.</p>
+ *
  * @author: yuanyuan
  * @date: 2023/9/21 9:11 下午
+ * @author zzl_i
+ * @version 1.0.0
  */
 public class SpringServiceFinder {
 
+    /**
+     * <p>getBaseService.</p>
+     *
+     * @param name a {@link java.lang.String} object
+     * @param serviceType a {@link java.lang.Class} object
+     * @param <T> a T class
+     * @return a T object
+     */
     public static <T> T getBaseService(String name, Class<T> serviceType) {
         Biz masterBiz = ArkClient.getMasterBiz();
         return ServiceProxyFactory.createServiceProxy(masterBiz.getBizName(),
             masterBiz.getBizVersion(), name, serviceType, null);
     }
 
+    /**
+     * <p>getBaseService.</p>
+     *
+     * @param serviceType a {@link java.lang.Class} object
+     * @param <T> a T class
+     * @return a T object
+     */
     public static <T> T getBaseService(Class<T> serviceType) {
         Biz masterBiz = ArkClient.getMasterBiz();
         return ServiceProxyFactory.createServiceProxy(masterBiz.getBizName(),
             masterBiz.getBizVersion(), null, serviceType, null);
     }
 
+    /**
+     * <p>listBaseServices.</p>
+     *
+     * @param serviceType a {@link java.lang.Class} object
+     * @param <T> a T class
+     * @return a {@link java.util.Map} object
+     */
     public static <T> Map<String, T> listBaseServices(Class<T> serviceType) {
         Biz masterBiz = ArkClient.getMasterBiz();
         return ServiceProxyFactory.batchCreateServiceProxy(masterBiz.getBizName(),
             masterBiz.getBizVersion(), serviceType, null);
     }
 
+    /**
+     * <p>getModuleService.</p>
+     *
+     * @param moduleName a {@link java.lang.String} object
+     * @param moduleVersion a {@link java.lang.String} object
+     * @param name a {@link java.lang.String} object
+     * @param serviceType a {@link java.lang.Class} object
+     * @param <T> a T class
+     * @return a T object
+     */
     public static <T> T getModuleService(String moduleName, String moduleVersion, String name,
                                          Class<T> serviceType) {
         return ServiceProxyFactory.createServiceProxy(moduleName, moduleVersion, name, serviceType,
             null);
     }
 
+    /**
+     * <p>getModuleService.</p>
+     *
+     * @param moduleName a {@link java.lang.String} object
+     * @param moduleVersion a {@link java.lang.String} object
+     * @param serviceType a {@link java.lang.Class} object
+     * @param <T> a T class
+     * @return a T object
+     */
     public static <T> T getModuleService(String moduleName, String moduleVersion,
                                          Class<T> serviceType) {
         return ServiceProxyFactory.createServiceProxy(moduleName, moduleVersion, null, serviceType,
             null);
     }
 
+    /**
+     * <p>listModuleServices.</p>
+     *
+     * @param moduleName a {@link java.lang.String} object
+     * @param moduleVersion a {@link java.lang.String} object
+     * @param serviceType a {@link java.lang.Class} object
+     * @param <T> a T class
+     * @return a {@link java.util.Map} object
+     */
     public static <T> Map<String, T> listModuleServices(String moduleName, String moduleVersion,
                                                         Class<T> serviceType) {
         return ServiceProxyFactory.batchCreateServiceProxy(moduleName, moduleVersion, serviceType,
             null);
     }
 
+    /**
+     * <p>listAllModuleServices.</p>
+     *
+     * @param serviceType a {@link java.lang.Class} object
+     * @param <T> a T class
+     * @return a {@link java.util.Map} object
+     */
     public static <T> Map<Biz, Map<String, T>> listAllModuleServices(Class<T> serviceType) {
         Biz masterBiz = ArkClient.getMasterBiz();
         return ArkClient.getBizManagerService().getBizInOrder().stream()

@@ -24,11 +24,16 @@ import com.alipay.sofa.koupleless.common.BizRuntimeContext;
 import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
 
 /**
+ * <p>BeforeBizStartupEventHandler class.</p>
+ *
  * @author: yuanyuan
  * @date: 2023/9/26 5:47 下午
+ * @author zzl_i
+ * @version 1.0.0
  */
 public class BeforeBizStartupEventHandler implements EventHandler<BeforeBizStartupEvent> {
 
+    /** {@inheritDoc} */
     @Override
     public void handleEvent(BeforeBizStartupEvent event) {
         Biz biz = event.getSource();
@@ -36,6 +41,7 @@ public class BeforeBizStartupEventHandler implements EventHandler<BeforeBizStart
         BizRuntimeContextRegistry.registerBizRuntimeManager(bizRuntimeContext);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int getPriority() {
         return PriorityOrdered.DEFAULT_PRECEDENCE;

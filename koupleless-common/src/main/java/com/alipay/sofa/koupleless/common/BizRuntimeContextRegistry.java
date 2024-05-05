@@ -27,29 +27,56 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+/**
+ * <p>BizRuntimeContextRegistry class.</p>
+ *
+ * @author zzl_i
+ * @version 1.0.0
+ */
 public class BizRuntimeContextRegistry {
     private static ConcurrentHashMap<ClassLoader, BizRuntimeContext> contextMap = new ConcurrentHashMap<>();
 
+    /**
+     * <p>registerBizRuntimeManager.</p>
+     *
+     * @param bizRuntimeContext a {@link com.alipay.sofa.koupleless.common.BizRuntimeContext} object
+     */
     public static void registerBizRuntimeManager(BizRuntimeContext bizRuntimeContext) {
         contextMap.put(bizRuntimeContext.getAppClassLoader(), bizRuntimeContext);
     }
 
+    /**
+     * <p>unRegisterBizRuntimeManager.</p>
+     *
+     * @param bizRuntimeContext a {@link com.alipay.sofa.koupleless.common.BizRuntimeContext} object
+     */
     public static void unRegisterBizRuntimeManager(BizRuntimeContext bizRuntimeContext) {
         contextMap.remove(bizRuntimeContext.getAppClassLoader());
     }
 
+    /**
+     * <p>getRuntimeSet.</p>
+     *
+     * @return a {@link java.util.Set} object
+     */
     public static Set<BizRuntimeContext> getRuntimeSet() {
         return Collections.unmodifiableSet(new CopyOnWriteArraySet<>(contextMap.values()));
     }
 
+    /**
+     * <p>getRuntimeMap.</p>
+     *
+     * @return a {@link java.util.concurrent.ConcurrentHashMap} object
+     */
     public static ConcurrentHashMap<ClassLoader, BizRuntimeContext> getRuntimeMap() {
         return contextMap;
     }
 
     /**
      * 获取 biz 对应的 SofaRuntimeManager
-     * @param biz
-     * @return
+     *
+     * @param biz a {@link com.alipay.sofa.ark.spi.model.Biz} object
+     * @return a {@link com.alipay.sofa.koupleless.common.BizRuntimeContext} object
      */
     public static BizRuntimeContext getBizRuntimeContext(Biz biz) {
         if (BizRuntimeContextRegistry.getRuntimeMap().containsKey(biz.getBizClassLoader())) {
@@ -60,11 +87,22 @@ public class BizRuntimeContextRegistry {
             "No BizRuntimeContext found for biz: " + biz.getBizName());
     }
 
+    /**
+     * <p>getMasterBizRuntimeContext.</p>
+     *
+     * @return a {@link com.alipay.sofa.koupleless.common.BizRuntimeContext} object
+     */
     public static BizRuntimeContext getMasterBizRuntimeContext() {
         Biz masterBiz = ArkClient.getMasterBiz();
         return getBizRuntimeContext(masterBiz);
     }
 
+    /**
+     * <p>getBizRuntimeContextByClassLoader.</p>
+     *
+     * @param classLoader a {@link java.lang.ClassLoader} object
+     * @return a {@link com.alipay.sofa.koupleless.common.BizRuntimeContext} object
+     */
     public static BizRuntimeContext getBizRuntimeContextByClassLoader(ClassLoader classLoader) {
         if (classLoader == null) {
             throw new BizRuntimeException(ErrorCodes.SpringContextManager.E100002,
@@ -79,6 +117,12 @@ public class BizRuntimeContextRegistry {
             "No BizRuntimeContext found for classLoader: " + classLoader);
     }
 
+    /**
+     * <p>getBizRuntimeContextByApplicationContext.</p>
+     *
+     * @param applicationContext a {@link org.springframework.context.ApplicationContext} object
+     * @return a {@link com.alipay.sofa.koupleless.common.BizRuntimeContext} object
+     */
     public static BizRuntimeContext getBizRuntimeContextByApplicationContext(ApplicationContext applicationContext) {
         for (BizRuntimeContext bizRuntimeContext : BizRuntimeContextRegistry.getRuntimeSet()) {
             if (bizRuntimeContext.getRootApplicationContext() != null

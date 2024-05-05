@@ -20,12 +20,16 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
+ * <p>ConvertUtils class.</p>
+ *
  * @author Lunarscave
+ * @version 1.0.0
  */
 public class ConvertUtils {
 
     /**
      * convert bytes(B) to megabyte(MB)
+     *
      * @param bytes input byte(B) value
      * @return megabyte(MB)
      */
@@ -35,6 +39,7 @@ public class ConvertUtils {
 
     /**
      * get duration from param date till now and change to second(s)
+     *
      * @param date input date
      * @return output duration(s)
      */

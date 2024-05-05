@@ -29,13 +29,23 @@ import java.util.stream.Collectors;
 import static com.alipay.sofa.koupleless.arklet.core.command.record.ProcessRecord.Status.INITIALIZED;
 
 /**
+ * <p>ProcessRecordHolder class.</p>
+ *
  * @author: yuanyuan
  * @date: 2023/8/31 3:28 下午
+ * @author zzl_i
+ * @version 1.0.0
  */
 public class ProcessRecordHolder {
 
     private static Map<String, ProcessRecord> processRecords = new ConcurrentHashMap<>();
 
+    /**
+     * <p>getProcessRecord.</p>
+     *
+     * @param rid a {@link java.lang.String} object
+     * @return a {@link com.alipay.sofa.koupleless.arklet.core.command.record.ProcessRecord} object
+     */
     public static ProcessRecord getProcessRecord(String rid) {
         if (!StringUtils.isEmpty(rid)) {
             return processRecords.get(rid);
@@ -43,21 +53,44 @@ public class ProcessRecordHolder {
         return null;
     }
 
+    /**
+     * <p>getAllProcessRecords.</p>
+     *
+     * @return a {@link java.util.List} object
+     */
     public static List<ProcessRecord> getAllProcessRecords() {
         return new ArrayList<>(processRecords.values());
     }
 
+    /**
+     * <p>getAllExecutingProcessRecords.</p>
+     *
+     * @return a {@link java.util.List} object
+     */
     public static List<ProcessRecord> getAllExecutingProcessRecords() {
         return processRecords.values().stream().filter(record -> !record.finished())
             .collect(Collectors.toList());
     }
 
+    /**
+     * <p>getProcessRecordsByStatus.</p>
+     *
+     * @param status a {@link java.lang.String} object
+     * @return a {@link java.util.List} object
+     */
     public static List<ProcessRecord> getProcessRecordsByStatus(String status) {
         return processRecords.values().stream()
             .filter(record -> StringUtils.isSameStr(record.getStatus().name(), status))
             .collect(Collectors.toList());
     }
 
+    /**
+     * <p>createProcessRecord.</p>
+     *
+     * @param rid a {@link java.lang.String} object
+     * @param arkBizMeta a {@link com.alipay.sofa.koupleless.arklet.core.command.meta.bizops.ArkBizMeta} object
+     * @return a {@link com.alipay.sofa.koupleless.arklet.core.command.record.ProcessRecord} object
+     */
     public static ProcessRecord createProcessRecord(String rid, ArkBizMeta arkBizMeta) {
         ProcessRecord pr = new ProcessRecord();
         pr.setRequestId(rid);

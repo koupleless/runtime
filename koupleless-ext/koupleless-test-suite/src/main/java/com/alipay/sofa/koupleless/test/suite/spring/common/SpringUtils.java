@@ -25,11 +25,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
+ * <p>SpringUtils class.</p>
+ *
  * @author CodeNoobKing
  * @date 2024/3/29
- **/
+ * @version 1.0.0
+ */
 public class SpringUtils {
 
+    /**
+     * <p>getBasePackages.</p>
+     *
+     * @param mainClass a {@link java.lang.Class} object
+     * @return a {@link java.util.List} object
+     */
     public static List<String> getBasePackages(Class<?> mainClass) {
         ComponentScan componentScan = mainClass.getAnnotation(ComponentScan.class);
         if (componentScan != null) {

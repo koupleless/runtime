@@ -25,9 +25,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * <p>ConditionalOnNotMasterBiz class.</p>
+ *
  * @author mingmen
  * @date 2023/6/14
  * 模块biz才满足条件
+ * @version 1.0.0
  */
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)

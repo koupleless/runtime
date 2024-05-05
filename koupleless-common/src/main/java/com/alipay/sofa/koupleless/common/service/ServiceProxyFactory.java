@@ -40,11 +40,26 @@ import static com.alipay.sofa.koupleless.common.exception.ErrorCodes.SpringConte
 import static com.alipay.sofa.koupleless.common.exception.ErrorCodes.SpringContextManager.E100005;
 
 /**
+ * <p>ServiceProxyFactory class.</p>
+ *
  * @author: yuanyuan
  * @date: 2023/9/21 9:55 下午
+ * @author zzl_i
+ * @version 1.0.0
  */
 public class ServiceProxyFactory {
 
+    /**
+     * <p>createServiceProxy.</p>
+     *
+     * @param bizName a {@link java.lang.String} object
+     * @param bizVersion a {@link java.lang.String} object
+     * @param name a {@link java.lang.String} object
+     * @param clientType a {@link java.lang.Class} object
+     * @param clientClassLoader a {@link java.lang.ClassLoader} object
+     * @param <T> a T class
+     * @return a T object
+     */
     public static <T> T createServiceProxy(String bizName, String bizVersion, String name,
                                            Class<T> clientType, ClassLoader clientClassLoader) {
         Object service = getService(bizName, bizVersion, name, clientType);
@@ -52,6 +67,16 @@ public class ServiceProxyFactory {
             clientClassLoader);
     }
 
+    /**
+     * <p>batchCreateServiceProxy.</p>
+     *
+     * @param bizName a {@link java.lang.String} object
+     * @param bizVersion a {@link java.lang.String} object
+     * @param serviceType a {@link java.lang.Class} object
+     * @param clientClassLoader a {@link java.lang.ClassLoader} object
+     * @param <T> a T class
+     * @return a {@link java.util.Map} object
+     */
     public static <T> Map<String, T> batchCreateServiceProxy(String bizName, String bizVersion,
                                                              Class<T> serviceType,
                                                              ClassLoader clientClassLoader) {
@@ -67,6 +92,15 @@ public class ServiceProxyFactory {
         return proxyMap;
     }
 
+    /**
+     * <p>getService.</p>
+     *
+     * @param bizName a {@link java.lang.String} object
+     * @param bizVersion a {@link java.lang.String} object
+     * @param name a {@link java.lang.String} object
+     * @param clientType a {@link java.lang.Class} object
+     * @return a {@link java.lang.Object} object
+     */
     public static Object getService(String bizName, String bizVersion, String name,
                                     Class<?> clientType) {
         Biz biz = determineMostSuitableBiz(bizName, bizVersion);
@@ -172,6 +206,13 @@ public class ServiceProxyFactory {
         return (T) proxy;
     }
 
+    /**
+     * <p>determineMostSuitableBiz.</p>
+     *
+     * @param moduleName a {@link java.lang.String} object
+     * @param moduleVersion a {@link java.lang.String} object
+     * @return a {@link com.alipay.sofa.ark.spi.model.Biz} object
+     */
     public static Biz determineMostSuitableBiz(String moduleName, String moduleVersion) {
         Biz biz;
         if (StringUtils.isEmpty(moduleVersion)) {

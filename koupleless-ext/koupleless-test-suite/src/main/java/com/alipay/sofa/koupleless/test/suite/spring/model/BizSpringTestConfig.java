@@ -30,8 +30,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * <p>BizSpringTestConfig class.</p>
+ *
  * @author CodeNoobKing
  * @date 2024/3/11
+ * @version 1.0.0
  */
 @NoArgsConstructor
 @AllArgsConstructor
@@ -70,6 +73,9 @@ public class BizSpringTestConfig {
     @Builder.Default
     private List<String> excludePackages = new ArrayList<>();
 
+    /**
+     * <p>init.</p>
+     */
     public void init() {
         Preconditions.checkState(mainClass != null, "mainClass must not be blank");
         mainClassName = mainClass.getName();

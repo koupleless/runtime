@@ -41,14 +41,19 @@ import java.util.Set;
 import static com.alipay.sofa.koupleless.common.service.ServiceProxyFactory.determineMostSuitableBiz;
 
 /**
+ * <p>ArkAutowiredBeanPostProcessor class.</p>
+ *
  * @author: yuanyuan
  * @date: 2023/9/26 11:29 上午
+ * @author zzl_i
+ * @version 1.0.0
  */
 public class ArkAutowiredBeanPostProcessor implements BeanPostProcessor {
 
     private static final Logger LOGGER = LoggerFactory
         .getLogger(ArkAutowiredBeanPostProcessor.class);
 
+    /** {@inheritDoc} */
     @Override
     public Object postProcessBeforeInitialization(Object bean,
                                                   String beanName) throws BeansException {
@@ -143,6 +148,7 @@ public class ArkAutowiredBeanPostProcessor implements BeanPostProcessor {
         return bean;
     }
 
+    /** {@inheritDoc} */
     @Override
     public Object postProcessAfterInitialization(Object bean,
                                                  String beanName) throws BeansException {

@@ -25,6 +25,9 @@ import java.util.Comparator;
 
 /**
  * Compares the priorities of two ForwardItem objects.
+ *
+ * @author zzl_i
+ * @version 1.0.0
  */
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

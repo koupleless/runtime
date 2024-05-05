@@ -23,17 +23,31 @@ import java.io.InputStream;
 import java.util.*;
 
 /**
+ * <p>SpringUtils class.</p>
+ *
  * @author CodeNoobKing
  * @date 2024/3/18
- **/
+ * @version 1.0.0
+ */
 public class SpringUtils {
 
     private static SpringUtils instance = new SpringUtils();
 
+    /**
+     * <p>INSTANCE.</p>
+     *
+     * @return a {@link com.alipay.sofa.koupleless.build.common.SpringUtils} object
+     */
     public static SpringUtils INSTANCE() {
         return instance;
     }
 
+    /**
+     * <p>parseSpringFactoryConfig.</p>
+     *
+     * @param inputStream a {@link java.io.InputStream} object
+     * @return a {@link java.util.Map} object
+     */
     @SneakyThrows
     public Map<String, List<String>> parseSpringFactoryConfig(InputStream inputStream) {
         Properties properties = new Properties();

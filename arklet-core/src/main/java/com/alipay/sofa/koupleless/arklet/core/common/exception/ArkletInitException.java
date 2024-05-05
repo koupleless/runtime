@@ -17,18 +17,37 @@
 package com.alipay.sofa.koupleless.arklet.core.common.exception;
 
 /**
+ * <p>ArkletInitException class.</p>
+ *
  * @author mingmen
  * @date 2023/6/14
+ * @version 1.0.0
  */
 public class ArkletInitException extends ArkletException {
+    /**
+     * <p>Constructor for ArkletInitException.</p>
+     *
+     * @param message a {@link java.lang.String} object
+     * @param cause a {@link java.lang.Throwable} object
+     */
     public ArkletInitException(String message, Throwable cause) {
         super(message, cause);
     }
 
+    /**
+     * <p>Constructor for ArkletInitException.</p>
+     *
+     * @param cause a {@link java.lang.Throwable} object
+     */
     public ArkletInitException(Throwable cause) {
         super(cause);
     }
 
+    /**
+     * <p>Constructor for ArkletInitException.</p>
+     *
+     * @param message a {@link java.lang.String} object
+     */
     public ArkletInitException(String message) {
         super(message);
     }

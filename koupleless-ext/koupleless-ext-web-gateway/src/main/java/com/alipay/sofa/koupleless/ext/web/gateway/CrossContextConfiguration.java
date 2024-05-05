@@ -24,8 +24,19 @@ import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactor
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * <p>CrossContextConfiguration class.</p>
+ *
+ * @author zzl_i
+ * @version 1.0.0
+ */
 @Configuration
 public class CrossContextConfiguration {
+    /**
+     * <p>tomcatCrossContextCustomizer.</p>
+     *
+     * @return a {@link org.springframework.boot.web.embedded.tomcat.TomcatContextCustomizer} object
+     */
     @Bean
     @ConditionalOnClass(Context.class)
     @ConditionalOnBean(TomcatServletWebServerFactory.class)

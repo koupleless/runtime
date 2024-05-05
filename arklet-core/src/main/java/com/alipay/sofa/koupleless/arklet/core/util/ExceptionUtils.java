@@ -20,10 +20,19 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 
 /**
+ * <p>ExceptionUtils class.</p>
+ *
  * @author mingmen
  * @date 2023/12/27
+ * @version 1.0.0
  */
 public class ExceptionUtils {
+    /**
+     * <p>getStackTraceAsString.</p>
+     *
+     * @param throwable a {@link java.lang.Throwable} object
+     * @return a {@link java.lang.String} object
+     */
     public static String getStackTraceAsString(Throwable throwable) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);

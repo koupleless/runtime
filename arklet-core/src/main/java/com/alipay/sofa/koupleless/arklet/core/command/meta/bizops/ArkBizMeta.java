@@ -19,8 +19,11 @@ package com.alipay.sofa.koupleless.arklet.core.command.meta.bizops;
 import com.alipay.sofa.koupleless.arklet.core.command.meta.InputMeta;
 
 /**
+ * <p>ArkBizMeta class.</p>
+ *
  * @author mingmen
  * @date 2023/8/21
+ * @version 1.0.0
  */
 public class ArkBizMeta extends InputMeta {
     private String  bizName;
@@ -28,34 +31,74 @@ public class ArkBizMeta extends InputMeta {
     private String  requestId;
     private boolean async;
 
+    /**
+     * <p>Getter for the field <code>bizName</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getBizName() {
         return bizName;
     }
 
+    /**
+     * <p>Setter for the field <code>bizName</code>.</p>
+     *
+     * @param bizName a {@link java.lang.String} object
+     */
     public void setBizName(String bizName) {
         this.bizName = bizName;
     }
 
+    /**
+     * <p>Getter for the field <code>bizVersion</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getBizVersion() {
         return bizVersion;
     }
 
+    /**
+     * <p>Setter for the field <code>bizVersion</code>.</p>
+     *
+     * @param bizVersion a {@link java.lang.String} object
+     */
     public void setBizVersion(String bizVersion) {
         this.bizVersion = bizVersion;
     }
 
+    /**
+     * <p>Getter for the field <code>requestId</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getRequestId() {
         return requestId;
     }
 
+    /**
+     * <p>Setter for the field <code>requestId</code>.</p>
+     *
+     * @param requestId a {@link java.lang.String} object
+     */
     public void setRequestId(String requestId) {
         this.requestId = requestId;
     }
 
+    /**
+     * <p>isAsync.</p>
+     *
+     * @return a boolean
+     */
     public boolean isAsync() {
         return async;
     }
 
+    /**
+     * <p>Setter for the field <code>async</code>.</p>
+     *
+     * @param async a boolean
+     */
     public void setAsync(boolean async) {
         this.async = async;
     }
