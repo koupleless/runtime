@@ -28,7 +28,7 @@ import java.net.URL;
  *
  * @author zjulbj
  * @author bingjie.lbj
- * @daye 2023/12/26
+ * @since 2023/12/26
  */
 public class JarLauncher extends org.springframework.boot.loader.JarLauncher {
     /**

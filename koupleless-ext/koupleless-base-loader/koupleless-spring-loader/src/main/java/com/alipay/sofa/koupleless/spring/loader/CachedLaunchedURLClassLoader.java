@@ -31,13 +31,17 @@ import org.springframework.boot.loader.archive.Archive;
  * A cached LaunchedURLClassLoader to accelerate load classes and resources
  *
  * @author zjulbj
- * @daye 2023/12/26
+ * @since 2023/12/26
  * @version CachedLaunchedURLClassLoader.java, v 0.1 2023年12月26日 14:45 syd
  */
 public class CachedLaunchedURLClassLoader extends LaunchedURLClassLoader {
     private static final int                   ENTRY_CACHE_SIZE  = Integer
         .getInteger("serverless.class.cache.size", 6000);
     private static final Object                NOT_FOUND         = new Object();
+
+    /**
+     * cache class to speed up
+     */
     protected final Map<String, Object>        classCache        = Collections
         .synchronizedMap(new LinkedHashMap<String, Object>(ENTRY_CACHE_SIZE, 0.75f, true) {
                                                                          @Override
@@ -45,6 +49,10 @@ public class CachedLaunchedURLClassLoader extends LaunchedURLClassLoader {
                                                                              return size() >= ENTRY_CACHE_SIZE;
                                                                          }
                                                                      });
+
+    /**
+     * cache resource url
+     */
     protected final Map<String, Optional<URL>> resourceUrlCache  = Collections
         .synchronizedMap(new LinkedHashMap<String, Optional<URL>>(ENTRY_CACHE_SIZE, 0.75f, true) {
                                                                          @Override
@@ -115,7 +123,7 @@ public class CachedLaunchedURLClassLoader extends LaunchedURLClassLoader {
      *
      * @param name a {@link java.lang.String} object
      * @param resolve a boolean
-     * @throws java.lang.ClassNotFoundException
+     * @throws java.lang.ClassNotFoundException throw classNotFoundException
      * @return a {@link java.lang.Class} object
      */
     protected Class<?> loadClassWithCache(String name,
