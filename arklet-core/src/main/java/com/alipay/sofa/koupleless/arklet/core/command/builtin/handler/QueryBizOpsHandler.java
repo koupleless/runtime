@@ -31,9 +31,9 @@ import static com.alipay.sofa.koupleless.arklet.core.command.builtin.BuiltinComm
 /**
  * <p>QueryBizOpsHandler class.</p>
  *
- * @author: yuanyuan
- * @date: 2023/9/4 9:50 下午
+ * @author yuanyuan
  * @author zzl_i
+ * @since 2023/9/4 9:50 下午
  * @version 1.0.0
  */
 public class QueryBizOpsHandler extends

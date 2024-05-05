@@ -28,7 +28,7 @@ import com.alipay.sofa.koupleless.arklet.core.command.meta.Output;
  * <p>CommandService interface.</p>
  *
  * @author mingmen
- * @date 2023/6/14
+ * @since 2023/6/14
  * @version 1.0.0
  */
 @SuppressWarnings("rawtypes")

@@ -43,9 +43,9 @@ import static com.alipay.sofa.koupleless.common.service.ServiceProxyFactory.dete
 /**
  * <p>ArkAutowiredBeanPostProcessor class.</p>
  *
- * @author: yuanyuan
- * @date: 2023/9/26 11:29 上午
+ * @author yuanyuan
  * @author zzl_i
+ * @since 2023/9/26 11:29 上午
  * @version 1.0.0
  */
 public class ArkAutowiredBeanPostProcessor implements BeanPostProcessor {

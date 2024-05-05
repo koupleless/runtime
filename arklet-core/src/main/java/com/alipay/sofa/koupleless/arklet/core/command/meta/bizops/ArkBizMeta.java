@@ -22,7 +22,7 @@ import com.alipay.sofa.koupleless.arklet.core.command.meta.InputMeta;
  * <p>ArkBizMeta class.</p>
  *
  * @author mingmen
- * @date 2023/8/21
+ * @since 2023/8/21
  * @version 1.0.0
  */
 public class ArkBizMeta extends InputMeta {

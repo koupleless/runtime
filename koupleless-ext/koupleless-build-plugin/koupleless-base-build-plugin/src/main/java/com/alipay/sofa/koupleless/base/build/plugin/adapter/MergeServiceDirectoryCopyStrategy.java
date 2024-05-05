@@ -35,7 +35,7 @@ import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
  * <p>MergeServiceDirectoryCopyStrategy class.</p>
  *
  * @author CodeNoobKing
- * @date 2024/3/18
+ * @since 2024/3/18
  * @version 1.0.0
  */
 public class MergeServiceDirectoryCopyStrategy implements CopyAdapterStrategy {

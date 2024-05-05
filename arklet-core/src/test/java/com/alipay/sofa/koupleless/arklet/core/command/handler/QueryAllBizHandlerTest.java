@@ -32,7 +32,7 @@ import static org.mockito.Mockito.mock;
 
 /**
  * @author mingmen
- * @date 2023/10/26
+ * @since 2023/10/26
  */
 public class QueryAllBizHandlerTest extends BaseHandlerTest {
 

@@ -19,9 +19,9 @@ package com.alipay.sofa.koupleless.common.service;
 /**
  * <p>ServiceProxyCache class.</p>
  *
- * @author: yuanyuan
- * @date: 2023/9/25 11:37 下午
+ * @author yuanyuan
  * @author zzl_i
+ * @since 2023/9/25 11:37 下午
  * @version 1.0.0
  */
 public class ServiceProxyCache {

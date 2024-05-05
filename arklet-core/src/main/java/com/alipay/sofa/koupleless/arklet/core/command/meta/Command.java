@@ -20,7 +20,7 @@ package com.alipay.sofa.koupleless.arklet.core.command.meta;
  * <p>Command interface.</p>
  *
  * @author mingmen
- * @date 2023/6/8
+ * @since 2023/6/8
  * @version 1.0.0
  */
 public interface Command {

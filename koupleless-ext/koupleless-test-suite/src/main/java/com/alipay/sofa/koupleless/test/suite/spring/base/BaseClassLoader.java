@@ -31,7 +31,7 @@ import java.util.jar.JarFile;
  * <p>BaseClassLoader class.</p>
  *
  * @author CodeNoobKing
- * @date 2024/3/22
+ * @since 2024/3/22
  * @version 1.0.0
  */
 public class BaseClassLoader extends URLClassLoader {

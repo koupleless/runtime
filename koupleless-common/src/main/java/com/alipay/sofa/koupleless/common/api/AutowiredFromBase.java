@@ -35,7 +35,6 @@ public @interface AutowiredFromBase {
 
     /**
      * not implemented yet
-     * @return
      */
     boolean required() default true;
 

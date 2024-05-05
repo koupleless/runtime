@@ -24,11 +24,11 @@ import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
 /**
  * <p>SpringBeanFinder class.</p>
  *
- * @author: yuanyuan
- * @date: 2023/12/8 5:26 下午
+ * @author yuanyuan
+ * @author zzl_i
+ * @since 2023/12/8 5:26 下午
  *
  * SpringBeanFinder 查找基座bean工具类，无跨classloader支持
- * @author zzl_i
  * @version 1.0.0
  */
 public class SpringBeanFinder {

@@ -22,9 +22,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * <p>NamedThreadFactory class.</p>
  *
- * @author: yuanyuan
- * @date: 2023/9/1 12:02 下午
+ * @author yuanyuan
  * @author zzl_i
+ * @since 2023/9/1 12:02 下午
  * @version 1.0.0
  */
 public class NamedThreadFactory implements ThreadFactory {

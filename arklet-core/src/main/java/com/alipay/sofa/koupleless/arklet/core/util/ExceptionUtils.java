@@ -23,7 +23,7 @@ import java.io.StringWriter;
  * <p>ExceptionUtils class.</p>
  *
  * @author mingmen
- * @date 2023/12/27
+ * @since 2023/12/27
  * @version 1.0.0
  */
 public class ExceptionUtils {

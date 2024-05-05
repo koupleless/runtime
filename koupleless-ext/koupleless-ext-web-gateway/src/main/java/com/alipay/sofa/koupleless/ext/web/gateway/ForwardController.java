@@ -54,6 +54,14 @@ public class ForwardController {
      * @throws javax.servlet.ServletException if any.
      * @throws java.io.IOException if any.
      */
+    /**
+     * <p>redirect.</p>
+     *
+     * @param request a {@link javax.servlet.http.HttpServletRequest} object
+     * @param response a {@link javax.servlet.http.HttpServletResponse} object
+     * @throws javax.servlet.ServletException if any.
+     * @throws java.io.IOException if any.
+     */
     @RequestMapping("/**")
     public void redirect(HttpServletRequest request,
                          HttpServletResponse response) throws ServletException, IOException {

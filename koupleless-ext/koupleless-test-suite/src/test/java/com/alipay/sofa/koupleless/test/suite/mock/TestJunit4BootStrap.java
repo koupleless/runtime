@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author CodeNoobKing
- * @date 2024/2/20
+ * @since 2024/2/20
  */
 public class TestJunit4BootStrap {
     public static AtomicBoolean IN_BIZ_CLASSLOADER = new AtomicBoolean(false);

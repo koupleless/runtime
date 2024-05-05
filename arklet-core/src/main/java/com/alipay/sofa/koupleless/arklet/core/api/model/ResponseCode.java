@@ -20,7 +20,7 @@ package com.alipay.sofa.koupleless.arklet.core.api.model;
  * <p>ResponseCode class.</p>
  *
  * @author mingmen
- * @date 2023/6/26
+ * @since 2023/6/26
  * @version 1.0.0
  */
 public enum ResponseCode {

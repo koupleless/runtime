@@ -28,7 +28,7 @@ import java.util.List;
  * <p>TestBizConfig class.</p>
  *
  * @author CodeNoobKing
- * @date 2024/3/21
+ * @since 2024/3/21
  * @version 1.0.0
  */
 @NoArgsConstructor

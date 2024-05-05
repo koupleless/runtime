@@ -23,8 +23,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * @author: yuanyuan
- * @date: 2023/10/27 6:27 下午
+ * @author yuanyuan
+ * @since 2023/10/27 6:27 下午
  */
 public class ProcessRecordHolderTest {
 

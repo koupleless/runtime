@@ -32,9 +32,9 @@ import static com.alipay.sofa.koupleless.arklet.core.command.record.ProcessRecor
 /**
  * <p>ProcessRecord class.</p>
  *
- * @author: yuanyuan
- * @date: 2023/8/31 3:27 下午
+ * @author yuanyuan
  * @author zzl_i
+ * @since 2023/8/31 3:27 下午
  * @version 1.0.0
  */
 @Getter

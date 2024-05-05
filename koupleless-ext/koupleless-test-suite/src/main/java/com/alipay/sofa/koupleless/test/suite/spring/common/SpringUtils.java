@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  * <p>SpringUtils class.</p>
  *
  * @author CodeNoobKing
- * @date 2024/3/29
+ * @since 2024/3/29
  * @version 1.0.0
  */
 public class SpringUtils {

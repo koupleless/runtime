@@ -22,7 +22,7 @@ import java.util.Map;
  * <p>RequestValidation class.</p>
  *
  * @author mingmen
- * @date 2023/6/19
+ * @since 2023/6/19
  * @version 1.0.0
  */
 public class RequestValidation {

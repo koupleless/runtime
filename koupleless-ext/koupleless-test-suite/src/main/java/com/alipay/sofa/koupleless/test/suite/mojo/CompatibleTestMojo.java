@@ -48,7 +48,7 @@ import org.junit.runner.Result;
  * <p>CompatibleTestMojo class.</p>
  *
  * @author CodeNoobKing
- * @date 2024/1/15
+ * @since 2024/1/15
  * @version 1.0.0
  */
 @Mojo(name = "compatible-test", defaultPhase = LifecyclePhase.INTEGRATION_TEST, requiresDependencyResolution = ResolutionScope.COMPILE)

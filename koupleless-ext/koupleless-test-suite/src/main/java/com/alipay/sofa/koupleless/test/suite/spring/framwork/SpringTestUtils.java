@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * <p>SpringTestUtils class.</p>
  *
  * @author CodeNoobKing
- * @date 2024/3/11
+ * @since 2024/3/11
  * @version 1.0.0
  */
 public class SpringTestUtils {

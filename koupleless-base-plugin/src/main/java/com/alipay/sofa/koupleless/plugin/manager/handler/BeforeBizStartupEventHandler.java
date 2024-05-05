@@ -26,9 +26,9 @@ import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
 /**
  * <p>BeforeBizStartupEventHandler class.</p>
  *
- * @author: yuanyuan
- * @date: 2023/9/26 5:47 下午
+ * @author yuanyuan
  * @author zzl_i
+ * @since 2023/9/26 5:47 下午
  * @version 1.0.0
  */
 public class BeforeBizStartupEventHandler implements EventHandler<BeforeBizStartupEvent> {

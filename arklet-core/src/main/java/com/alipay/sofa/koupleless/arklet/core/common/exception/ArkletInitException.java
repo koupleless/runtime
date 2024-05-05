@@ -20,7 +20,7 @@ package com.alipay.sofa.koupleless.arklet.core.common.exception;
  * <p>ArkletInitException class.</p>
  *
  * @author mingmen
- * @date 2023/6/14
+ * @since 2023/6/14
  * @version 1.0.0
  */
 public class ArkletInitException extends ArkletException {

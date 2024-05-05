@@ -30,7 +30,7 @@ import java.net.URL;
  * <p>BaseSpringTestConfig class.</p>
  *
  * @author CodeNoobKing
- * @date 2024/3/11
+ * @since 2024/3/11
  * @version 1.0.0
  */
 @NoArgsConstructor

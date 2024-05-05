@@ -25,7 +25,7 @@ import java.nio.file.StandardOpenOption;
  * <p>ClassCopyStrategy class.</p>
  *
  * @author CodeNoobKing
- * @date 2024/3/18
+ * @since 2024/3/18
  * @version 1.0.0
  */
 public class ClassCopyStrategy implements CopyAdapterStrategy {

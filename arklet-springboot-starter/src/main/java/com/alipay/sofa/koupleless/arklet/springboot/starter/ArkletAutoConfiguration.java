@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Configuration;
  * <p>ArkletAutoConfiguration class.</p>
  *
  * @author mingmen
- * @date 2023/6/14
+ * @since 2023/6/14
  * @version 1.0.0
  */
 @Configuration

@@ -42,7 +42,7 @@ import java.util.stream.Collectors;
  * <p>BizSpringTestApplication class.</p>
  *
  * @author CodeNoobKing
- * @date 2024/3/6
+ * @since 2024/3/6
  * @version 1.0.0
  */
 @Getter

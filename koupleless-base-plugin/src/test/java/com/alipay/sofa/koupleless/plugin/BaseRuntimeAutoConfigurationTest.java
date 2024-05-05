@@ -30,8 +30,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * @author: yuanyuan
- * @date: 2023/10/27 4:47 下午
+ * @author yuanyuan
+ * @since 2023/10/27 4:47 下午
  */
 public class BaseRuntimeAutoConfigurationTest {
 

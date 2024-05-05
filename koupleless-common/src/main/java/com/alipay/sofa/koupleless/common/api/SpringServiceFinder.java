@@ -31,9 +31,9 @@ import static com.alipay.sofa.koupleless.common.service.ServiceProxyFactory.dete
 /**
  * <p>SpringServiceFinder class.</p>
  *
- * @author: yuanyuan
- * @date: 2023/9/21 9:11 下午
+ * @author yuanyuan
  * @author zzl_i
+ * @since 2023/9/21 9:11 下午
  * @version 1.0.0
  */
 public class SpringServiceFinder {

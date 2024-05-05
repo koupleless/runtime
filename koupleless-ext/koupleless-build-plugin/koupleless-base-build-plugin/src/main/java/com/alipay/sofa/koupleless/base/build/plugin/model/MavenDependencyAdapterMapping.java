@@ -26,7 +26,7 @@ import org.apache.maven.model.Dependency;
  * <p>MavenDependencyAdapterMapping class.</p>
  *
  * @author CodeNoobKing
- * @date 2024/2/6
+ * @since 2024/2/6
  * @version 1.0.0
  */
 @NoArgsConstructor

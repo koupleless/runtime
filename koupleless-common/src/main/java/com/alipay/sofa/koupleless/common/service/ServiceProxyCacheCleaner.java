@@ -24,9 +24,9 @@ import java.util.Set;
 /**
  * <p>ServiceProxyCacheCleaner class.</p>
  *
- * @author: yuanyuan
- * @date: 2023/9/25 11:52 下午
+ * @author yuanyuan
  * @author zzl_i
+ * @since 2023/9/25 11:52 下午
  * @version 1.0.0
  */
 public class ServiceProxyCacheCleaner {

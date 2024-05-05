@@ -36,7 +36,7 @@ import com.google.inject.multibindings.Multibinder;
  * <p>ApiClient class.</p>
  *
  * @author mingmen
- * @date 2023/6/8
+ * @since 2023/6/8
  * @version 1.0.0
  */
 

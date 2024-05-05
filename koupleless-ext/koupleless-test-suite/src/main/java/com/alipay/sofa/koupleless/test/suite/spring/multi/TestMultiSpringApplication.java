@@ -18,7 +18,7 @@ package com.alipay.sofa.koupleless.test.suite.spring.multi;
 
 /**
  * @author CodeNoobKing
- * @date 2024/3/11
+ * @since 2024/3/11
  */
 
 import com.alipay.sofa.koupleless.test.suite.biz.TestBootstrap;
@@ -35,7 +35,11 @@ import java.util.*;
  *
  * @author CodeNoobKing
  * @author CodeNoobKing
- * @date 2024/3/7
+ * @author CodeNoobKing
+ * @author CodeNoobKing
+ * @author CodeNoobKing
+ * @author CodeNoobKing
+ * @since 2024/3/7
  * @version 1.0.0
  */
 public class TestMultiSpringApplication {

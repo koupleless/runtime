@@ -42,7 +42,7 @@ import static com.alipay.sofa.ark.spi.constant.Constants.MASTER_BIZ;
  * <p>BaseSpringTestApplication class.</p>
  *
  * @author CodeNoobKing
- * @date 2024/3/8
+ * @since 2024/3/8
  * @version 1.0.0
  */
 @Getter

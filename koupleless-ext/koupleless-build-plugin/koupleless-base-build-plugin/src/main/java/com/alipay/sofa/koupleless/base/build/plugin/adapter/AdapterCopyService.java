@@ -24,7 +24,7 @@ import java.io.File;
  * <p>AdapterCopyService class.</p>
  *
  * @author CodeNoobKing
- * @date 2024/3/20
+ * @since 2024/3/20
  * @version 1.0.0
  */
 public class AdapterCopyService {

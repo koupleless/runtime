@@ -22,7 +22,7 @@ import com.alipay.sofa.common.log.LoggerSpaceManager;
  * <p>ArkletLoggerFactory class.</p>
  *
  * @author mingmen
- * @date 2023/6/14
+ * @since 2023/6/14
  * @version 1.0.0
  */
 public class ArkletLoggerFactory {

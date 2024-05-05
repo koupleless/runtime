@@ -28,7 +28,7 @@ import org.springframework.context.ApplicationContextAware;
  * <p>MasterBizCmdHandlerCollector class.</p>
  *
  * @author mingmen
- * @date 2023/6/14
+ * @since 2023/6/14
  * custom directive extension for master base application
  * @version 1.0.0
  */

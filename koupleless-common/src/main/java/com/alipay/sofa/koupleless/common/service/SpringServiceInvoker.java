@@ -37,9 +37,9 @@ import static com.alipay.sofa.koupleless.common.util.SerializeUtils.serializeTra
 /**
  * <p>SpringServiceInvoker class.</p>
  *
- * @author: yuanyuan
- * @date: 2023/9/21 9:57 下午
+ * @author yuanyuan
  * @author zzl_i
+ * @since 2023/9/21 9:57 下午
  * @version 1.0.0
  */
 public class SpringServiceInvoker implements MethodInterceptor {

@@ -22,7 +22,7 @@ import com.alipay.sofa.koupleless.arklet.core.command.meta.Output;
  * <p>Response class.</p>
  *
  * @author mingmen
- * @date 2023/6/26
+ * @since 2023/6/26
  * @version 1.0.0
  */
 public class Response {

@@ -23,9 +23,9 @@ import java.util.concurrent.TimeUnit;
 /**
  * <p>ExecutorServiceManager class.</p>
  *
- * @author: yuanyuan
- * @date: 2023/8/31 4:12 下午
+ * @author yuanyuan
  * @author zzl_i
+ * @since 2023/8/31 4:12 下午
  * @version 1.0.0
  */
 public class ExecutorServiceManager {
