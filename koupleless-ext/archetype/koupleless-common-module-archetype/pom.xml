@@ -8,7 +8,6 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.alipay.sofa.koupleless</groupId>
   <artifactId>koupleless-common-module-archetype</artifactId>
   <packaging>maven-archetype</packaging>
 
