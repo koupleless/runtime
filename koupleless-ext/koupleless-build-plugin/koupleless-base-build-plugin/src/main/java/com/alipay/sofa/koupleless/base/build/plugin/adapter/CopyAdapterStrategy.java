@@ -31,7 +31,7 @@ public interface CopyAdapterStrategy {
      *
      * @param buildDir a {@link java.io.File} object
      * @param entryName a {@link java.lang.String} object
-     * @param content an array of {@link byte} objects
+     * @param content an array of byte objects
      * @throws java.lang.Throwable if any.
      */
     void copy(File buildDir, String entryName, byte[] content) throws Throwable;

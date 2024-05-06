@@ -20,6 +20,7 @@
         <maven.compiler.plugin>3.1</maven.compiler.plugin>
         <maven.source.plugin>3.0.0</maven.source.plugin>
         <maven.javadoc.plugin>3.6.3</maven.javadoc.plugin>
+        <maven.jar.plugin>3.4.1</maven.jar.plugin>
         <maven.staging.plugin>1.6.13</maven.staging.plugin>
         <maven.gpg.pluign>1.6</maven.gpg.pluign>
         <jacoco.maven.plugin>0.8.11</jacoco.maven.plugin>
@@ -460,6 +461,19 @@
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>${maven.javadoc.plugin}</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
                         <groupId>org.sonatype.plugins</groupId>
                         <artifactId>nexus-staging-maven-plugin</artifactId>
                         <version>${maven.staging.plugin}</version>
@@ -581,26 +595,6 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>${maven.javadoc.plugin}</version>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                                <configuration>
-                                    <additionalparam>-Xdoclint:none</additionalparam>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
             <repositories>
                 <repository>
                     <snapshots>

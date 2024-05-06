@@ -43,8 +43,8 @@ public class MergeServiceDirectoryCopyStrategy implements CopyAdapterStrategy {
     /**
      * <p>mergeContent.</p>
      *
-     * @param inputContent an array of {@link byte} objects
-     * @param outputContent an array of {@link byte} objects
+     * @param inputContent an array of byte objects
+     * @param outputContent an array of byte objects
      * @return a {@link java.util.List} object
      * @throws java.lang.Throwable if any.
      */

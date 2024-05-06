@@ -38,7 +38,7 @@ public class AdapterCopyService {
      *
      * @param buildDir a {@link java.io.File} object
      * @param entryName a {@link java.lang.String} object
-     * @param content an array of {@link byte} objects
+     * @param content an array of byte objects
      */
     @SneakyThrows
     public void copy(File buildDir, String entryName, byte[] content) {
