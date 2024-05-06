@@ -17,6 +17,7 @@
         <java.version>1.8</java.version>
         <license.maven.plugin>3.0</license.maven.plugin>
         <maven.java.formatter.plugin>2.16.0</maven.java.formatter.plugin>
+        <maven.plugin.plugin>3.12.0</maven.plugin.plugin>
         <maven.compiler.plugin>3.1</maven.compiler.plugin>
         <maven.source.plugin>3.0.0</maven.source.plugin>
         <maven.javadoc.plugin>3.6.3</maven.javadoc.plugin>
