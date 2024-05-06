@@ -15,7 +15,6 @@
     <modules>
         <module>koupleless-ext-web-gateway</module>
         <module>koupleless-test-suite</module>
-        <module>koupleless-base-loader</module>
         <module>koupleless-build-plugin</module>
         <module>archetype/koupleless-common-module-archetype</module>
     </modules>

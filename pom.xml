@@ -10,13 +10,14 @@
 
     <properties>
         <revision>1.2.0</revision>
-        <sofa.ark.version>2.2.10</sofa.ark.version>
-        <spring.boot.version>2.7.15</spring.boot.version>
+        <sofa.ark.version>3.0.5</sofa.ark.version>
+        <spring.boot.version>3.0.9</spring.boot.version>
         <project.encoding>UTF-8</project.encoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>1.8</java.version>
+        <java.version>17</java.version>
         <license.maven.plugin>3.0</license.maven.plugin>
         <maven.java.formatter.plugin>2.16.0</maven.java.formatter.plugin>
+        <maven.plugin.plugin>3.12.0</maven.plugin.plugin>
         <maven.compiler.plugin>3.1</maven.compiler.plugin>
         <maven.source.plugin>3.0.0</maven.source.plugin>
         <maven.javadoc.plugin>3.6.3</maven.javadoc.plugin>
@@ -25,10 +26,10 @@
         <maven.gpg.pluign>1.6</maven.gpg.pluign>
         <jacoco.maven.plugin>0.8.11</jacoco.maven.plugin>
         <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
-        <maven.compiler.source>8</maven.compiler.source>
-        <maven.compiler.target>8</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
         <flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version>
-        <oshi.version>3.9.1</oshi.version>
+        <oshi.version>6.4.5</oshi.version>
         <guice.version>6.0.0</guice.version>
         <guava.version>32.1.3-jre</guava.version>
         <fastjson.version>1.2.83</fastjson.version>

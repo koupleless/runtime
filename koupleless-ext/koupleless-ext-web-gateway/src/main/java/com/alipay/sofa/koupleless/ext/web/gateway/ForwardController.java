@@ -23,11 +23,11 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
 
@@ -57,9 +57,9 @@ public class ForwardController {
     /**
      * <p>redirect.</p>
      *
-     * @param request a {@link javax.servlet.http.HttpServletRequest} object
-     * @param response a {@link javax.servlet.http.HttpServletResponse} object
-     * @throws javax.servlet.ServletException if any.
+     * @param request a {@link HttpServletRequest} object
+     * @param response a {@link HttpServletResponse} object
+     * @throws ServletException if any.
      * @throws java.io.IOException if any.
      */
     @RequestMapping("/**")

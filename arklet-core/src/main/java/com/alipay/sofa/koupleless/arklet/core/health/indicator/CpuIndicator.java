@@ -106,7 +106,7 @@ public class CpuIndicator extends Indicator {
         }
 
         public String getCpuType() {
-            return cpu.getName();
+            return cpu.getProcessorIdentifier().getName();
         }
 
         private double getUsed(CentralProcessor.TickType tickType) {
