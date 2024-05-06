@@ -35,6 +35,7 @@ public @interface AutowiredFromBase {
 
     /**
      * not implemented yet
+     * @return whether must find when init
      */
     boolean required() default true;
 

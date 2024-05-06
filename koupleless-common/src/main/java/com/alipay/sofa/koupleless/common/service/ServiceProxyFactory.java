@@ -17,9 +17,11 @@
 package com.alipay.sofa.koupleless.common.service;
 
 import com.alipay.sofa.ark.api.ArkClient;
+import com.alipay.sofa.ark.common.util.ClassLoaderUtils;
 import com.alipay.sofa.ark.common.util.StringUtils;
 import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.ark.spi.model.BizState;
+import com.alipay.sofa.common.utils.ClassLoaderUtil;
 import com.alipay.sofa.koupleless.common.BizRuntimeContext;
 import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
 import com.alipay.sofa.koupleless.common.exception.BizRuntimeException;
@@ -162,8 +164,7 @@ public class ServiceProxyFactory {
                                               String name, Class<T> clientType,
                                               ClassLoader clientClassLoader) {
         if (clientClassLoader == null) {
-            Class<?> callerClass = ReflectionUtils.getCallerClass(6);
-            clientClassLoader = callerClass.getClassLoader();
+            clientClassLoader = ClassLoaderUtil.getCallerClassLoader();
         }
 
         BizRuntimeContext bizRuntimeContext = BizRuntimeContextRegistry

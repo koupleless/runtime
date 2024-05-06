@@ -594,7 +594,7 @@
                                     <goal>jar</goal>
                                 </goals>
                                 <configuration>
-                                    <skip>true</skip>
+                                    <additionalparam>-Xdoclint:none</additionalparam>
                                 </configuration>
                             </execution>
                         </executions>

@@ -23,9 +23,9 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
- * Support multi-business Properties<br/>
- * Isolating configuration separation between different business modules<br/>
- * The default value of the configuration of the base application is used<br/>
+ * Support multi-business Properties
+ * Isolating configuration separation between different business modules
+ * The default value of the configuration of the base application is used
  * <p>
  * If you want to use, you need to write the code in you base application
  * </p>
@@ -514,7 +514,7 @@ public class MultiBizProperties extends Properties {
     }
 
     /**
-     * replace the system properties to multi biz properties<br/>
+     * replace the system properties to multi biz properties
      * if you want to use, you need invoke the method in base application
      *
      * @param bizClassLoaderName a {@link java.lang.String} object
