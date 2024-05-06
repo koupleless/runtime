@@ -176,16 +176,16 @@ public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
     }
 
     Artifact downloadAdapterDependency(Dependency dependency) {
-        DefaultArtifact patchArtifact = new DefaultArtifact(dependency.getGroupId() + ":"
-                                                            + dependency.getArtifactId() + ":"
+        DefaultArtifact patchArtifact = new DefaultArtifact(
+            dependency.getGroupId() + ":" + dependency.getArtifactId() + ":"
                                                             + dependency.getVersion());
 
         try {
             ArtifactRequest artifactRequest = new ArtifactRequest().setArtifact(patchArtifact)
                 .setRepositories(project.getRemoteProjectRepositories());
 
-            ArtifactResult artifactResult = repositorySystem.resolveArtifact(
-                session.getRepositorySession(), artifactRequest);
+            ArtifactResult artifactResult = repositorySystem
+                .resolveArtifact(session.getRepositorySession(), artifactRequest);
 
             Preconditions.checkState(artifactResult.isResolved(), "artifact not resolved.");
             return artifactResult.getArtifact();
