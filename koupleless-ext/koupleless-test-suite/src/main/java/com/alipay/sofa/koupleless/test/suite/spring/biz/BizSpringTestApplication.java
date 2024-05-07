@@ -70,6 +70,12 @@ public class BizSpringTestApplication {
                 return true;
             }
         }
+
+        for (String excludeKeyword : config.getExcludeArtifactIds()) {
+            if (dependency.contains(excludeKeyword)) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -78,17 +84,18 @@ public class BizSpringTestApplication {
             .collect(Collectors.toList());
 
         URLClassLoader tccl = (URLClassLoader) Thread.currentThread().getContextClassLoader();
-        List<URL> excludedUrls = new ArrayList<>();
+        List<URL> bizDependencyUrls = new ArrayList<>();
         for (URL url : tccl.getURLs()) {
             if (!isExcludedDependency(url.toString())) {
-                excludedUrls.add(url);
+                bizDependencyUrls.add(url);
             }
         }
 
         testBiz = new TestBizModel(TestBizConfig.builder().bootstrapClassName("")
             .bizName(config.getBizName()).bizVersion("TEST").testClassNames(new ArrayList<>())
             .includeClassPatterns(includeClassPatterns)
-            .baseClassLoader(new URLClassLoader(excludedUrls.toArray(new URL[0]), tccl.getParent()))
+            .baseClassLoader(
+                new URLClassLoader(bizDependencyUrls.toArray(new URL[0]), tccl.getParent()))
             .build());
         testBiz.setWebContextPath(config.getBizName());
     }

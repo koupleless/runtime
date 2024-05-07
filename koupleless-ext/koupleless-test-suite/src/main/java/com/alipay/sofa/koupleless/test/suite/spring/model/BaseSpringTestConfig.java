@@ -25,6 +25,8 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author CodeNoobKing
@@ -36,9 +38,12 @@ import java.net.URL;
 @Builder
 public class BaseSpringTestConfig {
 
-    private Class<?> mainClass;
+    private Class<?>     mainClass;
 
-    private String   artifactId;
+    private String       artifactId;
+
+    @Builder.Default
+    private List<String> excludeArtifactIds = new ArrayList<>();
 
     public void init() {
         Preconditions.checkState(mainClass != null, "mainClass must not be blank");

@@ -39,6 +39,9 @@ public class TestMultiSpringApplication {
     @Getter
     private BaseSpringTestApplication             baseApplication;
 
+    // app name -> corresponding urls
+    private Map<String, List<String>>             appToUrls       = new HashMap<>();
+
     private Map<String, BizSpringTestApplication> bizApplications = new HashMap<>();
 
     public BizSpringTestApplication getBizApplication(String bizName) {
@@ -46,6 +49,7 @@ public class TestMultiSpringApplication {
     }
 
     public TestMultiSpringApplication(MultiSpringTestConfig config) {
+        config.init();
         this.baseApplication = new BaseSpringTestApplication(config.getBaseConfig());
         for (BizSpringTestConfig bizConfig : config.getBizConfigs()) {
             this.bizApplications.put(bizConfig.getBizName(),

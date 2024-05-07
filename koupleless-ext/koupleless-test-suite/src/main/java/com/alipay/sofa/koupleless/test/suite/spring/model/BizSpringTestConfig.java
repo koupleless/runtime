@@ -68,7 +68,10 @@ public class BizSpringTestConfig {
     private String       artifactId;
 
     @Builder.Default
-    private List<String> excludePackages = new ArrayList<>();
+    private List<String> excludePackages    = new ArrayList<>();
+
+    @Builder.Default
+    private List<String> excludeArtifactIds = new ArrayList<>();
 
     public void init() {
         Preconditions.checkState(mainClass != null, "mainClass must not be blank");

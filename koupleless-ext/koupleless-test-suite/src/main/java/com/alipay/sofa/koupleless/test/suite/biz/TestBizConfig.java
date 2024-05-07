@@ -40,4 +40,5 @@ public class TestBizConfig {
     private List<String>   includeClassPatterns;
     private URLClassLoader baseClassLoader;
     private List<String>   preFindResourceUrlKeyWords;
+    private List<String>   excludeArtifactIds;
 }

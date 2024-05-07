@@ -43,8 +43,18 @@ public class MultiSpringTestConfig {
         if (bizConfigs == null) {
             bizConfigs = new ArrayList<>();
         }
+        List<String> bizArtifactIds = new ArrayList<>();
         for (BizSpringTestConfig bizConfig : bizConfigs) {
             bizConfig.init();
+            bizConfig.getExcludeArtifactIds().add(baseConfig.getArtifactId());
+            bizArtifactIds.add(bizConfig.getArtifactId());
+        }
+
+        baseConfig.getExcludeArtifactIds().addAll(bizArtifactIds);
+        for (BizSpringTestConfig bizConfig : bizConfigs) {
+            ArrayList<String> copy = new ArrayList<>(bizArtifactIds);
+            copy.remove(bizConfig.getArtifactId());
+            bizConfig.getExcludeArtifactIds().addAll(copy);
         }
     }
 }
