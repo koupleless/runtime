@@ -41,9 +41,9 @@ public class BaseClassLoader extends URLClassLoader {
     private URLClassLoader parent;
     private URLClassLoader higherPriorityResourceClassLoader;
 
-    private URL[]          parentUrls;
+    private URL[] parentUrls;
 
-    private List<String>   excludeArtifactIds = new ArrayList<>();
+    private List<String> excludeArtifactIds = new ArrayList<>();
 
     @SneakyThrows
     public static List<URL> getUrlsFromSurefireManifest(URL url) {
@@ -52,12 +52,12 @@ public class BaseClassLoader extends URLClassLoader {
         String fileUrlPrefix = "file:";
         try (JarFile jarFile = new JarFile(url.getFile())) {
             String classPathValue = jarFile.getManifest().getMainAttributes()
-                .getValue("Class-Path");
+                    .getValue("Class-Path");
             String[] classPaths = classPathValue.split(" ");
             for (String classFilePath : classPaths) {
                 String filePath = StringUtils.startsWith(classFilePath, fileUrlPrefix)
-                    ? classFilePath
-                    : OSUtils.getLocalFileProtocolPrefix() + Paths.get(parentPath, classFilePath);
+                        ? classFilePath
+                        : OSUtils.getLocalFileProtocolPrefix() + Paths.get(parentPath, classFilePath);
                 urls.add(new URL(filePath));
             }
         }
@@ -99,8 +99,8 @@ public class BaseClassLoader extends URLClassLoader {
     @Override
     public URL[] getURLs() {
         return Arrays.stream(parentUrls)
-            .filter(url -> !excludeArtifactIds.stream().anyMatch(url.toString()::contains))
-            .toArray(URL[]::new);
+                .filter(url -> !excludeArtifactIds.stream().anyMatch(url.toString()::contains))
+                .toArray(URL[]::new);
     }
 
     @Override
@@ -133,8 +133,8 @@ public class BaseClassLoader extends URLClassLoader {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj.equals(this)) {
-            return true;
+        if (obj instanceof BaseClassLoader) {
+            return ((BaseClassLoader) obj).parent.equals(parent);
         }
         return parent.equals(obj);
     }
