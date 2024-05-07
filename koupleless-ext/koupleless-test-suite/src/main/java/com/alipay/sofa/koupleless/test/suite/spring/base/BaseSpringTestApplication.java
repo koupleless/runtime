@@ -35,6 +35,8 @@ import org.springframework.core.io.Resource;
 
 import java.net.URLClassLoader;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 import static com.alipay.sofa.ark.spi.constant.Constants.MASTER_BIZ;
@@ -43,26 +45,26 @@ import static com.alipay.sofa.ark.spi.constant.Constants.MASTER_BIZ;
  * <p>BaseSpringTestApplication class.</p>
  *
  * @author CodeNoobKing
- * @since 2024/3/8
  * @version 1.0.0
+ * @since 2024/3/8
  */
 @Getter
 public class BaseSpringTestApplication {
 
-    private BaseSpringTestConfig           config;
+    private BaseSpringTestConfig config;
 
     private ConfigurableApplicationContext applicationContext;
 
-    private URLClassLoader                 baseClassLoader;
+    private URLClassLoader baseClassLoader;
 
     /**
      * <p>initBaseClassLoader.</p>
      */
     public void initBaseClassLoader() {
         URLClassLoader baseClassLoader = (URLClassLoader) Thread.currentThread()
-            .getContextClassLoader();
+                .getContextClassLoader();
         this.baseClassLoader = new BaseClassLoader(baseClassLoader,
-            Lists.newArrayList(config.getArtifactId()), config.getExcludeArtifactIds());
+                Lists.newArrayList(config.getArtifactId()), config.getExcludeArtifactIds());
     }
 
     /**
@@ -77,7 +79,7 @@ public class BaseSpringTestApplication {
 
     private boolean isNotArkApplicationStartListener(ApplicationListener<?> listener) {
         return !listener.getClass().getName()
-            .equals("com.alipay.sofa.ark.springboot.listener.ArkApplicationStartListener");
+                .equals("com.alipay.sofa.ark.springboot.listener.ArkApplicationStartListener");
     }
 
     /**
@@ -88,44 +90,55 @@ public class BaseSpringTestApplication {
         Class<?> mainClass = baseClassLoader.loadClass(config.getMainClass().getName());
         // add necessary bizRuntimeContext
         SpringApplication springApplication = new SpringApplication(
-            new DefaultResourceLoader(baseClassLoader) {
-                @Override
-                public Resource getResource(String location) {
-                    if (!config.getExcludeArtifactIds().stream().anyMatch(location::contains)) {
-                        return super.getResource(location);
+                new DefaultResourceLoader(baseClassLoader) {
+                    @Override
+                    public Resource getResource(String location) {
+                        if (!config.getExcludeArtifactIds().stream().anyMatch(location::contains)) {
+                            return super.getResource(location);
+                        }
+                        return null;
                     }
-                    return null;
-                }
-            }, mainClass) {
+                }, mainClass) {
             // the listener is not needed in the test workflow.
             // because it will automatically create another ArkServiceContainer with a unreachable Container ClassLoader
             @Override
             public void setListeners(Collection<? extends ApplicationListener<?>> listeners) {
                 super.setListeners(listeners.stream()
-                    .filter(BaseSpringTestApplication.this::isNotArkApplicationStartListener)
-                    .collect(Collectors.toList()));
+                        .filter(BaseSpringTestApplication.this::isNotArkApplicationStartListener)
+                        .collect(Collectors.toList()));
             }
         };
         springApplication.setAdditionalProfiles("base");
 
         springApplication
-            .addListeners(new ApplicationListener<ApplicationEnvironmentPreparedEvent>() {
-                @Override
-                public void onApplicationEvent(ApplicationEnvironmentPreparedEvent event) {
-                    TestBootstrap.registerMasterBiz();
-                    ArkConfigs.setSystemProperty(MASTER_BIZ, ArkClient.getMasterBiz().getBizName());
-                    BizRuntimeContext bizRuntimeContext = new BizRuntimeContext(
-                        ArkClient.getMasterBiz());
-                    BizRuntimeContextRegistry.registerBizRuntimeManager(bizRuntimeContext);
-                }
-            }, new ApplicationListener<ApplicationContextInitializedEvent>() {
-                @Override
-                public void onApplicationEvent(ApplicationContextInitializedEvent event) {
-                    BizRuntimeContextRegistry.getMasterBizRuntimeContext()
-                        .setRootApplicationContext(event.getApplicationContext());
-                }
-            });
+                .addListeners(new ApplicationListener<ApplicationEnvironmentPreparedEvent>() {
+                    @Override
+                    public void onApplicationEvent(ApplicationEnvironmentPreparedEvent event) {
+                        TestBootstrap.registerMasterBiz();
+                        ArkConfigs.setSystemProperty(MASTER_BIZ, ArkClient.getMasterBiz().getBizName());
+                        BizRuntimeContext bizRuntimeContext = new BizRuntimeContext(
+                                ArkClient.getMasterBiz());
+                        BizRuntimeContextRegistry.registerBizRuntimeManager(bizRuntimeContext);
+                    }
+                }, new ApplicationListener<ApplicationContextInitializedEvent>() {
+                    @Override
+                    public void onApplicationEvent(ApplicationContextInitializedEvent event) {
+                        BizRuntimeContextRegistry.getMasterBizRuntimeContext()
+                                .setRootApplicationContext(event.getApplicationContext());
+                    }
+                });
 
-        applicationContext = springApplication.run();
+        CompletableFuture.runAsync(new Runnable() {
+            @Override
+            public void run() {
+                Thread.currentThread().setContextClassLoader(baseClassLoader);
+                applicationContext = springApplication.run();
+            }
+        }, new Executor() {
+            @Override
+            public void execute(Runnable command) {
+                new Thread(command).start();
+            }
+        }).get();
     }
 }
