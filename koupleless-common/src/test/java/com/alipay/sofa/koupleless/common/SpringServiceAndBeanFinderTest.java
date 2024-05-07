@@ -51,8 +51,8 @@ import java.util.Set;
 import static org.mockito.Mockito.when;
 
 /**
- * @author: yuanyuan
- * @date: 2023/9/26 9:40 下午
+ * @author yuanyuan
+ * @since 2023/9/26 9:40 下午
  */
 @RunWith(MockitoJUnitRunner.class)
 public class SpringServiceAndBeanFinderTest {

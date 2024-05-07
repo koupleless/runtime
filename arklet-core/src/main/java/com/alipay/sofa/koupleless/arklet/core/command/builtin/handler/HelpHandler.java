@@ -28,13 +28,17 @@ import com.alipay.sofa.koupleless.arklet.core.command.meta.Output;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.CommandValidationException;
 
 /**
+ * <p>HelpHandler class.</p>
+ *
  * @author mingmen
- * @date 2023/6/14
+ * @since 2023/6/14
+ * @version 1.0.0
  */
 
 @SuppressWarnings("rawtypes")
 public class HelpHandler extends AbstractCommandHandler<InputMeta, List<CommandModel>> {
 
+    /** {@inheritDoc} */
     @Override
     public Output<List<CommandModel>> handle(InputMeta inputMeta) {
         List<AbstractCommandHandler> list = getCommandService().listAllHandlers();
@@ -45,11 +49,13 @@ public class HelpHandler extends AbstractCommandHandler<InputMeta, List<CommandM
         return Output.ofSuccess(models);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Command command() {
         return BuiltinCommand.HELP;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void validate(InputMeta input) throws CommandValidationException {
 

@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 
 /**
  * @author CodeNoobKing
- * @date 2024/3/11
+ * @since 2024/3/11
  */
 @Component
 public class SampleBizService implements HelloService {

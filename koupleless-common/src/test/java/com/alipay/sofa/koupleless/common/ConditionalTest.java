@@ -40,7 +40,7 @@ public class ConditionalTest {
 
     /**
      * @author mingmen
-     * @date 2023/6/14
+     * @since 2023/6/14
      */
     @Configuration
     public static class ConditionalAutoConfiguration {

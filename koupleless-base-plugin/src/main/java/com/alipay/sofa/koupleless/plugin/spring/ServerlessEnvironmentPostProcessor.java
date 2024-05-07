@@ -46,15 +46,22 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * @author: yuanyuan
- * @date: 2023/10/30 9:48 下午
+ * <p>ServerlessEnvironmentPostProcessor class.</p>
+ *
+ * @author yuanyuan
+ * @author zzl_i
+ * @since 2023/10/30 9:48 下午
+ * @version 1.0.0
  */
 public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProcessor, Ordered {
 
+    /** Constant <code>SPRING_CONFIG_LOCATION="spring.config.location"</code> */
     public static final String                        SPRING_CONFIG_LOCATION                     = "spring.config.location";
 
+    /** Constant <code>SPRING_ADDITIONAL_LOCATION="spring.config.additional-location"</code> */
     public static final String                        SPRING_ADDITIONAL_LOCATION                 = "spring.config.additional-location";
 
+    /** Constant <code>SPRING_ACTIVE_PROFILES="spring.profiles.active"</code> */
     public static final String                        SPRING_ACTIVE_PROFILES                     = "spring.profiles.active";
 
     private final static String                       ACTIVE_CONFIG_FORMAT                       = "config/%s/application-%s.properties";
@@ -79,6 +86,7 @@ public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProces
         COMPATIBLE_KEYS.put("logging.path", "logging.file.path");
     }
 
+    /** {@inheritDoc} */
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment,
                                        SpringApplication application) {
@@ -213,6 +221,12 @@ public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProces
             BASE_APP_SHARE_ENV_KEYS);
     }
 
+    /**
+     * <p>getCanonicalPath.</p>
+     *
+     * @param path a {@link java.lang.String} object
+     * @return a {@link java.lang.String} object
+     */
     public String getCanonicalPath(String path) {
         try {
             if (StringUtils.isEmpty(path)) {
@@ -230,6 +244,8 @@ public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProces
     }
 
     /**
+     * {@inheritDoc}
+     *
      * 优先级在 ConfigFileApplicationListener / ConfigDataEnvironmentPostProcessor 紧跟之后
      */
     @Override

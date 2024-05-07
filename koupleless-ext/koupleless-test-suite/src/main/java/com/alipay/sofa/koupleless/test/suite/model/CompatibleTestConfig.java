@@ -24,8 +24,11 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 /**
+ * <p>CompatibleTestConfig class.</p>
+ *
  * @author CodeNoobKing
- * @date 2024/2/20
+ * @since 2024/2/20
+ * @version 1.0.0
  */
 
 @Data

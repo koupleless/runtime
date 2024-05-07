@@ -25,12 +25,21 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
+ * <p>BaseRuntimeAutoConfiguration class.</p>
+ *
  * @author mingmen
- * @date 2023/6/14
+ * @since 2023/6/14
+ * @version 1.0.0
  */
 @Configuration
 public class BaseRuntimeAutoConfiguration {
 
+    /**
+     * <p>bizRuntimeContext.</p>
+     *
+     * @param applicationContext a {@link org.springframework.context.ApplicationContext} object
+     * @return a {@link com.alipay.sofa.koupleless.common.BizRuntimeContext} object
+     */
     @Bean
     public BizRuntimeContext bizRuntimeContext(ApplicationContext applicationContext) {
         ClassLoader classLoader = applicationContext.getClassLoader();
@@ -40,6 +49,11 @@ public class BaseRuntimeAutoConfiguration {
         return bizRuntimeContext;
     }
 
+    /**
+     * <p>arkAutowiredBeanPostProcessor.</p>
+     *
+     * @return a {@link com.alipay.sofa.koupleless.common.service.ArkAutowiredBeanPostProcessor} object
+     */
     @Bean
     @ConditionalOnMissingBean
     public ArkAutowiredBeanPostProcessor arkAutowiredBeanPostProcessor() {

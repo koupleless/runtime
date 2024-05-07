@@ -51,8 +51,11 @@ import com.alipay.sofa.koupleless.arklet.core.util.AssertUtils;
 import com.google.inject.Singleton;
 
 /**
+ * <p>CommandServiceImpl class.</p>
+ *
  * @author mingmen
- * @date 2023/6/8
+ * @since 2023/6/8
+ * @version 1.0.0
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 @Singleton
@@ -63,6 +66,7 @@ public class CommandServiceImpl implements CommandService {
 
     private final Map<String, AbstractCommandHandler> handlerMap = new ConcurrentHashMap<>(16);
 
+    /** {@inheritDoc} */
     @Override
     public void registerCommandHandler(AbstractCommandHandler handler) {
         AssertUtils.isTrue(StringUtil.isNotBlank(handler.command().getId()),
@@ -80,6 +84,7 @@ public class CommandServiceImpl implements CommandService {
         LOGGER.info("registered command:{}", handler.command().getId());
     }
 
+    /** {@inheritDoc} */
     @Override
     public void init() {
         registerBuiltInCommands();
@@ -95,11 +100,13 @@ public class CommandServiceImpl implements CommandService {
         registerCommandHandler(new QueryBizOpsHandler());
     }
 
+    /** {@inheritDoc} */
     @Override
     public void destroy() {
         handlerMap.clear();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Output<?> process(String cmd, Map content) throws CommandValidationException {
         AbstractCommandHandler handler = getHandler(cmd);
@@ -177,11 +184,13 @@ public class CommandServiceImpl implements CommandService {
         return handler.handle(input);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean supported(String cmd) {
         return handlerMap.containsKey(cmd);
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<AbstractCommandHandler> listAllHandlers() {
         return new ArrayList<>(handlerMap.values());
@@ -195,11 +204,13 @@ public class CommandServiceImpl implements CommandService {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public AbstractCommandHandler getHandler(Command command) {
         return getHandler(command.getId());
     }
 
+    /** {@inheritDoc} */
     @Override
     public AbstractCommandHandler getHandler(String commandId) {
         AbstractCommandHandler handler = handlerMap.get(commandId);

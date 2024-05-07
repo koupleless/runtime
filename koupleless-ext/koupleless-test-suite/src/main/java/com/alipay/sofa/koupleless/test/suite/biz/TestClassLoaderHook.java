@@ -36,9 +36,12 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 /**
+ * <p>TestClassLoaderHook class.</p>
+ *
  * @author CodeNoobKing
- * @date 2024/3/21
- **/
+ * @since 2024/3/21
+ * @version 1.0.0
+ */
 public class TestClassLoaderHook extends DelegateToMasterBizClassLoaderHook {
 
     @Setter
@@ -47,6 +50,12 @@ public class TestClassLoaderHook extends DelegateToMasterBizClassLoaderHook {
     private ConcurrentMap<String, List<String>> higherPriorityResourceArtifacts = Maps
         .newConcurrentMap();
 
+    /**
+     * <p>putHigherPriorityResourceArtifacts.</p>
+     *
+     * @param identity a {@link java.lang.String} object
+     * @param artifacts a {@link java.util.List} object
+     */
     public void putHigherPriorityResourceArtifacts(String identity, List<String> artifacts) {
         higherPriorityResourceArtifacts.put(identity, artifacts);
     }
@@ -72,6 +81,7 @@ public class TestClassLoaderHook extends DelegateToMasterBizClassLoaderHook {
         return null;
     }
 
+    /** {@inheritDoc} */
     @SneakyThrows
     @Override
     public URL preFindResource(String name, ClassLoaderService classLoaderService, Biz biz) {

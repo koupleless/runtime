@@ -34,7 +34,7 @@ import org.junit.Test;
 
 /**
  * @author mingmen
- * @date 2023/6/26
+ * @since 2023/6/26
  */
 public class CommandTest extends BaseTest {
 

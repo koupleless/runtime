@@ -16,6 +16,12 @@
  */
 package com.alipay.sofa.koupleless.common.exception;
 
+/**
+ * <p>ErrorCodes class.</p>
+ *
+ * @author zzl_i
+ * @version 1.0.0
+ */
 public class ErrorCodes {
 
     public static class SpringContextManager {

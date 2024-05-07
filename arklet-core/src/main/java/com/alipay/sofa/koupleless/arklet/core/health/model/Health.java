@@ -23,24 +23,49 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * <p>Health class.</p>
+ *
  * @author Lunarscave
+ * @version 1.0.0
  */
 public class Health {
 
     private final Map<String, Object> healthData;
 
+    /**
+     * <p>Constructor for Health.</p>
+     *
+     * @param builder a {@link com.alipay.sofa.koupleless.arklet.core.health.model.Health.HealthBuilder} object
+     */
     public Health(HealthBuilder builder) {
         this.healthData = Collections.unmodifiableMap(builder.healthData);
     }
 
+    /**
+     * <p>Getter for the field <code>healthData</code>.</p>
+     *
+     * @return a {@link java.util.Map} object
+     */
     public Map<String, Object> getHealthData() {
         return healthData;
     }
 
+    /**
+     * <p>containsError.</p>
+     *
+     * @param errorCode a {@link java.lang.String} object
+     * @return a boolean
+     */
     public boolean containsError(String errorCode) {
         return this.healthData.containsKey(errorCode);
     }
 
+    /**
+     * <p>containsUnhealthy.</p>
+     *
+     * @param healthyCode a {@link java.lang.String} object
+     * @return a boolean
+     */
     public boolean containsUnhealthy(String healthyCode) {
         Map<String, Object> healthData = this.getHealthData();
         boolean isUnhealthy = false;

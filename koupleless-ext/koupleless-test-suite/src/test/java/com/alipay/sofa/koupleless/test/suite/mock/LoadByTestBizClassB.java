@@ -18,7 +18,7 @@ package com.alipay.sofa.koupleless.test.suite.mock;
 
 /**
  * @author CodeNoobKing
- * @date 2024/2/20
+ * @since 2024/2/20
  */
 public class LoadByTestBizClassB {
 }

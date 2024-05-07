@@ -23,7 +23,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * <p>Forwards class.</p>
+ *
+ * @author zzl_i
+ * @version 1.0.0
+ */
 public class Forwards {
+    /** Constant <code>ROOT_PATH="/"</code> */
     public static final String       ROOT_PATH      = "/";
 
     private static final String      PATH_SEPARATOR = "/";
@@ -33,11 +40,23 @@ public class Forwards {
     private List<ForwardItem>        items;
     private Map<String, ForwardItem> contextPathMap;
 
+    /**
+     * <p>Setter for the field <code>items</code>.</p>
+     *
+     * @param items a {@link java.util.List} object
+     */
     public void setItems(List<ForwardItem> items) {
         this.items = items;
         this.contextPathMap = new ConcurrentHashMap<>();
     }
 
+    /**
+     * <p>getForwardItem.</p>
+     *
+     * @param host a {@link java.lang.String} object
+     * @param path a {@link java.lang.String} object
+     * @return a {@link com.alipay.sofa.koupleless.ext.web.gateway.ForwardItem} object
+     */
     public ForwardItem getForwardItem(String host, String path) {
         String key = host + path;
         return contextPathMap.computeIfAbsent(key, k -> doGetForwardItem(host, path));

@@ -32,12 +32,20 @@ import java.util.stream.Collectors;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+/**
+ * <p>SkipInitializerListener class.</p>
+ *
+ * @author zzl_i
+ * @version 1.0.0
+ */
 @Order
 public class SkipInitializerListener implements ApplicationListener<SpringApplicationEvent> {
     private static final Logger LOGGER                  = getLogger(SkipInitializerListener.class);
 
+    /** Constant <code>MODULE_INITIALIZER_SKIP="koupleless.module.initializer.skip"</code> */
     public static final String  MODULE_INITIALIZER_SKIP = "koupleless.module.initializer.skip";
 
+    /** {@inheritDoc} */
     @Override
     public void onApplicationEvent(SpringApplicationEvent event) {
         try {
@@ -49,12 +57,22 @@ public class SkipInitializerListener implements ApplicationListener<SpringApplic
         }
     }
 
+    /**
+     * <p>optimizeModule.</p>
+     *
+     * @param event a {@link org.springframework.boot.context.event.SpringApplicationEvent} object
+     */
     protected void optimizeModule(SpringApplicationEvent event) {
         if (event instanceof ApplicationStartingEvent) {
             skipInitializers(event.getSpringApplication());
         }
     }
 
+    /**
+     * <p>skipInitializers.</p>
+     *
+     * @param application a {@link org.springframework.boot.SpringApplication} object
+     */
     protected void skipInitializers(SpringApplication application) {
         BizRuntimeContext bizRuntimeContext = BizRuntimeContextRegistry
             .getMasterBizRuntimeContext();

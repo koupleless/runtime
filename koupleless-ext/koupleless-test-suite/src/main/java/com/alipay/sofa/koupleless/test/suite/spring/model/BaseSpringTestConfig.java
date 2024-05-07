@@ -29,8 +29,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * <p>BaseSpringTestConfig class.</p>
+ *
  * @author CodeNoobKing
- * @date 2024/3/11
+ * @since 2024/3/11
+ * @version 1.0.0
  */
 @NoArgsConstructor
 @AllArgsConstructor
@@ -45,6 +48,9 @@ public class BaseSpringTestConfig {
     @Builder.Default
     private List<String> excludeArtifactIds = new ArrayList<>();
 
+    /**
+     * <p>init.</p>
+     */
     public void init() {
         Preconditions.checkState(mainClass != null, "mainClass must not be blank");
         if (StringUtils.isBlank(artifactId)) {

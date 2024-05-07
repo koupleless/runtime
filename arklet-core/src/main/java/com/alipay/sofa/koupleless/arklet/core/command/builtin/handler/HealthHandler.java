@@ -30,9 +30,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
+ * <p>HealthHandler class.</p>
+ *
  * @author Lunarscave
+ * @version 1.0.0
  */
 public class HealthHandler extends AbstractCommandHandler<HealthHandler.Input, Health> {
+    /** {@inheritDoc} */
     @Override
     public void validate(Input input) throws CommandValidationException {
         if (input != null) {
@@ -43,6 +47,7 @@ public class HealthHandler extends AbstractCommandHandler<HealthHandler.Input, H
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public Output<Health> handle(Input input) {
 
@@ -71,6 +76,7 @@ public class HealthHandler extends AbstractCommandHandler<HealthHandler.Input, H
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public Command command() {
         return BuiltinCommand.HEALTH;

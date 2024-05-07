@@ -20,7 +20,7 @@ import com.alipay.sofa.koupleless.arklet.core.command.meta.InputMeta;
 
 /**
  * @author mingmen
- * @date 2023/8/6
+ * @since 2023/8/6
  */
 public class Input extends InputMeta {
     public int    id;

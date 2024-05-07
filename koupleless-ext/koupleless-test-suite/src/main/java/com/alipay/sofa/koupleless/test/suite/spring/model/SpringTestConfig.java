@@ -22,8 +22,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
+ * <p>SpringTestConfig class.</p>
+ *
  * @author CodeNoobKing
- * @date 2024/3/11
+ * @since 2024/3/11
+ * @version 1.0.0
  */
 @NoArgsConstructor
 @AllArgsConstructor

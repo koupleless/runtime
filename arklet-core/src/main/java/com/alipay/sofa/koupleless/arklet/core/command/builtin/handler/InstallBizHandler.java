@@ -46,14 +46,18 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * <p>InstallBizHandler class.</p>
+ *
  * @author mingmen
- * @date 2023/6/8
+ * @since 2023/6/8
+ * @version 1.0.0
  */
 public class InstallBizHandler extends
                                AbstractCommandHandler<InstallBizHandler.Input, InstallBizHandler.InstallBizClientResponse>
                                implements ArkBizOps {
     private static final ArkletLogger LOGGER = ArkletLoggerFactory.getDefaultLogger();
 
+    /** {@inheritDoc} */
     @Override
     public Output<InstallBizClientResponse> handle(Input input) {
         MemoryPoolMXBean metaSpaceMXBean = getMetaSpaceMXBean();
@@ -91,11 +95,13 @@ public class InstallBizHandler extends
         return installBizClientResponse;
     }
 
+    /** {@inheritDoc} */
     @Override
     public Command command() {
         return BuiltinCommand.INSTALL_BIZ;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void validate(Input input) throws CommandValidationException {
         isTrue(!input.isAsync() || !StringUtils.isEmpty(input.getRequestId()),

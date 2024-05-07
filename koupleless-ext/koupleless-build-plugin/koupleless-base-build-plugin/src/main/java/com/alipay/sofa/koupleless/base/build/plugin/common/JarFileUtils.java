@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
  * jar file utils
  *
  * @author CodeNoobKing
+ * @version 1.0.0
  */
 public class JarFileUtils {
 

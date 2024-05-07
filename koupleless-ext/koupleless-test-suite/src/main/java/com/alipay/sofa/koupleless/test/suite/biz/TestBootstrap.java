@@ -47,6 +47,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+/**
+ * <p>TestBootstrap class.</p>
+ *
+ * @author zzl_i
+ * @version 1.0.0
+ */
 public class TestBootstrap {
 
     @Getter
@@ -65,6 +71,9 @@ public class TestBootstrap {
         return pluginDependencies.stream().anyMatch(plugin -> StringUtils.contains(path, plugin));
     }
 
+    /**
+     * <p>setUpPlugins.</p>
+     */
     @SneakyThrows
     public static void setUpPlugins() {
         pluginDependencies.add("web-ark-plugin");
@@ -88,6 +97,9 @@ public class TestBootstrap {
         container.getService(PluginDeployService.class).deploy();
     }
 
+    /**
+     * <p>publicService.</p>
+     */
     public static void publicService() {
         ArkServiceContainer container = ArkServiceContainerHolder.getContainer();
         RegistryService registryService = container.getService(RegistryService.class);
@@ -117,6 +129,11 @@ public class TestBootstrap {
             new ContainerServiceProvider(PriorityOrdered.HIGHEST_PRECEDENCE));
     }
 
+    /**
+     * <p>init.</p>
+     *
+     * @param baseClassLoader a {@link java.lang.ClassLoader} object
+     */
     public static void init(ClassLoader baseClassLoader) {
         if (started.compareAndSet(false, true)) {
             TestBootstrap.baseClassLoader = (URLClassLoader) baseClassLoader;
@@ -128,6 +145,9 @@ public class TestBootstrap {
         }
     }
 
+    /**
+     * <p>registerMasterBiz.</p>
+     */
     public static void registerMasterBiz() {
         if (masterBizRegistered.compareAndSet(false, true)) {
             BizModel bizModel = new BizModel();

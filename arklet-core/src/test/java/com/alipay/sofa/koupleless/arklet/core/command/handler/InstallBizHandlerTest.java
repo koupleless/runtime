@@ -45,7 +45,7 @@ import static org.mockito.Mockito.when;
 
 /**
  * @author mingmen
- * @date 2023/9/5
+ * @since 2023/9/5
  */
 public class InstallBizHandlerTest extends BaseHandlerTest {
 

@@ -39,8 +39,11 @@ import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 /**
+ * <p>BizSpringTestApplication class.</p>
+ *
  * @author CodeNoobKing
- * @date 2024/3/6
+ * @since 2024/3/6
+ * @version 1.0.0
  */
 @Getter
 public class BizSpringTestApplication {
@@ -52,11 +55,22 @@ public class BizSpringTestApplication {
     private BizSpringTestConfig            config;
 
     @SneakyThrows
+    /**
+     * <p>Constructor for BizSpringTestApplication.</p>
+     *
+     * @param config a {@link com.alipay.sofa.koupleless.test.suite.spring.model.BizSpringTestConfig} object
+     */
     public BizSpringTestApplication(BizSpringTestConfig config) {
         config.init();
         this.config = config;
     }
 
+    /**
+     * <p>isExcludedDependency.</p>
+     *
+     * @param dependency a {@link java.lang.String} object
+     * @return a boolean
+     */
     public boolean isExcludedDependency(String dependency) {
         for (String regexp : CollectionUtils
             .emptyIfNull(SpringTestUtils.getConfig().getBiz().getExcludeDependencyRegexps())) {
@@ -79,6 +93,9 @@ public class BizSpringTestApplication {
         return false;
     }
 
+    /**
+     * <p>initBiz.</p>
+     */
     public void initBiz() {
         List<String> includeClassPatterns = config.getPackageNames().stream().map(s -> s + ".*")
             .collect(Collectors.toList());
@@ -100,6 +117,9 @@ public class BizSpringTestApplication {
         testBiz.setWebContextPath(config.getBizName());
     }
 
+    /**
+     * <p>run.</p>
+     */
     @SneakyThrows
     public void run() {
         CompletableFuture.runAsync(new Runnable() {

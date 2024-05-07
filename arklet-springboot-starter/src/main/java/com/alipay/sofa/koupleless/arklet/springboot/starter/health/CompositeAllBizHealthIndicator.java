@@ -32,11 +32,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 整合所有 Biz 的健康指标
+ *
  * @author lianglipeng.llp@alibaba-inc.com
  * @version $Id: CompositeAllBizHealthIndicator.java, v 1.1.0 2024年03月21日 11:56 立蓬 Exp $
  * @since 1.1.0
  */
 public class CompositeAllBizHealthIndicator extends AbstractHealthIndicator {
+    /** {@inheritDoc} */
     @Override
     protected void doHealthCheck(Builder builder) throws Exception {
         Map<String, Health> bizHealthMap = aggregateBizHealth();

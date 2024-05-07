@@ -26,6 +26,12 @@ import org.springframework.context.support.AbstractApplicationContext;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * <p>BizRuntimeContext class.</p>
+ *
+ * @author zzl_i
+ * @version 1.0.0
+ */
 public class BizRuntimeContext {
 
     private String                                           bizName;
@@ -36,44 +42,95 @@ public class BizRuntimeContext {
 
     private Map<ClassLoader, Map<String, ServiceProxyCache>> serviceProxyCaches = new ConcurrentHashMap<>();
 
+    /**
+     * <p>Getter for the field <code>bizName</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getBizName() {
         return bizName;
     }
 
+    /**
+     * <p>Setter for the field <code>bizName</code>.</p>
+     *
+     * @param bizName a {@link java.lang.String} object
+     */
     public void setBizName(String bizName) {
         this.bizName = bizName;
     }
 
+    /**
+     * <p>Getter for the field <code>appClassLoader</code>.</p>
+     *
+     * @return a {@link java.lang.ClassLoader} object
+     */
     public ClassLoader getAppClassLoader() {
         return appClassLoader;
     }
 
+    /**
+     * <p>Setter for the field <code>appClassLoader</code>.</p>
+     *
+     * @param appClassLoader a {@link java.lang.ClassLoader} object
+     */
     public void setAppClassLoader(ClassLoader appClassLoader) {
         this.appClassLoader = appClassLoader;
     }
 
+    /**
+     * <p>Getter for the field <code>rootApplicationContext</code>.</p>
+     *
+     * @return a {@link org.springframework.context.ApplicationContext} object
+     */
     public ApplicationContext getRootApplicationContext() {
         return rootApplicationContext;
     }
 
+    /**
+     * <p>Setter for the field <code>rootApplicationContext</code>.</p>
+     *
+     * @param rootApplicationContext a {@link org.springframework.context.ApplicationContext} object
+     */
     public void setRootApplicationContext(ApplicationContext rootApplicationContext) {
         this.rootApplicationContext = rootApplicationContext;
     }
 
+    /**
+     * <p>Constructor for BizRuntimeContext.</p>
+     *
+     * @param biz a {@link com.alipay.sofa.ark.spi.model.Biz} object
+     */
     public BizRuntimeContext(Biz biz) {
         this(biz, null);
     }
 
+    /**
+     * <p>Constructor for BizRuntimeContext.</p>
+     *
+     * @param biz a {@link com.alipay.sofa.ark.spi.model.Biz} object
+     * @param applicationContext a {@link org.springframework.context.ApplicationContext} object
+     */
     public BizRuntimeContext(Biz biz, ApplicationContext applicationContext) {
         this.bizName = biz.getBizName();
         this.appClassLoader = biz.getBizClassLoader();
         this.rootApplicationContext = applicationContext;
     }
 
+    /**
+     * <p>Getter for the field <code>serviceProxyCaches</code>.</p>
+     *
+     * @return a {@link java.util.Map} object
+     */
     public Map<ClassLoader, Map<String, ServiceProxyCache>> getServiceProxyCaches() {
         return serviceProxyCaches;
     }
 
+    /**
+     * <p>removeServiceProxyCaches.</p>
+     *
+     * @param classLoader a {@link java.lang.ClassLoader} object
+     */
     public void removeServiceProxyCaches(ClassLoader classLoader) {
         serviceProxyCaches.remove(classLoader);
     }

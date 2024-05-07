@@ -24,7 +24,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * <p>BizHealthMeta class.</p>
+ *
  * @author Lunarscave
+ * @version 1.0.0
  */
 public class BizHealthMeta {
 
@@ -36,38 +39,84 @@ public class BizHealthMeta {
 
     private String   webContextPath;
 
+    /**
+     * <p>Getter for the field <code>bizName</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getBizName() {
         return bizName;
     }
 
+    /**
+     * <p>Setter for the field <code>bizName</code>.</p>
+     *
+     * @param bizName a {@link java.lang.String} object
+     */
     public void setBizName(String bizName) {
         this.bizName = bizName;
     }
 
+    /**
+     * <p>Getter for the field <code>bizVersion</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getBizVersion() {
         return bizVersion;
     }
 
+    /**
+     * <p>Setter for the field <code>bizVersion</code>.</p>
+     *
+     * @param bizVersion a {@link java.lang.String} object
+     */
     public void setBizVersion(String bizVersion) {
         this.bizVersion = bizVersion;
     }
 
+    /**
+     * <p>Getter for the field <code>bizState</code>.</p>
+     *
+     * @return a {@link com.alipay.sofa.ark.spi.model.BizState} object
+     */
     public BizState getBizState() {
         return bizState;
     }
 
+    /**
+     * <p>Setter for the field <code>bizState</code>.</p>
+     *
+     * @param bizState a {@link com.alipay.sofa.ark.spi.model.BizState} object
+     */
     public void setBizState(BizState bizState) {
         this.bizState = bizState;
     }
 
+    /**
+     * <p>Getter for the field <code>webContextPath</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getWebContextPath() {
         return webContextPath;
     }
 
+    /**
+     * <p>Setter for the field <code>webContextPath</code>.</p>
+     *
+     * @param webContextPath a {@link java.lang.String} object
+     */
     public void setWebContextPath(String webContextPath) {
         this.webContextPath = webContextPath;
     }
 
+    /**
+     * <p>createBizMeta.</p>
+     *
+     * @param biz a {@link com.alipay.sofa.ark.spi.model.Biz} object
+     * @return a {@link com.alipay.sofa.koupleless.arklet.core.health.model.BizHealthMeta} object
+     */
     public static BizHealthMeta createBizMeta(Biz biz) {
         AssertUtils.assertNotNull(biz, "can not find biz");
         BizHealthMeta bizHealthMeta = createBizMeta(biz.getBizName(), biz.getBizVersion());
@@ -76,6 +125,13 @@ public class BizHealthMeta {
         return bizHealthMeta;
     }
 
+    /**
+     * <p>createBizMeta.</p>
+     *
+     * @param bizName a {@link java.lang.String} object
+     * @param bizVersion a {@link java.lang.String} object
+     * @return a {@link com.alipay.sofa.koupleless.arklet.core.health.model.BizHealthMeta} object
+     */
     public static BizHealthMeta createBizMeta(String bizName, String bizVersion) {
         BizHealthMeta bizHealthMeta = new BizHealthMeta();
         bizHealthMeta.bizName = bizName;
@@ -83,6 +139,12 @@ public class BizHealthMeta {
         return bizHealthMeta;
     }
 
+    /**
+     * <p>createBizMetaList.</p>
+     *
+     * @param bizList a {@link java.util.List} object
+     * @return a {@link java.util.List} object
+     */
     public static List<BizHealthMeta> createBizMetaList(List<Biz> bizList) {
         AssertUtils.isTrue(bizList.size() > 0, "no biz found");
         List<BizHealthMeta> bizHealthMetaList = new ArrayList<>();
