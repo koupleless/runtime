@@ -153,9 +153,10 @@ public class TestBootstrap {
             BizModel bizModel = new BizModel();
             bizModel.setBizName("master biz");
             bizModel.setBizVersion("TEST");
-            bizModel.setClassLoader(baseClassLoader);
+            bizModel.setClassLoader(baseClassLoader.getParent());
             bizModel.setBizState(BizState.RESOLVED);
             ArkClient.setMasterBiz(bizModel);
+            ArkClient.getBizManagerService().registerBiz(bizModel);
         }
     }
 }

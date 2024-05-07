@@ -42,7 +42,7 @@ public class BaseRuntimeAutoConfiguration {
      */
     @Bean
     public BizRuntimeContext bizRuntimeContext(ApplicationContext applicationContext) {
-        ClassLoader classLoader = applicationContext.getClassLoader();
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         BizRuntimeContext bizRuntimeContext = BizRuntimeContextRegistry
             .getBizRuntimeContextByClassLoader(classLoader);
         bizRuntimeContext.setRootApplicationContext(applicationContext);

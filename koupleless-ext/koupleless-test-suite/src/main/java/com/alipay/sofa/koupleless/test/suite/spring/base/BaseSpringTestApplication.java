@@ -18,6 +18,8 @@ package com.alipay.sofa.koupleless.test.suite.spring.base;
 
 import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.api.ArkConfigs;
+import com.alipay.sofa.ark.container.model.BizModel;
+import com.alipay.sofa.ark.spi.model.BizState;
 import com.alipay.sofa.koupleless.common.BizRuntimeContext;
 import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
 import com.alipay.sofa.koupleless.test.suite.biz.TestBootstrap;
@@ -123,22 +125,12 @@ public class BaseSpringTestApplication {
             }, new ApplicationListener<ApplicationContextInitializedEvent>() {
                 @Override
                 public void onApplicationEvent(ApplicationContextInitializedEvent event) {
+                    ((BizModel) ArkClient.getMasterBiz()).setBizState(BizState.ACTIVATED);
                     BizRuntimeContextRegistry.getMasterBizRuntimeContext()
                         .setRootApplicationContext(event.getApplicationContext());
                 }
             });
 
-        CompletableFuture.runAsync(new Runnable() {
-            @Override
-            public void run() {
-                Thread.currentThread().setContextClassLoader(baseClassLoader);
-                applicationContext = springApplication.run();
-            }
-        }, new Executor() {
-            @Override
-            public void execute(Runnable command) {
-                new Thread(command).start();
-            }
-        }).get();
+        applicationContext = springApplication.run();
     }
 }

@@ -33,8 +33,8 @@ import java.util.List;
  * <p>BizSpringTestConfig class.</p>
  *
  * @author CodeNoobKing
- * @since 2024/3/11
  * @version 1.0.0
+ * @since 2024/3/11
  */
 @NoArgsConstructor
 @AllArgsConstructor
@@ -55,6 +55,8 @@ public class BizSpringTestConfig {
      * 业务名。
      */
     private String       bizName;
+
+    private String       bizVersion;
 
     /**
      * 主类。
@@ -89,6 +91,10 @@ public class BizSpringTestConfig {
 
         if (StringUtils.isBlank(bizName)) {
             bizName = artifactId;
+        }
+
+        if (StringUtils.isBlank(bizVersion)) {
+            bizVersion = "TEST";
         }
 
         if (StringUtils.isBlank(webContextPath)) {
