@@ -28,19 +28,21 @@ import java.util.List;
  * <p>TestBizConfig class.</p>
  *
  * @author CodeNoobKing
- * @since 2024/3/21
  * @version 1.0.0
+ * @since 2024/3/21
  */
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder
 public class TestBizConfig {
-    private String       bootstrapClassName;
-    private String       bizName;
-    private String       bizVersion;
-    private List<String> testClassNames;
-    private List<String> includeClassPatterns;
-    private ClassLoader  baseClassLoader;
-    private List<String> preFindResourceUrlKeyWords;
+    private String         bootstrapClassName;
+    private String         bizName;
+    private String         bizVersion;
+    private List<String>   testClassNames;
+    private List<String>   includeClassPatterns;
+    private URLClassLoader baseClassLoader;
+    private List<String>   preFindResourceUrlKeyWords;
+    private List<String>   excludeArtifactIds;
+    private List<String>   includeArtifactIds;
 }

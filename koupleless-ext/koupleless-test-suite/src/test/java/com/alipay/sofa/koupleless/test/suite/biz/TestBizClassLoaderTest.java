@@ -48,7 +48,7 @@ public class TestBizClassLoaderTest {
         includeClassPatterns.add(Pattern.compile(".*mock\\.LoadByTestBizClassB.*"));
 
         TestBizClassLoader testBizClassLoader = new TestBizClassLoader(bizIdentity,
-            includeClassNames, includeClassPatterns, baseClassLoader);
+            includeClassNames, includeClassPatterns, new ArrayList<>(), baseClassLoader);
         Assert.assertNull(testBizClassLoader.resolveLocalClass(LoadByBaseClass.class.getName()));
 
         Assert.assertEquals(testBizClassLoader, testBizClassLoader
