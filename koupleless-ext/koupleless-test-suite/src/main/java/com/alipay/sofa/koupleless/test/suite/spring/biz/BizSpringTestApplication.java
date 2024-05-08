@@ -112,6 +112,7 @@ public class BizSpringTestApplication {
         testBiz = new TestBizModel(TestBizConfig.builder().bootstrapClassName("")
             .bizName(config.getBizName()).bizVersion(config.getBizVersion())
             .testClassNames(new ArrayList<>()).includeClassPatterns(includeClassPatterns)
+            .includeArtifactIds(config.getIncludeArtifactIds())
             .baseClassLoader(
                 new URLClassLoader(bizDependencyUrls.toArray(new URL[0]), tccl.getParent()))
             .build());

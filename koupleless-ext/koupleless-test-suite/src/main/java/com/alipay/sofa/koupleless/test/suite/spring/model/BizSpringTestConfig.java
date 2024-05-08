@@ -78,6 +78,9 @@ public class BizSpringTestConfig {
     @Builder.Default
     private List<String> excludeArtifactIds = new ArrayList<>();
 
+    @Builder.Default
+    private List<String> includeArtifactIds = new ArrayList<>();
+
     /**
      * <p>init.</p>
      */

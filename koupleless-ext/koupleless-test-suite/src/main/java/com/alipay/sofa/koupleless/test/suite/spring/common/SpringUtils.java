@@ -28,8 +28,8 @@ import java.util.stream.Collectors;
  * <p>SpringUtils class.</p>
  *
  * @author CodeNoobKing
- * @since 2024/3/29
  * @version 1.0.0
+ * @since 2024/3/29
  */
 public class SpringUtils {
 
@@ -53,7 +53,8 @@ public class SpringUtils {
 
         SpringBootApplication springBootApplication = mainClass
             .getAnnotation(SpringBootApplication.class);
-        if (springBootApplication != null && springBootApplication.scanBasePackages() != null) {
+        if (springBootApplication != null && springBootApplication.scanBasePackages() != null
+            && springBootApplication.scanBasePackages().length != 0) {
             return Arrays.asList(springBootApplication.scanBasePackages());
         }
 

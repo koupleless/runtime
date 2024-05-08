@@ -68,7 +68,8 @@ public class TestBizModel extends BizModel {
         registerBiz();
 
         TestBizClassLoader testBizClassLoader = new TestBizClassLoader(config.getBizName(),
-            config.getTestClassNames(), compiledIncludeClassPatterns, config.getBaseClassLoader());
+            config.getTestClassNames(), compiledIncludeClassPatterns,
+            config.getIncludeArtifactIds(), config.getBaseClassLoader());
         testBizClassLoader.setBizModel(this);
         testBizClassLoader.setBizIdentity(this.getIdentity());
         this.setClassLoader(testBizClassLoader);
