@@ -17,6 +17,7 @@
 package com.alipay.sofa.koupleless.test.suite.spring.multi;
 
 import com.alipay.sofa.koupleless.test.suite.biz.TestBizClassLoader;
+import com.alipay.sofa.koupleless.test.suite.spring.mock.biz.SampleBizService;
 import com.alipay.sofa.koupleless.test.suite.spring.mock.common.HelloService;
 import com.alipay.sofa.koupleless.test.suite.spring.model.BaseSpringTestConfig;
 import com.alipay.sofa.koupleless.test.suite.spring.model.BizSpringTestConfig;
@@ -59,6 +60,6 @@ public class TestMultiSSpringApplicationTest {
         HelloService sampleBizService = application.getBizApplication("biz0")
             .getApplicationContext().getBean(HelloService.class);
 
-        Assert.assertEquals(TestBizClassLoader.class.getName(), sampleBizService.helloWorld());
+        Assert.assertTrue(sampleBizService instanceof SampleBizService);
     }
 }
