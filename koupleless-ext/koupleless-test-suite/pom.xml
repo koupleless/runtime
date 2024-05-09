@@ -84,6 +84,12 @@
             <groupId>com.alipay.sofa.koupleless</groupId>
             <artifactId>koupleless-common</artifactId>
         </dependency>
+        <!-- just for test -->
+        <dependency>
+            <groupId>com.alipay.sofa.koupleless</groupId>
+            <artifactId>koupleless-app-starter</artifactId>
+            <scope>test</scope>
+        </dependency>
 
 
     </dependencies>

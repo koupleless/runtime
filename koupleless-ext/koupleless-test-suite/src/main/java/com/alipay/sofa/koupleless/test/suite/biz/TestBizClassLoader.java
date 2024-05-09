@@ -105,7 +105,8 @@ public class TestBizClassLoader extends BizClassLoader {
 
             if (resolveByClassLoaderPattern instanceof Pattern
                 && ((Pattern) resolveByClassLoaderPattern).matcher(name).matches()) {
-                return super.resolveLocalClass(name);
+                Class<?> clz = super.resolveLocalClass(name);
+                return clz;
             }
         }
 
