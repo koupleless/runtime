@@ -21,6 +21,8 @@ import com.alipay.sofa.ark.spi.event.biz.AfterBizStartupEvent;
 import com.alipay.sofa.ark.spi.event.biz.BeforeBizStartupEvent;
 import com.alipay.sofa.ark.spi.model.BizState;
 import com.alipay.sofa.ark.spi.service.event.EventAdminService;
+import com.alipay.sofa.koupleless.common.BizRuntimeContext;
+import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
 import com.alipay.sofa.koupleless.test.suite.biz.TestBizModel;
 import com.alipay.sofa.koupleless.test.suite.biz.TestBizConfig;
 import com.alipay.sofa.koupleless.test.suite.spring.framwork.SpringTestUtils;
