@@ -108,9 +108,12 @@ public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProces
                 while (iterator.hasNext()) {
                     PropertySource<?> next = iterator.next();
                     String psName = next.getName();
-                    if (!StringUtils.isEmpty(psName)
-                        && (psName.contains(getCanonicalPath(configLocation))
-                            || psName.contains(getCanonicalPath(additionalLocation)))) {
+                    boolean hasPsName = StringUtils.isEmpty(psName);
+                    boolean isFromConfigLocation = !StringUtils.isEmpty(configLocation)
+                        && psName.contains(getCanonicalPath(configLocation));
+                    boolean isFromAdditionalLocation = !StringUtils.isEmpty(additionalLocation)
+                        && psName.contains(getCanonicalPath(additionalLocation));
+                    if (hasPsName && (isFromAdditionalLocation || isFromConfigLocation)) {
                         toRemove.add(psName);
                     }
                 }
@@ -229,9 +232,6 @@ public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProces
      */
     public String getCanonicalPath(String path) {
         try {
-            if (StringUtils.isEmpty(path)) {
-                return "";
-            }
             File file = new File((path));
             if (file.exists() && file.isDirectory()) {
                 return file.getCanonicalPath();
