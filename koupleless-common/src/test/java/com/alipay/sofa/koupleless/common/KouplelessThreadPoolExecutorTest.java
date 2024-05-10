@@ -17,7 +17,6 @@
 package com.alipay.sofa.koupleless.common;
 
 import com.alipay.sofa.ark.common.util.ClassLoaderUtils;
-import com.alipay.sofa.koupleless.common.api.KouplelessRunnable;
 import com.alipay.sofa.koupleless.common.util.KouplelessThreadPoolExecutor;
 import org.junit.Test;
 
@@ -35,23 +34,27 @@ import static org.junit.Assert.assertEquals;
 public class KouplelessThreadPoolExecutorTest {
     @Test
     public void testSubmit() {
-        KouplelessThreadPoolExecutor executor = new KouplelessThreadPoolExecutor(1, 1, 60L,
+        KouplelessThreadPoolExecutor executor = new KouplelessThreadPoolExecutor(10, 10, 60L,
             TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
-        URLClassLoader mockClassLoader = mockClassLoader();
-        Thread.currentThread().setContextClassLoader(mockClassLoader);
-        executor.submit(() -> {
-            assertEquals(mockClassLoader, Thread.currentThread().getContextClassLoader());
-        });
 
-        executor.submit(new Callable<String>() {
-            @Override
-            public String call() throws Exception {
+        ClassLoader currentCl = Thread.currentThread().getContextClassLoader();
+        try {
+            URLClassLoader mockClassLoader = mockClassLoader();
+            Thread.currentThread().setContextClassLoader(mockClassLoader);
+            executor.submit(() -> {
                 assertEquals(mockClassLoader, Thread.currentThread().getContextClassLoader());
-                return "mock";
-            }
-        });
-
-        executor.shutdown();
+            });
+            executor.submit(new Callable<String>() {
+                @Override
+                public String call() throws Exception {
+                    assertEquals(mockClassLoader, Thread.currentThread().getContextClassLoader());
+                    return "mock";
+                }
+            });
+            executor.shutdown();
+        }finally {
+            Thread.currentThread().setContextClassLoader(currentCl);
+        }
     }
 
     private URLClassLoader mockClassLoader() {
