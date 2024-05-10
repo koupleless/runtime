@@ -230,7 +230,7 @@ public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProces
     public String getCanonicalPath(String path) {
         try {
             if (StringUtils.isEmpty(path)) {
-                return path;
+                return "";
             }
             File file = new File((path));
             if (file.exists() && file.isDirectory()) {
