@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.alipay.sofa.koupleless.common.util;
 
 import com.alipay.sofa.koupleless.common.api.KouplelessCallable;
@@ -16,26 +32,30 @@ import java.util.concurrent.TimeUnit;
  * @version $Id: KouplelessThreadPoolExecutor.java, v 0.1 2024年05月10日 11:29 立蓬 Exp $
  */
 public class KouplelessThreadPoolExecutor extends ThreadPoolExecutor {
-    public KouplelessThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit,
-                                        BlockingQueue<Runnable> workQueue) {
+    public KouplelessThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime,
+                                        TimeUnit unit, BlockingQueue<Runnable> workQueue) {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue);
     }
 
-    public KouplelessThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit,
-                                        BlockingQueue<Runnable> workQueue, ThreadFactory threadFactory) {
+    public KouplelessThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime,
+                                        TimeUnit unit, BlockingQueue<Runnable> workQueue,
+                                        ThreadFactory threadFactory) {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory);
     }
 
-    public KouplelessThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit,
-                                        BlockingQueue<Runnable> workQueue, RejectedExecutionHandler handler) {
+    public KouplelessThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime,
+                                        TimeUnit unit, BlockingQueue<Runnable> workQueue,
+                                        RejectedExecutionHandler handler) {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, handler);
     }
 
-    public KouplelessThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit,
-                                        BlockingQueue<Runnable> workQueue, ThreadFactory threadFactory, RejectedExecutionHandler handler) {
-        super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, handler);
+    public KouplelessThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime,
+                                        TimeUnit unit, BlockingQueue<Runnable> workQueue,
+                                        ThreadFactory threadFactory,
+                                        RejectedExecutionHandler handler) {
+        super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory,
+            handler);
     }
-
 
     public void execute(Runnable runnable) {
         super.execute(getRunnable(runnable));
@@ -57,14 +77,14 @@ public class KouplelessThreadPoolExecutor extends ThreadPoolExecutor {
     }
 
     private Runnable getRunnable(Runnable runnable) {
-        if(runnable instanceof KouplelessRunnable) {
+        if (runnable instanceof KouplelessRunnable) {
             return runnable;
         }
         return wrapRunnable(runnable);
     }
 
     private <T> Callable<T> getCallable(Callable<T> callable) {
-        if(callable instanceof KouplelessCallable) {
+        if (callable instanceof KouplelessCallable) {
             return callable;
         }
         return KouplelessCallable.wrap(callable);
