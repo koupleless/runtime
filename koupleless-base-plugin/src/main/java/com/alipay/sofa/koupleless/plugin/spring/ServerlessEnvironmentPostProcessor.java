@@ -50,43 +50,51 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @author yuanyuan
  * @author zzl_i
- * @since 2023/10/30 9:48 下午
  * @version 1.0.0
+ * @since 2023/10/30 9:48 下午
  */
 public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProcessor, Ordered {
 
-    /** Constant <code>SPRING_CONFIG_LOCATION="spring.config.location"</code> */
-    public static final String                        SPRING_CONFIG_LOCATION                     = "spring.config.location";
+    /**
+     * Constant <code>SPRING_CONFIG_LOCATION="spring.config.location"</code>
+     */
+    public static final String SPRING_CONFIG_LOCATION = "spring.config.location";
 
-    /** Constant <code>SPRING_ADDITIONAL_LOCATION="spring.config.additional-location"</code> */
-    public static final String                        SPRING_ADDITIONAL_LOCATION                 = "spring.config.additional-location";
+    /**
+     * Constant <code>SPRING_ADDITIONAL_LOCATION="spring.config.additional-location"</code>
+     */
+    public static final String SPRING_ADDITIONAL_LOCATION = "spring.config.additional-location";
 
-    /** Constant <code>SPRING_ACTIVE_PROFILES="spring.profiles.active"</code> */
-    public static final String                        SPRING_ACTIVE_PROFILES                     = "spring.profiles.active";
+    /**
+     * Constant <code>SPRING_ACTIVE_PROFILES="spring.profiles.active"</code>
+     */
+    public static final String SPRING_ACTIVE_PROFILES = "spring.profiles.active";
 
-    private final static String                       ACTIVE_CONFIG_FORMAT                       = "config/%s/application-%s.properties";
+    private final static String ACTIVE_CONFIG_FORMAT = "config/%s/application-%s.properties";
 
-    private final static String                       DEFAULT_CONFIG_FORMAT                      = "config/%s/application.properties";
+    private final static String DEFAULT_CONFIG_FORMAT = "config/%s/application.properties";
 
-    private final static String                       SOFA_ARK_BIZ_PROPERTY_SOURCE_PREFIX        = "Biz-Config resource";
+    private final static String SOFA_ARK_BIZ_PROPERTY_SOURCE_PREFIX = "Biz-Config resource";
 
     // 框架定义的允许共享的配置列表
-    private static final Set<String>                  DEFAULT_SHARE_KEYS                         = new HashSet<>();
+    private static final Set<String> DEFAULT_SHARE_KEYS = new HashSet<>();
 
-    private static final Map<String, String>          COMPATIBLE_KEYS                            = new HashMap<>();
+    private static final Map<String, String> COMPATIBLE_KEYS = new HashMap<>();
 
     // 允许用户扩展的配置列表
-    private static final String                       ENV_SHARE_KEY                              = "ark.common.env.share.keys";
-    private static final String                       MASTER_BIZ_PROPERTIES_PROPERTY_SOURCE_NAME = "MasterBiz-Config resource";
-    private static final Set<String>                  BASE_APP_SHARE_ENV_KEYS                    = new HashSet<>();
+    private static final String      ENV_SHARE_KEY                              = "ark.common.env.share.keys";
+    private static final String      MASTER_BIZ_PROPERTIES_PROPERTY_SOURCE_NAME = "MasterBiz-Config resource";
+    private static final Set<String> BASE_APP_SHARE_ENV_KEYS                    = new HashSet<>();
 
-    private static final AtomicReference<Environment> MASTER_ENV                                 = new AtomicReference<>();
+    private static final AtomicReference<Environment> MASTER_ENV = new AtomicReference<>();
 
     static {
         COMPATIBLE_KEYS.put("logging.path", "logging.file.path");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment,
                                        SpringApplication application) {
@@ -97,7 +105,7 @@ public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProces
         }
         // 模块
         if (ArkClient.getMasterBiz().getBizClassLoader() != Thread.currentThread()
-            .getContextClassLoader()) {
+                .getContextClassLoader()) {
             // 禁用模块 spring.config.location 和 spring.config.additional-location
             String configLocation = System.getProperty(SPRING_CONFIG_LOCATION);
             String additionalLocation = System.getProperty(SPRING_ADDITIONAL_LOCATION);
@@ -108,12 +116,9 @@ public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProces
                 while (iterator.hasNext()) {
                     PropertySource<?> next = iterator.next();
                     String psName = next.getName();
-                    boolean hasPsName = StringUtils.isEmpty(psName);
-                    boolean isFromConfigLocation = !StringUtils.isEmpty(configLocation)
-                        && psName.contains(getCanonicalPath(configLocation));
-                    boolean isFromAdditionalLocation = !StringUtils.isEmpty(additionalLocation)
-                        && psName.contains(getCanonicalPath(additionalLocation));
-                    if (hasPsName && (isFromAdditionalLocation || isFromConfigLocation)) {
+                    if (!StringUtils.isEmpty(psName)
+                        && (StringUtils.contains(psName, getCanonicalPath(configLocation))
+                            || StringUtils.contains(psName, getCanonicalPath(additionalLocation)))) {
                         toRemove.add(psName);
                     }
                 }
@@ -125,13 +130,13 @@ public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProces
             List<String> propertiesPaths = inferConfigurationPropertiesPaths(environment);
             for (String propertiesPath : propertiesPaths) {
                 Properties properties = PropertiesUtil
-                    .loadProperties(Thread.currentThread().getContextClassLoader(), propertiesPath);
+                        .loadProperties(Thread.currentThread().getContextClassLoader(), propertiesPath);
                 if (!properties.isEmpty()) {
                     PropertiesPropertySource newPropertySource = new PropertiesPropertySource(
-                        SOFA_ARK_BIZ_PROPERTY_SOURCE_PREFIX.concat(propertiesPath), properties);
+                            SOFA_ARK_BIZ_PROPERTY_SOURCE_PREFIX.concat(propertiesPath), properties);
 
                     addBizPropertySourceBeforeApplicationPropertySource(environment,
-                        newPropertySource);
+                            newPropertySource);
                     getLogger().info("customize biz properties: {}", propertiesPath);
                 }
             }
@@ -147,10 +152,10 @@ public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProces
     private void addBizPropertySourceBeforeApplicationPropertySource(ConfigurableEnvironment environment,
                                                                      PropertiesPropertySource bizPropertySource) {
         PropertySource applicationPropertySourceInBiz = environment.getPropertySources().stream()
-            .filter(ps -> ps instanceof OriginTrackedMapPropertySource).findFirst().orElse(null);
+                .filter(ps -> ps instanceof OriginTrackedMapPropertySource).findFirst().orElse(null);
         if (applicationPropertySourceInBiz != null) {
             environment.getPropertySources().addBefore(applicationPropertySourceInBiz.getName(),
-                bizPropertySource);
+                    bizPropertySource);
         } else {
             environment.getPropertySources().addLast(bizPropertySource);
         }
@@ -158,17 +163,17 @@ public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProces
 
     private List<String> inferConfigurationPropertiesPaths(ConfigurableEnvironment environment) {
         Biz biz = ArkClient.getBizManagerService()
-            .getBizByClassLoader(Thread.currentThread().getContextClassLoader());
+                .getBizByClassLoader(Thread.currentThread().getContextClassLoader());
         List<String> configurationPropertiesPath = new ArrayList<>();
         String propertyFromSys = System.getProperty(SPRING_ACTIVE_PROFILES);
         String propertyFromDefault = environment.getProperty(SPRING_ACTIVE_PROFILES);
         String property = StringUtils.isEmpty(propertyFromSys) ? propertyFromDefault
-            : propertyFromSys;
+                : propertyFromSys;
         if (!StringUtils.isEmpty(property)) {
             String[] activeProfiles = property.split(",");
             for (String activeProfile : activeProfiles) {
                 configurationPropertiesPath
-                    .add(String.format(ACTIVE_CONFIG_FORMAT, biz.getBizName(), activeProfile));
+                        .add(String.format(ACTIVE_CONFIG_FORMAT, biz.getBizName(), activeProfile));
             }
         }
         configurationPropertiesPath.add(String.format(DEFAULT_CONFIG_FORMAT, biz.getBizName()));
@@ -180,13 +185,14 @@ public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProces
         BASE_APP_SHARE_ENV_KEYS.addAll(DEFAULT_SHARE_KEYS);
         // 增加基座用户定义的共享配置列表
         BASE_APP_SHARE_ENV_KEYS.addAll(org.springframework.util.StringUtils
-            .commaDelimitedListToSet(environment.getProperty(ENV_SHARE_KEY)));
+                .commaDelimitedListToSet(environment.getProperty(ENV_SHARE_KEY)));
         MASTER_ENV.set(environment);
         registerCompatibleProperty(environment);
     }
 
     /**
      * 注册兼容性配置，如果没有配置oldKey，用newKey的值代替
+     *
      * @param environment
      */
     private void registerCompatibleProperty(ConfigurableEnvironment environment) {
@@ -196,7 +202,7 @@ public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProces
             keepCompatible(environment, properties, entry.getKey(), entry.getValue());
         }
         PropertySource compatiblePropertySource = new PropertiesPropertySource(
-            "compatiblePropertySource", properties);
+                "compatiblePropertySource", properties);
         environment.getPropertySources().addLast(compatiblePropertySource);
         getLogger().info("register compatiblePropertySource to env,{}", properties);
     }
@@ -218,10 +224,10 @@ public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProces
 
         //构建 MasterBizPropertySource，注册到 environment 中
         MasterBizPropertySource masterBizPropertySource = new MasterBizPropertySource(
-            MASTER_BIZ_PROPERTIES_PROPERTY_SOURCE_NAME, masterEnv, BASE_APP_SHARE_ENV_KEYS);
+                MASTER_BIZ_PROPERTIES_PROPERTY_SOURCE_NAME, masterEnv, BASE_APP_SHARE_ENV_KEYS);
         bizEnv.getPropertySources().addLast(masterBizPropertySource);
         getLogger().info("register master biz property source to biz, shareKeys: {}",
-            BASE_APP_SHARE_ENV_KEYS);
+                BASE_APP_SHARE_ENV_KEYS);
     }
 
     /**
@@ -232,6 +238,9 @@ public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProces
      */
     public String getCanonicalPath(String path) {
         try {
+            if (StringUtils.isEmpty(path)) {
+                return path;
+            }
             File file = new File((path));
             if (file.exists() && file.isDirectory()) {
                 return file.getCanonicalPath();
@@ -245,7 +254,7 @@ public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProces
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * 优先级在 ConfigFileApplicationListener / ConfigDataEnvironmentPostProcessor 紧跟之后
      */
     @Override
