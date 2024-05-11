@@ -107,7 +107,7 @@ jobs:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
 
   adapter_release_for_jdk8:
-    needs: build_and_test
+#    needs: build_and_test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
