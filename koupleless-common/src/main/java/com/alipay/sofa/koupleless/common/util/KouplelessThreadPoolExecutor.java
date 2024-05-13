@@ -1,19 +1,3 @@
-/*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package com.alipay.sofa.koupleless.common.util;
 
 import com.alipay.sofa.koupleless.common.api.KouplelessCallable;
@@ -58,43 +42,21 @@ public class KouplelessThreadPoolExecutor extends ThreadPoolExecutor {
     }
 
     public void execute(Runnable runnable) {
-        super.execute(getRunnable(runnable));
+        super.execute(KouplelessRunnable.wrap(runnable));
     }
 
     @Override
     public Future<?> submit(Runnable runnable) {
-        return super.submit(getRunnable(runnable));
+        return super.submit(KouplelessRunnable.wrap(runnable));
     }
 
     @Override
     public <T> Future<T> submit(Runnable runnable, T result) {
-        return super.submit(getRunnable(runnable), result);
+        return super.submit(KouplelessRunnable.wrap(runnable), result);
     }
 
     @Override
     public <T> Future<T> submit(Callable<T> callable) {
-        return super.submit(getCallable(callable));
-    }
-
-    private Runnable getRunnable(Runnable runnable) {
-        if (runnable instanceof KouplelessRunnable) {
-            return runnable;
-        }
-        return wrapRunnable(runnable);
-    }
-
-    private <T> Callable<T> getCallable(Callable<T> callable) {
-        if (callable instanceof KouplelessCallable) {
-            return callable;
-        }
-        return KouplelessCallable.wrap(callable);
-    }
-
-    private Runnable wrapRunnable(Runnable runnable) {
-        return KouplelessRunnable.wrap(runnable);
-    }
-
-    private <T> Callable<T> wrapCallable(Callable<T> callable) {
-        return KouplelessCallable.wrap(callable);
+        return super.submit(KouplelessCallable.wrap(callable));
     }
 }
