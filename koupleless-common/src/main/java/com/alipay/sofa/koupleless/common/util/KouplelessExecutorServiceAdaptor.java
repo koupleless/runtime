@@ -82,26 +82,32 @@ public class KouplelessExecutorServiceAdaptor implements ExecutorService {
 
     @Override
     public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks) throws InterruptedException {
-        return executorService.invokeAll(tasks.stream().map(KouplelessCallable::wrap).collect(Collectors.toList()));
+        return executorService
+            .invokeAll(tasks.stream().map(KouplelessCallable::wrap).collect(Collectors.toList()));
     }
 
     @Override
     public <T> List<Future<T>> invokeAll(Collection<? extends Callable<T>> tasks, long timeout,
                                          TimeUnit unit) throws InterruptedException {
-        return executorService.invokeAll(tasks.stream().map(KouplelessCallable::wrap).collect(Collectors.toList()), timeout, unit);
+        return executorService.invokeAll(
+            tasks.stream().map(KouplelessCallable::wrap).collect(Collectors.toList()), timeout,
+            unit);
     }
 
     @Override
     public <T> T invokeAny(Collection<? extends Callable<T>> tasks) throws InterruptedException,
                                                                     ExecutionException {
-        return executorService.invokeAny(tasks.stream().map(KouplelessCallable::wrap).collect(Collectors.toList()));
+        return executorService
+            .invokeAny(tasks.stream().map(KouplelessCallable::wrap).collect(Collectors.toList()));
     }
 
     @Override
     public <T> T invokeAny(Collection<? extends Callable<T>> tasks, long timeout,
                            TimeUnit unit) throws InterruptedException, ExecutionException,
                                           TimeoutException {
-        return executorService.invokeAny(tasks.stream().map(KouplelessCallable::wrap).collect(Collectors.toList()), timeout, unit);
+        return executorService.invokeAny(
+            tasks.stream().map(KouplelessCallable::wrap).collect(Collectors.toList()), timeout,
+            unit);
     }
 
     @Override
