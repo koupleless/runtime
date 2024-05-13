@@ -30,6 +30,12 @@ public class KouplelessRunnable implements Runnable {
     }
 
     public static Runnable wrap(Runnable runnable) {
+        if (runnable == null)
+            throw new NullPointerException();
+
+        if (runnable instanceof KouplelessRunnable) {
+            return runnable;
+        }
         return new KouplelessRunnable(runnable);
     }
 

@@ -52,7 +52,7 @@ public class KouplelessThreadPoolExecutorTest {
                 }
             });
             executor.shutdown();
-        }finally {
+        } finally {
             Thread.currentThread().setContextClassLoader(currentCl);
         }
     }
