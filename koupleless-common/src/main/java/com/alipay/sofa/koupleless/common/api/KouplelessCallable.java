@@ -32,6 +32,12 @@ public class KouplelessCallable<T> implements Callable<T> {
     }
 
     public static <T> Callable<T> wrap(Callable<T> callable) {
+        if (callable == null)
+            throw new NullPointerException();
+
+        if (callable instanceof KouplelessCallable) {
+            return callable;
+        }
         return new KouplelessCallable<T>(callable);
     }
 
