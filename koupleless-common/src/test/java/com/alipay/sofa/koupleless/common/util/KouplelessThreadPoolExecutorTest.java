@@ -33,15 +33,17 @@ import static org.junit.Assert.assertEquals;
  */
 public class KouplelessThreadPoolExecutorTest {
 
-    private URLClassLoader classLoader = mockClassLoader();
-    private KouplelessThreadPoolExecutor executor = new KouplelessThreadPoolExecutor(10, 10, 60L,
-            TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+    private URLClassLoader               classLoader = mockClassLoader();
+    private KouplelessThreadPoolExecutor executor    = new KouplelessThreadPoolExecutor(10, 10, 60L,
+        TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+
     @Test
     public void test() {
         ClassLoader currentCl = Thread.currentThread().getContextClassLoader();
         try {
 
-            Runnable runnable = () -> assertEquals(classLoader, Thread.currentThread().getContextClassLoader());
+            Runnable runnable = () -> assertEquals(classLoader,
+                Thread.currentThread().getContextClassLoader());
 
             Callable<String> callable = () -> {
                 assertEquals(classLoader, Thread.currentThread().getContextClassLoader());
@@ -51,7 +53,7 @@ public class KouplelessThreadPoolExecutorTest {
             Thread.currentThread().setContextClassLoader(classLoader);
             executor.submit(runnable);
             executor.submit(callable);
-            executor.submit(runnable,"mock");
+            executor.submit(runnable, "mock");
 
         } finally {
             Thread.currentThread().setContextClassLoader(currentCl);
@@ -63,7 +65,7 @@ public class KouplelessThreadPoolExecutorTest {
     }
 
     @After
-    public void after(){
+    public void after() {
         executor.shutdown();
     }
 }
