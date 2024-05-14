@@ -61,6 +61,9 @@ public class BaseStartUpHealthIndicator extends AbstractHealthIndicator
     /** Constant <code>WITH_ALL_BIZ_READINESS="koupleless.healthcheck.base.readiness.w"{trunked}</code> */
     public static final String                      WITH_ALL_BIZ_READINESS = "koupleless.healthcheck.base.readiness.withAllBizReadiness";
 
+    /**
+     * this is ugly, but we need to support both springboot1.x, 2.x and above, we need to use reflection to support both
+     */
     public Method                                   healthBuildWithDetails = null;
 
     /**
@@ -70,6 +73,9 @@ public class BaseStartUpHealthIndicator extends AbstractHealthIndicator
      */
     public BaseStartUpHealthIndicator(boolean withAllBizReadiness) {
 
+        // this is ugly, but we need to support both springboot1.x, 2.x and above, we need to use reflection to support both
+        // springboot 1.x only contains default constructor
+        // springboot 2.x and above contains constructor with string args, we could set the failed message.
         Constructor<?>[] constructors = this.getClass().getSuperclass().getConstructors();
         // check whether contains constructor with String parameter
         boolean found = false;

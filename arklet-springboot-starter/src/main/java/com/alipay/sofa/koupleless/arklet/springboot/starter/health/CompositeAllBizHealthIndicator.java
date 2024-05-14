@@ -40,6 +40,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class CompositeAllBizHealthIndicator extends AbstractHealthIndicator {
 
+    /**
+     * this is ugly, but we need to support both springboot1.x, 2.x and above, we need to use reflection to support both
+     */
     public Method healthBuildWithDetails = null;
 
     public CompositeAllBizHealthIndicator() {
