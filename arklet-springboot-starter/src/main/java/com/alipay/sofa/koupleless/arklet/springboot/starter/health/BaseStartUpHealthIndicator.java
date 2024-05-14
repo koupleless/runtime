@@ -32,6 +32,11 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.event.SpringApplicationEvent;
 import org.springframework.context.ApplicationListener;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -57,12 +62,50 @@ public class BaseStartUpHealthIndicator extends AbstractHealthIndicator
     public static final String                      WITH_ALL_BIZ_READINESS = "koupleless.healthcheck.base.readiness.withAllBizReadiness";
 
     /**
+     * this is ugly, but we need to support both springboot1.x, 2.x and above, we need to use reflection to support both
+     */
+    public Method                                   healthBuildWithDetails = null;
+
+    /**
      * <p>Constructor for BaseStartUpHealthIndicator.</p>
      *
      * @param withAllBizReadiness a boolean
      */
     public BaseStartUpHealthIndicator(boolean withAllBizReadiness) {
-        super("ark biz start up health check failed");
+
+        // this is ugly, but we need to support both springboot1.x, 2.x and above, we need to use reflection to support both
+        // springboot 1.x only contains default constructor
+        // springboot 2.x and above contains constructor with string args, we could set the failed message.
+        Constructor<?>[] constructors = this.getClass().getSuperclass().getConstructors();
+        // check whether contains constructor with String parameter
+        boolean found = false;
+        Constructor<?> constructorWithStringArg = null;
+        Constructor<?> constructorWithNoArg = null;
+        for (Constructor<?> c : constructors) {
+            if (c.getParameterCount() == 1 && c.getParameters()[0].getType().equals(String.class)) {
+                constructorWithStringArg = c;
+            } else if (c.getParameterCount() == 0) {
+                constructorWithNoArg = c;
+            }
+        }
+
+        try {
+            if (constructorWithStringArg != null) {
+                constructorWithStringArg.newInstance("ark biz start up health check failed");
+            } else if (constructorWithNoArg != null) {
+                constructorWithNoArg.newInstance();
+            }
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            // ignore
+            throw new RuntimeException("failed to create base startup health indicator", e);
+        }
+
+        try {
+            this.healthBuildWithDetails = Health.Builder.class.getMethod("withDetails", Map.class);
+        } catch (NoSuchMethodException e) {
+            // ignore
+        }
+
         this.associateWithAllBizReadiness = withAllBizReadiness;
     }
 
@@ -105,8 +148,15 @@ public class BaseStartUpHealthIndicator extends AbstractHealthIndicator
     /** {@inheritDoc} */
     @Override
     protected void doHealthCheck(Health.Builder builder) {
-        builder.withDetail(ArkClient.getMasterBiz().getIdentity(), baseStartUpStatus)
-            .withDetails(bizStartUpStatus);
+        builder.withDetail(ArkClient.getMasterBiz().getIdentity(), baseStartUpStatus);
+
+        if (healthBuildWithDetails != null) {
+            try {
+                healthBuildWithDetails.invoke(builder, bizStartUpStatus);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         if (!associateWithAllBizReadiness) {
             builder.status(baseStartUpStatus);
