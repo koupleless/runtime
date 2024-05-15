@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.common.api;
+package com.alipay.sofa.koupleless.plugin.concurrent;
+
+import com.alipay.sofa.koupleless.plugin.manager.handler.ShutdownExecutorServicesOnUninstallEventHandler;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
@@ -32,18 +34,21 @@ public class KouplelessThreadPoolExecutor extends ThreadPoolExecutor {
     public KouplelessThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime,
                                         TimeUnit unit, BlockingQueue<Runnable> workQueue) {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue);
+        ShutdownExecutorServicesOnUninstallEventHandler.manageExecutorService(this);
     }
 
     public KouplelessThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime,
                                         TimeUnit unit, BlockingQueue<Runnable> workQueue,
                                         ThreadFactory threadFactory) {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory);
+        ShutdownExecutorServicesOnUninstallEventHandler.manageExecutorService(this);
     }
 
     public KouplelessThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime,
                                         TimeUnit unit, BlockingQueue<Runnable> workQueue,
                                         RejectedExecutionHandler handler) {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, handler);
+        ShutdownExecutorServicesOnUninstallEventHandler.manageExecutorService(this);
     }
 
     public KouplelessThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime,
@@ -52,6 +57,7 @@ public class KouplelessThreadPoolExecutor extends ThreadPoolExecutor {
                                         RejectedExecutionHandler handler) {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory,
             handler);
+        ShutdownExecutorServicesOnUninstallEventHandler.manageExecutorService(this);
     }
 
     public void execute(Runnable runnable) {
