@@ -35,11 +35,11 @@ import static org.junit.Assert.assertEquals;
  * @author lianglipeng.llp@alibaba-inc.com
  * @version $Id: KouplelessScheduledExecutorServiceAdaptorTest.java, v 0.1 2024年05月14日 00:05 立蓬 Exp $
  */
-public class KouplelessScheduledExecutorServiceAdaptorTest {
+public class KouplelessScheduledExecutorServiceTest {
 
     private ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(4);
 
-    private ScheduledExecutorService executor                 = new KouplelessScheduledExecutorServiceAdaptor(
+    private ScheduledExecutorService executor                 = new KouplelessScheduledExecutorService(
         scheduledExecutorService);
 
     private URLClassLoader           classLoader              = mockClassLoader();
