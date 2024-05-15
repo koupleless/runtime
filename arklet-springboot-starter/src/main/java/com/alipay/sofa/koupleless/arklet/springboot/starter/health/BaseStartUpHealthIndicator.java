@@ -78,7 +78,6 @@ public class BaseStartUpHealthIndicator extends AbstractHealthIndicator
         // springboot 2.x and above contains constructor with string args, we could set the failed message.
         Constructor<?>[] constructors = this.getClass().getSuperclass().getConstructors();
         // check whether contains constructor with String parameter
-        boolean found = false;
         Constructor<?> constructorWithStringArg = null;
         Constructor<?> constructorWithNoArg = null;
         for (Constructor<?> c : constructors) {
