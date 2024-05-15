@@ -34,10 +34,10 @@ import java.util.stream.Collectors;
  * @author lianglipeng.llp@alibaba-inc.com
  * @version $Id: KouplelessScheduledExecutorServiceAdaptor.java, v 0.1 2024年05月13日 15:54 立蓬 Exp $
  */
-public class KouplelessScheduledExecutorServiceAdaptor implements ScheduledExecutorService {
+public class KouplelessScheduledExecutorService implements ScheduledExecutorService {
     private final ScheduledExecutorService scheduledExecutorService;
 
-    public KouplelessScheduledExecutorServiceAdaptor(ScheduledExecutorService scheduledExecutorService) {
+    public KouplelessScheduledExecutorService(ScheduledExecutorService scheduledExecutorService) {
         this.scheduledExecutorService = scheduledExecutorService;
     }
 

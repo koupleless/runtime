@@ -35,10 +35,10 @@ import static org.junit.Assert.assertEquals;
  * @author lianglipeng.llp@alibaba-inc.com
  * @version $Id: KouplelessExecutorServiceAdaptorTest.java, v 0.1 2024年05月14日 00:05 立蓬 Exp $
  */
-public class KouplelessExecutorServiceAdaptorTest {
+public class KouplelessExecutorServiceTest {
     private ExecutorService executorService = Executors.newFixedThreadPool(6);
 
-    private ExecutorService executor        = new KouplelessExecutorServiceAdaptor(executorService);
+    private ExecutorService executor        = new KouplelessExecutorService(executorService);
 
     private URLClassLoader  classLoader     = mockClassLoader();
 
