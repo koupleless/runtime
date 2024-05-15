@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.common.util;
+package com.alipay.sofa.koupleless.common.api;
 
 import com.alipay.sofa.ark.common.util.ClassLoaderUtils;
 import com.google.common.collect.Lists;
@@ -24,8 +24,8 @@ import org.junit.Test;
 import java.net.URLClassLoader;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -33,29 +33,28 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * @author lianglipeng.llp@alibaba-inc.com
- * @version $Id: KouplelessExecutorServiceAdaptorTest.java, v 0.1 2024年05月14日 00:05 立蓬 Exp $
+ * @version $Id: KouplelessScheduledExecutorServiceAdaptorTest.java, v 0.1 2024年05月14日 00:05 立蓬 Exp $
  */
-public class KouplelessExecutorServiceTest {
-    private ExecutorService executorService = Executors.newFixedThreadPool(6);
+public class KouplelessScheduledExecutorServiceTest {
 
-    private ExecutorService executor        = new KouplelessExecutorService(executorService);
+    private ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(4);
 
-    private URLClassLoader  classLoader     = mockClassLoader();
+    private ScheduledExecutorService executor                 = new KouplelessScheduledExecutorService(
+        scheduledExecutorService);
+
+    private URLClassLoader           classLoader              = mockClassLoader();
 
     @Test
     public void test() {
         ClassLoader currentCl = Thread.currentThread().getContextClassLoader();
         try {
             Thread.currentThread().setContextClassLoader(classLoader);
-
             Runnable runnable = () -> assertEquals(classLoader,
                 Thread.currentThread().getContextClassLoader());
-
             Callable<String> callable = () -> {
                 assertEquals(classLoader, Thread.currentThread().getContextClassLoader());
                 return "mock";
             };
-
             executor.submit(runnable);
             executor.submit(callable);
             executor.submit(runnable, "mock");
@@ -63,7 +62,6 @@ public class KouplelessExecutorServiceTest {
             executor.invokeAll(Lists.newArrayList(callable), 2, TimeUnit.SECONDS);
             executor.invokeAny(Lists.newArrayList(callable));
             executor.invokeAny(Lists.newArrayList(callable), 2, TimeUnit.SECONDS);
-
         } catch (InterruptedException | ExecutionException | TimeoutException e) {
             throw new RuntimeException(e);
         } finally {
