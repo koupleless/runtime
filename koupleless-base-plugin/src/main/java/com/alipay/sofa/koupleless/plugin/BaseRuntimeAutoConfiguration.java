@@ -19,6 +19,7 @@ package com.alipay.sofa.koupleless.plugin;
 import com.alipay.sofa.koupleless.common.BizRuntimeContext;
 import com.alipay.sofa.koupleless.common.service.ArkAutowiredBeanPostProcessor;
 import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.ApplicationContext;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -56,6 +57,7 @@ public class BaseRuntimeAutoConfiguration {
      */
     @Bean
     @ConditionalOnMissingBean
+    @ConditionalOnClass(name = { "com.alipay.sofa.koupleless.common.service.ArkAutowiredBeanPostProcessor" })
     public ArkAutowiredBeanPostProcessor arkAutowiredBeanPostProcessor() {
         return new ArkAutowiredBeanPostProcessor();
     }
