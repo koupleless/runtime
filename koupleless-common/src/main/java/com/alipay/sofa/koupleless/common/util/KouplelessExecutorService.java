@@ -33,10 +33,10 @@ import java.util.stream.Collectors;
  * @author lianglipeng.llp@alibaba-inc.com
  * @version $Id: KouplelessExecutorServiceAdaptor.java, v 0.1 2024年05月13日 12:03 立蓬 Exp $
  */
-public class KouplelessExecutorServiceAdaptor implements ExecutorService {
+public class KouplelessExecutorService implements ExecutorService {
     private final ExecutorService executorService;
 
-    public KouplelessExecutorServiceAdaptor(ExecutorService executorService) {
+    public KouplelessExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
     }
 
