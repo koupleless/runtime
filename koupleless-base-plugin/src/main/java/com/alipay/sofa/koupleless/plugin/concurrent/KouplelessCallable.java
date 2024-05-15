@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.common.api;
+package com.alipay.sofa.koupleless.plugin.concurrent;
 
 import java.util.concurrent.Callable;
 
