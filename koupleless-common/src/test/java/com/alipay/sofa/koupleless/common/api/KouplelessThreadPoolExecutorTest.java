@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.common.util;
+package com.alipay.sofa.koupleless.common.api;
 
 import com.alipay.sofa.ark.common.util.ClassLoaderUtils;
 import org.junit.After;
