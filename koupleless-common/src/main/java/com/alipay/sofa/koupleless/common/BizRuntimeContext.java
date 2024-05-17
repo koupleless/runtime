@@ -17,6 +17,10 @@
 package com.alipay.sofa.koupleless.common;
 
 import com.alipay.sofa.ark.spi.model.Biz;
+import com.alipay.sofa.koupleless.common.service.BeanRegistry;
+import com.alipay.sofa.koupleless.common.service.Component;
+import com.alipay.sofa.koupleless.common.service.ComponentRegistry;
+import com.alipay.sofa.koupleless.common.service.ServiceComponent;
 import com.alipay.sofa.koupleless.common.exception.BizRuntimeException;
 import com.alipay.sofa.koupleless.common.exception.ErrorCodes;
 import com.alipay.sofa.koupleless.common.service.ServiceProxyCache;
@@ -32,7 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author zzl_i
  * @version 1.0.0
  */
-public class BizRuntimeContext {
+public class BizRuntimeContext implements ComponentRegistry {
 
     private String                                           bizName;
 
@@ -41,6 +45,10 @@ public class BizRuntimeContext {
     private ApplicationContext                               rootApplicationContext;
 
     private Map<ClassLoader, Map<String, ServiceProxyCache>> serviceProxyCaches = new ConcurrentHashMap<>();
+
+
+    // Beanregistry key为 "identifier"
+    private             Map<String/*protocol_full_class_name*/, BeanRegistry<ServiceComponent>>   serviceMap;
 
     /**
      * <p>Getter for the field <code>bizName</code>.</p>
@@ -70,7 +78,7 @@ public class BizRuntimeContext {
     }
 
     /**
-     * <p>Setter for the field <code>appClassLoader</code>.</p>
+     * <p>Setter for the field <code>appClassLoader</code>.</p>z
      *
      * @param appClassLoader a {@link java.lang.ClassLoader} object
      */
@@ -151,4 +159,26 @@ public class BizRuntimeContext {
         }
     }
 
+    @Override
+    public void register(Component bean) {
+        bean.setBizRuntimeContext(this);
+        if (bean instanceof ServiceComponent) {
+            doRegister(serviceMap.get(bean.getProtocol()), bean);
+        }
+    }
+
+    private void doRegister(BeanRegistry registry, Component bean) {
+        if (registry == null) {
+            throw new IllegalArgumentException("protocol " + bean.getProtocol() + " not support");
+        }
+        registry.register(bean.getIdentifier(), bean);
+    }
+
+    @Override
+    public void unregister(Component bean) {
+        BeanRegistry<ServiceComponent> registry = serviceMap.get(bean.getProtocol());
+        if (registry != null) {
+            registry.unRegister(bean.getIdentifier());
+        }
+    }
 }

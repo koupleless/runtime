@@ -52,3 +52,27 @@ adapterMappings:
       regexp: ".*spring-boot-starter-logging:.*"
     adapter:
       artifactId: koupleless-adapter-logback
+  - matcher:
+      regexp: ".*spring-boot-autoconfigure:2\\.[3-6]\\..*"
+    adapter:
+      artifactId: koupleless-adapter-executorservice-spring-2.3-2.6
+  - matcher:
+      regexp: ".*spring-boot-autoconfigure:2\\.7\\.*"
+    adapter:
+      artifactId: koupleless-adapter-executor-spring-2.7
+  - matcher:
+      regexp: ".*spring-boot-autoconfigure:2\\.3\\.*"
+    adapter:
+      artifactId: koupleless-adapter-scheduler-spring-2.3-2.4.5
+  - matcher:
+      regexp: ".*spring-boot-autoconfigure:2\\.4\\.[0-5]"
+    adapter:
+      artifactId: koupleless-adapter-scheduler-spring-2.3-2.4.5
+  - matcher:
+      regexp: ".*spring-boot-autoconfigure:2\\.4\\.([6-9]|\d{2,}).*"
+    adapter:
+      artifactId: koupleless-adapter-scheduler-spring-2.4.6-2.7
+  - matcher:
+      regexp: ".*spring-boot-autoconfigure:2\\.[5-7]\\..*"
+    adapter:
+      artifactId: koupleless-adapter-scheduler-spring-2.4.6-2.7
