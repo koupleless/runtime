@@ -29,10 +29,17 @@ public class CustomBiz implements Biz {
 
     private final String bizName;
     private final String bizVersion;
+    private URL          bizUrl;
 
     public CustomBiz(String bizName, String bizVersion) {
         this.bizName = bizName;
         this.bizVersion = bizVersion;
+    }
+
+    public CustomBiz(String bizName, String bizVersion, URL bizUrl) {
+        this.bizName = bizName;
+        this.bizVersion = bizVersion;
+        this.bizUrl = bizUrl;
     }
 
     @Override
@@ -88,6 +95,11 @@ public class CustomBiz implements Biz {
     @Override
     public URL[] getClassPath() {
         return new URL[0];
+    }
+
+    @Override
+    public URL getBizUrl() {
+        return this.bizUrl;
     }
 
     @Override
