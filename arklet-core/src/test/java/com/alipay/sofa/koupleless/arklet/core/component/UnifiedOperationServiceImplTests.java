@@ -34,6 +34,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doReturn;
@@ -136,8 +137,10 @@ public class UnifiedOperationServiceImplTests {
             paths.add("/file/a-biz.jar");
             paths.add("/file/b-biz.jar");
             paths.add("/file/notbiz.jar");
+            Map<Integer, List<String>> pathsInOrder = new HashMap<>();
+            pathsInOrder.put(100, paths);
 
-            doReturn(paths).when(batchInstallHelper).getBizUrlsFromLocalFileSystem(any());
+            doReturn(pathsInOrder).when(batchInstallHelper).getBizUrlsFromLocalFileSystem(any());
 
             doReturn(new HashMap<>()).when(batchInstallHelper).getMainAttributes(anyString());
         }
