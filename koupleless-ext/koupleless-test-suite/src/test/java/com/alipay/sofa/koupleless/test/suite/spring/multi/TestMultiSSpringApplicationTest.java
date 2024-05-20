@@ -60,6 +60,7 @@ public class TestMultiSSpringApplicationTest {
         HelloService sampleBizService = application.getBizApplication("biz0")
             .getApplicationContext().getBean(HelloService.class);
 
-        Assert.assertTrue(sampleBizService instanceof SampleBizService);
+        Assert.assertEquals("com.alipay.sofa.koupleless.test.suite.biz.TestBizClassLoader",
+            sampleBizService.getClass().getClassLoader().getClass().getName());
     }
 }
