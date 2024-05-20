@@ -91,6 +91,11 @@ public class CustomBiz implements Biz {
     }
 
     @Override
+    public URL getBizUrl() {
+        return null;
+    }
+
+    @Override
     public Set<String> getDenyImportPackages() {
         return null;
     }

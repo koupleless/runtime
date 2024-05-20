@@ -14,36 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.common.service;
+package com.alipay.sofa.koupleless.common.model;
+
+import com.alipay.sofa.koupleless.common.service.AbstractServiceComponent;
+import com.alipay.sofa.koupleless.common.service.ServiceState;
+import lombok.Builder;
 
 /**
  * @author lianglipeng.llp@alibaba-inc.com
- * @version $Id: ServiceState.java, v 0.1 2024年05月20日 15:22 立蓬 Exp $
+ * @version $Id: MockServiceComponent.java, v 0.1 2024年05月20日 21:08 立蓬 Exp $
  */
-public enum ServiceState {
-                          EXPORTED("exported"), UNEXPORTED("unexported"), BROKEN("broken");
 
-    private String state;
-
-    ServiceState(String state) {
-        this.state = state;
-    }
-
-    public String getServiceState() {
-        return state;
-    }
-
-    @Override
-    public String toString() {
-        return getServiceState();
-    }
-
-    public static ServiceState of(String state) {
-        for (ServiceState it : values()) {
-            if (it.getServiceState().equalsIgnoreCase(state)) {
-                return it;
-            }
-        }
-        return BROKEN;
+public class MockServiceComponent extends AbstractServiceComponent {
+    @Builder
+    public MockServiceComponent(String identifier, Object bean, Class<?> beanClass,
+                                Class<?> interfaceType, Object metaData,
+                                ServiceState serviceState) {
+        super("mock", identifier, bean, beanClass, interfaceType, metaData, serviceState);
     }
 }
