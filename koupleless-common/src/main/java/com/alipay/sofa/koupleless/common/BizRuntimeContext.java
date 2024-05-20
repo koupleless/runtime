@@ -17,13 +17,13 @@
 package com.alipay.sofa.koupleless.common;
 
 import com.alipay.sofa.ark.spi.model.Biz;
-import com.alipay.sofa.koupleless.common.service.AbstractReferenceComponent;
-import com.alipay.sofa.koupleless.common.service.BeanRegistry;
-import com.alipay.sofa.koupleless.common.service.AbstractComponent;
-import com.alipay.sofa.koupleless.common.service.ComponentRegistry;
-import com.alipay.sofa.koupleless.common.service.AbstractServiceComponent;
 import com.alipay.sofa.koupleless.common.exception.BizRuntimeException;
 import com.alipay.sofa.koupleless.common.exception.ErrorCodes;
+import com.alipay.sofa.koupleless.common.service.AbstractComponent;
+import com.alipay.sofa.koupleless.common.service.AbstractReferenceComponent;
+import com.alipay.sofa.koupleless.common.service.AbstractServiceComponent;
+import com.alipay.sofa.koupleless.common.service.BeanRegistry;
+import com.alipay.sofa.koupleless.common.service.ComponentRegistry;
 import com.alipay.sofa.koupleless.common.service.ServiceProxyCache;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -39,18 +39,18 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class BizRuntimeContext implements ComponentRegistry {
 
-    private String                                                                            bizName;
+    private String                                                                             bizName;
 
-    private ClassLoader                                                                       appClassLoader;
+    private ClassLoader                                                                        appClassLoader;
 
-    private ApplicationContext                                                                rootApplicationContext;
+    private ApplicationContext                                                                 rootApplicationContext;
 
-    private Map<ClassLoader, Map<String, ServiceProxyCache>>                                  serviceProxyCaches = new ConcurrentHashMap<>();
+    private Map<ClassLoader, Map<String, ServiceProxyCache>>                                   serviceProxyCaches = new ConcurrentHashMap<>();
 
     // Beanregistry key为 "identifier"
-    private Map<String/*protocol_full_class_name*/, BeanRegistry<AbstractServiceComponent>>   serviceMap;
+    private Map<String/*protocol_full_class_name*/, BeanRegistry<AbstractServiceComponent>>   serviceMap         = new ConcurrentHashMap<>();
 
-    private Map<String/*protocol_full_class_name*/, BeanRegistry<AbstractReferenceComponent>> referenceMap;
+    private Map<String/*protocol_full_class_name*/, BeanRegistry<AbstractReferenceComponent>> referenceMap       = new ConcurrentHashMap<>();
 
     /**
      * <p>Getter for the field <code>bizName</code>.</p>
@@ -164,41 +164,50 @@ public class BizRuntimeContext implements ComponentRegistry {
     @Override
     public void registerService(AbstractServiceComponent bean) {
         bean.setBizRuntimeContext(this);
+        serviceMap.putIfAbsent(bean.getProtocol(), new BeanRegistry<>());
         doRegister(serviceMap.get(bean.getProtocol()), bean);
     }
 
     private void doRegister(BeanRegistry registry, AbstractComponent bean) {
-        if (registry == null) {
-            throw new IllegalArgumentException("protocol " + bean.getProtocol() + " not support");
-        }
         registry.register(bean.getIdentifier(), bean);
     }
 
     @Override
     public void unregisterService(AbstractServiceComponent bean) {
         BeanRegistry<AbstractServiceComponent> registry = serviceMap.get(bean.getProtocol());
-        if (registry != null) {
-            registry.unRegister(bean.getIdentifier());
+
+        if (null == registry) {
+            throw new BizRuntimeException(ErrorCodes.ServiceManager.E200002,
+                "protocol service" + bean.getProtocol() + " has not registered");
         }
+
+        registry.unRegister(bean.getIdentifier());
     }
 
     @Override
     public void registerReference(AbstractReferenceComponent bean) {
         bean.setBizRuntimeContext(this);
+        referenceMap.putIfAbsent(bean.getProtocol(), new BeanRegistry<>());
         doRegister(referenceMap.get(bean.getProtocol()), bean);
     }
 
     @Override
     public void unregisterReference(AbstractReferenceComponent bean) {
         BeanRegistry<AbstractReferenceComponent> registry = referenceMap.get(bean.getProtocol());
-        if (registry != null) {
-            registry.unRegister(bean.getIdentifier());
+        if (null == registry) {
+            throw new BizRuntimeException(ErrorCodes.ServiceManager.E200002,
+                "protocol reference" + bean.getProtocol() + " has not registered");
         }
+
+        registry.unRegister(bean.getIdentifier());
     }
 
     @Override
     public <T extends AbstractServiceComponent> T getServiceComponent(String protocol,
                                                                       String identifier) {
+        if (serviceMap.get(protocol) == null) {
+            return null;
+        }
         AbstractComponent serviceComponent = serviceMap.get(protocol).getBean(identifier);
         return serviceComponent == null ? null : (T) serviceComponent;
     }

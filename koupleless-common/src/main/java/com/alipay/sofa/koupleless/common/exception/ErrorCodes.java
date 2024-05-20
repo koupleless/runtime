@@ -56,6 +56,10 @@ public class ErrorCodes {
          * 服务找不到
          */
         public static final String E200001 = "200001";
+        /**
+         * 协议未注册
+         */
+        public static final String E200002 = "200002";
     }
 
 }
