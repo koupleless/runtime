@@ -114,7 +114,7 @@ public class SpringServiceAndBeanFinderTest {
         Mockito.when(biz1.getBizState()).thenReturn(BizState.RESOLVED);
         Exception exception1 = Assert.assertThrows(BizRuntimeException.class,
             () -> moduleBean.test());
-        Assert.assertEquals("biz biz1:version1 state resolved is not valid",
+        Assert.assertEquals("biz biz1:version1 is still installing when called",
             exception1.getMessage());
     }
 
@@ -188,12 +188,12 @@ public class SpringServiceAndBeanFinderTest {
     @Test
     public void testSpringServiceFinderWithoutBiz() {
         Mockito.when(bizManagerService.getBiz("biz1", "version1")).thenReturn(biz1);
-        Mockito.when(biz1.getBizState()).thenReturn(BizState.RESOLVED);
+        Mockito.when(biz1.getBizState()).thenReturn(BizState.UNRESOLVED);
         Exception exception1 = Assert.assertThrows(BizRuntimeException.class, () -> {
             SpringServiceFinder.getModuleService("biz1", "version1", "moduleBean",
                 ModuleBean.class);
         });
-        Assert.assertEquals("biz biz1:version1 state resolved is not valid",
+        Assert.assertEquals("biz biz1:version1 state unresolved is not valid",
             exception1.getMessage());
 
         Object newModuleBean = null;
