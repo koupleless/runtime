@@ -28,8 +28,8 @@ import java.util.List;
  * <p>MultiSpringTestConfig class.</p>
  *
  * @author CodeNoobKing
- * @since 2024/3/11
  * @version 1.0.0
+ * @since 2024/3/11
  */
 @NoArgsConstructor
 @AllArgsConstructor
@@ -37,7 +37,7 @@ import java.util.List;
 @Builder
 public class MultiSpringTestConfig {
 
-    private BaseSpringTestConfig      baseConfig;
+    private BaseSpringTestConfig baseConfig;
 
     private List<BizSpringTestConfig> bizConfigs;
 
@@ -51,6 +51,16 @@ public class MultiSpringTestConfig {
         }
         for (BizSpringTestConfig bizConfig : bizConfigs) {
             bizConfig.init();
+            bizConfig.getExcludeArtifactIds().add(baseConfig.getArtifactId());
+            bizConfig.getExcludeArtifactIds().remove(bizConfig.getArtifactId());
+            bizArtifactIds.add(bizConfig.getArtifactId());
+        }
+
+        baseConfig.getExcludeArtifactIds().addAll(bizArtifactIds);
+        for (BizSpringTestConfig bizConfig : bizConfigs) {
+            ArrayList<String> copy = new ArrayList<>(bizArtifactIds);
+            copy.remove(bizConfig.getArtifactId());
+            bizConfig.getExcludeArtifactIds().addAll(copy);
         }
     }
 }
