@@ -16,30 +16,22 @@
  */
 package com.alipay.sofa.koupleless.common.service;
 
-import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author lianglipeng.llp@alibaba-inc.com
- * @version $Id: ComponentRegistry.java, v 0.1 2024年05月17日 15:10 立蓬 Exp $
+ * @since 1.3.0
  */
-public interface ComponentRegistry {
-    /**
-     * Register a component
-     *
-     * @param bean
-     */
-    <T extends AbstractServiceComponent> void registerService(T bean);
+public abstract class AbstractServiceComponent extends AbstractComponent {
+    @Setter
+    @Getter
+    private ServiceState serviceState;
 
-    /**
-     * unregister component
-     * @param bean
-     * @param <T>
-     */
-    <T extends AbstractServiceComponent> void unregisterService(T bean);
-
-    <T extends AbstractReferenceComponent> void registerReference(T bean);
-
-    <T extends AbstractReferenceComponent> void unregisterReference(T bean);
-
-    <T extends AbstractServiceComponent> T getServiceComponent(String protocol, String identifier);
+    public AbstractServiceComponent(String protocol, String identifier, Object bean,
+                                    Class<?> beanClass, Class<?> interfaceType, Object metaData,
+                                    ServiceState serviceState) {
+        super(protocol, identifier, bean, beanClass, interfaceType, metaData);
+        this.serviceState = serviceState;
+    }
 }

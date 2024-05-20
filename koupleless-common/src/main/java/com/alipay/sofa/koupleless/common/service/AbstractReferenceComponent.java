@@ -16,30 +16,14 @@
  */
 package com.alipay.sofa.koupleless.common.service;
 
-import java.util.List;
-
 /**
  * @author lianglipeng.llp@alibaba-inc.com
- * @version $Id: ComponentRegistry.java, v 0.1 2024年05月17日 15:10 立蓬 Exp $
+ * @version $Id: AbstractReferenceComponent.java, v 0.1 2024年05月20日 14:29 立蓬 Exp $
  */
-public interface ComponentRegistry {
-    /**
-     * Register a component
-     *
-     * @param bean
-     */
-    <T extends AbstractServiceComponent> void registerService(T bean);
+public class AbstractReferenceComponent extends AbstractComponent {
 
-    /**
-     * unregister component
-     * @param bean
-     * @param <T>
-     */
-    <T extends AbstractServiceComponent> void unregisterService(T bean);
-
-    <T extends AbstractReferenceComponent> void registerReference(T bean);
-
-    <T extends AbstractReferenceComponent> void unregisterReference(T bean);
-
-    <T extends AbstractServiceComponent> T getServiceComponent(String protocol, String identifier);
+    public AbstractReferenceComponent(String protocol, String identifier, Object bean,
+                                      Class<?> beanClass, Class<?> interfaceType, Object metaData) {
+        super(protocol, identifier, bean, beanClass, interfaceType, metaData);
+    }
 }
