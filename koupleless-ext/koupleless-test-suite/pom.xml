@@ -89,6 +89,7 @@
             <groupId>com.alipay.sofa.koupleless</groupId>
             <artifactId>koupleless-app-starter</artifactId>
             <scope>test</scope>
+            <version>${revision}</version>
         </dependency>
 
 
