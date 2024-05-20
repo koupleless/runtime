@@ -16,30 +16,34 @@
  */
 package com.alipay.sofa.koupleless.common.service;
 
-import java.util.List;
-
 /**
  * @author lianglipeng.llp@alibaba-inc.com
- * @version $Id: ComponentRegistry.java, v 0.1 2024年05月17日 15:10 立蓬 Exp $
+ * @version $Id: ServiceState.java, v 0.1 2024年05月20日 15:22 立蓬 Exp $
  */
-public interface ComponentRegistry {
-    /**
-     * Register a component
-     *
-     * @param bean
-     */
-    <T extends AbstractServiceComponent> void registerService(T bean);
+public enum ServiceState {
+                          EXPORTED("exported"), UNEXPORTED("unexported"), BROKEN("broken");
 
-    /**
-     * unregister component
-     * @param bean
-     * @param <T>
-     */
-    <T extends AbstractServiceComponent> void unregisterService(T bean);
+    private String state;
 
-    <T extends AbstractReferenceComponent> void registerReference(T bean);
+    ServiceState(String state) {
+        this.state = state;
+    }
 
-    <T extends AbstractReferenceComponent> void unregisterReference(T bean);
+    public String getServiceState() {
+        return state;
+    }
 
-    <T extends AbstractServiceComponent> T getServiceComponent(String protocol, String identifier);
+    @Override
+    public String toString() {
+        return getServiceState();
+    }
+
+    public static ServiceState of(String state) {
+        for (ServiceState it : values()) {
+            if (it.getServiceState().equalsIgnoreCase(state)) {
+                return it;
+            }
+        }
+        return BROKEN;
+    }
 }

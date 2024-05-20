@@ -17,10 +17,11 @@
 package com.alipay.sofa.koupleless.common;
 
 import com.alipay.sofa.ark.spi.model.Biz;
+import com.alipay.sofa.koupleless.common.service.AbstractReferenceComponent;
 import com.alipay.sofa.koupleless.common.service.BeanRegistry;
-import com.alipay.sofa.koupleless.common.service.Component;
+import com.alipay.sofa.koupleless.common.service.AbstractComponent;
 import com.alipay.sofa.koupleless.common.service.ComponentRegistry;
-import com.alipay.sofa.koupleless.common.service.ServiceComponent;
+import com.alipay.sofa.koupleless.common.service.AbstractServiceComponent;
 import com.alipay.sofa.koupleless.common.exception.BizRuntimeException;
 import com.alipay.sofa.koupleless.common.exception.ErrorCodes;
 import com.alipay.sofa.koupleless.common.service.ServiceProxyCache;
@@ -38,17 +39,18 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class BizRuntimeContext implements ComponentRegistry {
 
-    private String                                           bizName;
+    private String                                                                            bizName;
 
-    private ClassLoader                                      appClassLoader;
+    private ClassLoader                                                                       appClassLoader;
 
-    private ApplicationContext                               rootApplicationContext;
+    private ApplicationContext                                                                rootApplicationContext;
 
-    private Map<ClassLoader, Map<String, ServiceProxyCache>> serviceProxyCaches = new ConcurrentHashMap<>();
-
+    private Map<ClassLoader, Map<String, ServiceProxyCache>>                                  serviceProxyCaches = new ConcurrentHashMap<>();
 
     // Beanregistry key为 "identifier"
-    private             Map<String/*protocol_full_class_name*/, BeanRegistry<ServiceComponent>>   serviceMap;
+    private Map<String/*protocol_full_class_name*/, BeanRegistry<AbstractServiceComponent>>   serviceMap;
+
+    private Map<String/*protocol_full_class_name*/, BeanRegistry<AbstractReferenceComponent>> referenceMap;
 
     /**
      * <p>Getter for the field <code>bizName</code>.</p>
@@ -160,14 +162,12 @@ public class BizRuntimeContext implements ComponentRegistry {
     }
 
     @Override
-    public void register(Component bean) {
+    public void registerService(AbstractServiceComponent bean) {
         bean.setBizRuntimeContext(this);
-        if (bean instanceof ServiceComponent) {
-            doRegister(serviceMap.get(bean.getProtocol()), bean);
-        }
+        doRegister(serviceMap.get(bean.getProtocol()), bean);
     }
 
-    private void doRegister(BeanRegistry registry, Component bean) {
+    private void doRegister(BeanRegistry registry, AbstractComponent bean) {
         if (registry == null) {
             throw new IllegalArgumentException("protocol " + bean.getProtocol() + " not support");
         }
@@ -175,10 +175,31 @@ public class BizRuntimeContext implements ComponentRegistry {
     }
 
     @Override
-    public void unregister(Component bean) {
-        BeanRegistry<ServiceComponent> registry = serviceMap.get(bean.getProtocol());
+    public void unregisterService(AbstractServiceComponent bean) {
+        BeanRegistry<AbstractServiceComponent> registry = serviceMap.get(bean.getProtocol());
         if (registry != null) {
             registry.unRegister(bean.getIdentifier());
         }
+    }
+
+    @Override
+    public void registerReference(AbstractReferenceComponent bean) {
+        bean.setBizRuntimeContext(this);
+        doRegister(referenceMap.get(bean.getProtocol()), bean);
+    }
+
+    @Override
+    public void unregisterReference(AbstractReferenceComponent bean) {
+        BeanRegistry<AbstractReferenceComponent> registry = referenceMap.get(bean.getProtocol());
+        if (registry != null) {
+            registry.unRegister(bean.getIdentifier());
+        }
+    }
+
+    @Override
+    public <T extends AbstractServiceComponent> T getServiceComponent(String protocol,
+                                                                      String identifier) {
+        AbstractComponent serviceComponent = serviceMap.get(protocol).getBean(identifier);
+        return serviceComponent == null ? null : (T) serviceComponent;
     }
 }
