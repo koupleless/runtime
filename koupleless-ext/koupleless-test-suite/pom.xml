@@ -86,6 +86,13 @@
             <version>${revision}</version>
         </dependency>
 
+        <!-- just for start test-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <version>2.7.3</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
