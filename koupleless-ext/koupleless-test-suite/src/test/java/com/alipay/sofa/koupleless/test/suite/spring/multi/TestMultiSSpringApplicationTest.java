@@ -36,31 +36,33 @@ public class TestMultiSSpringApplicationTest {
 
     @Test
     public void testMultiApplicationLaunched() throws Throwable {
+        System.setProperty("ConfigurationWarningsApplicationContextInitializer", "");
+
         BaseSpringTestConfig baseConfig = BaseSpringTestConfig.builder()
-            .mainClass(com.alipay.sofa.koupleless.test.suite.spring.mock.base.Application.class)
-            .build();
+                .mainClass(com.alipay.sofa.koupleless.test.suite.spring.mock.base.Application.class)
+                .build();
 
         List<BizSpringTestConfig> bizConfigs = new ArrayList<>();
         bizConfigs.add(BizSpringTestConfig.builder().bizName("biz0")
-            .mainClass(com.alipay.sofa.koupleless.test.suite.spring.mock.biz.Application.class)
-            .build());
+                .mainClass(com.alipay.sofa.koupleless.test.suite.spring.mock.biz.Application.class)
+                .build());
 
         TestMultiSpringApplication application = new TestMultiSpringApplication(
-            MultiSpringTestConfig.builder().baseConfig(baseConfig).bizConfigs(bizConfigs).build());
+                MultiSpringTestConfig.builder().baseConfig(baseConfig).bizConfigs(bizConfigs).build());
 
         application.run();
         Thread.sleep(1_000);
 
         HelloService sampleBaseService = application.getBaseApplication().getApplicationContext()
-            .getBean(HelloService.class);
+                .getBean(HelloService.class);
 
         Assert.assertEquals(Thread.currentThread().getContextClassLoader().getClass().getName(),
-            sampleBaseService.helloWorld());
+                sampleBaseService.helloWorld());
 
         HelloService sampleBizService = application.getBizApplication("biz0")
-            .getApplicationContext().getBean(HelloService.class);
+                .getApplicationContext().getBean(HelloService.class);
 
         Assert.assertEquals("com.alipay.sofa.koupleless.test.suite.biz.TestBizClassLoader",
-            sampleBizService.getClass().getClassLoader().getClass().getName());
+                sampleBizService.getClass().getClassLoader().getClass().getName());
     }
 }
