@@ -37,7 +37,7 @@ import java.util.List;
 @Builder
 public class MultiSpringTestConfig {
 
-    private BaseSpringTestConfig baseConfig;
+    private BaseSpringTestConfig      baseConfig;
 
     private List<BizSpringTestConfig> bizConfigs;
 
