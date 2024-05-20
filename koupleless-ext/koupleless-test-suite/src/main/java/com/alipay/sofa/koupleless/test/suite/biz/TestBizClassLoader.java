@@ -17,8 +17,11 @@
 package com.alipay.sofa.koupleless.test.suite.biz;
 
 import com.alipay.sofa.ark.common.util.ClassLoaderUtils;
+import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.container.service.classloader.BizClassLoader;
 import com.alipay.sofa.ark.exception.ArkLoaderException;
+import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger;
+import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
 import lombok.SneakyThrows;
 import org.apache.commons.collections4.CollectionUtils;
 
@@ -74,6 +77,8 @@ public class TestBizClassLoader extends BizClassLoader {
                               ClassLoader baseClassLoader) {
         super(bizIdentity, ClassLoaderUtils.getURLs(baseClassLoader));
         initHook();
+        ArkletLoggerFactory.getDefaultLogger().info("{}, baseClassLoaderClz", baseClassLoader);
+        ArkletLoggerFactory.getDefaultLogger().info("{}, baseUrls", baseClassLoader.getURLs());
         this.resolveByClassLoaderPatterns = new ArrayList<>();
         this.resolveByClassLoaderPatterns.addAll(CollectionUtils.emptyIfNull(includeClassPatterns));
         this.resolveByClassLoaderPatterns.addAll(CollectionUtils.emptyIfNull(includeClassNames));

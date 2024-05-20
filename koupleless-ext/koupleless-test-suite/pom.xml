@@ -85,14 +85,11 @@
             <artifactId>koupleless-common</artifactId>
             <version>${revision}</version>
         </dependency>
-
-        <!-- just for start test-->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-            <version>2.7.3</version>
-            <scope>test</scope>
+            <groupId>com.alipay.sofa.koupleless</groupId>
+            <artifactId>arklet-core</artifactId>
         </dependency>
+
 
     </dependencies>
 
