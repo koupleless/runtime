@@ -16,6 +16,7 @@
  */
 package com.alipay.sofa.koupleless.test.suite.spring.base;
 
+import com.alipay.sofa.ark.loader.jar.JarUtils;
 import com.alipay.sofa.koupleless.common.util.OSUtils;
 import com.google.common.collect.Lists;
 import lombok.SneakyThrows;
@@ -78,13 +79,14 @@ public class BaseClassLoader extends URLClassLoader {
         return urls;
     }
 
-    public BaseClassLoader(ClassLoader parent, List<String> higherPriorityArtifacts,
-                           List<String> excludeArtifactIds) {
+    public BaseClassLoader(ClassLoader parent, String baseArtifactId,
+                           List<String> higherPriorityArtifacts, List<String> excludeArtifactIds) {
         // add an interception layer to the parent classloader
         // in this way we can control the classloading process
         super(new URL[0], parent);
         this.parent = (URLClassLoader) parent;
         this.excludeArtifactIds = excludeArtifactIds;
+        this.excludeArtifactIds.remove(baseArtifactId);
 
         List<URL> urls = Lists.newArrayList();
         this.parentUrls = getUrls(this.parent).toArray(new URL[0]);

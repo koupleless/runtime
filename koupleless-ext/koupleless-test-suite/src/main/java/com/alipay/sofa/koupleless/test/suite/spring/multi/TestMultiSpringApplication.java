@@ -39,16 +39,13 @@ import java.util.*;
  * @author CodeNoobKing
  * @author CodeNoobKing
  * @author CodeNoobKing
- * @since 2024/3/7
  * @version 1.0.0
+ * @since 2024/3/7
  */
 public class TestMultiSpringApplication {
 
     @Getter
     private BaseSpringTestApplication             baseApplication;
-
-    // app name -> corresponding urls
-    private Map<String, List<String>>             appToUrls       = new HashMap<>();
 
     private Map<String, BizSpringTestApplication> bizApplications = new HashMap<>();
 
