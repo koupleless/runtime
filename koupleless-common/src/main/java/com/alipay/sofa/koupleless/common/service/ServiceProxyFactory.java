@@ -105,7 +105,8 @@ public class ServiceProxyFactory {
                                     Class<?> clientType) {
         Biz biz = determineMostSuitableBiz(bizName, bizVersion);
 
-        if (biz == null) {
+        // biz not exist or not install finished
+        if (biz == null || biz.getBizState() == BizState.RESOLVED) {
             return null;
         } else if (biz.getBizState() != BizState.ACTIVATED
                    && biz.getBizState() != BizState.DEACTIVATED) {
@@ -221,7 +222,7 @@ public class ServiceProxyFactory {
                 return null;
             }
             biz = bizList.stream().filter(it -> BizState.ACTIVATED == it.getBizState()).findFirst()
-                .get();
+                .orElse(null);
         } else {
             biz = ArkClient.getBizManagerService().getBiz(moduleName, moduleVersion);
         }
