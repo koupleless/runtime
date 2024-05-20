@@ -20,6 +20,7 @@ import com.alipay.sofa.ark.common.util.ClassLoaderUtils;
 import com.alipay.sofa.ark.container.service.classloader.BizClassLoader;
 import com.alipay.sofa.ark.exception.ArkLoaderException;
 import lombok.SneakyThrows;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.lang.reflect.Field;
 import java.net.URL;
@@ -74,9 +75,9 @@ public class TestBizClassLoader extends BizClassLoader {
         super(bizIdentity, ClassLoaderUtils.getURLs(baseClassLoader));
         initHook();
         this.resolveByClassLoaderPatterns = new ArrayList<>();
-        this.resolveByClassLoaderPatterns.addAll(includeClassPatterns);
-        this.resolveByClassLoaderPatterns.addAll(includeClassNames);
-        this.includedArtifactIds.addAll(includeArtifactIds);
+        this.resolveByClassLoaderPatterns.addAll(CollectionUtils.emptyIfNull(includeClassPatterns));
+        this.resolveByClassLoaderPatterns.addAll(CollectionUtils.emptyIfNull(includeClassNames));
+        this.includedArtifactIds.addAll(CollectionUtils.emptyIfNull(includeArtifactIds));
 
     }
 
