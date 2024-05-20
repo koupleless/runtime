@@ -32,6 +32,8 @@ import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.boot.context.event.SpringApplicationEvent;
 import org.springframework.context.ApplicationListener;
 
+import java.lang.reflect.Method;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -57,12 +59,23 @@ public class BaseStartUpHealthIndicator extends AbstractHealthIndicator
     public static final String                      WITH_ALL_BIZ_READINESS = "koupleless.healthcheck.base.readiness.withAllBizReadiness";
 
     /**
+     * this is ugly, but we need to support both springboot1.x, 2.x and above, we need to use reflection to support both
+     */
+    public Method                                   healthBuildWithDetails = null;
+
+    /**
      * <p>Constructor for BaseStartUpHealthIndicator.</p>
      *
      * @param withAllBizReadiness a boolean
      */
     public BaseStartUpHealthIndicator(boolean withAllBizReadiness) {
-        super("ark biz start up health check failed");
+        super();
+        try {
+            this.healthBuildWithDetails = Health.Builder.class.getMethod("withDetails", Map.class);
+        } catch (NoSuchMethodException e) {
+            // ignore
+        }
+
         this.associateWithAllBizReadiness = withAllBizReadiness;
     }
 
@@ -105,8 +118,15 @@ public class BaseStartUpHealthIndicator extends AbstractHealthIndicator
     /** {@inheritDoc} */
     @Override
     protected void doHealthCheck(Health.Builder builder) {
-        builder.withDetail(ArkClient.getMasterBiz().getIdentity(), baseStartUpStatus)
-            .withDetails(bizStartUpStatus);
+        builder.withDetail(ArkClient.getMasterBiz().getIdentity(), baseStartUpStatus);
+
+        if (healthBuildWithDetails != null) {
+            try {
+                healthBuildWithDetails.invoke(builder, bizStartUpStatus);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         if (!associateWithAllBizReadiness) {
             builder.status(baseStartUpStatus);

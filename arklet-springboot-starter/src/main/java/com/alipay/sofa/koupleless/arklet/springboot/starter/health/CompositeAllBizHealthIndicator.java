@@ -26,6 +26,7 @@ import org.springframework.boot.actuate.health.Health.Builder;
 import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.actuate.health.Status;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,12 +39,30 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 1.1.0
  */
 public class CompositeAllBizHealthIndicator extends AbstractHealthIndicator {
+
+    /**
+     * this is ugly, but we need to support both springboot1.x, 2.x and above, we need to use reflection to support both
+     */
+    public Method healthBuildWithDetails = null;
+
+    public CompositeAllBizHealthIndicator() {
+        try {
+            healthBuildWithDetails = Health.Builder.class.getDeclaredMethod("withDetails",
+                Map.class);
+        } catch (NoSuchMethodException e) {
+            // ignore
+        }
+    }
+
     /** {@inheritDoc} */
     @Override
     protected void doHealthCheck(Builder builder) throws Exception {
         Map<String, Health> bizHealthMap = aggregateBizHealth();
 
-        builder.up().withDetails(bizHealthMap);
+        builder.up();
+        if (healthBuildWithDetails != null) {
+            healthBuildWithDetails.invoke(builder, bizHealthMap);
+        }
 
         if (bizHealthMap.values().stream().map(Health::getStatus).anyMatch(Status.DOWN::equals)) {
             builder.down();

@@ -69,8 +69,9 @@ public class ServerlessEnvironmentPostProcessorTest {
             .addLast(new PropertiesPropertySource("masterProperties", new Properties()));
         when(masterEnvironment.getPropertySources()).thenReturn(masterPropertySources);
 
-        ServerlessEnvironmentPostProcessor serverlessEnvironmentPostProcessor = spy(
-            new ServerlessEnvironmentPostProcessor());
+        ServerlessEnvironmentPostProcessor serverlessEnvironmentPostProcessor = new ServerlessEnvironmentPostProcessor();
+        // reset ArkClient, to reinit the master environment.
+        ArkClient.setMasterBiz(null);
         serverlessEnvironmentPostProcessor.postProcessEnvironment(masterEnvironment,
             springApplication);
 

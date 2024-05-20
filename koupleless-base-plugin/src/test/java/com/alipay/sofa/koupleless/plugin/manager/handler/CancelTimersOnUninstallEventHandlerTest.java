@@ -55,7 +55,7 @@ public class CancelTimersOnUninstallEventHandlerTest {
     @Test
     public void testManageTimers() {
 
-        ClassLoader newClassLoader = new URLClassLoader(new URL[1],
+        ClassLoader newClassLoader = new URLClassLoader(new URL[0],
             CancelTimersOnUninstallEventHandler.class.getClassLoader());
         BizModel bizModel = new BizModel();
         bizModel.setClassLoader(newClassLoader);

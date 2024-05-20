@@ -20,6 +20,8 @@ import com.alipay.sofa.koupleless.arklet.core.health.model.Constants;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -70,9 +72,25 @@ public class CpuIndicator extends Indicator {
 
         private long[]                 nextTicks;
 
+        private String                 cpuType;
+
         public CpuIndicatorHandler() {
-            this.cpu = new SystemInfo().getHardware().getProcessor();
-            prevTicks = cpu.getSystemCpuLoadTicks();
+            try {
+                this.cpu = new SystemInfo().getHardware().getProcessor();
+                prevTicks = cpu.getSystemCpuLoadTicks();
+                try {
+                    Method method = cpu.getClass().getMethod("getName");
+                    this.cpuType = (String) method.invoke(cpu, null);
+                } catch (NoSuchMethodException | IllegalAccessException
+                        | InvocationTargetException e) {
+                    this.cpuType = cpu.getProcessorIdentifier().getName();
+                }
+            } catch (Throwable t) {
+                throw new RuntimeException(
+                    "\n【Reason】This Exception happened when oshi-core defined in koupleless is not supported in project."
+                                           + "\n【Solution】Please define the version of oshi-core which supported in your pom dependencyManagement!",
+                    t);
+            }
         }
 
         public void collectTicks() {
@@ -106,7 +124,7 @@ public class CpuIndicator extends Indicator {
         }
 
         public String getCpuType() {
-            return cpu.getName();
+            return this.cpuType;
         }
 
         private double getUsed(CentralProcessor.TickType tickType) {
