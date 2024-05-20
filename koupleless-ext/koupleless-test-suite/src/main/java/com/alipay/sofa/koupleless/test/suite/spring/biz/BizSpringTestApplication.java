@@ -24,6 +24,7 @@ import com.alipay.sofa.ark.spi.model.BizState;
 import com.alipay.sofa.ark.spi.service.event.EventAdminService;
 import com.alipay.sofa.koupleless.test.suite.biz.TestBizModel;
 import com.alipay.sofa.koupleless.test.suite.biz.TestBizConfig;
+import com.alipay.sofa.koupleless.test.suite.spring.base.BaseClassLoader;
 import com.alipay.sofa.koupleless.test.suite.spring.framwork.SpringTestUtils;
 import com.alipay.sofa.koupleless.test.suite.spring.model.BizSpringTestConfig;
 import lombok.Getter;
