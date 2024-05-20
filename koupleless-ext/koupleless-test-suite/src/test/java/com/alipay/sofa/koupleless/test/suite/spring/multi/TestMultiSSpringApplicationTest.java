@@ -36,7 +36,7 @@ public class TestMultiSSpringApplicationTest {
 
     @Test
     public void testMultiApplicationLaunched() throws Throwable {
-        System.setProperty("ConfigurationWarningsApplicationContextInitializer", "");
+        System.setProperty("koupleless.module.initializer.skip", "");
 
         BaseSpringTestConfig baseConfig = BaseSpringTestConfig.builder()
             .mainClass(com.alipay.sofa.koupleless.test.suite.spring.mock.base.Application.class)
