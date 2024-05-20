@@ -76,7 +76,7 @@ public class TestBizClassLoader extends BizClassLoader {
                               URLClassLoader baseClassLoader) {
         super(bizIdentity, baseClassLoader.getURLs());
         initHook();
-        ArkletLoggerFactory.getDefaultLogger().info("{}, baseClassLoaderClz", baseClassLoader);
+        ArkletLoggerFactory.getDefaultLogger().info("{}, ", baseClassLoader);
         ArkletLoggerFactory.getDefaultLogger().info("{}, baseUrls", baseClassLoader.getURLs());
         this.resolveByClassLoaderPatterns = new ArrayList<>();
         this.resolveByClassLoaderPatterns.addAll(CollectionUtils.emptyIfNull(includeClassPatterns));

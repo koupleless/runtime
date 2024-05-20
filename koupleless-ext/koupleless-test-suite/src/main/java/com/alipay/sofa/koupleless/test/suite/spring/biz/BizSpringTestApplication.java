@@ -25,6 +25,7 @@ import com.alipay.sofa.koupleless.common.BizRuntimeContext;
 import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
 import com.alipay.sofa.koupleless.test.suite.biz.TestBizModel;
 import com.alipay.sofa.koupleless.test.suite.biz.TestBizConfig;
+import com.alipay.sofa.koupleless.test.suite.spring.base.BaseClassLoader;
 import com.alipay.sofa.koupleless.test.suite.spring.framwork.SpringTestUtils;
 import com.alipay.sofa.koupleless.test.suite.spring.model.BizSpringTestConfig;
 import lombok.Getter;
@@ -105,7 +106,7 @@ public class BizSpringTestApplication {
 
         URLClassLoader tccl = (URLClassLoader) Thread.currentThread().getContextClassLoader();
         List<URL> bizDependencyUrls = new ArrayList<>();
-        for (URL url : tccl.getURLs()) {
+        for (URL url : BaseClassLoader.getUrls(tccl)) {
             if (!isExcludedDependency(url.toString())) {
                 bizDependencyUrls.add(url);
             }
