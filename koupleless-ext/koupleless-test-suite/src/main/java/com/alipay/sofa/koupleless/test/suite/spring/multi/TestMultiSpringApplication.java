@@ -39,8 +39,8 @@ import java.util.*;
  * @author CodeNoobKing
  * @author CodeNoobKing
  * @author CodeNoobKing
- * @since 2024/3/7
  * @version 1.0.0
+ * @since 2024/3/7
  */
 public class TestMultiSpringApplication {
 
