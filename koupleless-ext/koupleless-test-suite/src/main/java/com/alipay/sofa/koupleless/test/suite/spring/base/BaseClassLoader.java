@@ -17,6 +17,7 @@
 package com.alipay.sofa.koupleless.test.suite.spring.base;
 
 import com.alipay.sofa.ark.loader.jar.JarUtils;
+import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
 import com.alipay.sofa.koupleless.common.util.OSUtils;
 import com.google.common.collect.Lists;
 import lombok.SneakyThrows;
@@ -72,7 +73,10 @@ public class BaseClassLoader extends URLClassLoader {
             urls.add(url);
 
             if (url.toString().matches(".*target/surefire.*")) {
-                urls.addAll(getUrlsFromSurefireManifest(url));
+                List<URL> urlsFromSurefireManifest = getUrlsFromSurefireManifest(url);
+                ArkletLoggerFactory.getDefaultLogger().info("{}, urlsFromSurefireManifest",
+                    urlsFromSurefireManifest);
+                urls.addAll(urlsFromSurefireManifest);
             }
         }
 
