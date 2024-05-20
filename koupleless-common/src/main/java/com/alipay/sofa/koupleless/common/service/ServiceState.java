@@ -21,7 +21,7 @@ package com.alipay.sofa.koupleless.common.service;
  * @version $Id: ServiceState.java, v 0.1 2024年05月20日 15:22 立蓬 Exp $
  */
 public enum ServiceState {
-                          EXPORTED("exported"), UNEXPORTED("unexported"), BROKEN("broken");
+    EXPORTED("exported"), UNEXPORTED("unexported"), BROKEN("broken");
 
     private String state;
 
