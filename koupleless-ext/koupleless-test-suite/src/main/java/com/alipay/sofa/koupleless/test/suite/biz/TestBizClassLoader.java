@@ -57,7 +57,7 @@ public class TestBizClassLoader extends BizClassLoader {
         bizClassLoaderHookField.setAccessible(false);
 
         Field bizClassLoaderIsHookLoadedField = BizClassLoader.class
-                .getDeclaredField("isHookLoaded");
+            .getDeclaredField("isHookLoaded");
         bizClassLoaderIsHookLoadedField.setAccessible(true);
         bizClassLoaderIsHookLoadedField.set(this, new AtomicBoolean(true));
         bizClassLoaderIsHookLoadedField.setAccessible(false);
@@ -130,8 +130,8 @@ public class TestBizClassLoader extends BizClassLoader {
         Class<?> clz = super.loadClassInternal(name, resolve);
 
         String codeSourceLocation = Optional.ofNullable(clz.getProtectionDomain())
-                .map(ProtectionDomain::getCodeSource).map(CodeSource::getLocation).map(URL::toString)
-                .orElse("");
+            .map(ProtectionDomain::getCodeSource).map(CodeSource::getLocation).map(URL::toString)
+            .orElse("");
 
         for (String includedArtifactId : includedArtifactIds) {
             // should be load by test class loader
