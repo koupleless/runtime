@@ -16,8 +16,7 @@
  */
 package com.alipay.sofa.koupleless.test.suite.spring.multi;
 
-import com.alipay.sofa.koupleless.test.suite.biz.TestBizClassLoader;
-import com.alipay.sofa.koupleless.test.suite.spring.mock.biz.SampleBizService;
+import com.alipay.sofa.koupleless.test.suite.common.IntegrationLogger;
 import com.alipay.sofa.koupleless.test.suite.spring.mock.common.HelloService;
 import com.alipay.sofa.koupleless.test.suite.spring.model.BaseSpringTestConfig;
 import com.alipay.sofa.koupleless.test.suite.spring.model.BizSpringTestConfig;
@@ -36,6 +35,7 @@ public class TestMultiSSpringApplicationTest {
 
     @Test
     public void testMultiApplicationLaunched() throws Throwable {
+        IntegrationLogger.getLogger();
         System.setProperty("koupleless.module.initializer.skip", "");
 
         BaseSpringTestConfig baseConfig = BaseSpringTestConfig.builder()
