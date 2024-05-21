@@ -43,7 +43,7 @@ public class BaseClassLoader extends URLClassLoader {
     private ClassLoader    parent;
     private URLClassLoader higherPriorityClassLoader;
 
-    private URL[] parentUrls;
+    private URL[]          parentUrls;
 
     /**
      * <p>getUrlsFromSurefireManifest.</p>
@@ -58,12 +58,12 @@ public class BaseClassLoader extends URLClassLoader {
         String fileUrlPrefix = "file:";
         try (JarFile jarFile = new JarFile(url.getFile())) {
             String classPathValue = jarFile.getManifest().getMainAttributes()
-                    .getValue("Class-Path");
+                .getValue("Class-Path");
             String[] classPaths = classPathValue.split(" ");
             for (String classFilePath : classPaths) {
                 String filePath = StringUtils.startsWith(classFilePath, fileUrlPrefix)
-                        ? classFilePath
-                        : OSUtils.getLocalFileProtocolPrefix() + Paths.get(parentPath, classFilePath);
+                    ? classFilePath
+                    : OSUtils.getLocalFileProtocolPrefix() + Paths.get(parentPath, classFilePath);
                 urls.add(new URL(filePath));
             }
         }
@@ -85,7 +85,7 @@ public class BaseClassLoader extends URLClassLoader {
             if (url.toString().matches(".*target/surefire.*")) {
                 List<URL> urlsFromSurefireManifest = getUrlsFromSurefireManifest(url);
                 ArkletLoggerFactory.getDefaultLogger().info("{}, urlsFromSurefireManifest",
-                        urlsFromSurefireManifest);
+                    urlsFromSurefireManifest);
                 urls.addAll(urlsFromSurefireManifest);
             }
         }
@@ -118,8 +118,8 @@ public class BaseClassLoader extends URLClassLoader {
     @Override
     public URL[] getURLs() {
         URL[] urls = Arrays.stream(parentUrls)
-                .filter(url -> !excludeArtifactIds.stream().anyMatch(url.toString()::contains))
-                .toArray(URL[]::new);
+            .filter(url -> !excludeArtifactIds.stream().anyMatch(url.toString()::contains))
+            .toArray(URL[]::new);
         IntegrationLogger.getLogger().debug("{}, BaseUrls", urls);
         return urls;
     }
