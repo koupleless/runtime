@@ -38,16 +38,16 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class BizRuntimeContext implements ComponentRegistry {
 
-    private String                                                                            bizName;
+    private String                                                                          bizName;
 
-    private ClassLoader                                                                       appClassLoader;
+    private ClassLoader                                                                     appClassLoader;
 
-    private ApplicationContext                                                                rootApplicationContext;
+    private ApplicationContext                                                              rootApplicationContext;
 
-    private Map<ClassLoader, Map<String, ServiceProxyCache>>                                  serviceProxyCaches = new ConcurrentHashMap<>();
+    private Map<ClassLoader, Map<String, ServiceProxyCache>>                                serviceProxyCaches = new ConcurrentHashMap<>();
 
     // Beanregistry key为 "identifier"
-    private Map<String/*protocol_full_class_name*/, BeanRegistry<AbstractServiceComponent>>   serviceMap         = new ConcurrentHashMap<>();
+    private Map<String/*protocol_full_class_name*/, BeanRegistry<AbstractServiceComponent>> serviceMap         = new ConcurrentHashMap<>();
 
     /**
      * <p>Getter for the field <code>bizName</code>.</p>
