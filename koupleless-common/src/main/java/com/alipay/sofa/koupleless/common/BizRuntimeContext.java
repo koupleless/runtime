@@ -77,7 +77,7 @@ public class BizRuntimeContext implements ComponentRegistry {
     }
 
     /**
-     * <p>Setter for the field <code>appClassLoader</code>.</p>z
+     * <p>Setter for the field <code>appClassLoader</code>.</p>
      *
      * @param appClassLoader a {@link java.lang.ClassLoader} object
      */
