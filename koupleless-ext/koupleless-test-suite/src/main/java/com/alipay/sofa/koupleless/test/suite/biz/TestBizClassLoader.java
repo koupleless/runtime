@@ -82,7 +82,7 @@ public class TestBizClassLoader extends BizClassLoader {
         this.resolveByClassLoaderPatterns.addAll(CollectionUtils.emptyIfNull(includeClassNames));
         this.includedArtifactIds.addAll(CollectionUtils.emptyIfNull(includeArtifactIds));
 
-        ArkletLoggerFactory.getDefaultLogger().info("{}, BaseUrls", baseClassLoader.getURLs());
+        ArkletLoggerFactory.getDefaultLogger().info("{}, BaseUrlsForBiz", baseClassLoader.getURLs());
         ArkletLoggerFactory.getDefaultLogger().info("{}, IncludeClassNames", includeClassNames);
         ArkletLoggerFactory.getDefaultLogger().info("{}, IncludeClassPatterns", includeClassNames);
         ArkletLoggerFactory.getDefaultLogger().info("{}, IncludeArtifactIds", includeArtifactIds);
