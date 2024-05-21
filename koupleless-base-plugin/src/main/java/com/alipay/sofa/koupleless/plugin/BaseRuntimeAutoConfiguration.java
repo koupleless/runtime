@@ -43,7 +43,7 @@ public class BaseRuntimeAutoConfiguration {
      * @return a {@link com.alipay.sofa.koupleless.common.BizRuntimeContext} object
      */
     @Bean
-    @ConditionalOnMissingClass("com.alipay.sofa.koupleless.test.suite.biz.TestBizClassLoader.TestBizClassLoader")
+    @ConditionalOnMissingClass("com.alipay.sofa.koupleless.test.suite.biz.TestBizClassLoader")
     public BizRuntimeContext bizRuntimeContext(ApplicationContext applicationContext) {
         ClassLoader classLoader = applicationContext.getClassLoader();
         BizRuntimeContext bizRuntimeContext = BizRuntimeContextRegistry
@@ -53,7 +53,7 @@ public class BaseRuntimeAutoConfiguration {
     }
 
     @Bean(name = "bizRuntimeContext")
-    @ConditionalOnClass(name = "com.alipay.sofa.koupleless.test.suite.biz.TestBizClassLoader.TestBizClassLoader")
+    @ConditionalOnClass(name = "com.alipay.sofa.koupleless.test.suite.biz.TestBizClassLoader")
     public BizRuntimeContext bizRuntimeContextIntegrationTest(ApplicationContext applicationContext) {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         BizRuntimeContext bizRuntimeContext = BizRuntimeContextRegistry
