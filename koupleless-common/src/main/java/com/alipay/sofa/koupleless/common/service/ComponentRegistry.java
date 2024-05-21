@@ -37,9 +37,5 @@ public interface ComponentRegistry {
      */
     <T extends AbstractServiceComponent> void unregisterService(T bean);
 
-    <T extends AbstractReferenceComponent> void registerReference(T bean);
-
-    <T extends AbstractReferenceComponent> void unregisterReference(T bean);
-
     <T extends AbstractServiceComponent> T getServiceComponent(String protocol, String identifier);
 }

@@ -17,7 +17,6 @@
 package com.alipay.sofa.koupleless.common;
 
 import com.alipay.sofa.ark.spi.model.Biz;
-import com.alipay.sofa.koupleless.common.model.MockReferenceComponent;
 import com.alipay.sofa.koupleless.common.model.MockServiceComponent;
 import com.alipay.sofa.koupleless.common.service.ServiceState;
 import org.junit.Test;
@@ -37,15 +36,5 @@ public class BizRuntimeContextTest {
             .interfaceType(Object.class).metaData(new Object()).bean(new Object()).build();
         context.registerService(mockServiceComponent);
         context.unregisterService(mockServiceComponent);
-    }
-
-    @Test
-    public void testReference() {
-        BizRuntimeContext context = new BizRuntimeContext(Mockito.mock(Biz.class));
-        MockReferenceComponent mockReferenceComponent = MockReferenceComponent.builder()
-            .identifier("identifier").beanClass(Object.class).interfaceType(Object.class)
-            .metaData(new Object()).bean(new Object()).build();
-        context.registerReference(mockReferenceComponent);
-        context.unregisterReference(mockReferenceComponent);
     }
 }

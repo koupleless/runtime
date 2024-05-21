@@ -20,7 +20,6 @@ import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.koupleless.common.exception.BizRuntimeException;
 import com.alipay.sofa.koupleless.common.exception.ErrorCodes;
 import com.alipay.sofa.koupleless.common.service.AbstractComponent;
-import com.alipay.sofa.koupleless.common.service.AbstractReferenceComponent;
 import com.alipay.sofa.koupleless.common.service.AbstractServiceComponent;
 import com.alipay.sofa.koupleless.common.service.BeanRegistry;
 import com.alipay.sofa.koupleless.common.service.ComponentRegistry;
@@ -49,8 +48,6 @@ public class BizRuntimeContext implements ComponentRegistry {
 
     // Beanregistry key为 "identifier"
     private Map<String/*protocol_full_class_name*/, BeanRegistry<AbstractServiceComponent>>   serviceMap         = new ConcurrentHashMap<>();
-
-    private Map<String/*protocol_full_class_name*/, BeanRegistry<AbstractReferenceComponent>> referenceMap       = new ConcurrentHashMap<>();
 
     /**
      * <p>Getter for the field <code>bizName</code>.</p>
@@ -179,24 +176,6 @@ public class BizRuntimeContext implements ComponentRegistry {
         if (null == registry) {
             throw new BizRuntimeException(ErrorCodes.ServiceManager.E200002,
                 "protocol service" + bean.getProtocol() + " has not registered");
-        }
-
-        registry.unRegister(bean.getIdentifier());
-    }
-
-    @Override
-    public void registerReference(AbstractReferenceComponent bean) {
-        bean.setBizRuntimeContext(this);
-        referenceMap.putIfAbsent(bean.getProtocol(), new BeanRegistry<>());
-        doRegister(referenceMap.get(bean.getProtocol()), bean);
-    }
-
-    @Override
-    public void unregisterReference(AbstractReferenceComponent bean) {
-        BeanRegistry<AbstractReferenceComponent> registry = referenceMap.get(bean.getProtocol());
-        if (null == registry) {
-            throw new BizRuntimeException(ErrorCodes.ServiceManager.E200002,
-                "protocol reference" + bean.getProtocol() + " has not registered");
         }
 
         registry.unRegister(bean.getIdentifier());
