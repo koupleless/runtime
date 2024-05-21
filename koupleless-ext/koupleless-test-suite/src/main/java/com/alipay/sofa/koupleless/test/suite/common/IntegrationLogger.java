@@ -18,6 +18,7 @@ package com.alipay.sofa.koupleless.test.suite.common;
 
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
 import lombok.Getter;
+import org.slf4j.Logger;
 
 /**
  * @author CodeNoobKing
@@ -25,8 +26,11 @@ import lombok.Getter;
  **/
 public class IntegrationLogger {
 
-    @Getter
-    static org.slf4j.Logger logger = null;
+    static Logger logger = null;
+
+    public static Logger getLogger() {
+        return logger;
+    }
 
     static {
         logger = ArkletLoggerFactory.getLogger("INTEGRATION-TEST");
