@@ -110,6 +110,7 @@ public class BaseClassLoader extends URLClassLoader {
             }
         }
         this.higherPriorityClassLoader = new URLClassLoader(urls.toArray(new URL[0]));
+        IntegrationLogger.getLogger().debug("{}, ParentUrls", parentUrls);
         IntegrationLogger.getLogger().debug("{}, BaseArtifactId", baseArtifactId);
         IntegrationLogger.getLogger().debug("{}, ExcludeArtifactIds", excludeArtifactIds);
     }
@@ -117,11 +118,9 @@ public class BaseClassLoader extends URLClassLoader {
     /** {@inheritDoc} */
     @Override
     public URL[] getURLs() {
-        URL[] urls = Arrays.stream(parentUrls)
+        return Arrays.stream(parentUrls)
             .filter(url -> !excludeArtifactIds.stream().anyMatch(url.toString()::contains))
             .toArray(URL[]::new);
-        IntegrationLogger.getLogger().debug("{}, BaseUrls", urls);
-        return urls;
     }
 
     /** {@inheritDoc} */
