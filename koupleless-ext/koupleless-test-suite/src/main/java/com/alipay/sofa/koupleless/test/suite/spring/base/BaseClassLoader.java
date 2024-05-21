@@ -19,6 +19,7 @@ package com.alipay.sofa.koupleless.test.suite.spring.base;
 import com.alipay.sofa.ark.loader.jar.JarUtils;
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
 import com.alipay.sofa.koupleless.common.util.OSUtils;
+import com.alipay.sofa.koupleless.test.suite.common.IntegrationLogger;
 import com.google.common.collect.Lists;
 import lombok.SneakyThrows;
 import org.apache.commons.collections4.iterators.IteratorEnumeration;
@@ -43,9 +44,9 @@ public class BaseClassLoader extends URLClassLoader {
     private URLClassLoader parent;
     private URLClassLoader higherPriorityResourceClassLoader;
 
-    private URL[]          parentUrls;
+    private URL[] parentUrls;
 
-    private List<String>   excludeArtifactIds = new ArrayList<>();
+    private List<String> excludeArtifactIds = new ArrayList<>();
 
     @SneakyThrows
     public static List<URL> getUrlsFromSurefireManifest(URL url) {
@@ -54,12 +55,12 @@ public class BaseClassLoader extends URLClassLoader {
         String fileUrlPrefix = "file:";
         try (JarFile jarFile = new JarFile(url.getFile())) {
             String classPathValue = jarFile.getManifest().getMainAttributes()
-                .getValue("Class-Path");
+                    .getValue("Class-Path");
             String[] classPaths = classPathValue.split(" ");
             for (String classFilePath : classPaths) {
                 String filePath = StringUtils.startsWith(classFilePath, fileUrlPrefix)
-                    ? classFilePath
-                    : OSUtils.getLocalFileProtocolPrefix() + Paths.get(parentPath, classFilePath);
+                        ? classFilePath
+                        : OSUtils.getLocalFileProtocolPrefix() + Paths.get(parentPath, classFilePath);
                 urls.add(new URL(filePath));
             }
         }
@@ -75,7 +76,7 @@ public class BaseClassLoader extends URLClassLoader {
             if (url.toString().matches(".*target/surefire.*")) {
                 List<URL> urlsFromSurefireManifest = getUrlsFromSurefireManifest(url);
                 ArkletLoggerFactory.getDefaultLogger().info("{}, urlsFromSurefireManifest",
-                    urlsFromSurefireManifest);
+                        urlsFromSurefireManifest);
                 urls.addAll(urlsFromSurefireManifest);
             }
         }
@@ -100,13 +101,17 @@ public class BaseClassLoader extends URLClassLoader {
             }
         }
         this.higherPriorityResourceClassLoader = new URLClassLoader(urls.toArray(new URL[0]), null);
+        IntegrationLogger.getLogger().debug("{}, BaseArtifactId", baseArtifactId);
+        IntegrationLogger.getLogger().debug("{}, ExcludeArtifactIds", excludeArtifactIds);
     }
 
     @Override
     public URL[] getURLs() {
-        return Arrays.stream(parentUrls)
-            .filter(url -> !excludeArtifactIds.stream().anyMatch(url.toString()::contains))
-            .toArray(URL[]::new);
+        URL[] urls = Arrays.stream(parentUrls)
+                .filter(url -> !excludeArtifactIds.stream().anyMatch(url.toString()::contains))
+                .toArray(URL[]::new);
+        IntegrationLogger.getLogger().debug("{}, BaseUrls", urls);
+        return urls;
     }
 
     @Override
