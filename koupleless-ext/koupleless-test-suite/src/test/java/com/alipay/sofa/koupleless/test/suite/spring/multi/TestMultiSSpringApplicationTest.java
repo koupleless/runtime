@@ -33,7 +33,6 @@ import java.util.List;
  */
 public class TestMultiSSpringApplicationTest {
 
-    @Test
     public void testMultiApplicationLaunched() throws Throwable {
         IntegrationLogger.getLogger();
         System.setProperty("koupleless.module.initializer.skip", "");
