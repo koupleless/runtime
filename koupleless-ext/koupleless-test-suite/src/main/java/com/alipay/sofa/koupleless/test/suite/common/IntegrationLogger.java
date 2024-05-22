@@ -14,35 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.test.suite.biz;
+package com.alipay.sofa.koupleless.test.suite.common;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import java.net.URLClassLoader;
-import java.util.List;
+import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
+import lombok.Getter;
+import org.slf4j.Logger;
 
 /**
- * <p>TestBizConfig class.</p>
- *
  * @author CodeNoobKing
- * @version 1.0.0
- * @since 2024/3/21
- */
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
-@Builder
-public class TestBizConfig {
-    private String         bootstrapClassName;
-    private String         bizName;
-    private String         bizVersion;
-    private List<String>   testClassNames;
-    private List<String>   includeClassPatterns;
-    private URLClassLoader baseClassLoader;
-    private List<String>   preFindResourceUrlKeyWords;
-    private List<String>   excludeArtifactIds;
-    private List<String>   includeArtifactIds;
+ * @date 2024/5/21
+ **/
+public class IntegrationLogger {
+
+    static Logger logger = null;
+
+    public static Logger getLogger() {
+        return logger;
+    }
+
+    static {
+        logger = ArkletLoggerFactory.getLogger("INTEGRATION-TEST");
+    }
+
 }

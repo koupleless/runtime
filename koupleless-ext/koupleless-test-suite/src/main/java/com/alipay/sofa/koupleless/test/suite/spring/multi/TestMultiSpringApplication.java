@@ -39,8 +39,8 @@ import java.util.*;
  * @author CodeNoobKing
  * @author CodeNoobKing
  * @author CodeNoobKing
- * @since 2024/3/7
  * @version 1.0.0
+ * @since 2024/3/7
  */
 public class TestMultiSpringApplication {
 
@@ -65,6 +65,7 @@ public class TestMultiSpringApplication {
      * @param config a {@link com.alipay.sofa.koupleless.test.suite.spring.model.MultiSpringTestConfig} object
      */
     public TestMultiSpringApplication(MultiSpringTestConfig config) {
+        config.init();
         this.baseApplication = new BaseSpringTestApplication(config.getBaseConfig());
         for (BizSpringTestConfig bizConfig : config.getBizConfigs()) {
             this.bizApplications.put(bizConfig.getBizName(),

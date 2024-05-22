@@ -16,14 +16,23 @@
  */
 package com.alipay.sofa.koupleless.test.suite.biz;
 
+import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.container.service.classloader.BizClassLoader;
+import com.alipay.sofa.ark.exception.ArkLoaderException;
+import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger;
+import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
 import lombok.SneakyThrows;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
@@ -36,6 +45,8 @@ import java.util.regex.Pattern;
 public class TestBizClassLoader extends BizClassLoader {
 
     private List<Object> resolveByClassLoaderPatterns;
+
+    private List<String> includedArtifactIds = new ArrayList<>();
 
     @SneakyThrows
     private void initHook() {
@@ -55,24 +66,33 @@ public class TestBizClassLoader extends BizClassLoader {
     /**
      * <p>Constructor for TestBizClassLoader.</p>
      *
-     * @param bizIdentity a {@link java.lang.String} object
-     * @param includeClassNames a {@link java.util.List} object
+     * @param bizIdentity          a {@link java.lang.String} object
+     * @param includeClassNames    a {@link java.util.List} object
      * @param includeClassPatterns a {@link java.util.List} object
-     * @param baseClassLoader a {@link java.net.URLClassLoader} object
+     * @param baseClassLoader      a {@link java.net.URLClassLoader} object
      */
     public TestBizClassLoader(String bizIdentity, List<String> includeClassNames,
-                              List<Pattern> includeClassPatterns, URLClassLoader baseClassLoader) {
+                              List<Pattern> includeClassPatterns, List<String> includeArtifactIds,
+                              URLClassLoader baseClassLoader) {
         super(bizIdentity, baseClassLoader.getURLs());
         initHook();
+
         this.resolveByClassLoaderPatterns = new ArrayList<>();
-        this.resolveByClassLoaderPatterns.addAll(includeClassPatterns);
-        this.resolveByClassLoaderPatterns.addAll(includeClassNames);
+        this.resolveByClassLoaderPatterns.addAll(CollectionUtils.emptyIfNull(includeClassPatterns));
+        this.resolveByClassLoaderPatterns.addAll(CollectionUtils.emptyIfNull(includeClassNames));
+        this.includedArtifactIds.addAll(CollectionUtils.emptyIfNull(includeArtifactIds));
+
+        ArkletLoggerFactory.getDefaultLogger().info("{}, {} ", baseClassLoader.getURLs(),
+            "BaseUrlsForBiz");
+        ArkletLoggerFactory.getDefaultLogger().info("{}, IncludeClassNames", includeClassNames);
+        ArkletLoggerFactory.getDefaultLogger().info("{}, IncludeClassPatterns", includeClassNames);
+        ArkletLoggerFactory.getDefaultLogger().info("{}, IncludeArtifactIds", includeArtifactIds);
 
     }
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * 重写 resolveLocalClass 方法，根据 resolveByClassLoaderPatterns 判断是否需要使用 baseClassLoader 加载类。
      * 这是因为，当我们做集成测试兼容的时候，我们需要区分地加载同一个包里的哪些类在 baseClassLoader 加载，哪些类在 bizClassLoader 加载。
      * 这个能力在正常的 ark 使用场景下是不具备的，因为正常 sofa-ark 是包粒度的。
@@ -95,12 +115,33 @@ public class TestBizClassLoader extends BizClassLoader {
 
             if (resolveByClassLoaderPattern instanceof Pattern
                 && ((Pattern) resolveByClassLoaderPattern).matcher(name).matches()) {
-                return super.resolveLocalClass(name);
+                Class<?> clz = super.resolveLocalClass(name);
+                return clz;
             }
         }
 
         // default to base classLoader
         return null;
+    }
+
+    // since we cannot acquire package of clz, we have to perform a post interception
+    @Override
+    public Class<?> loadClassInternal(String name, boolean resolve) throws ArkLoaderException {
+        Class<?> clz = super.loadClassInternal(name, resolve);
+
+        String codeSourceLocation = Optional.ofNullable(clz.getProtectionDomain())
+            .map(ProtectionDomain::getCodeSource).map(CodeSource::getLocation).map(URL::toString)
+            .orElse("");
+
+        for (String includedArtifactId : includedArtifactIds) {
+            // should be load by test class loader
+            if (codeSourceLocation.contains(includedArtifactId)
+                && !this.equals(clz.getClassLoader())) {
+                return super.resolveLocalClass(name);
+            }
+        }
+
+        return clz;
     }
 
 }

@@ -18,6 +18,8 @@ package com.alipay.sofa.koupleless.test.suite.spring.base;
 
 import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.api.ArkConfigs;
+import com.alipay.sofa.ark.container.model.BizModel;
+import com.alipay.sofa.ark.spi.model.BizState;
 import com.alipay.sofa.koupleless.common.BizRuntimeContext;
 import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
 import com.alipay.sofa.koupleless.test.suite.biz.TestBootstrap;
@@ -31,9 +33,12 @@ import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEven
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.Resource;
 
 import java.net.URLClassLoader;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 import static com.alipay.sofa.ark.spi.constant.Constants.MASTER_BIZ;
@@ -42,8 +47,8 @@ import static com.alipay.sofa.ark.spi.constant.Constants.MASTER_BIZ;
  * <p>BaseSpringTestApplication class.</p>
  *
  * @author CodeNoobKing
- * @since 2024/3/8
  * @version 1.0.0
+ * @since 2024/3/8
  */
 @Getter
 public class BaseSpringTestApplication {
@@ -60,8 +65,8 @@ public class BaseSpringTestApplication {
     public void initBaseClassLoader() {
         URLClassLoader baseClassLoader = (URLClassLoader) Thread.currentThread()
             .getContextClassLoader();
-        this.baseClassLoader = new BaseClassLoader(Lists.newArrayList(config.getArtifactId()),
-            baseClassLoader);
+        this.baseClassLoader = new BaseClassLoader(baseClassLoader, config.getArtifactId(),
+            Lists.newArrayList(config.getArtifactId()), config.getExcludeArtifactIds());
     }
 
     /**
@@ -87,7 +92,15 @@ public class BaseSpringTestApplication {
         Class<?> mainClass = baseClassLoader.loadClass(config.getMainClass().getName());
         // add necessary bizRuntimeContext
         SpringApplication springApplication = new SpringApplication(
-            new DefaultResourceLoader(baseClassLoader), mainClass) {
+            new DefaultResourceLoader(baseClassLoader) {
+                @Override
+                public Resource getResource(String location) {
+                    if (!config.getExcludeArtifactIds().stream().anyMatch(location::contains)) {
+                        return super.getResource(location);
+                    }
+                    return null;
+                }
+            }, mainClass) {
             // the listener is not needed in the test workflow.
             // because it will automatically create another ArkServiceContainer with a unreachable Container ClassLoader
             @Override
@@ -112,6 +125,7 @@ public class BaseSpringTestApplication {
             }, new ApplicationListener<ApplicationContextInitializedEvent>() {
                 @Override
                 public void onApplicationEvent(ApplicationContextInitializedEvent event) {
+                    ((BizModel) ArkClient.getMasterBiz()).setBizState(BizState.ACTIVATED);
                     BizRuntimeContextRegistry.getMasterBizRuntimeContext()
                         .setRootApplicationContext(event.getApplicationContext());
                 }

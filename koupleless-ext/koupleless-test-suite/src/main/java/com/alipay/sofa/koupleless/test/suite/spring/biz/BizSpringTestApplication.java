@@ -19,9 +19,13 @@ package com.alipay.sofa.koupleless.test.suite.spring.biz;
 import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.spi.event.biz.AfterBizStartupEvent;
 import com.alipay.sofa.ark.spi.event.biz.BeforeBizStartupEvent;
+import com.alipay.sofa.ark.spi.model.BizState;
 import com.alipay.sofa.ark.spi.service.event.EventAdminService;
+import com.alipay.sofa.koupleless.common.BizRuntimeContext;
+import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
 import com.alipay.sofa.koupleless.test.suite.biz.TestBizModel;
 import com.alipay.sofa.koupleless.test.suite.biz.TestBizConfig;
+import com.alipay.sofa.koupleless.test.suite.spring.base.BaseClassLoader;
 import com.alipay.sofa.koupleless.test.suite.spring.framwork.SpringTestUtils;
 import com.alipay.sofa.koupleless.test.suite.spring.model.BizSpringTestConfig;
 import lombok.Getter;
@@ -42,8 +46,8 @@ import java.util.stream.Collectors;
  * <p>BizSpringTestApplication class.</p>
  *
  * @author CodeNoobKing
- * @since 2024/3/6
  * @version 1.0.0
+ * @since 2024/3/6
  */
 @Getter
 public class BizSpringTestApplication {
@@ -84,6 +88,12 @@ public class BizSpringTestApplication {
                 return true;
             }
         }
+
+        for (String excludeKeyword : config.getExcludeArtifactIds()) {
+            if (dependency.contains(excludeKeyword)) {
+                return true;
+            }
+        }
         return false;
     }
 
@@ -95,17 +105,19 @@ public class BizSpringTestApplication {
             .collect(Collectors.toList());
 
         URLClassLoader tccl = (URLClassLoader) Thread.currentThread().getContextClassLoader();
-        List<URL> excludedUrls = new ArrayList<>();
-        for (URL url : tccl.getURLs()) {
+        List<URL> bizDependencyUrls = new ArrayList<>();
+        for (URL url : BaseClassLoader.getUrls(tccl)) {
             if (!isExcludedDependency(url.toString())) {
-                excludedUrls.add(url);
+                bizDependencyUrls.add(url);
             }
         }
 
         testBiz = new TestBizModel(TestBizConfig.builder().bootstrapClassName("")
-            .bizName(config.getBizName()).bizVersion("TEST").testClassNames(new ArrayList<>())
-            .includeClassPatterns(includeClassPatterns)
-            .baseClassLoader(new URLClassLoader(excludedUrls.toArray(new URL[0]), tccl.getParent()))
+            .bizName(config.getBizName()).bizVersion(config.getBizVersion())
+            .testClassNames(new ArrayList<>()).includeClassPatterns(includeClassPatterns)
+            .includeArtifactIds(config.getIncludeArtifactIds())
+            .baseClassLoader(
+                new URLClassLoader(bizDependencyUrls.toArray(new URL[0]), tccl.getParent()))
             .build());
         testBiz.setWebContextPath(config.getBizName());
     }
@@ -127,8 +139,8 @@ public class BizSpringTestApplication {
                 SpringApplication springApplication = new SpringApplication(mainClass);
                 springApplication.setAdditionalProfiles(config.getBizName());
                 applicationContext = springApplication.run();
+                testBiz.setBizState(BizState.ACTIVATED);
                 eventAdminService.sendEvent(new AfterBizStartupEvent(testBiz));
-
             }
         }, new Executor() {
             @Override
