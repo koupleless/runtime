@@ -131,14 +131,13 @@ public class SpringServiceFinder {
     public static <T> Map<Biz, Map<String, T>> listAllModuleServices(Class<T> serviceType) {
         Biz masterBiz = ArkClient.getMasterBiz();
         List<Biz> bizList = ArkClient.getBizManagerService().getBizInOrder().stream()
-                .filter(biz -> biz != masterBiz)
-                .collect(Collectors.toList());
+            .filter(biz -> biz != masterBiz).collect(Collectors.toList());
 
         Map<Biz, Map<String, T>> bizMap = new HashMap<>();
         for (Biz biz : bizList) {
             // ensure batchCreateServiceProxy called by listAllModuleServices directly，rather than called in the stream()
-            Map<String, T> proxies = ServiceProxyFactory.batchCreateServiceProxy(biz.getBizName(), biz.getBizVersion(), serviceType,
-                    null);
+            Map<String, T> proxies = ServiceProxyFactory.batchCreateServiceProxy(biz.getBizName(),
+                biz.getBizVersion(), serviceType, null);
             bizMap.put(biz, proxies);
         }
 
