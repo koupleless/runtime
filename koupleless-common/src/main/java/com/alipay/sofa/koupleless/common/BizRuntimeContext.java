@@ -47,7 +47,7 @@ public class BizRuntimeContext implements ComponentRegistry {
     private Map<ClassLoader, Map<String, ServiceProxyCache>>                                serviceProxyCaches = new ConcurrentHashMap<>();
 
     // Beanregistry key为 "identifier"
-    private Map<String/*protocol_full_class_name*/, BeanRegistry<AbstractServiceComponent>> serviceMap         = new ConcurrentHashMap<>();
+    private Map<String/*protocol_name*/, BeanRegistry<AbstractServiceComponent>> serviceMap         = new ConcurrentHashMap<>();
 
     /**
      * <p>Getter for the field <code>bizName</code>.</p>
