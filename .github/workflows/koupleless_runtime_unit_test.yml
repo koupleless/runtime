@@ -5,10 +5,14 @@ on:
   push:
     branches:
       - main
+      - runtime-2.1.x
+      - runtime-2.0.x
 
   pull_request:
     branches:
       - main
+      - runtime-2.1.x
+      - runtime-2.0.x
 
   # enable manually running the workflow
   workflow_dispatch:
