@@ -16,6 +16,7 @@
  */
 package com.alipay.sofa.koupleless.test.suite.spring.base;
 
+import com.alipay.sofa.ark.common.util.ClassLoaderUtils;
 import com.alipay.sofa.koupleless.common.util.OSUtils;
 import com.google.common.collect.Lists;
 import lombok.SneakyThrows;
@@ -36,7 +37,7 @@ import java.util.jar.JarFile;
  */
 public class BaseClassLoader extends URLClassLoader {
 
-    private URLClassLoader parent;
+    private ClassLoader    parent;
     private URLClassLoader higherPriorityClassLoader;
 
     private URL[]          parentUrls;
@@ -73,9 +74,9 @@ public class BaseClassLoader extends URLClassLoader {
      * @return a {@link java.util.List} object
      */
     @SneakyThrows
-    public static List<URL> getUrls(URLClassLoader classLoader) {
+    public static List<URL> getUrls(ClassLoader classLoader) {
         List<URL> urls = Lists.newArrayList();
-        for (URL url : classLoader.getURLs()) {
+        for (URL url : ClassLoaderUtils.getURLs(classLoader)) {
             urls.add(url);
 
             if (url.toString().matches(".*target/surefire.*")) {
@@ -96,7 +97,7 @@ public class BaseClassLoader extends URLClassLoader {
         // add an interception layer to the parent classloader
         // in this way we can control the classloading process
         super(new URL[0], parent);
-        this.parent = (URLClassLoader) parent;
+        this.parent = parent;
 
         List<URL> urls = Lists.newArrayList();
         this.parentUrls = getUrls(this.parent).toArray(new URL[0]);

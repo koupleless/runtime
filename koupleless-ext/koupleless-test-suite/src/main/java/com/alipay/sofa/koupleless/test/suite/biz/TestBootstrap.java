@@ -17,6 +17,7 @@
 package com.alipay.sofa.koupleless.test.suite.biz;
 
 import com.alipay.sofa.ark.api.ArkClient;
+import com.alipay.sofa.ark.common.util.ClassLoaderUtils;
 import com.alipay.sofa.ark.container.model.BizModel;
 import com.alipay.sofa.ark.container.registry.ContainerServiceProvider;
 import com.alipay.sofa.ark.container.service.ArkServiceContainer;
@@ -56,7 +57,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class TestBootstrap {
 
     @Getter
-    private static URLClassLoader      baseClassLoader;
+    private static ClassLoader         baseClassLoader;
 
     private static ArkServiceContainer INSTANCE            = new ArkServiceContainer(new String[0]);
     private static AtomicBoolean       started             = new AtomicBoolean();
@@ -82,7 +83,8 @@ public class TestBootstrap {
         pluginDependencies.add("koupleless-base-plugin");
 
         ArkServiceContainer container = ArkServiceContainerHolder.getContainer();
-        for (URL url : TestBootstrap.getBaseClassLoader().getURLs()) {
+        URL[] urls = ClassLoaderUtils.getURLs(TestBootstrap.getBaseClassLoader());
+        for (URL url : urls) {
             String path = url.getPath();
             if (isPluginDependency(path)) {
                 JarFileArchive archive = new JarFileArchive(new File(url.getFile()));
@@ -136,7 +138,7 @@ public class TestBootstrap {
      */
     public static void init(ClassLoader baseClassLoader) {
         if (started.compareAndSet(false, true)) {
-            TestBootstrap.baseClassLoader = (URLClassLoader) baseClassLoader;
+            TestBootstrap.baseClassLoader = baseClassLoader;
             INSTANCE.start();
             publicService();
             setUpPlugins();
