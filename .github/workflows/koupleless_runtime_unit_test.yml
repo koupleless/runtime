@@ -21,7 +21,7 @@ env:
   WORK_DIR: .
 
 jobs:
-  unit-test-for-jdk8:
+  unit-test-for-jdk17:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
