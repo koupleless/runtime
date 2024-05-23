@@ -90,7 +90,7 @@ public class SkipInitializerListenerTest {
                 BaseRuntimeAutoConfiguration.class);
             SpringApplication springApplication = builder.build();
 
-            assertEquals(7, springApplication.getInitializers().size());
+            int beforeSkipInitializerSize = springApplication.getInitializers().size();
 
             try {
                 springApplication.run();
@@ -98,7 +98,7 @@ public class SkipInitializerListenerTest {
                 // skip exception
             }
 
-            assertEquals(3, springApplication.getInitializers().size());
+            assertEquals(beforeSkipInitializerSize - 4, springApplication.getInitializers().size());
         } finally {
             Thread.currentThread().setContextClassLoader(oldClassLoader);
         }
