@@ -66,7 +66,7 @@ public class ShutdownExecutorServicesOnUninstallEventHandlerTest {
         ExecutorService executorService2 = manageExecutorService(
             new ScheduledThreadPoolExecutor(10));
 
-        ClassLoader newClassLoader = new URLClassLoader(new URL[1],
+        ClassLoader newClassLoader = new URLClassLoader(new URL[0],
             ShutdownExecutorServicesOnUninstallEventHandler.class.getClassLoader());
         currentThread().setContextClassLoader(newClassLoader);
 
