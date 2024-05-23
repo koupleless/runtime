@@ -17,6 +17,7 @@
 package com.alipay.sofa.koupleless.test.suite.spring.biz;
 
 import com.alipay.sofa.ark.api.ArkClient;
+import com.alipay.sofa.ark.common.util.ClassLoaderUtils;
 import com.alipay.sofa.ark.spi.event.biz.AfterBizStartupEvent;
 import com.alipay.sofa.ark.spi.event.biz.BeforeBizStartupEvent;
 import com.alipay.sofa.ark.spi.model.BizState;
@@ -104,7 +105,7 @@ public class BizSpringTestApplication {
         List<String> includeClassPatterns = config.getPackageNames().stream().map(s -> s + ".*")
             .collect(Collectors.toList());
 
-        URLClassLoader tccl = (URLClassLoader) Thread.currentThread().getContextClassLoader();
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         List<URL> bizDependencyUrls = new ArrayList<>();
         for (URL url : BaseClassLoader.getUrls(tccl)) {
             if (!isExcludedDependency(url.toString())) {

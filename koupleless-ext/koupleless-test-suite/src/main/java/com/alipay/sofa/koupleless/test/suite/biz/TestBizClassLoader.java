@@ -17,6 +17,7 @@
 package com.alipay.sofa.koupleless.test.suite.biz;
 
 import com.alipay.sofa.ark.api.ArkClient;
+import com.alipay.sofa.ark.common.util.ClassLoaderUtils;
 import com.alipay.sofa.ark.container.service.classloader.BizClassLoader;
 import com.alipay.sofa.ark.exception.ArkLoaderException;
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger;
@@ -73,8 +74,8 @@ public class TestBizClassLoader extends BizClassLoader {
      */
     public TestBizClassLoader(String bizIdentity, List<String> includeClassNames,
                               List<Pattern> includeClassPatterns, List<String> includeArtifactIds,
-                              URLClassLoader baseClassLoader) {
-        super(bizIdentity, baseClassLoader.getURLs());
+                              ClassLoader baseClassLoader) {
+        super(bizIdentity, ClassLoaderUtils.getURLs(baseClassLoader));
         initHook();
 
         this.resolveByClassLoaderPatterns = new ArrayList<>();
@@ -82,7 +83,7 @@ public class TestBizClassLoader extends BizClassLoader {
         this.resolveByClassLoaderPatterns.addAll(CollectionUtils.emptyIfNull(includeClassNames));
         this.includedArtifactIds.addAll(CollectionUtils.emptyIfNull(includeArtifactIds));
 
-        ArkletLoggerFactory.getDefaultLogger().info("{}, {} ", baseClassLoader.getURLs(),
+        ArkletLoggerFactory.getDefaultLogger().info("{}, {} ", ClassLoaderUtils.getURLs(baseClassLoader),
             "BaseUrlsForBiz");
         ArkletLoggerFactory.getDefaultLogger().info("{}, IncludeClassNames", includeClassNames);
         ArkletLoggerFactory.getDefaultLogger().info("{}, IncludeClassPatterns", includeClassNames);

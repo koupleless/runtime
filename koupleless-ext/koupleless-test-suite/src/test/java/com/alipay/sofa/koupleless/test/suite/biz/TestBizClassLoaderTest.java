@@ -16,6 +16,7 @@
  */
 package com.alipay.sofa.koupleless.test.suite.biz;
 
+import com.alipay.sofa.ark.common.util.ClassLoaderUtils;
 import com.alipay.sofa.koupleless.test.suite.mock.LoadByBaseClass;
 import com.alipay.sofa.koupleless.test.suite.mock.LoadByTestBizClassA;
 import org.junit.Assert;
@@ -33,7 +34,7 @@ import java.util.regex.Pattern;
 public class TestBizClassLoaderTest {
 
     private URLClassLoader baseClassLoader = new URLClassLoader(
-        ((URLClassLoader) Thread.currentThread().getContextClassLoader()).getURLs(),
+        ClassLoaderUtils.getURLs(Thread.currentThread().getContextClassLoader()),
         Thread.currentThread().getContextClassLoader());
 
     @Test
