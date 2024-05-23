@@ -19,6 +19,7 @@ package com.alipay.sofa.koupleless.test.suite.spring.base;
 import com.alipay.sofa.ark.common.util.ClassLoaderUtils;
 import com.alipay.sofa.ark.loader.jar.JarUtils;
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
+import com.alipay.sofa.ark.common.util.ClassLoaderUtils;
 import com.alipay.sofa.koupleless.common.util.OSUtils;
 import com.alipay.sofa.koupleless.test.suite.common.IntegrationLogger;
 import com.google.common.collect.Lists;
@@ -98,9 +99,10 @@ public class BaseClassLoader extends URLClassLoader {
         // add an interception layer to the parent classloader
         // in this way we can control the classloading process
         super(new URL[0], parent);
-        this.parent = (URLClassLoader) parent;
+        this.parent = parent;
         this.excludeArtifactIds = excludeArtifactIds;
         this.excludeArtifactIds.remove(baseArtifactId);
+
 
         List<URL> urls = Lists.newArrayList();
         this.parentUrls = getUrls(this.parent).toArray(new URL[0]);
