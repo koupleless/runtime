@@ -4,11 +4,11 @@ run-name: ${{ github.actor }} pushed code
 on:
   push:
     branches:
-      - main
+      - runtime-2.0.x
 
   pull_request:
     branches:
-      - main
+      - runtime-2.0.x
 
   # enable manually running the workflow
   workflow_dispatch:
@@ -17,7 +17,7 @@ env:
   WORK_DIR: .
 
 jobs:
-  unit-test-for-jdk8:
+  unit-test-for-jdk17:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -25,7 +25,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: adopt
-          java-version: 8
+          java-version: 17
           cache: maven
 
       - name: Test
