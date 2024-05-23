@@ -36,11 +36,11 @@ import java.util.List;
 @Data
 @Builder
 public class TestBizConfig {
-    private String         bootstrapClassName;
-    private String         bizName;
-    private String         bizVersion;
-    private List<String>   testClassNames;
-    private List<String>   includeClassPatterns;
-    private URLClassLoader baseClassLoader;
-    private List<String>   preFindResourceUrlKeyWords;
+    private String       bootstrapClassName;
+    private String       bizName;
+    private String       bizVersion;
+    private List<String> testClassNames;
+    private List<String> includeClassPatterns;
+    private ClassLoader  baseClassLoader;
+    private List<String> preFindResourceUrlKeyWords;
 }

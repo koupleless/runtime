@@ -17,11 +17,12 @@
 package com.alipay.sofa.koupleless.test.suite.spring.biz;
 
 import com.alipay.sofa.ark.api.ArkClient;
+import com.alipay.sofa.ark.common.util.ClassLoaderUtils;
 import com.alipay.sofa.ark.spi.event.biz.AfterBizStartupEvent;
 import com.alipay.sofa.ark.spi.event.biz.BeforeBizStartupEvent;
 import com.alipay.sofa.ark.spi.service.event.EventAdminService;
-import com.alipay.sofa.koupleless.test.suite.biz.TestBizModel;
 import com.alipay.sofa.koupleless.test.suite.biz.TestBizConfig;
+import com.alipay.sofa.koupleless.test.suite.biz.TestBizModel;
 import com.alipay.sofa.koupleless.test.suite.spring.framwork.SpringTestUtils;
 import com.alipay.sofa.koupleless.test.suite.spring.model.BizSpringTestConfig;
 import lombok.Getter;
@@ -94,9 +95,9 @@ public class BizSpringTestApplication {
         List<String> includeClassPatterns = config.getPackageNames().stream().map(s -> s + ".*")
             .collect(Collectors.toList());
 
-        URLClassLoader tccl = (URLClassLoader) Thread.currentThread().getContextClassLoader();
+        ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         List<URL> excludedUrls = new ArrayList<>();
-        for (URL url : tccl.getURLs()) {
+        for (URL url : ClassLoaderUtils.getURLs(tccl)) {
             if (!isExcludedDependency(url.toString())) {
                 excludedUrls.add(url);
             }

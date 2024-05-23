@@ -16,11 +16,11 @@
  */
 package com.alipay.sofa.koupleless.test.suite.biz;
 
+import com.alipay.sofa.ark.common.util.ClassLoaderUtils;
 import com.alipay.sofa.ark.container.service.classloader.BizClassLoader;
 import lombok.SneakyThrows;
 
 import java.lang.reflect.Field;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -61,8 +61,8 @@ public class TestBizClassLoader extends BizClassLoader {
      * @param baseClassLoader a {@link java.net.URLClassLoader} object
      */
     public TestBizClassLoader(String bizIdentity, List<String> includeClassNames,
-                              List<Pattern> includeClassPatterns, URLClassLoader baseClassLoader) {
-        super(bizIdentity, baseClassLoader.getURLs());
+                              List<Pattern> includeClassPatterns, ClassLoader baseClassLoader) {
+        super(bizIdentity, ClassLoaderUtils.getURLs(baseClassLoader));
         initHook();
         this.resolveByClassLoaderPatterns = new ArrayList<>();
         this.resolveByClassLoaderPatterns.addAll(includeClassPatterns);

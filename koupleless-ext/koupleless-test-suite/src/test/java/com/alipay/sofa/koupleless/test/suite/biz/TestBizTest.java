@@ -45,7 +45,7 @@ public class TestBizTest {
             .bootstrapClassName("com.alipay.sofa.koupleless.test.suite.mock.BootStrapClass")
             .bizName("test").bizVersion("1.0.0").testClassNames(testClassNames)
             .includeClassPatterns(includeClassPatterns)
-            .baseClassLoader((URLClassLoader) TestBizTest.class.getClassLoader()).build());
+            .baseClassLoader(TestBizTest.class.getClassLoader()).build());
     }
 
     @Test
