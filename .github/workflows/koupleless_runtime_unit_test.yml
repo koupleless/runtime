@@ -31,7 +31,7 @@ jobs:
       - name: Test
         run: mvn clean install -DskipTests -Dmaven.javadoc.skip=true -B -U
           && sh ./check_format.sh
-          && mvn test
+          && mvn test  -DargLine="-Djdk.util.zip.disableZip64ExtraFieldValidation=true"
 
       - name: upload coverage reports to Codecov with github action
         uses: codecov/codecov-action@v3
