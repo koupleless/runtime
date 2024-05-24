@@ -21,6 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: 'runtime-2.0.x'
       - name: Setup Java JDK
         uses: actions/setup-java@v3
         with:
@@ -31,7 +33,7 @@ jobs:
       - name: Test
         run: mvn clean install -DskipTests -Dmaven.javadoc.skip=true -B -U
           && sh ./check_format.sh
-          && mvn test  -DargLine="-Djdk.util.zip.disableZip64ExtraFieldValidation=true"
+          && mvn test -DargLine="-Djdk.util.zip.disableZip64ExtraFieldValidation=true"
 
       - name: upload coverage reports to Codecov with github action
         uses: codecov/codecov-action@v3
