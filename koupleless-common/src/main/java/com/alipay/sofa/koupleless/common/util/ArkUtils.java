@@ -37,4 +37,12 @@ public class ArkUtils {
         return ArkClient.getMasterBiz().getBizClassLoader() != Thread.currentThread()
             .getContextClassLoader();
     }
+
+    public static boolean isMasterBiz() {
+        if (ArkClient.getMasterBiz() == null) {
+            return false;
+        }
+        return ArkClient.getMasterBiz().getBizClassLoader() == Thread.currentThread()
+            .getContextClassLoader();
+    }
 }
