@@ -395,6 +395,7 @@
                         <exclude>**/org/springframework/boot/**/*</exclude>
                         <exclude>**/org/apache/logging/slf4j/**/*</exclude>
                         <exclude>**/com/ctrip/framework/apollo/spring/boot/**/*</exclude>
+                        <exclude>**/common/service/ServiceState.java</exclude>
                     </excludes>
                 </configuration>
                 <executions>
