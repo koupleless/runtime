@@ -16,12 +16,14 @@
  */
 package com.alipay.sofa.koupleless.plugin.manager.listener;
 
+import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.api.ClientResponse;
 import com.alipay.sofa.ark.api.ResponseCode;
 import com.alipay.sofa.koupleless.arklet.core.ArkletComponentRegistry;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BatchInstallRequest;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BatchInstallResponse;
 import com.alipay.sofa.koupleless.arklet.core.ops.UnifiedOperationService;
+import com.alipay.sofa.koupleless.common.util.ArkUtils;
 import lombok.SneakyThrows;
 import org.junit.After;
 import org.junit.Before;
@@ -30,8 +32,12 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.util.HashMap;
@@ -41,7 +47,6 @@ import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.times;
 
 /**
- *
  * @author CodeNoobKingKc2
  * @version $Id: ApplicationContextEventListenerTest, v 0.1 2023-11-21 11:32 CodeNoobKingKc2 Exp $
  */
@@ -72,48 +77,38 @@ public class StaticBatchInstallEventListenerTest {
     @Test
     public void testBatchDeployFromLocalDir() {
         BatchInstallResponse response = null;
-        ContextRefreshedEvent event = null;
-        {
-            componentRegistryMockedStatic.when(ArkletComponentRegistry::getOperationServiceInstance)
-                .thenReturn(operationService);
+        ApplicationReadyEvent event = null;
+        componentRegistryMockedStatic.when(ArkletComponentRegistry::getOperationServiceInstance)
+            .thenReturn(operationService);
 
-            response = BatchInstallResponse.builder().code(ResponseCode.SUCCESS)
-                .bizUrlToResponse(new HashMap<>()).build();
+        response = BatchInstallResponse.builder().code(ResponseCode.SUCCESS)
+            .bizUrlToResponse(new HashMap<>()).build();
 
-            response.getBizUrlToResponse().put("foo", new ClientResponse());
-            response.getBizUrlToResponse().get("foo").setCode(ResponseCode.SUCCESS);
+        response.getBizUrlToResponse().put("foo", new ClientResponse());
+        response.getBizUrlToResponse().get("foo").setCode(ResponseCode.SUCCESS);
 
-            doReturn(response).when(operationService).batchInstall(
-                BatchInstallRequest.builder().bizDirAbsolutePath("/path/to/dir").build());
+        doReturn(response).when(operationService)
+            .batchInstall(BatchInstallRequest.builder().bizDirAbsolutePath("/path/to/dir").build());
 
-            event = mock(ContextRefreshedEvent.class);
-            doReturn(mock(ApplicationContext.class)).when(event).getApplicationContext();
-        }
-
-        arkletApplicationListener.onApplicationEvent(event);
-
-        {
+        event = mock(ApplicationReadyEvent.class);
+        try (MockedStatic<ArkUtils> arkUtilsMockedStatic = Mockito.mockStatic(ArkUtils.class)) {
+            arkUtilsMockedStatic.when(ArkUtils::isMasterBiz).thenReturn(true);
+            arkletApplicationListener.onApplicationEvent(event);
             verify(operationService, times(1)).batchInstall(any(BatchInstallRequest.class));
         }
-
     }
 
     @SneakyThrows
     @Test
     public void testBatchDeployFromLocalDir_Skip() {
-        ContextRefreshedEvent event = null;
-        {
-            event = mock(ContextRefreshedEvent.class);
-            ApplicationContext mockdcontext = mock(ApplicationContext.class);
-            doReturn(mockdcontext).when(event).getApplicationContext();
-            doReturn(mockdcontext).when(mockdcontext).getParent();
-        }
+        ApplicationReadyEvent event = null;
+        event = mock(ApplicationReadyEvent.class);
+        ConfigurableApplicationContext mockdcontext = mock(ConfigurableApplicationContext.class);
 
-        arkletApplicationListener.onApplicationEvent(event);
-
-        {
+        try (MockedStatic<ArkUtils> arkUtilsMockedStatic = Mockito.mockStatic(ArkUtils.class)) {
+            arkUtilsMockedStatic.when(ArkUtils::isMasterBiz).thenReturn(false);
+            arkletApplicationListener.onApplicationEvent(event);
             verify(operationService, never()).batchInstall(any(BatchInstallRequest.class));
         }
-
     }
 }
