@@ -94,7 +94,6 @@ public class BaseClassLoader extends URLClassLoader {
         this.excludeArtifactIds = excludeArtifactIds;
         this.excludeArtifactIds.remove(baseArtifactId);
 
-
         List<URL> urls = Lists.newArrayList();
         this.parentUrls = getUrls(this.parent).toArray(new URL[0]);
         for (URL url : parentUrls) {
