@@ -60,8 +60,7 @@ public class BaseSpringTestApplication {
      * <p>initBaseClassLoader.</p>
      */
     public void initBaseClassLoader() {
-        ClassLoader baseClassLoader = Thread.currentThread()
-            .getContextClassLoader();
+        ClassLoader baseClassLoader = Thread.currentThread().getContextClassLoader();
         this.baseClassLoader = new BaseClassLoader(baseClassLoader, config.getArtifactId(),
             Lists.newArrayList(config.getArtifactId()), config.getExcludeArtifactIds());
     }
