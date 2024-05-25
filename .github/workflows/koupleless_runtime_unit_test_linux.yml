@@ -1,4 +1,4 @@
-name: Koupleless Runtime Unit Test
+name: Koupleless Runtime Linux Unit Test
 run-name: ${{ github.actor }} pushed code
 
 on:
