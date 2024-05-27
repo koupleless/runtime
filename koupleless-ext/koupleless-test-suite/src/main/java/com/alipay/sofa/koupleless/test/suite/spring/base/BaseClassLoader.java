@@ -26,6 +26,7 @@ import lombok.SneakyThrows;
 import org.apache.commons.collections4.iterators.IteratorEnumeration;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -52,7 +53,7 @@ public class BaseClassLoader extends URLClassLoader {
     @SneakyThrows
     public static List<URL> getUrlsFromSurefireManifest(URL url) {
         List<URL> urls = Lists.newArrayList();
-        String parentPath = Paths.get(url.getFile()).getParent().toString();
+        String parentPath = new File(url.getPath()).getParent();
         String fileUrlPrefix = "file:";
         try (JarFile jarFile = new JarFile(url.getFile())) {
             String classPathValue = jarFile.getManifest().getMainAttributes()
@@ -61,7 +62,8 @@ public class BaseClassLoader extends URLClassLoader {
             for (String classFilePath : classPaths) {
                 String filePath = StringUtils.startsWith(classFilePath, fileUrlPrefix)
                     ? classFilePath
-                    : OSUtils.getLocalFileProtocolPrefix() + Paths.get(parentPath, classFilePath);
+                    : OSUtils.getLocalFileProtocolPrefix()
+                      + new File(parentPath, classFilePath).getPath();
                 urls.add(new URL(filePath));
             }
         }
