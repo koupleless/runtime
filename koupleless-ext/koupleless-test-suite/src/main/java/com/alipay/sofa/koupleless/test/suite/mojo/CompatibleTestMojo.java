@@ -90,7 +90,7 @@ public class CompatibleTestMojo extends AbstractMojo {
     @SneakyThrows
     private CompatibleTestConfig loadConfigs() {
         return yamlObjectMapper.readValue(
-            Paths.get(project.getBuild().getTestOutputDirectory(), compatibleTestConfigFile).toUri()
+            new File(project.getBuild().getTestOutputDirectory(), compatibleTestConfigFile).toURI()
                 .toURL(),
             new TypeReference<CompatibleTestConfig>() {
             });
@@ -102,11 +102,10 @@ public class CompatibleTestMojo extends AbstractMojo {
         // if root project classes is not configured to include by class loader
         // then it mused be loaded by base classloader
         List<String> rootProjectClasses = new ArrayList<>();
-        rootProjectClasses
-            .add(Paths.get(project.getBuild().getOutputDirectory()).toAbsolutePath().toString());
+        rootProjectClasses.add(new File(project.getBuild().getOutputDirectory()).getAbsolutePath());
 
-        rootProjectClasses.add(
-            Paths.get(project.getBuild().getTestOutputDirectory()).toAbsolutePath().toString());
+        rootProjectClasses
+            .add(new File(project.getBuild().getTestOutputDirectory()).getAbsolutePath());
 
         List<TestBizModel> result = new ArrayList<>();
         for (CompatibleTestBizConfig config : CollectionUtils
