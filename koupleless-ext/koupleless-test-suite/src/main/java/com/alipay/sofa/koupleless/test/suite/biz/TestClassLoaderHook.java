@@ -74,7 +74,7 @@ public class TestClassLoaderHook extends DelegateToMasterBizClassLoaderHook {
     }
 
     private URL findResourceInBuildDirectory(File file, String resource) throws Throwable {
-        File resourceFile = Paths.get(file.getAbsolutePath(), resource).toFile();
+        File resourceFile = new File(file, resource);
         if (resourceFile.exists()) {
             return resourceFile.toURI().toURL();
         }

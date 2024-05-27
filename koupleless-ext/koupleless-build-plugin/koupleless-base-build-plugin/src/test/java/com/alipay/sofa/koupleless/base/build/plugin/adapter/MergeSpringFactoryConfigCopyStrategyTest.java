@@ -49,9 +49,8 @@ public class MergeSpringFactoryConfigCopyStrategyTest {
         copyStrategy.copy(buildDir, "META-INF/spring.factories",
             Files.readAllBytes(adapterFile.toPath()));
 
-        Map<String, List<String>> properties = SpringUtils.INSTANCE()
-            .parseSpringFactoryConfig(Files.newInputStream(
-                Paths.get(buildDir.toPath().toString(), "META-INF", "spring.factories")));
+        Map<String, List<String>> properties = SpringUtils.INSTANCE().parseSpringFactoryConfig(Files
+            .newInputStream(new File(new File(buildDir, "META-INF"), "spring.factories").toPath()));
 
         Assert.assertEquals(properties.get("just"), Lists.newArrayList("keep"));
 
