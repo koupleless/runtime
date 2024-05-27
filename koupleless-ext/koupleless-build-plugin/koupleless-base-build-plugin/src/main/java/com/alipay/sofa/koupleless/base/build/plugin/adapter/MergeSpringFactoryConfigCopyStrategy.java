@@ -77,8 +77,7 @@ public class MergeSpringFactoryConfigCopyStrategy implements CopyAdapterStrategy
     /** {@inheritDoc} */
     @Override
     public void copy(File buildDir, String entryName, byte[] content) throws Throwable {
-        File factoryFile = new File(
-            Paths.get(buildDir.getAbsolutePath(), "META-INF", "spring.factories").toUri());
+        File factoryFile = new File(new File(buildDir, "META-INF"), "spring.factories");
         if (!factoryFile.exists()) {
             Files.createDirectories(factoryFile.toPath().getParent());
             Files.createFile(factoryFile.toPath());

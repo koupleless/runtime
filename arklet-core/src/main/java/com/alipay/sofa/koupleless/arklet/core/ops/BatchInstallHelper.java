@@ -21,6 +21,7 @@ import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
 import com.google.common.base.Preconditions;
 import lombok.SneakyThrows;
 
+import java.io.File;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
@@ -47,7 +48,7 @@ public class BatchInstallHelper {
     @SneakyThrows
     public Map<Integer, List<String>> getBizUrlsFromLocalFileSystem(String absoluteBizDirPath) {
         Map<Integer, List<String>> bizUrlsWithPriority = new HashMap<>();
-        Files.walkFileTree(Paths.get(absoluteBizDirPath), new SimpleFileVisitor<Path>() {
+        Files.walkFileTree(new File(absoluteBizDirPath).toPath(), new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
                 Path absolutePath = file.toAbsolutePath();
