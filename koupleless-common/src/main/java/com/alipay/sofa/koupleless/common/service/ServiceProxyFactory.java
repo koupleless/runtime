@@ -165,6 +165,9 @@ public class ServiceProxyFactory {
             Class<?> callerClass = ReflectionUtils.getCallerClass(6);
             clientClassLoader = callerClass.getClassLoader();
         }
+        if (clientClassLoader == null) {
+            clientClassLoader = Thread.currentThread().getContextClassLoader();
+        }
 
         BizRuntimeContext bizRuntimeContext = BizRuntimeContextRegistry
             .getBizRuntimeContextByClassLoader(clientClassLoader);
