@@ -20,6 +20,8 @@ import com.alipay.sofa.koupleless.common.util.ReflectionUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 public class ReflectionUtilsTest {
     @Test
     public void testIsValid() {
@@ -54,5 +56,30 @@ public class ReflectionUtilsTest {
         StackTraceElement validElement = new StackTraceElement("ValidClassName", "validMethodName",
             "fileName", 123);
         Assert.assertTrue(ReflectionUtils.isValid(validElement));
+    }
+
+    @Test
+    public void testSetField() {
+        TestClassA testClassA = new TestClassA();
+        ReflectionUtils.setField("name", testClassA, "b");
+        ReflectionUtils.setField("parentName", testClassA, "child");
+        assertEquals("b", testClassA.getName());
+        assertEquals("child", testClassA.getParentName());
+    }
+
+    class TestClassParent {
+        private String parentName = "parent";
+
+        String getParentName() {
+            return parentName;
+        }
+    }
+
+    class TestClassA extends TestClassParent {
+        private String name = "a";
+
+        String getName() {
+            return name;
+        }
     }
 }
