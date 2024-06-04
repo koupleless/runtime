@@ -14,35 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.common.util;
+package com.alipay.sofa.koupleless.common.service;
 
-import com.alipay.sofa.ark.api.ArkClient;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * <p>ArkUtils class.</p>
- *
- * @author zzl_i
- * @version 1.0.0
+ * @author lianglipeng.llp@alibaba-inc.com
+ * @version $Id: BeanRegistry.java, v 0.1 2024年05月17日 14:30 立蓬 Exp $
  */
-public class ArkUtils {
-    /**
-     * 判断是否是ark模块
-     *
-     * @return a boolean
-     */
-    public static boolean isModuleBiz() {
-        if (ArkClient.getMasterBiz() == null) {
-            return false;
-        }
-        return ArkClient.getMasterBiz().getBizClassLoader() != Thread.currentThread()
-            .getContextClassLoader();
+public class BeanRegistry<T> {
+    private Map<String, T> map = new ConcurrentHashMap<>();
+
+    public void register(String key, T bean) {
+        map.put(key, bean);
     }
 
-    public static boolean isMasterBiz() {
-        if (ArkClient.getMasterBiz() == null) {
-            return false;
-        }
-        return ArkClient.getMasterBiz().getBizClassLoader() == Thread.currentThread()
-            .getContextClassLoader();
+    public void unRegister(String key) {
+        map.remove(key);
+    }
+
+    public T getBean(String identifier) {
+        Object o = map.get(identifier);
+        return o == null ? null : (T) o;
+    }
+
+    public List<T> getBeans() {
+        return new ArrayList<>(map.values());
+    }
+
+    public void close() {
+        map.clear();
     }
 }

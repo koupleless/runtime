@@ -16,11 +16,12 @@
  */
 package com.alipay.sofa.koupleless.arklet.core.ops;
 
-import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger;
+import com.alipay.sofa.ark.spi.service.PriorityOrdered;
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
 import com.google.common.base.Preconditions;
 import lombok.SneakyThrows;
 
+import java.io.File;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
@@ -39,44 +40,43 @@ import java.util.jar.Manifest;
 public class BatchInstallHelper {
 
     /**
-     * 判断是否是 biz jar 文件
-     * 目前简单的以后缀 '-biz.jar' 为约束。
-     *
-     * @param path 文件路径。
-     * @return 是否是 biz jar 文件。
-     */
-    public boolean isBizJarFile(Path path) {
-        if (path.toString().endsWith(".jar")) {
-            Map<String, Object> attributes = getMainAttributes(path.toString());
-            return attributes.containsKey("Ark-Biz-Name");
-        } else {
-            return false;
-        }
-    }
-
-    /**
      * <p>getBizUrlsFromLocalFileSystem.</p>
      *
      * @param absoluteBizDirPath a {@link java.lang.String} object
      * @return a {@link java.util.List} object
      */
     @SneakyThrows
-    public List<String> getBizUrlsFromLocalFileSystem(String absoluteBizDirPath) {
-        List<String> bizUrls = new ArrayList<>();
-        Files.walkFileTree(Paths.get(absoluteBizDirPath), new SimpleFileVisitor<Path>() {
+    public Map<Integer, List<String>> getBizUrlsFromLocalFileSystem(String absoluteBizDirPath) {
+        Map<Integer, List<String>> bizUrlsWithPriority = new HashMap<>();
+        Files.walkFileTree(new File(absoluteBizDirPath).toPath(), new SimpleFileVisitor<Path>() {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
                 Path absolutePath = file.toAbsolutePath();
-                if (isBizJarFile(absolutePath)) {
-                    ArkletLoggerFactory.getDefaultLogger().info("Found biz jar file: {}",
-                        absolutePath);
-                    bizUrls.add(absolutePath.toString());
+                if (absolutePath.toString().endsWith(".jar")) {
+                    Map<String, Object> attributes = getMainAttributes(absolutePath.toString());
+                    if (attributes.containsKey("Ark-Biz-Name")) {
+                        Integer order = Integer.valueOf(
+                            attributes.getOrDefault("priority", PriorityOrdered.DEFAULT_PRECEDENCE)
+                                .toString());
+                        bizUrlsWithPriority.putIfAbsent(order, new ArrayList<>());
+                        bizUrlsWithPriority.get(order).add(absolutePath.toString());
+                    }
                 }
+
                 return FileVisitResult.CONTINUE;
             }
         });
 
-        return bizUrls;
+        // reorder
+        List<Map.Entry<Integer, List<String>>> keyInOrder = new ArrayList<>(
+            bizUrlsWithPriority.entrySet());
+        keyInOrder.sort(Map.Entry.comparingByKey());
+        Map<Integer, List<String>> bizUrlsInOrder = new HashMap<>();
+        for (Map.Entry<Integer, List<String>> entry : keyInOrder) {
+            bizUrlsInOrder.put(entry.getKey(), entry.getValue());
+        }
+
+        return bizUrlsInOrder;
     }
 
     /**

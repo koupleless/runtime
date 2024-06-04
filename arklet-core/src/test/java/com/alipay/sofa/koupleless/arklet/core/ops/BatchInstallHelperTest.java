@@ -37,6 +37,7 @@ import java.util.function.BiConsumer;
 import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import java.util.stream.Collectors;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -128,12 +129,13 @@ public class BatchInstallHelperTest {
                         }
                     });
 
-                List<String> bizUrls = batchInstallHelper
+                Map<Integer, List<String>> bizUrls = batchInstallHelper
                     .getBizUrlsFromLocalFileSystem("/path/to/jar/file");
                 List<String> expected = new ArrayList<>();
                 expected.add("/path/a-biz.jar");
                 expected.add("/path/b-biz.jar");
-                Assert.assertEquals(expected, bizUrls);
+                Assert.assertEquals(expected,
+                    bizUrls.values().stream().flatMap(List::stream).collect(Collectors.toList()));
             }
 
         }

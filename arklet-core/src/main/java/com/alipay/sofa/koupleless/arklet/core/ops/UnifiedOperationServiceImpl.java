@@ -105,34 +105,37 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
     /** {@inheritDoc} */
     @Override
     public BatchInstallResponse batchInstall(BatchInstallRequest request) throws Throwable {
-        List<String> bizUrls = batchInstallHelper
-            .getBizUrlsFromLocalFileSystem(request.getBizDirAbsolutePath());
-        ThreadPoolExecutor executorService = ExecutorServiceManager.getArkBizOpsExecutor();
-        List<CompletableFuture<ClientResponse>> futures = new ArrayList<>();
-
         long startTimestamp = System.currentTimeMillis();
-        for (String bizUrl : bizUrls) {
-            futures.add(
-                CompletableFuture.supplyAsync(() -> safeBatchInstall(bizUrl), executorService));
+        Map<Integer, List<String>> bizUrls = batchInstallHelper
+            .getBizUrlsFromLocalFileSystem(request.getBizDirAbsolutePath());
+        ArkletLoggerFactory.getDefaultLogger().info("Found biz jar files: {}", bizUrls);
+        ThreadPoolExecutor executorService = ExecutorServiceManager.getArkBizOpsExecutor();
+
+        Map<String, ClientResponse> bizUrlToInstallResult = new HashMap<>();
+        boolean hasFailed = false;
+        for (Map.Entry<Integer, List<String>> entry : bizUrls.entrySet()) {
+            List<String> bizUrlsInSameOrder = entry.getValue();
+            List<CompletableFuture<ClientResponse>> futures = new ArrayList<>();
+            for (String bizUrl : bizUrlsInSameOrder) {
+                futures.add(
+                    CompletableFuture.supplyAsync(() -> safeBatchInstall(bizUrl), executorService));
+            }
+
+            // wait for all install futures done
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).get();
+            int counter = 0;
+            for (CompletableFuture<ClientResponse> future : futures) {
+                ClientResponse clientResponse = future.get();
+                String bizUrl = bizUrlsInSameOrder.get(counter);
+                bizUrlToInstallResult.put(bizUrl, clientResponse);
+                hasFailed = hasFailed || clientResponse.getCode() != ResponseCode.SUCCESS;
+                counter++;
+            }
         }
 
-        // wait for all install futures done
-        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).get();
         long endTimestamp = System.currentTimeMillis();
         ArkletLoggerFactory.getDefaultLogger().info("batch install cost {} ms",
             endTimestamp - startTimestamp);
-
-        // analyze install result per bizUrl
-        int counter = 0;
-        boolean hasFailed = false;
-        Map<String, ClientResponse> bizUrlToInstallResult = new HashMap<>();
-        for (CompletableFuture<ClientResponse> future : futures) {
-            ClientResponse clientResponse = future.get();
-            String bizUrl = bizUrls.get(counter);
-            bizUrlToInstallResult.put(bizUrl, clientResponse);
-            hasFailed = hasFailed || clientResponse.getCode() != ResponseCode.SUCCESS;
-            counter++;
-        }
 
         return BatchInstallResponse.builder()
             .code(hasFailed ? ResponseCode.FAILED : ResponseCode.SUCCESS)

@@ -197,7 +197,7 @@ public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
 
     void addArtifactToProjectRoot(Artifact artifact) {
         File file = artifact.getFile();
-        File buildDir = Paths.get(outputDirectory.getAbsolutePath(), "classes").toFile();
+        File buildDir = new File(outputDirectory, "classes");
         Map<String, Byte[]> entryToContent = JarFileUtils.getFileContentAsLines(file,
             Pattern.compile("(.*\\.class$|^META-INF/services/.*$|^META-INF/spring.factories$)"));
 

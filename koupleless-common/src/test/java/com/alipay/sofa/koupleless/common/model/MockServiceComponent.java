@@ -14,35 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.common.util;
+package com.alipay.sofa.koupleless.common.model;
 
-import com.alipay.sofa.ark.api.ArkClient;
+import com.alipay.sofa.koupleless.common.service.AbstractServiceComponent;
+import com.alipay.sofa.koupleless.common.service.ServiceState;
+import lombok.Builder;
 
 /**
- * <p>ArkUtils class.</p>
- *
- * @author zzl_i
- * @version 1.0.0
+ * @author lianglipeng.llp@alibaba-inc.com
+ * @version $Id: MockServiceComponent.java, v 0.1 2024年05月20日 21:08 立蓬 Exp $
  */
-public class ArkUtils {
-    /**
-     * 判断是否是ark模块
-     *
-     * @return a boolean
-     */
-    public static boolean isModuleBiz() {
-        if (ArkClient.getMasterBiz() == null) {
-            return false;
-        }
-        return ArkClient.getMasterBiz().getBizClassLoader() != Thread.currentThread()
-            .getContextClassLoader();
-    }
 
-    public static boolean isMasterBiz() {
-        if (ArkClient.getMasterBiz() == null) {
-            return false;
-        }
-        return ArkClient.getMasterBiz().getBizClassLoader() == Thread.currentThread()
-            .getContextClassLoader();
+public class MockServiceComponent extends AbstractServiceComponent {
+    @Builder
+    public MockServiceComponent(String identifier, Object bean, Class<?> beanClass,
+                                Class<?> interfaceType, Object metaData,
+                                ServiceState serviceState) {
+        super("mock", identifier, bean, beanClass, interfaceType, metaData, serviceState);
     }
 }

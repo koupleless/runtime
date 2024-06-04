@@ -50,18 +50,24 @@ import java.util.concurrent.atomic.AtomicReference;
  *
  * @author yuanyuan
  * @author zzl_i
- * @since 2023/10/30 9:48 下午
  * @version 1.0.0
+ * @since 2023/10/30 9:48 下午
  */
 public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProcessor, Ordered {
 
-    /** Constant <code>SPRING_CONFIG_LOCATION="spring.config.location"</code> */
+    /**
+     * Constant <code>SPRING_CONFIG_LOCATION="spring.config.location"</code>
+     */
     public static final String                        SPRING_CONFIG_LOCATION                     = "spring.config.location";
 
-    /** Constant <code>SPRING_ADDITIONAL_LOCATION="spring.config.additional-location"</code> */
+    /**
+     * Constant <code>SPRING_ADDITIONAL_LOCATION="spring.config.additional-location"</code>
+     */
     public static final String                        SPRING_ADDITIONAL_LOCATION                 = "spring.config.additional-location";
 
-    /** Constant <code>SPRING_ACTIVE_PROFILES="spring.profiles.active"</code> */
+    /**
+     * Constant <code>SPRING_ACTIVE_PROFILES="spring.profiles.active"</code>
+     */
     public static final String                        SPRING_ACTIVE_PROFILES                     = "spring.profiles.active";
 
     private final static String                       ACTIVE_CONFIG_FORMAT                       = "config/%s/application-%s.properties";
@@ -86,7 +92,9 @@ public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProces
         COMPATIBLE_KEYS.put("logging.path", "logging.file.path");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment,
                                        SpringApplication application) {
@@ -109,8 +117,9 @@ public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProces
                     PropertySource<?> next = iterator.next();
                     String psName = next.getName();
                     if (!StringUtils.isEmpty(psName)
-                        && (psName.contains(getCanonicalPath(configLocation))
-                            || psName.contains(getCanonicalPath(additionalLocation)))) {
+                        && (StringUtils.contains(psName, getCanonicalPath(configLocation))
+                            || StringUtils.contains(psName,
+                                getCanonicalPath(additionalLocation)))) {
                         toRemove.add(psName);
                     }
                 }
@@ -184,6 +193,7 @@ public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProces
 
     /**
      * 注册兼容性配置，如果没有配置oldKey，用newKey的值代替
+     *
      * @param environment
      */
     private void registerCompatibleProperty(ConfigurableEnvironment environment) {
@@ -245,7 +255,7 @@ public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProces
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * 优先级在 ConfigFileApplicationListener / ConfigDataEnvironmentPostProcessor 紧跟之后
      */
     @Override

@@ -37,7 +37,7 @@ public class MergeServiceDirectoryCopyStrategyTest {
     public void testMergeServiceDirectory() throws Throwable {
         File buildDir = Files.createTempDirectory("testDir").toFile();
         File buildDirMETA = Files
-            .createDirectories(Paths.get(buildDir.getAbsolutePath(), "META-INF", "services"))
+            .createDirectories(new File(new File(buildDir, "META-INF"), "services").toPath())
             .toFile();
         File buildDirTemplate = new File(
             getClass().getClassLoader().getResource("testcopy/services0").toURI());
@@ -47,7 +47,7 @@ public class MergeServiceDirectoryCopyStrategyTest {
         List<String> fileNames = Arrays.asList(buildDirTemplate.list());
         for (String fileName : fileNames) {
             strategy.copy(buildDir, "META-INF/services/" + fileName,
-                Files.readAllBytes(Paths.get(buildDirTemplate.getPath(), fileName)));
+                Files.readAllBytes(new File(buildDirTemplate, fileName).toPath()));
         }
 
         FileUtils.copyDirectory(buildDirTemplate, buildDirMETA);
@@ -55,7 +55,7 @@ public class MergeServiceDirectoryCopyStrategyTest {
         fileNames = Arrays.asList(adapterDir.list());
         for (String fileName : fileNames) {
             strategy.copy(buildDir, "META-INF/services/" + fileName,
-                Files.readAllBytes(Paths.get(adapterDir.getPath(), fileName)));
+                Files.readAllBytes(new File(adapterDir, fileName).toPath()));
         }
 
         System.out.println(fileNames);
@@ -64,16 +64,15 @@ public class MergeServiceDirectoryCopyStrategyTest {
         Assert.assertTrue(fileNames.contains("org.apache.dubbo.rpc.Filter"));
         Assert.assertTrue(fileNames.contains("org.foo.bar"));
 
-        List<String> lines = Files.readAllLines(Paths.get(buildDirMETA.getAbsolutePath(),
-            "org.apache.dubbo.common.context.FrameworkExt"));
+        List<String> lines = Files.readAllLines(
+            new File(buildDirMETA, "org.apache.dubbo.common.context.FrameworkExt").toPath());
         List<String> expected = new ArrayList<>();
         expected.add("com.alipay.sofa.koupleless.support.dubbo.KouplelessConfigManager");
         expected.add("com.alipay.sofa.koupleless.support.dubbo.KouplelessServiceRepository");
 
         Assert.assertEquals(expected, lines);
 
-        lines = Files
-            .readAllLines(Paths.get(buildDirMETA.getAbsolutePath(), "org.apache.dubbo.rpc.Filter"));
+        lines = Files.readAllLines(new File(buildDirMETA, "org.apache.dubbo.rpc.Filter").toPath());
         expected.clear();
         expected.add("com.alipay.sofa.koupleless.support.dubbo.ConsumerRedefinePathFilter0");
         expected.add("com.alipay.sofa.koupleless.support.dubbo.ConsumerRedefinePathFilter1");

@@ -14,35 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.common.util;
+package com.alipay.sofa.koupleless.common.service;
 
-import com.alipay.sofa.ark.api.ArkClient;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
- * <p>ArkUtils class.</p>
- *
- * @author zzl_i
- * @version 1.0.0
+ * @author lianglipeng.llp@alibaba-inc.com
+ * @since 1.3.0
  */
-public class ArkUtils {
-    /**
-     * 判断是否是ark模块
-     *
-     * @return a boolean
-     */
-    public static boolean isModuleBiz() {
-        if (ArkClient.getMasterBiz() == null) {
-            return false;
-        }
-        return ArkClient.getMasterBiz().getBizClassLoader() != Thread.currentThread()
-            .getContextClassLoader();
-    }
+public abstract class AbstractServiceComponent extends AbstractComponent {
+    @Setter
+    @Getter
+    private ServiceState serviceState;
 
-    public static boolean isMasterBiz() {
-        if (ArkClient.getMasterBiz() == null) {
-            return false;
-        }
-        return ArkClient.getMasterBiz().getBizClassLoader() == Thread.currentThread()
-            .getContextClassLoader();
+    public AbstractServiceComponent(String protocol, String identifier, Object bean,
+                                    Class<?> beanClass, Class<?> interfaceType, Object metaData,
+                                    ServiceState serviceState) {
+        super(protocol, identifier, bean, beanClass, interfaceType, metaData);
+        this.serviceState = serviceState;
     }
 }

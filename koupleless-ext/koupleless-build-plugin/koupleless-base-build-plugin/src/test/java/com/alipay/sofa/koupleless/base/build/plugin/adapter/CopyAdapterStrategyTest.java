@@ -39,7 +39,7 @@ public class CopyAdapterStrategyTest {
             Files.readAllBytes(adapterFile.toPath()));
 
         byte[] bytes = Files
-            .readAllBytes(Paths.get(buildDir.toPath().toString(), "example", "file0"));
+            .readAllBytes(new File(new File(buildDir, "example"), "file0").toPath());
         Assert.assertEquals("hello world!", new String(bytes));
     }
 }

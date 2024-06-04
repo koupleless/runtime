@@ -25,8 +25,11 @@ import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BatchInstallRequest;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BatchInstallResponse;
 import com.alipay.sofa.koupleless.arklet.core.ops.UnifiedOperationService;
+import com.alipay.sofa.koupleless.common.util.ArkUtils;
 import com.google.common.base.Preconditions;
 import lombok.SneakyThrows;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -41,8 +44,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author CodeNoobKingKc2
  * @version $Id: ApplicationContextEventListener, v 0.1 2023-11-21 11:26 CodeNoobKingKc2 Exp $
  */
-public class StaticBatchInstallEventListener implements
-                                             ApplicationListener<ApplicationContextEvent> {
+public class StaticBatchInstallEventListener implements ApplicationListener<ApplicationReadyEvent> {
 
     // 合并部署是否已经完成，防止重复执行。
     private AtomicBoolean isBatchdDeployed = new AtomicBoolean(false);
@@ -76,16 +78,10 @@ public class StaticBatchInstallEventListener implements
 
     /** {@inheritDoc} */
     @Override
-    public void onApplicationEvent(ApplicationContextEvent event) {
-        // 非基座应用直接跳过
-        if (!Objects.equals(this.getClass().getClassLoader(),
-            Thread.currentThread().getContextClassLoader())
-            || event.getApplicationContext().getParent() != null) {
-            return;
-        }
-
-        // 基座应用启动完成后，执行合并部署。
-        if (event instanceof ContextRefreshedEvent) {
+    public void onApplicationEvent(ApplicationReadyEvent event) {
+        // 非基座应用直接跳过, 包括普通应用和模块
+        if (ArkUtils.isMasterBiz()) {
+            // 基座应用启动完成后，执行合并部署。
             batchDeployFromLocalDir();
         }
     }
