@@ -55,8 +55,6 @@ public class BatchInstallHelper {
                 if (absolutePath.toString().endsWith(".jar")) {
                     Map<String, Object> attributes = getMainAttributes(absolutePath.toString());
                     if (attributes.containsKey("Ark-Biz-Name")) {
-                        ArkletLoggerFactory.getDefaultLogger().info("Found biz jar file: {}",
-                            absolutePath);
                         Integer order = Integer.valueOf(
                             attributes.getOrDefault("priority", PriorityOrdered.DEFAULT_PRECEDENCE)
                                 .toString());
