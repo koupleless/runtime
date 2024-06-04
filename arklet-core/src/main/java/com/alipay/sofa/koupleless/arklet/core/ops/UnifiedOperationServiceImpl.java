@@ -107,6 +107,7 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
     public BatchInstallResponse batchInstall(BatchInstallRequest request) throws Throwable {
         List<String> bizUrls = batchInstallHelper
             .getBizUrlsFromLocalFileSystem(request.getBizDirAbsolutePath());
+        ArkletLoggerFactory.getDefaultLogger().info("Found biz jar files: {}", bizUrls);
         ThreadPoolExecutor executorService = ExecutorServiceManager.getArkBizOpsExecutor();
         List<CompletableFuture<ClientResponse>> futures = new ArrayList<>();
 
