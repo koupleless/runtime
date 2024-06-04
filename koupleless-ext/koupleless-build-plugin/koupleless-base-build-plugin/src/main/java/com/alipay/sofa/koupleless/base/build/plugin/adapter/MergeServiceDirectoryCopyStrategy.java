@@ -68,12 +68,12 @@ public class MergeServiceDirectoryCopyStrategy implements CopyAdapterStrategy {
     /** {@inheritDoc} */
     @Override
     public void copy(File buildDir, String entryName, byte[] content) throws Throwable {
-        File serviceDir = Paths.get(buildDir.getAbsolutePath(), "META-INF", "services").toFile();
+        File serviceDir = new File(new File(buildDir, "META-INF"), "services");
         if (!serviceDir.exists()) {
             Files.createDirectories(serviceDir.toPath());
         }
         String configName = StringUtils.removeStart(entryName, "META-INF/services");
-        File originalConfigFile = Paths.get(serviceDir.getAbsolutePath(), configName).toFile();
+        File originalConfigFile = new File(serviceDir, configName);
         if (!originalConfigFile.exists()) {
             Files.createFile(originalConfigFile.toPath());
         }

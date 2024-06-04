@@ -102,8 +102,11 @@ public class SpringServiceInvoker implements MethodInterceptor {
         if (biz == null) {
             throw new BizRuntimeException(E100003,
                 String.format("biz %s:%s does not exist when called", bizName, bizVersion));
-        }
-        if (BizState.ACTIVATED != biz.getBizState() && BizState.DEACTIVATED != biz.getBizState()) {
+        } else if (biz.getBizState() == BizState.RESOLVED) {
+            throw new BizRuntimeException(E100003,
+                String.format("biz %s:%s is still installing when called", bizName, bizVersion));
+        } else if (BizState.ACTIVATED != biz.getBizState()
+                   && BizState.DEACTIVATED != biz.getBizState()) {
             throw new BizRuntimeException(E100004, String.format("biz %s:%s state %s is not valid",
                 bizName, bizVersion, biz.getBizState()));
         }

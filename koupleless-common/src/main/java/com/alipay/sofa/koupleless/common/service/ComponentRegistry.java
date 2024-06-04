@@ -14,35 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.common.util;
+package com.alipay.sofa.koupleless.common.service;
 
-import com.alipay.sofa.ark.api.ArkClient;
+import java.util.List;
 
 /**
- * <p>ArkUtils class.</p>
- *
- * @author zzl_i
- * @version 1.0.0
+ * @author lianglipeng.llp@alibaba-inc.com
+ * @version $Id: ComponentRegistry.java, v 0.1 2024年05月17日 15:10 立蓬 Exp $
  */
-public class ArkUtils {
+public interface ComponentRegistry {
     /**
-     * 判断是否是ark模块
+     * Register a component
      *
-     * @return a boolean
+     * @param bean
      */
-    public static boolean isModuleBiz() {
-        if (ArkClient.getMasterBiz() == null) {
-            return false;
-        }
-        return ArkClient.getMasterBiz().getBizClassLoader() != Thread.currentThread()
-            .getContextClassLoader();
-    }
+    <T extends AbstractServiceComponent> void registerService(T bean);
 
-    public static boolean isMasterBiz() {
-        if (ArkClient.getMasterBiz() == null) {
-            return false;
-        }
-        return ArkClient.getMasterBiz().getBizClassLoader() == Thread.currentThread()
-            .getContextClassLoader();
-    }
+    /**
+     * unregister component
+     * @param bean
+     * @param <T>
+     */
+    <T extends AbstractServiceComponent> void unregisterService(T bean);
+
+    <T extends AbstractServiceComponent> T getServiceComponent(String protocol, String identifier);
 }

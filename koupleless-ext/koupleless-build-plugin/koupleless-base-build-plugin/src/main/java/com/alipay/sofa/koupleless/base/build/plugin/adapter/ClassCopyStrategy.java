@@ -36,7 +36,7 @@ public class ClassCopyStrategy implements CopyAdapterStrategy {
      */
     @Override
     public void copy(File buildDir, String entryName, byte[] content) throws Throwable {
-        File fileToCreate = Paths.get(buildDir.getAbsolutePath(), entryName).toFile();
+        File fileToCreate = new File(buildDir, entryName);
         Files.createDirectories(fileToCreate.toPath().getParent());
         if (!fileToCreate.exists()) {
             Files.createFile(fileToCreate.toPath());

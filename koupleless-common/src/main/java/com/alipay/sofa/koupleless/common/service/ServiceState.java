@@ -14,35 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.common.util;
-
-import com.alipay.sofa.ark.api.ArkClient;
+package com.alipay.sofa.koupleless.common.service;
 
 /**
- * <p>ArkUtils class.</p>
- *
- * @author zzl_i
- * @version 1.0.0
+ * @author lianglipeng.llp@alibaba-inc.com
+ * @version $Id: ServiceState.java, v 0.1 2024年05月20日 15:22 立蓬 Exp $
  */
-public class ArkUtils {
-    /**
-     * 判断是否是ark模块
-     *
-     * @return a boolean
-     */
-    public static boolean isModuleBiz() {
-        if (ArkClient.getMasterBiz() == null) {
-            return false;
-        }
-        return ArkClient.getMasterBiz().getBizClassLoader() != Thread.currentThread()
-            .getContextClassLoader();
+public enum ServiceState {
+                          EXPORTED("exported"), UNEXPORTED("unexported"), BROKEN("broken");
+
+    private String state;
+
+    ServiceState(String state) {
+        this.state = state;
     }
 
-    public static boolean isMasterBiz() {
-        if (ArkClient.getMasterBiz() == null) {
-            return false;
+    public String getServiceState() {
+        return state;
+    }
+
+    @Override
+    public String toString() {
+        return getServiceState();
+    }
+
+    public static ServiceState of(String state) {
+        for (ServiceState it : values()) {
+            if (it.getServiceState().equalsIgnoreCase(state)) {
+                return it;
+            }
         }
-        return ArkClient.getMasterBiz().getBizClassLoader() == Thread.currentThread()
-            .getContextClassLoader();
+        return BROKEN;
     }
 }

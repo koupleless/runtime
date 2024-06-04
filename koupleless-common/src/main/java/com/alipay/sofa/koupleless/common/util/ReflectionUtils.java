@@ -16,6 +16,7 @@
  */
 package com.alipay.sofa.koupleless.common.util;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 /**
@@ -131,7 +132,7 @@ public class ReflectionUtils {
         // 在 JDK 17 下执行的方法逻辑
         // 解除注释，编译成Class 并且放置到 META-INF/versions/17/com/alipay/sofa/serverless/common/util 下面
         // slower fallback method using stack trace
-        final StackTraceElement element = getEquivalentStackTraceElement(depth + 1);
+        final StackTraceElement element = getEquivalentStackTraceElement(depth);
         try {
             return LoaderUtil.loadClass(element.getClassName());
         } catch (final ClassNotFoundException e) {
@@ -151,6 +152,23 @@ public class ReflectionUtils {
             return executeReflectionLogic(realFramesToSkip);
         } catch (Exception e) {
             return executeStackTraceLogic(realFramesToSkip);
+        }
+    }
+
+    /**
+     * Set field of specified object to value, will try to operate on super class until success
+     */
+    public static <T> void setField(String fieldName, Object o, T value) {
+        Class<?> klass = o.getClass();
+        while (klass != null) {
+            try {
+                Field f = klass.getDeclaredField(fieldName);
+                f.setAccessible(true);
+                f.set(o, value);
+                return;
+            } catch (Exception e) {
+                klass = klass.getSuperclass();
+            }
         }
     }
 
