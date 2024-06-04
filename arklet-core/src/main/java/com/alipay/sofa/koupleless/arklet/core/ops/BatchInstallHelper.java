@@ -68,8 +68,6 @@ public class BatchInstallHelper {
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
                 Path absolutePath = file.toAbsolutePath();
                 if (isBizJarFile(absolutePath)) {
-                    ArkletLoggerFactory.getDefaultLogger().info("Found biz jar file: {}",
-                        absolutePath);
                     bizUrls.add(absolutePath.toString());
                 }
                 return FileVisitResult.CONTINUE;
