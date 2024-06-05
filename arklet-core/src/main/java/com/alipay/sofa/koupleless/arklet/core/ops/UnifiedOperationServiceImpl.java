@@ -64,6 +64,13 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
     @Override
     public ClientResponse install(String bizName, String bizVersion, String bizUrl, String[] args,
                                   Map<String, String> envs) throws Throwable {
+        // uninstall first
+        List<Biz> bizListToUninstall = ArkClient.getBizManagerService().getBiz(bizName);
+        for (Biz biz : bizListToUninstall) {
+            ArkClient.uninstallBiz(biz.getBizName(), biz.getBizVersion());
+        }
+
+        // install
         BizOperation bizOperation = new BizOperation()
             .setOperationType(BizOperation.OperationType.INSTALL);
         bizOperation.setBizName(bizName);
@@ -75,20 +82,16 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
     /**
      * <p>safeBatchInstall.</p>
      *
-     * @param bizUrl a {@link java.lang.String} object
+     * @param bizAbsolutePath a {@link java.lang.String} object
      * @return a {@link com.alipay.sofa.ark.api.ClientResponse} object
      */
-    public ClientResponse safeBatchInstall(String bizUrl) {
+    public ClientResponse safeBatchInstall(String bizAbsolutePath) {
         try {
-            BizOperation bizOperation = new BizOperation()
-                .setOperationType(BizOperation.OperationType.INSTALL);
-
-            bizOperation.putParameter(Constants.CONFIG_BIZ_URL,
-                OSUtils.getLocalFileProtocolPrefix() + bizUrl);
-            Map<String, Object> mainAttributes = batchInstallHelper.getMainAttributes(bizUrl);
-            bizOperation.setBizName((String) mainAttributes.get(Constants.ARK_BIZ_NAME));
-            bizOperation.setBizVersion((String) mainAttributes.get(Constants.ARK_BIZ_VERSION));
-            return ArkClient.installOperation(bizOperation);
+            String bizUrl = OSUtils.getLocalFileProtocolPrefix() + bizAbsolutePath;
+            Map<String, Object> mainAttributes = batchInstallHelper.getMainAttributes(bizAbsolutePath);
+            String bizName = (String) mainAttributes.get(Constants.ARK_BIZ_NAME);
+            String bizVersion = (String) mainAttributes.get(Constants.ARK_BIZ_VERSION);
+            return install(bizName, bizVersion, bizUrl, null, null);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
             return new ClientResponse().setCode(ResponseCode.FAILED)
