@@ -88,7 +88,8 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
     public ClientResponse safeBatchInstall(String bizAbsolutePath) {
         try {
             String bizUrl = OSUtils.getLocalFileProtocolPrefix() + bizAbsolutePath;
-            Map<String, Object> mainAttributes = batchInstallHelper.getMainAttributes(bizAbsolutePath);
+            Map<String, Object> mainAttributes = batchInstallHelper
+                .getMainAttributes(bizAbsolutePath);
             String bizName = (String) mainAttributes.get(Constants.ARK_BIZ_NAME);
             String bizVersion = (String) mainAttributes.get(Constants.ARK_BIZ_VERSION);
             return install(bizName, bizVersion, bizUrl, null, null);
