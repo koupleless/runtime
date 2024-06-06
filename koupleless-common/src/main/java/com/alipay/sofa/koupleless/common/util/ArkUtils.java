@@ -38,6 +38,11 @@ public class ArkUtils {
             .getContextClassLoader();
     }
 
+    /**
+     * <p>isMasterBiz.</p>
+     *
+     * @return a boolean
+     */
     public static boolean isMasterBiz() {
         if (ArkClient.getMasterBiz() == null) {
             return false;

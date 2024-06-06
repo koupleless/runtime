@@ -20,14 +20,28 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
+ * <p>Abstract AbstractServiceComponent class.</p>
+ *
  * @author lianglipeng.llp@alibaba-inc.com
  * @since 1.3.0
+ * @version $Id: $Id
  */
 public abstract class AbstractServiceComponent extends AbstractComponent {
     @Setter
     @Getter
     private ServiceState serviceState;
 
+    /**
+     * <p>Constructor for AbstractServiceComponent.</p>
+     *
+     * @param protocol a {@link java.lang.String} object
+     * @param identifier a {@link java.lang.String} object
+     * @param bean a {@link java.lang.Object} object
+     * @param beanClass a {@link java.lang.Class} object
+     * @param interfaceType a {@link java.lang.Class} object
+     * @param metaData a {@link java.lang.Object} object
+     * @param serviceState a {@link com.alipay.sofa.koupleless.common.service.ServiceState} object
+     */
     public AbstractServiceComponent(String protocol, String identifier, Object bean,
                                     Class<?> beanClass, Class<?> interfaceType, Object metaData,
                                     ServiceState serviceState) {

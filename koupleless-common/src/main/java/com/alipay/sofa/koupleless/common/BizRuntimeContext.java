@@ -158,6 +158,7 @@ public class BizRuntimeContext implements ComponentRegistry {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public void registerService(AbstractServiceComponent bean) {
         bean.setBizRuntimeContext(this);
@@ -169,6 +170,7 @@ public class BizRuntimeContext implements ComponentRegistry {
         registry.register(bean.getIdentifier(), bean);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void unregisterService(AbstractServiceComponent bean) {
         BeanRegistry<AbstractServiceComponent> registry = serviceMap.get(bean.getProtocol());
@@ -181,6 +183,7 @@ public class BizRuntimeContext implements ComponentRegistry {
         registry.unRegister(bean.getIdentifier());
     }
 
+    /** {@inheritDoc} */
     @Override
     public <T extends AbstractServiceComponent> T getServiceComponent(String protocol,
                                                                       String identifier) {
