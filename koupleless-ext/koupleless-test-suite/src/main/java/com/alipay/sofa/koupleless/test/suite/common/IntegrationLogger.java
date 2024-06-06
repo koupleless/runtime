@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 
 /**
  * @author CodeNoobKing
- * @date 2024/5/21
+ * @since 2024/5/21
  **/
 public class IntegrationLogger {
 
