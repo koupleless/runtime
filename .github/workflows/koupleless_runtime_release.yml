@@ -112,6 +112,8 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: 'koupleless/adapter'
+          path: 'adapter'
+
       - name: Finding Maven Modules
         id: find-maven-modules
         run: |
@@ -138,8 +140,9 @@ jobs:
           
             if [[ "${jdk_version}" == "1.8" ]]; then
               echo "release for module $module"
-              mvn --batch-mode deploy -Psnapshot -pl $module -am -amd -B -U
-              echo "snapshot completed for module $module"
+              mvn --batch-mode deploy -Prelease -pl $module -am -amd -B -U
+              echo "release completed for module $module"
+            fi
           done
         working-directory: adapter/
         env:
