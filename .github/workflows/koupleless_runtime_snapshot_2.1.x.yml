@@ -127,7 +127,7 @@ jobs:
         working-directory: adapter/
 
 
-      - name: release adapter for jdk8
+      - name: release adapter for jdk17
         run: |
           # 创建一个映射来存储模块名到 JDK 版本的映射
           modules=(${{ join(fromJSON(steps.find-maven-modules.outputs.modules-list), ' ') }})
