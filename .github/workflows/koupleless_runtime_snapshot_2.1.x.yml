@@ -126,11 +126,11 @@ jobs:
           echo "modules-list=$modules_in_json" >> $GITHUB_OUTPUT
         working-directory: adapter/
 
-
-      - name: release adapter for jdk8
+      - name: release adapter for jdk17
         run: |
           # 创建一个映射来存储模块名到 JDK 版本的映射
           modules=(${{ join(fromJSON(steps.find-maven-modules.outputs.modules-list), ' ') }})
+          modules_in_right_jdk=""
           for module in "${modules[@]}"; do
             # 读取模块中的 pom.xml 来确定 JDK 版本
             jdk_version=$(grep -m 1 '<java.version>' $module/pom.xml | sed 's/<[^>]*>//g' | xargs)
@@ -138,11 +138,16 @@ jobs:
             # 如果是目标 jdk 版本，则执行 release 操作
 
             if [[ "${jdk_version}" == "17" ]]; then
-              echo "release for module $module"
-              mvn --batch-mode deploy -Psnapshot -pl $module -am -amd -B -U
-              echo "snapshot completed for module $module"
+              modules_in_right_jdk="${modules_in_right_jdk}${module},"
             fi
           done
+          
+          if [[ -n ${modules_in_right_jdk} ]]; then
+            modules_in_right_jdk="${modules_in_right_jdk:0:-1}"
+            echo "release for module ${modules_in_right_jdk}"
+            mvn --batch-mode deploy -Psnapshot -pl ${modules_in_right_jdk} -am -amd -B -U
+            echo "release completed for module ${modules_in_right_jdk}"
+          fi
         working-directory: adapter/
         env:
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
