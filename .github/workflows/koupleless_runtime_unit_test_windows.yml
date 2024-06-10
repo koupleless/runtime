@@ -17,7 +17,7 @@ env:
   WORK_DIR: .
 
 jobs:
-  unit-test-for-jdk8:
+  unit-test-for-jdk8-in-linux:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
@@ -37,3 +37,18 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+
+  unit-test-for-jdk8-in-windows:
+    runs-on:  windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Java JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: adopt
+          java-version: 8
+          cache: maven
+
+      - name: Test
+        run: mvn clean install --% -Dmaven.javadoc.skip=true -B -U
+          && sh ./check_format.sh
