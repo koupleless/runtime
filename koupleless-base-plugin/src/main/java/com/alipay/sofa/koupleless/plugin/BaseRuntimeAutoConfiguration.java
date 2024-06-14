@@ -21,10 +21,13 @@ import com.alipay.sofa.koupleless.common.service.ArkAutowiredBeanPostProcessor;
 import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
+import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationContext;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.EventListener;
 
 /**
  * <p>BaseRuntimeAutoConfiguration class.</p>
@@ -60,6 +63,16 @@ public class BaseRuntimeAutoConfiguration {
             .getBizRuntimeContextByClassLoader(classLoader);
         bizRuntimeContext.setRootApplicationContext(applicationContext);
         return bizRuntimeContext;
+    }
+
+    @EventListener
+    public void onApplicationStartedEvent(ApplicationStartedEvent event) {
+        // 获取 ApplicationContext
+        ConfigurableApplicationContext applicationContext = event.getApplicationContext();
+        ClassLoader classLoader = applicationContext.getClassLoader();
+        BizRuntimeContext bizRuntimeContext = BizRuntimeContextRegistry
+                .getBizRuntimeContextByClassLoader(classLoader);
+        bizRuntimeContext.setRootApplicationContext(applicationContext);
     }
 
     /**
