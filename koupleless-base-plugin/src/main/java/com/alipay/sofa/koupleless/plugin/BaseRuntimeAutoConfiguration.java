@@ -71,7 +71,7 @@ public class BaseRuntimeAutoConfiguration {
         ConfigurableApplicationContext applicationContext = event.getApplicationContext();
         ClassLoader classLoader = applicationContext.getClassLoader();
         BizRuntimeContext bizRuntimeContext = BizRuntimeContextRegistry
-                .getBizRuntimeContextByClassLoader(classLoader);
+            .getBizRuntimeContextByClassLoader(classLoader);
         bizRuntimeContext.setRootApplicationContext(applicationContext);
     }
 
