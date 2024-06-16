@@ -16,13 +16,6 @@
  */
 package com.alipay.sofa.koupleless.arklet.core.ops;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ThreadPoolExecutor;
-
 import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.api.ClientResponse;
 import com.alipay.sofa.ark.api.ResponseCode;
@@ -30,11 +23,19 @@ import com.alipay.sofa.ark.spi.constant.Constants;
 import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.ark.spi.model.BizOperation;
 import com.alipay.sofa.koupleless.arklet.core.command.executor.ExecutorServiceManager;
+import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger;
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BatchInstallRequest;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BatchInstallResponse;
 import com.alipay.sofa.koupleless.common.util.OSUtils;
 import com.google.inject.Singleton;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * <p>UnifiedOperationServiceImpl class.</p>
@@ -45,6 +46,8 @@ import com.google.inject.Singleton;
  */
 @Singleton
 public class UnifiedOperationServiceImpl implements UnifiedOperationService {
+
+    private static final ArkletLogger LOGGER = ArkletLoggerFactory.getDefaultLogger();
 
     private BatchInstallHelper batchInstallHelper = new BatchInstallHelper();
 
@@ -63,32 +66,52 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
     /** {@inheritDoc} */
     @Override
     public ClientResponse install(String bizName, String bizVersion, String bizUrl, String[] args,
-                                  Map<String, String> envs) throws Throwable {
+                                  Map<String, String> envs, boolean useUninstallBeforeInstallStrategy) throws Throwable {
+        if(useUninstallBeforeInstallStrategy){
+            return doUninstallBeforeInstallStrategy(bizName, bizVersion, bizUrl, args, envs);
+        }
+        return doUninstallAfterInstallStrategy(bizName, bizVersion, bizUrl, args, envs);
+    }
+
+    private ClientResponse doUninstallBeforeInstallStrategy(String bizName, String bizVersion, String bizUrl, String[] args,
+                                                            Map<String, String> envs) throws Throwable {
+        // uninstall first
+        List<Biz> bizListToUninstall = ArkClient.getBizManagerService().getBiz(bizName);
+        LOGGER.info("start to uninstall bizLists: {}", bizListToUninstall);
+        for (Biz biz : bizListToUninstall) {
+            ArkClient.uninstallBiz(biz.getBizName(), biz.getBizVersion());
+        }
+
+        LOGGER.info("success uninstall bizLists: {}", bizListToUninstall);
+        LOGGER.info("start to install biz: {},{},{}", bizName,bizVersion,bizUrl);
+        // install
         BizOperation bizOperation = new BizOperation()
-            .setOperationType(BizOperation.OperationType.INSTALL);
+                .setOperationType(BizOperation.OperationType.INSTALL);
         bizOperation.setBizName(bizName);
         bizOperation.setBizVersion(bizVersion);
         bizOperation.putParameter(Constants.CONFIG_BIZ_URL, bizUrl);
         return ArkClient.installOperation(bizOperation, args, envs);
     }
 
+    private ClientResponse doUninstallAfterInstallStrategy(String bizName, String bizVersion, String bizUrl, String[] args,
+                                                           Map<String, String> envs) throws Throwable{
+        throw new UnsupportedOperationException("have not implemented uninstallAfterInstallStrategy");
+    }
+
     /**
      * <p>safeBatchInstall.</p>
      *
-     * @param bizUrl a {@link java.lang.String} object
+     * @param bizAbsolutePath a {@link java.lang.String} object
      * @return a {@link com.alipay.sofa.ark.api.ClientResponse} object
      */
-    public ClientResponse safeBatchInstall(String bizUrl) {
+    public ClientResponse safeBatchInstall(String bizAbsolutePath,boolean useUninstallBeforeInstallStrategy) {
         try {
-            BizOperation bizOperation = new BizOperation()
-                .setOperationType(BizOperation.OperationType.INSTALL);
-
-            bizOperation.putParameter(Constants.CONFIG_BIZ_URL,
-                OSUtils.getLocalFileProtocolPrefix() + bizUrl);
-            Map<String, Object> mainAttributes = batchInstallHelper.getMainAttributes(bizUrl);
-            bizOperation.setBizName((String) mainAttributes.get(Constants.ARK_BIZ_NAME));
-            bizOperation.setBizVersion((String) mainAttributes.get(Constants.ARK_BIZ_VERSION));
-            return ArkClient.installOperation(bizOperation);
+            String bizUrl = OSUtils.getLocalFileProtocolPrefix() + bizAbsolutePath;
+            Map<String, Object> mainAttributes = batchInstallHelper
+                .getMainAttributes(bizAbsolutePath);
+            String bizName = (String) mainAttributes.get(Constants.ARK_BIZ_NAME);
+            String bizVersion = (String) mainAttributes.get(Constants.ARK_BIZ_VERSION);
+            return install(bizName, bizVersion, bizUrl, null, null,useUninstallBeforeInstallStrategy);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
             return new ClientResponse().setCode(ResponseCode.FAILED)
@@ -118,7 +141,7 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
             List<CompletableFuture<ClientResponse>> futures = new ArrayList<>();
             for (String bizUrl : bizUrlsInSameOrder) {
                 futures.add(
-                    CompletableFuture.supplyAsync(() -> safeBatchInstall(bizUrl), executorService));
+                    CompletableFuture.supplyAsync(() -> safeBatchInstall(bizUrl,request.isUseUninstallBeforeInstallStrategy()), executorService));
             }
 
             // wait for all install futures done

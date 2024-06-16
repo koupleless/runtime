@@ -87,7 +87,7 @@ public class UnifiedOperationServiceImplTests {
                     Mockito.any(String[].class), Mockito.anyMap()))
                 .thenReturn(clientResponse);
             ClientResponse response = unifiedOperationService.install("bizName", "bizVersion",
-                "http://example.com/biz.jar", new String[] {}, new HashMap<>());
+                "http://example.com/biz.jar", new String[] {}, new HashMap<>(),true);
             arkClientMockedStatic
                 .verify(() -> ArkClient.installOperation(Mockito.any(BizOperation.class),
                     Mockito.any(String[].class), Mockito.anyMap()));

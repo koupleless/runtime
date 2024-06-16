@@ -36,4 +36,8 @@ public class BatchInstallRequest {
      * 本地文件系统目录。
      */
     private String bizDirAbsolutePath;
+    /**
+     * 使用先卸载后安装策略
+     */
+    private boolean useUninstallBeforeInstallStrategy = true;
 }
