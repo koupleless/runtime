@@ -64,7 +64,7 @@ public class InstallBizHandlerTest extends BaseHandlerTest {
         input.setBizUrl("testUrl");
 
         when(handler.getOperationService().install(input.getBizName(), input.getBizVersion(),
-            input.getBizUrl(), input.getArgs(), input.getEnvs(),true)).thenReturn(success);
+            input.getBizUrl(), input.getArgs(), input.getEnvs(), true)).thenReturn(success);
 
         Output<InstallBizHandler.InstallBizClientResponse> result = handler.handle(input);
 
@@ -80,7 +80,7 @@ public class InstallBizHandlerTest extends BaseHandlerTest {
         input.setBizUrl("testUrl");
 
         when(handler.getOperationService().install(input.getBizName(), input.getBizVersion(),
-            input.getBizUrl(), input.getArgs(), input.getEnvs(),true)).thenReturn(failed);
+            input.getBizUrl(), input.getArgs(), input.getEnvs(), true)).thenReturn(failed);
 
         Output<InstallBizHandler.InstallBizClientResponse> result = handler.handle(input);
 
