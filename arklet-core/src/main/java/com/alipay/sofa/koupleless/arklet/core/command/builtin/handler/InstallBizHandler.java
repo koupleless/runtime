@@ -64,7 +64,8 @@ public class InstallBizHandler extends
         try {
             InstallBizClientResponse installBizClientResponse = convertClientResponse(
                 getOperationService().install(input.getBizName(), input.getBizVersion(),
-                    input.getBizUrl(), input.getArgs(), input.getEnvs(),input.isUseUninstallBeforeInstallStrategy()));
+                    input.getBizUrl(), input.getArgs(), input.getEnvs(),
+                    input.isUseUninstallBeforeInstallStrategy()));
             installBizClientResponse
                 .setElapsedSpace(metaSpaceMXBean.getUsage().getUsed() - startSpace);
             if (ResponseCode.SUCCESS.equals(installBizClientResponse.getCode())) {
