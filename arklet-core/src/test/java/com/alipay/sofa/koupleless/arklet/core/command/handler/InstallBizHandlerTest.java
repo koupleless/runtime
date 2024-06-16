@@ -59,12 +59,12 @@ public class InstallBizHandlerTest extends BaseHandlerTest {
     }
 
     @Test
-    public void testHandle_Success() throws Throwable {
+    public void testHandle_Success_useUninstallBeforeInstallStrategy() throws Throwable {
         Input input = new Input();
         input.setBizUrl("testUrl");
 
         when(handler.getOperationService().install(input.getBizName(), input.getBizVersion(),
-            input.getBizUrl(), input.getArgs(), input.getEnvs())).thenReturn(success);
+            input.getBizUrl(), input.getArgs(), input.getEnvs(),true)).thenReturn(success);
 
         Output<InstallBizHandler.InstallBizClientResponse> result = handler.handle(input);
 
@@ -75,12 +75,12 @@ public class InstallBizHandlerTest extends BaseHandlerTest {
     }
 
     @Test
-    public void testHandle_Failure() throws Throwable {
+    public void testHandle_Failure_useUninstallBeforeInstallStrategy() throws Throwable {
         Input input = new Input();
         input.setBizUrl("testUrl");
 
         when(handler.getOperationService().install(input.getBizName(), input.getBizVersion(),
-            input.getBizUrl(), input.getArgs(), input.getEnvs())).thenReturn(failed);
+            input.getBizUrl(), input.getArgs(), input.getEnvs(),true)).thenReturn(failed);
 
         Output<InstallBizHandler.InstallBizClientResponse> result = handler.handle(input);
 

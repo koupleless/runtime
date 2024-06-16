@@ -47,7 +47,7 @@ public interface UnifiedOperationService extends ArkletComponent {
      * @param envs a {@link java.util.Map} object
      */
     ClientResponse install(String bizName, String bizVersion, String bizUrl, String[] args,
-                           Map<String, String> envs) throws Throwable;
+                           Map<String, String> envs,boolean useUninstallBeforeInstallStrategy) throws Throwable;
 
     /**
      * uninstall biz
