@@ -67,16 +67,16 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
     @Override
     public ClientResponse install(String bizName, String bizVersion, String bizUrl, String[] args,
                                   Map<String, String> envs,
-                                  boolean useUninstallBeforeInstallStrategy) throws Throwable {
-        if (useUninstallBeforeInstallStrategy) {
-            return doUninstallBeforeInstallStrategy(bizName, bizVersion, bizUrl, args, envs);
+                                  boolean useUninstallThenInstallStrategy) throws Throwable {
+        if (useUninstallThenInstallStrategy) {
+            return doUninstallThenInstallStrategy(bizName, bizVersion, bizUrl, args, envs);
         }
-        return doUninstallAfterInstallStrategy(bizName, bizVersion, bizUrl, args, envs);
+        return doInstallThenUninstallStrategy(bizName, bizVersion, bizUrl, args, envs);
     }
 
-    private ClientResponse doUninstallBeforeInstallStrategy(String bizName, String bizVersion,
-                                                            String bizUrl, String[] args,
-                                                            Map<String, String> envs) throws Throwable {
+    private ClientResponse doUninstallThenInstallStrategy(String bizName, String bizVersion,
+                                                          String bizUrl, String[] args,
+                                                          Map<String, String> envs) throws Throwable {
         // uninstall first
         List<Biz> bizListToUninstall = ArkClient.getBizManagerService().getBiz(bizName);
         LOGGER.info("start to uninstall bizLists: {}", bizListToUninstall);
@@ -95,9 +95,9 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
         return ArkClient.installOperation(bizOperation, args, envs);
     }
 
-    private ClientResponse doUninstallAfterInstallStrategy(String bizName, String bizVersion,
-                                                           String bizUrl, String[] args,
-                                                           Map<String, String> envs) throws Throwable {
+    private ClientResponse doInstallThenUninstallStrategy(String bizName, String bizVersion,
+                                                          String bizUrl, String[] args,
+                                                          Map<String, String> envs) throws Throwable {
         throw new UnsupportedOperationException(
             "have not implemented uninstallAfterInstallStrategy");
     }
@@ -109,7 +109,7 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
      * @return a {@link com.alipay.sofa.ark.api.ClientResponse} object
      */
     public ClientResponse safeBatchInstall(String bizAbsolutePath,
-                                           boolean useUninstallBeforeInstallStrategy) {
+                                           boolean useUninstallThenInstallStrategy) {
         try {
             String bizUrl = OSUtils.getLocalFileProtocolPrefix() + bizAbsolutePath;
             Map<String, Object> mainAttributes = batchInstallHelper
@@ -117,7 +117,7 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
             String bizName = (String) mainAttributes.get(Constants.ARK_BIZ_NAME);
             String bizVersion = (String) mainAttributes.get(Constants.ARK_BIZ_VERSION);
             return install(bizName, bizVersion, bizUrl, null, null,
-                useUninstallBeforeInstallStrategy);
+                useUninstallThenInstallStrategy);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
             return new ClientResponse().setCode(ResponseCode.FAILED)
@@ -147,7 +147,7 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
             List<CompletableFuture<ClientResponse>> futures = new ArrayList<>();
             for (String bizUrl : bizUrlsInSameOrder) {
                 futures.add(CompletableFuture.supplyAsync(
-                    () -> safeBatchInstall(bizUrl, request.isUseUninstallBeforeInstallStrategy()),
+                    () -> safeBatchInstall(bizUrl, request.isUseUninstallThenInstallStrategy()),
                     executorService));
             }
 

@@ -65,7 +65,7 @@ public class InstallBizHandler extends
             InstallBizClientResponse installBizClientResponse = convertClientResponse(
                 getOperationService().install(input.getBizName(), input.getBizVersion(),
                     input.getBizUrl(), input.getArgs(), input.getEnvs(),
-                    input.isUseUninstallBeforeInstallStrategy()));
+                    input.isUseUninstallThenInstallStrategy()));
             installBizClientResponse
                 .setElapsedSpace(metaSpaceMXBean.getUsage().getUsed() - startSpace);
             if (ResponseCode.SUCCESS.equals(installBizClientResponse.getCode())) {
@@ -161,10 +161,10 @@ public class InstallBizHandler extends
          */
         private Map<String, String> envs;
         /**
-         * uninstall bizs with same name as new biz before install new biz
-         * default value is true, if set false, after installing the new biz, the old biz will be uninstalled
+         * uninstall bizs with same name as the new biz, then install the new biz
+         * default value is true, if set false, installing the new biz, the old biz will be uninstalled
          */
-        private boolean             useUninstallBeforeInstallStrategy = true;
+        private boolean             useUninstallThenInstallStrategy = true;
     }
 
     @Getter
