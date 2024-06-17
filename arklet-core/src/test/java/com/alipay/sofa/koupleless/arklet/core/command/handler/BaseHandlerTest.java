@@ -21,7 +21,7 @@ import com.alipay.sofa.ark.api.ResponseCode;
 import com.alipay.sofa.ark.spi.model.BizOperation;
 import com.alipay.sofa.koupleless.arklet.core.BaseTest;
 import com.alipay.sofa.koupleless.arklet.core.command.builtin.handler.InstallBizHandler;
-import com.alipay.sofa.koupleless.arklet.core.health.custom.CustomBizManagerService;
+import com.alipay.sofa.koupleless.arklet.core.health.custom.MockBizManagerService;
 import com.alipay.sofa.koupleless.arklet.core.health.custom.CustomPluginManagerService;
 import org.junit.After;
 import org.junit.Before;
@@ -49,11 +49,11 @@ public class BaseHandlerTest extends BaseTest {
             ArkClient.installOperation(new BizOperation());
             ArkClient.uninstallBiz(anyString(), anyString());
         }).thenReturn(success);
-        arkClient.when(ArkClient::getBizManagerService).thenReturn(new CustomBizManagerService());
+        arkClient.when(ArkClient::getBizManagerService).thenReturn(new MockBizManagerService());
         arkClient.when(ArkClient::getPluginManagerService)
             .thenReturn(new CustomPluginManagerService());
         arkClient.when(ArkClient::getMasterBiz)
-            .thenReturn(new CustomBizManagerService().getMasterBiz());
+            .thenReturn(new MockBizManagerService().getMasterBiz());
     }
 
     @After

@@ -39,5 +39,6 @@ public class BatchInstallRequest {
     /**
      * 使用先卸载后安装策略
      */
+    @Builder.Default
     private boolean useUninstallBeforeInstallStrategy = true;
 }
