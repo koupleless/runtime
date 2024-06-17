@@ -17,20 +17,16 @@
 package com.alipay.sofa.koupleless.arklet.core.command.handler;
 
 import com.alipay.sofa.ark.api.ArkClient;
-import com.alipay.sofa.ark.spi.archive.BizArchive;
-import com.alipay.sofa.ark.spi.model.Biz;
-import com.alipay.sofa.ark.spi.model.BizOperation;
 import com.alipay.sofa.ark.spi.service.biz.BizFactoryService;
 import com.alipay.sofa.koupleless.arklet.core.command.builtin.BuiltinCommand;
 import com.alipay.sofa.koupleless.arklet.core.command.builtin.handler.InstallBizHandler;
 import com.alipay.sofa.koupleless.arklet.core.command.builtin.handler.InstallBizHandler.Input;
 import com.alipay.sofa.koupleless.arklet.core.command.meta.Output;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.CommandValidationException;
-import com.alipay.sofa.koupleless.arklet.core.health.custom.model.CustomBiz;
+import com.alipay.sofa.koupleless.arklet.core.health.custom.model.MockBiz;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.io.File;
@@ -39,7 +35,6 @@ import java.net.URL;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
@@ -62,6 +57,7 @@ public class InstallBizHandlerTest extends BaseHandlerTest {
     public void testHandle_Success_useUninstallBeforeInstallStrategy() throws Throwable {
         Input input = new Input();
         input.setBizUrl("testUrl");
+        input.setBizName("testBiz1");
 
         when(handler.getOperationService().install(input.getBizName(), input.getBizVersion(),
             input.getBizUrl(), input.getArgs(), input.getEnvs(), true)).thenReturn(success);
@@ -78,6 +74,7 @@ public class InstallBizHandlerTest extends BaseHandlerTest {
     public void testHandle_Failure_useUninstallBeforeInstallStrategy() throws Throwable {
         Input input = new Input();
         input.setBizUrl("testUrl");
+        input.setBizName("testBiz1");
 
         when(handler.getOperationService().install(input.getBizName(), input.getBizVersion(),
             input.getBizUrl(), input.getArgs(), input.getEnvs(), true)).thenReturn(failed);
@@ -124,7 +121,7 @@ public class InstallBizHandlerTest extends BaseHandlerTest {
         input.setBizUrl("file://" + url.getFile());
 
         when(bizFactoryService.createBiz(any(File.class)))
-            .thenReturn(new CustomBiz(bizName, bizVersion));
+            .thenReturn(new MockBiz(bizName, bizVersion));
         arkClient.when(ArkClient::getBizFactoryService).thenReturn(bizFactoryService);
         arkClient.when(() -> ArkClient.createBizSaveFile(anyString(), anyString()))
             .thenReturn(new File(url.getFile()));
