@@ -84,8 +84,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          ref: 'runtime-2.0.x'
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
@@ -97,6 +95,8 @@ jobs:
           server-password: MAVEN_PASSWORD
           gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }} # Value of the GPG private key to import
           gpg-passphrase: MAVEN_GPG_PASSPHRASE # env variable for GPG private key passphrase
+      - name: install with Maven
+        run: mvn clean install
       - name: Build with Maven
         run: mvn --batch-mode deploy -DskipTests -Psnapshot
         env:
@@ -104,26 +104,49 @@ jobs:
           MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
 
-  adapter_release_for_jdk17:
-#    needs: build_and_test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
+      - name: checkout adapter repo
+        uses: actions/checkout@v3
         with:
           repository: 'koupleless/adapter'
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-          cache: maven
-          server-id: ossrh
-          server-username: MAVEN_USERNAME
-          server-password: MAVEN_PASSWORD
-          gpg-private-key: ${{ secrets.MAVEN_GPG_PRIVATE_KEY }} # Value of the GPG private key to import
-          gpg-passphrase: MAVEN_GPG_PASSPHRASE # env variable for GPG private key passphrase
-      - name: Build with Maven
-        run: ./script/ci_build.sh 17 snapshot
+          path: 'adapter'
+
+      - name: Finding Maven Modules
+        id: find-maven-modules
+        run: |
+          echo "Finding Maven Modules"
+          # 定位 pom.xml 文件，通过 grep 排除掉根目录下的 pom.xml
+          modules=$(find . -name pom.xml -maxdepth 2 -not -path "./pom.xml" -exec dirname {} \;)
+          echo "$modules"
+          # 使用 jq 将 shell 数组转换成 JSON 数组供后续步骤使用
+          modules_in_json=$(echo $modules | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          echo "$modules_in_json"
+          echo "modules-list=$modules_in_json" >> $GITHUB_OUTPUT
+        working-directory: adapter/
+
+
+      - name: release adapter for jdk17
+        run: |
+          # 创建一个映射来存储模块名到 JDK 版本的映射
+          modules=(${{ join(fromJSON(steps.find-maven-modules.outputs.modules-list), ' ') }})
+          modules_in_right_jdk=""
+          for module in "${modules[@]}"; do
+            # 读取模块中的 pom.xml 来确定 JDK 版本
+            jdk_version=$(grep -m 1 '<java.version>' $module/pom.xml | sed 's/<[^>]*>//g' | xargs)
+            echo "${module} JDK version: ${jdk_version}"
+            # 如果是目标 jdk 版本，则执行 release 操作
+
+            if [[ "${jdk_version}" == "17" ]]; then
+              modules_in_right_jdk="${modules_in_right_jdk}${module},"
+            fi
+          done
+          
+          if [[ -n ${modules_in_right_jdk} ]]; then
+            modules_in_right_jdk="${modules_in_right_jdk:0:-1}"
+            echo "release for module ${modules_in_right_jdk}"
+            mvn --batch-mode deploy -Psnapshot -pl ${modules_in_right_jdk} -am -amd -B -U
+            echo "release completed for module ${modules_in_right_jdk}"
+          fi
+        working-directory: adapter/
         env:
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.MAVEN_PASSWORD }}

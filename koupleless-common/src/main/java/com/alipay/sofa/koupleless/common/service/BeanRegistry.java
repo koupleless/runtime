@@ -22,29 +22,56 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * <p>BeanRegistry class.</p>
+ *
  * @author lianglipeng.llp@alibaba-inc.com
  * @version $Id: BeanRegistry.java, v 0.1 2024年05月17日 14:30 立蓬 Exp $
  */
 public class BeanRegistry<T> {
     private Map<String, T> map = new ConcurrentHashMap<>();
 
+    /**
+     * <p>register.</p>
+     *
+     * @param key a {@link java.lang.String} object
+     * @param bean a T object
+     */
     public void register(String key, T bean) {
         map.put(key, bean);
     }
 
+    /**
+     * <p>unRegister.</p>
+     *
+     * @param key a {@link java.lang.String} object
+     */
     public void unRegister(String key) {
         map.remove(key);
     }
 
+    /**
+     * <p>getBean.</p>
+     *
+     * @param identifier a {@link java.lang.String} object
+     * @return a T object
+     */
     public T getBean(String identifier) {
         Object o = map.get(identifier);
         return o == null ? null : (T) o;
     }
 
+    /**
+     * <p>getBeans.</p>
+     *
+     * @return a {@link java.util.List} object
+     */
     public List<T> getBeans() {
         return new ArrayList<>(map.values());
     }
 
+    /**
+     * <p>close.</p>
+     */
     public void close() {
         map.clear();
     }

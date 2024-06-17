@@ -157,6 +157,11 @@ public class ReflectionUtils {
 
     /**
      * Set field of specified object to value, will try to operate on super class until success
+     *
+     * @param fieldName a {@link java.lang.String} object
+     * @param o a {@link java.lang.Object} object
+     * @param value a T object
+     * @param <T> a T class
      */
     public static <T> void setField(String fieldName, Object o, T value) {
         Class<?> klass = o.getClass();
