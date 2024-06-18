@@ -16,18 +16,11 @@
  */
 package com.alipay.sofa.koupleless.plugin;
 
-import com.alipay.sofa.koupleless.common.BizRuntimeContext;
 import com.alipay.sofa.koupleless.common.service.ArkAutowiredBeanPostProcessor;
-import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
-import org.springframework.context.ApplicationContext;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.event.EventListener;
 
 /**
  * <p>BaseRuntimeAutoConfiguration class.</p>
@@ -38,43 +31,6 @@ import org.springframework.context.event.EventListener;
  */
 @Configuration
 public class BaseRuntimeAutoConfiguration {
-
-    /**
-     * <p>bizRuntimeContext.</p>
-     *
-     * @param applicationContext a {@link org.springframework.context.ApplicationContext} object
-     * @return a {@link com.alipay.sofa.koupleless.common.BizRuntimeContext} object
-     */
-    @Bean
-    @ConditionalOnMissingClass("com.alipay.sofa.koupleless.test.suite.biz.TestBizClassLoader")
-    public BizRuntimeContext bizRuntimeContext(ApplicationContext applicationContext) {
-        ClassLoader classLoader = applicationContext.getClassLoader();
-        BizRuntimeContext bizRuntimeContext = BizRuntimeContextRegistry
-            .getBizRuntimeContextByClassLoader(classLoader);
-        bizRuntimeContext.setRootApplicationContext(applicationContext);
-        return bizRuntimeContext;
-    }
-
-    @Bean(name = "bizRuntimeContext")
-    @ConditionalOnClass(name = "com.alipay.sofa.koupleless.test.suite.biz.TestBizClassLoader")
-    public BizRuntimeContext bizRuntimeContextIntegrationTest(ApplicationContext applicationContext) {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        BizRuntimeContext bizRuntimeContext = BizRuntimeContextRegistry
-            .getBizRuntimeContextByClassLoader(classLoader);
-        bizRuntimeContext.setRootApplicationContext(applicationContext);
-        return bizRuntimeContext;
-    }
-
-    @EventListener
-    public void onApplicationStartedEvent(ApplicationStartedEvent event) {
-        // 获取 ApplicationContext
-        ConfigurableApplicationContext applicationContext = event.getApplicationContext();
-        ClassLoader classLoader = applicationContext.getClassLoader();
-        BizRuntimeContext bizRuntimeContext = BizRuntimeContextRegistry
-            .getBizRuntimeContextByClassLoader(classLoader);
-        bizRuntimeContext.setRootApplicationContext(applicationContext);
-    }
-
     /**
      * <p>arkAutowiredBeanPostProcessor.</p>
      *
