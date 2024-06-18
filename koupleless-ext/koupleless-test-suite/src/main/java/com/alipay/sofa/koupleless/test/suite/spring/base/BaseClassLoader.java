@@ -33,6 +33,7 @@ import java.net.URLClassLoader;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarFile;
@@ -139,9 +140,21 @@ public class BaseClassLoader extends URLClassLoader {
 
     @Override
     public URL getResource(String name) {
-        URL resource = higherPriorityResourceClassLoader.getResource(name);
-        resource = resource != null ? resource : super.getResource(name);
-        return resource;
+        try {
+            Enumeration<URL> urlEnumeration = getResources(name);
+            // to List
+            List<URL> urls = new ArrayList<>();
+            while (urlEnumeration.hasMoreElements()) {
+                urls.add(urlEnumeration.nextElement());
+            }
+            // if there are multiple resources, return the first one
+            if (urls.size() > 0) {
+                return urls.get(0);
+            }
+            return null;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
