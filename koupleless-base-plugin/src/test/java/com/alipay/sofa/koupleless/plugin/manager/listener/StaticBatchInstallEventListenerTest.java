@@ -81,7 +81,7 @@ public class StaticBatchInstallEventListenerTest {
 
     @SneakyThrows
     private void resetIsBatchedDeployed() {
-        Field field = StaticBatchInstallEventListener.class.getDeclaredField("isBatchedDeployed");
+        Field field = StaticBatchInstallEventListener.class.getDeclaredField("isBatchDeployed");
         field.setAccessible(true);
         AtomicBoolean isBatchedDeployed = (AtomicBoolean) field.get(null);
         isBatchedDeployed.set(false);
