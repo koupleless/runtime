@@ -40,7 +40,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextRefreshedEvent;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -73,7 +75,16 @@ public class StaticBatchInstallEventListenerTest {
     @After
     public void afterTest() {
         componentRegistryMockedStatic.close();
+        resetIsBatchedDeployed();
         System.clearProperty("com.alipay.sofa.ark.static.biz.dir");
+    }
+
+    @SneakyThrows
+    private void resetIsBatchedDeployed() {
+        Field field = StaticBatchInstallEventListener.class.getDeclaredField("isBatchedDeployed");
+        field.setAccessible(true);
+        AtomicBoolean isBatchedDeployed = (AtomicBoolean) field.get(null);
+        isBatchedDeployed.set(false);
     }
 
     @SneakyThrows
