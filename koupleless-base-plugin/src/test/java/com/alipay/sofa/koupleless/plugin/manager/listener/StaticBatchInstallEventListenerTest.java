@@ -121,16 +121,16 @@ public class StaticBatchInstallEventListenerTest {
         BatchInstallResponse response = null;
         ApplicationReadyEvent event = null;
         componentRegistryMockedStatic.when(ArkletComponentRegistry::getOperationServiceInstance)
-                .thenReturn(operationService);
+            .thenReturn(operationService);
 
         response = BatchInstallResponse.builder().code(ResponseCode.SUCCESS)
-                .bizUrlToResponse(new HashMap<>()).build();
+            .bizUrlToResponse(new HashMap<>()).build();
 
         response.getBizUrlToResponse().put("foo", new ClientResponse());
         response.getBizUrlToResponse().get("foo").setCode(ResponseCode.SUCCESS);
 
         doReturn(response).when(operationService)
-                .batchInstall(BatchInstallRequest.builder().bizDirAbsolutePath("/path/to/dir").build());
+            .batchInstall(BatchInstallRequest.builder().bizDirAbsolutePath("/path/to/dir").build());
 
         event = mock(ApplicationReadyEvent.class);
         try (MockedStatic<ArkUtils> arkUtilsMockedStatic = Mockito.mockStatic(ArkUtils.class)) {
