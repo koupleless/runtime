@@ -56,6 +56,9 @@ public class StaticBatchInstallEventListenerTest {
     @InjectMocks
     private StaticBatchInstallEventListener arkletApplicationListener;
 
+    @InjectMocks
+    private StaticBatchInstallEventListener arkletApplicationListener2;
+
     @Mock
     private UnifiedOperationService         operationService;
 
@@ -111,4 +114,31 @@ public class StaticBatchInstallEventListenerTest {
             verify(operationService, never()).batchInstall(any(BatchInstallRequest.class));
         }
     }
+
+    @SneakyThrows
+    @Test
+    public void testDuplicateBatchDeployFromLocalDir() {
+        BatchInstallResponse response = null;
+        ApplicationReadyEvent event = null;
+        componentRegistryMockedStatic.when(ArkletComponentRegistry::getOperationServiceInstance)
+                .thenReturn(operationService);
+
+        response = BatchInstallResponse.builder().code(ResponseCode.SUCCESS)
+                .bizUrlToResponse(new HashMap<>()).build();
+
+        response.getBizUrlToResponse().put("foo", new ClientResponse());
+        response.getBizUrlToResponse().get("foo").setCode(ResponseCode.SUCCESS);
+
+        doReturn(response).when(operationService)
+                .batchInstall(BatchInstallRequest.builder().bizDirAbsolutePath("/path/to/dir").build());
+
+        event = mock(ApplicationReadyEvent.class);
+        try (MockedStatic<ArkUtils> arkUtilsMockedStatic = Mockito.mockStatic(ArkUtils.class)) {
+            arkUtilsMockedStatic.when(ArkUtils::isMasterBiz).thenReturn(true);
+            arkletApplicationListener.onApplicationEvent(event);
+            arkletApplicationListener2.onApplicationEvent(event);
+            verify(operationService, times(1)).batchInstall(any(BatchInstallRequest.class));
+        }
+    }
+
 }
