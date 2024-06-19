@@ -42,7 +42,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class StaticBatchInstallEventListener implements ApplicationListener<ApplicationReadyEvent> {
 
     // 合并部署是否已经完成，防止重复执行。
-    private static final AtomicBoolean isBatchedDeployed = new AtomicBoolean(false);
+    private static final AtomicBoolean isBatchDeployed = new AtomicBoolean(false);
 
     /**
      * <p>batchDeployFromLocalDir.</p>
@@ -50,7 +50,7 @@ public class StaticBatchInstallEventListener implements ApplicationListener<Appl
     @SneakyThrows
     public void batchDeployFromLocalDir() {
         String absolutePath = System.getProperty("com.alipay.sofa.ark.static.biz.dir");
-        if (StringUtils.isEmpty(absolutePath) || isBatchedDeployed.get()) {
+        if (StringUtils.isEmpty(absolutePath) || isBatchDeployed.get()) {
             return;
         }
         ArkletLoggerFactory.getDefaultLogger().info("start to batch deploy from local dir:{}",
@@ -66,7 +66,7 @@ public class StaticBatchInstallEventListener implements ApplicationListener<Appl
                 entry.getKey(), entry.getValue().getCode().toString(),
                 entry.getValue().getMessage());
         }
-        isBatchedDeployed.set(true);
+        isBatchDeployed.set(true);
         Preconditions.checkState(batchInstallResponse.getCode() == ResponseCode.SUCCESS,
             "batch deploy failed!");
     }
