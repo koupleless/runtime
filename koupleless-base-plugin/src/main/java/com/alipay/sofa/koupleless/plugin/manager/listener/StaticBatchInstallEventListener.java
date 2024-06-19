@@ -20,7 +20,6 @@ import com.alipay.sofa.ark.api.ClientResponse;
 import com.alipay.sofa.ark.api.ResponseCode;
 import com.alipay.sofa.ark.common.util.StringUtils;
 import com.alipay.sofa.koupleless.arklet.core.ArkletComponentRegistry;
-import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger;
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BatchInstallRequest;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BatchInstallResponse;
@@ -29,13 +28,9 @@ import com.alipay.sofa.koupleless.common.util.ArkUtils;
 import com.google.common.base.Preconditions;
 import lombok.SneakyThrows;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ApplicationContextEvent;
-import org.springframework.context.event.ContextRefreshedEvent;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -47,7 +42,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class StaticBatchInstallEventListener implements ApplicationListener<ApplicationReadyEvent> {
 
     // 合并部署是否已经完成，防止重复执行。
-    private AtomicBoolean isBatchdDeployed = new AtomicBoolean(false);
+    private static final AtomicBoolean isBatchedDeployed = new AtomicBoolean(false);
 
     /**
      * <p>batchDeployFromLocalDir.</p>
@@ -55,7 +50,7 @@ public class StaticBatchInstallEventListener implements ApplicationListener<Appl
     @SneakyThrows
     public void batchDeployFromLocalDir() {
         String absolutePath = System.getProperty("com.alipay.sofa.ark.static.biz.dir");
-        if (StringUtils.isEmpty(absolutePath) || isBatchdDeployed.get()) {
+        if (StringUtils.isEmpty(absolutePath) || isBatchedDeployed.get()) {
             return;
         }
         ArkletLoggerFactory.getDefaultLogger().info("start to batch deploy from local dir:{}",
@@ -71,7 +66,7 @@ public class StaticBatchInstallEventListener implements ApplicationListener<Appl
                 entry.getKey(), entry.getValue().getCode().toString(),
                 entry.getValue().getMessage());
         }
-        isBatchdDeployed.set(true);
+        isBatchedDeployed.set(true);
         Preconditions.checkState(batchInstallResponse.getCode() == ResponseCode.SUCCESS,
             "batch deploy failed!");
     }
