@@ -112,6 +112,7 @@ public class BizSpringTestConfig {
         if (packageNames == null) {
             packageNames = SpringUtils.getBasePackages(mainClass);
         }
+        excludeArtifactIds.add("surefire");
     }
 
 }
