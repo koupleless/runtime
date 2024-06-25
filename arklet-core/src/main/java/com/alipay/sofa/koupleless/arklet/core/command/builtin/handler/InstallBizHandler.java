@@ -33,7 +33,6 @@ import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletRuntimeExce
 import com.alipay.sofa.koupleless.arklet.core.common.exception.CommandValidationException;
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger;
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
-import com.google.common.base.Preconditions;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -65,7 +64,8 @@ public class InstallBizHandler extends
         try {
             InstallBizClientResponse installBizClientResponse = convertClientResponse(
                 getOperationService().install(input.getBizName(), input.getBizVersion(),
-                    input.getBizUrl(), input.getArgs(), input.getEnvs()));
+                    input.getBizUrl(), input.getArgs(), input.getEnvs(),
+                    input.isUseUninstallThenInstallStrategy()));
             installBizClientResponse
                 .setElapsedSpace(metaSpaceMXBean.getUsage().getUsed() - startSpace);
             if (ResponseCode.SUCCESS.equals(installBizClientResponse.getCode())) {
@@ -160,6 +160,11 @@ public class InstallBizHandler extends
          * Don't use this in non-multi-tenant jdk.
          */
         private Map<String, String> envs;
+        /**
+         * uninstall bizs with same name as the new biz, then install the new biz
+         * default value is true, if set false, installing the new biz, the old biz will be uninstalled
+         */
+        private boolean             useUninstallThenInstallStrategy = true;
     }
 
     @Getter

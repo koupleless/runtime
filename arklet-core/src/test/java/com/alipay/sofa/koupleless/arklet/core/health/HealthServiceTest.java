@@ -20,7 +20,7 @@ import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.ark.spi.model.Plugin;
 import com.alipay.sofa.koupleless.arklet.core.BaseTest;
-import com.alipay.sofa.koupleless.arklet.core.health.custom.CustomBizManagerService;
+import com.alipay.sofa.koupleless.arklet.core.health.custom.MockBizManagerService;
 import com.alipay.sofa.koupleless.arklet.core.health.custom.CustomIndicator;
 import com.alipay.sofa.koupleless.arklet.core.health.custom.CustomPluginManagerService;
 import com.alipay.sofa.koupleless.arklet.core.health.model.BizHealthMeta;
@@ -125,11 +125,11 @@ public class HealthServiceTest extends BaseTest {
     @Before
     public void initHealthService() {
         arkClient = mockStatic(ArkClient.class);
-        arkClient.when(ArkClient::getBizManagerService).thenReturn(new CustomBizManagerService());
+        arkClient.when(ArkClient::getBizManagerService).thenReturn(new MockBizManagerService());
         arkClient.when(ArkClient::getPluginManagerService)
             .thenReturn(new CustomPluginManagerService());
         arkClient.when(ArkClient::getMasterBiz)
-            .thenReturn(new CustomBizManagerService().getMasterBiz());
+            .thenReturn(new MockBizManagerService().getMasterBiz());
     }
 
     @Test
@@ -154,7 +154,7 @@ public class HealthServiceTest extends BaseTest {
 
     @Test
     public void testGetModuleInfo() {
-        final CustomBizManagerService bizService = new CustomBizManagerService();
+        final MockBizManagerService bizService = new MockBizManagerService();
         final CustomPluginManagerService pluginService = new CustomPluginManagerService();
         final String bizName = "testBiz1";
         final String pluginName = "testPlugin1";

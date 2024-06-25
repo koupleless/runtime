@@ -18,9 +18,11 @@ package com.alipay.sofa.koupleless.arklet.core.component;
 
 import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.api.ClientResponse;
+import com.alipay.sofa.ark.spi.constant.Constants;
 import com.alipay.sofa.ark.spi.model.BizOperation;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BatchInstallRequest;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BatchInstallResponse;
+import com.alipay.sofa.koupleless.arklet.core.health.custom.MockBizManagerService;
 import com.alipay.sofa.koupleless.arklet.core.ops.BatchInstallHelper;
 import com.alipay.sofa.koupleless.arklet.core.ops.UnifiedOperationServiceImpl;
 import lombok.SneakyThrows;
@@ -28,7 +30,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
@@ -36,7 +41,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
 
 /**
@@ -86,8 +92,11 @@ public class UnifiedOperationServiceImplTests {
                 .when(() -> ArkClient.installOperation(Mockito.any(BizOperation.class),
                     Mockito.any(String[].class), Mockito.anyMap()))
                 .thenReturn(clientResponse);
-            ClientResponse response = unifiedOperationService.install("bizName", "bizVersion",
-                "http://example.com/biz.jar", new String[] {}, new HashMap<>());
+            arkClientMockedStatic.when(ArkClient::getBizManagerService)
+                .thenReturn(new MockBizManagerService());
+
+            ClientResponse response = unifiedOperationService.install("testBiz1", "bizVersion",
+                "http://example.com/biz.jar", new String[] {}, new HashMap<>(), true);
             arkClientMockedStatic
                 .verify(() -> ArkClient.installOperation(Mockito.any(BizOperation.class),
                     Mockito.any(String[].class), Mockito.anyMap()));
