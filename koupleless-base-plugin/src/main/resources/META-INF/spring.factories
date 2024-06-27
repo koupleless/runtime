@@ -10,3 +10,6 @@ org.springframework.boot.env.EnvironmentPostProcessor=\
 # Auto Configuration Import Filters
 org.springframework.boot.autoconfigure.AutoConfigurationImportFilter=\
   com.alipay.sofa.koupleless.plugin.spring.SkipAutoConfigurationImportFilter
+
+org.springframework.context.ApplicationContextInitializer=\
+  com.alipay.sofa.koupleless.plugin.spring.BizApplicationContextInitializer
