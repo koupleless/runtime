@@ -44,7 +44,7 @@ import java.util.Properties;
 
 import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.SOFA_ARK_MODULE;
 import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.EXTENSION_INTEGRATE_LOCAL_DIRS;
-import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.EXTENSION_INTEGRATE_LOCAL_URLS;
+import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.EXTENSION_INTEGRATE_URLS;
 import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.FILE_PREFIX;
 import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.HTTPS_PREFIX;
 import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.HTTP_PREFIX;
@@ -57,10 +57,10 @@ import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.HT
 public class KouplelessBaseIntegrateBizMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${project.basedir}", required = true)
-    private File                 baseDir;
+    File                         baseDir;
 
     @Parameter(defaultValue = "${project.build.outputDirectory}", required = true)
-    private File                 outputDirectory;
+    File                         outputDirectory;
 
     KouplelessIntegrateBizConfig kouplelessIntegrateBizConfig = new KouplelessIntegrateBizConfig();
 
@@ -76,12 +76,12 @@ public class KouplelessBaseIntegrateBizMojo extends AbstractMojo {
         }
     }
 
-    private void integrateBizToResource() throws IOException {
+    void integrateBizToResource() throws IOException {
         copyFilesToResource();
         copyLocalDirsToResource();
     }
 
-    private void copyFilesToResource() throws IOException {
+    protected void copyFilesToResource() throws IOException {
         File targetDir = new File(outputDirectory, SOFA_ARK_MODULE);
         for (String urlStr : kouplelessIntegrateBizConfig.getFileURLs()) {
             File targetFile = new File(targetDir, getFullRevision(urlStr));
@@ -108,9 +108,9 @@ public class KouplelessBaseIntegrateBizMojo extends AbstractMojo {
         return "unknownBizName-unknownBizVersion.jar";
     }
 
-    private void copyLocalDirsToResource() throws IOException {
+    protected void copyLocalDirsToResource() throws IOException {
         File targetDir = new File(outputDirectory, SOFA_ARK_MODULE);
-        for (String dirPath : kouplelessIntegrateBizConfig.getLocalDirURLs()) {
+        for (String dirPath : kouplelessIntegrateBizConfig.getLocalDirs()) {
             for (File bizSourceFile : getBizFileFromLocalFileSystem(dirPath)) {
                 File targetFile = new File(targetDir, bizSourceFile.getName());
                 if (!targetFile.exists()) {
@@ -143,7 +143,7 @@ public class KouplelessBaseIntegrateBizMojo extends AbstractMojo {
         return bizFiles;
     }
 
-    private void initKouplelessIntegrateBizConfig() {
+    protected void initKouplelessIntegrateBizConfig() {
         readFromArkPropertiesFile();
         readFromArkYamlFile();
     }
@@ -151,17 +151,17 @@ public class KouplelessBaseIntegrateBizMojo extends AbstractMojo {
     private void readFromArkYamlFile() {
         Map<String, Object> arkYaml = ArkConfigHolder.getArkYaml(baseDir.getAbsolutePath());
         kouplelessIntegrateBizConfig
-            .addFileURLs(ParseUtils.getStringSet(arkYaml, EXTENSION_INTEGRATE_LOCAL_URLS));
+            .addFileURLs(ParseUtils.getStringSet(arkYaml, EXTENSION_INTEGRATE_URLS));
         kouplelessIntegrateBizConfig
-            .addLocalDirURLs(ParseUtils.getStringSet(arkYaml, EXTENSION_INTEGRATE_LOCAL_DIRS));
+            .addLocalDirs(ParseUtils.getStringSet(arkYaml, EXTENSION_INTEGRATE_LOCAL_DIRS));
     }
 
     private void readFromArkPropertiesFile() {
         Properties arkProperties = ArkConfigHolder.getArkProperties(baseDir.getAbsolutePath());
         kouplelessIntegrateBizConfig
-            .addFileURLs(ParseUtils.getSetValues(arkProperties, EXTENSION_INTEGRATE_LOCAL_URLS));
-        kouplelessIntegrateBizConfig.addLocalDirURLs(
-            ParseUtils.getSetValues(arkProperties, EXTENSION_INTEGRATE_LOCAL_DIRS));
+            .addFileURLs(ParseUtils.getSetValues(arkProperties, EXTENSION_INTEGRATE_URLS));
+        kouplelessIntegrateBizConfig
+            .addLocalDirs(ParseUtils.getSetValues(arkProperties, EXTENSION_INTEGRATE_LOCAL_DIRS));
 
     }
 }
