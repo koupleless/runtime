@@ -16,7 +16,10 @@
  */
 package com.alipay.sofa.koupleless.base.build.plugin.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -26,17 +29,26 @@ import java.util.Set;
  * @version $Id: KouplelessIntegrateBizConfig.java, v 0.1 2024年06月25日 12:03 立蓬 Exp $
  */
 
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 public class KouplelessIntegrateBizConfig {
-    private Set<String> fileURLs     = new HashSet<>();
+    /**
+     * 指定文件URL，将拷贝到 classpath 下的 SOFA-ARK/biz，支持：file:///,http://, https://
+     */
+    Set<String> fileURLs  = new HashSet<>();
 
-    private Set<String> localDirURLs = new HashSet<>();
+    /**
+     * 指定本地目录，将拷贝该目录下的所有 ark-biz 到 classpath 下的 SOFA-ARK/biz
+     */
+    Set<String> localDirs = new HashSet<>();
 
     public void addFileURLs(Set<String> urls) {
         fileURLs.addAll(urls);
     }
 
-    public void addLocalDirURLs(Set<String> urls) {
-        localDirURLs.addAll(urls);
+    public void addLocalDirs(Set<String> absolutePath) {
+        localDirs.addAll(absolutePath);
     }
 }
