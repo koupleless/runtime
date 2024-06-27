@@ -16,6 +16,8 @@
  */
 package com.alipay.sofa.koupleless.base.build.plugin.constant;
 
+import com.alipay.sofa.koupleless.base.build.plugin.utils.OSUtils;
+
 import java.io.File;
 
 /**
@@ -28,7 +30,8 @@ public class Constants {
      */
     public final static String COMMA_SPLIT                    = ",";
 
-    public static final String FILE_PREFIX                    = "file://";
+    public static final String FILE_PREFIX                    = OSUtils
+        .getLocalFileProtocolPrefix();
     public static final String HTTP_PREFIX                    = "http://";
 
     public static final String HTTPS_PREFIX                   = "https://";
@@ -46,7 +49,7 @@ public class Constants {
     /**
      * extension-config
      */
-    public final static String EXTENSION_INTEGRATE_LOCAL_URLS = "integrateBizURLs";
+    public final static String EXTENSION_INTEGRATE_URLS       = "integrateBizURLs";
 
     public final static String EXTENSION_INTEGRATE_LOCAL_DIRS = "integrateLocalDirs";
 
