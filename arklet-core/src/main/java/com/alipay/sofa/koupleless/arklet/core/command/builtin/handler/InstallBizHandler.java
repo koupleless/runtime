@@ -78,15 +78,11 @@ public class InstallBizHandler extends
     }
 
     private InstallRequest convertInstallRequest(Input input) {
-        return InstallRequest.builder()
-            .bizName(input.getBizName())
-            .bizVersion(input.getBizVersion())
-            .bizUrl(input.getBizUrl())
-            .args(input.getArgs())
+        return InstallRequest.builder().bizName(input.getBizName())
+            .bizVersion(input.getBizVersion()).bizUrl(input.getBizUrl()).args(input.getArgs())
             .envs(input.getEnvs())
             .useUninstallThenInstallStrategy(input.isUseUninstallThenInstallStrategy())
-            .bizAlias(input.getBizAlias())
-            .build();
+            .bizAlias(input.getBizAlias()).build();
     }
 
     private MemoryPoolMXBean getMetaSpaceMXBean() {

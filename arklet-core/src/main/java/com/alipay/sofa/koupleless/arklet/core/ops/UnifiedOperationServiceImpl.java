@@ -76,7 +76,7 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
         String bizName = request.getBizName();
         String bizVersion = request.getBizVersion();
         String bizUrl = request.getBizUrl();
-        String[] args =request.getArgs();
+        String[] args = request.getArgs();
         Map<String, String> envs = request.getEnvs();
         String bizAlias = request.getBizAlias();
 
@@ -96,7 +96,7 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
         bizOperation.setBizName(bizName);
         bizOperation.setBizVersion(bizVersion);
         bizOperation.putParameter(Constants.CONFIG_BIZ_URL, bizUrl);
-        return ArkClient.installOperation(bizOperation, args, envs,bizAlias);
+        return ArkClient.installOperation(bizOperation, args, envs, bizAlias);
     }
 
     private ClientResponse doInstallThenUninstallStrategy(InstallRequest installRequest) throws Throwable {
@@ -119,12 +119,9 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
             String bizName = (String) mainAttributes.get(Constants.ARK_BIZ_NAME);
             String bizVersion = (String) mainAttributes.get(Constants.ARK_BIZ_VERSION);
 
-            InstallRequest installRequest = InstallRequest.builder()
-                    .bizUrl(bizUrl)
-                    .bizName(bizName)
-                    .bizVersion(bizVersion)
-                    .useUninstallThenInstallStrategy(useUninstallThenInstallStrategy)
-                    .build();
+            InstallRequest installRequest = InstallRequest.builder().bizUrl(bizUrl).bizName(bizName)
+                .bizVersion(bizVersion)
+                .useUninstallThenInstallStrategy(useUninstallThenInstallStrategy).build();
             return install(installRequest);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
