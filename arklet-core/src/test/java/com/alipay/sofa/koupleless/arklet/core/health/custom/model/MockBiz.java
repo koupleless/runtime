@@ -88,6 +88,11 @@ public class MockBiz implements Biz {
     }
 
     @Override
+    public String getBizAlias() {
+        return "";
+    }
+
+    @Override
     public String getMainClass() {
         return null;
     }
