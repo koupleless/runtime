@@ -52,3 +52,7 @@ adapterMappings:
       regexp: ".*spring-boot-starter-logging:.*"
     adapter:
       artifactId: koupleless-adapter-logback
+  - matcher:
+      regexp: ".*(org\\.apache\\.rocketmq:rocketmq-client:4\\.4\\.0)"
+    adapter:
+      artifactId: koupleless-adapter-rocketmq-4.4
