@@ -18,10 +18,10 @@ package com.alipay.sofa.koupleless.arklet.core.component;
 
 import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.api.ClientResponse;
-import com.alipay.sofa.ark.spi.constant.Constants;
 import com.alipay.sofa.ark.spi.model.BizOperation;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BatchInstallRequest;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BatchInstallResponse;
+import com.alipay.sofa.koupleless.arklet.core.common.model.InstallRequest;
 import com.alipay.sofa.koupleless.arklet.core.health.custom.MockBizManagerService;
 import com.alipay.sofa.koupleless.arklet.core.ops.BatchInstallHelper;
 import com.alipay.sofa.koupleless.arklet.core.ops.UnifiedOperationServiceImpl;
@@ -95,8 +95,16 @@ public class UnifiedOperationServiceImplTests {
             arkClientMockedStatic.when(ArkClient::getBizManagerService)
                 .thenReturn(new MockBizManagerService());
 
-            ClientResponse response = unifiedOperationService.install("testBiz1", "bizVersion",
-                "http://example.com/biz.jar", new String[] {}, new HashMap<>(), true);
+            InstallRequest request = InstallRequest.builder()
+                    .bizUrl("http://example.com/biz.jar")
+                    .bizName("testBiz1")
+                    .bizVersion("bizVersion")
+                    .useUninstallThenInstallStrategy(true)
+                    .bizAlias("bizAlias")
+                    .args(new String[] {})
+                    .envs(new HashMap<>())
+                    .build();
+            ClientResponse response = unifiedOperationService.install(request);
             arkClientMockedStatic
                 .verify(() -> ArkClient.installOperation(Mockito.any(BizOperation.class),
                     Mockito.any(String[].class), Mockito.anyMap()));
