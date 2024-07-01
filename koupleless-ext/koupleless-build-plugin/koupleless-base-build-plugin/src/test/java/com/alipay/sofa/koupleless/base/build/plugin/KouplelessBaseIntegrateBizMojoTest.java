@@ -61,7 +61,7 @@ public class KouplelessBaseIntegrateBizMojoTest {
             .fileURLs(Sets.newHashSet(bizFileURL)).localDirs(Sets.newHashSet(bizDir)).build();
         mojo.integrateBizToResource();
 
-        File targetDir =  new File(mojo.outputDirectory,SOFA_ARK_MODULE);
+        File targetDir = new File(mojo.outputDirectory, SOFA_ARK_MODULE);
         assertEquals(2, targetDir.listFiles().length);
     }
 }
