@@ -40,9 +40,9 @@ public class Constants {
      * ark.conf
      */
     public final static String ARK_CONF_BASE_DIR              = "conf/ark";
-    public final static String ARK_PROPERTIES_FILE            = "ark.properties";
+    public final static String ARK_PROPERTIES_FILE            = "bootstrap.properties";
 
-    public final static String ARK_YML_FILE                   = "ark.yml";
+    public final static String ARK_YML_FILE                   = "bootstrap.yml";
 
     public final static String SOFA_ARK_MODULE                = "SOFA-ARK" + File.separator + "biz";
 
