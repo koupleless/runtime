@@ -27,6 +27,7 @@ import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger;
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BatchInstallRequest;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BatchInstallResponse;
+import com.alipay.sofa.koupleless.arklet.core.common.model.InstallRequest;
 import com.alipay.sofa.koupleless.common.util.OSUtils;
 import com.google.inject.Singleton;
 
@@ -63,20 +64,22 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
 
     }
 
-    /** {@inheritDoc} */
     @Override
-    public ClientResponse install(String bizName, String bizVersion, String bizUrl, String[] args,
-                                  Map<String, String> envs,
-                                  boolean useUninstallThenInstallStrategy) throws Throwable {
-        if (useUninstallThenInstallStrategy) {
-            return doUninstallThenInstallStrategy(bizName, bizVersion, bizUrl, args, envs);
+    public ClientResponse install(InstallRequest request) throws Throwable {
+        if (request.isUseUninstallThenInstallStrategy()) {
+            return doUninstallThenInstallStrategy(request);
         }
-        return doInstallThenUninstallStrategy(bizName, bizVersion, bizUrl, args, envs);
+        return doInstallThenUninstallStrategy(request);
     }
 
-    private ClientResponse doUninstallThenInstallStrategy(String bizName, String bizVersion,
-                                                          String bizUrl, String[] args,
-                                                          Map<String, String> envs) throws Throwable {
+    private ClientResponse doUninstallThenInstallStrategy(InstallRequest request) throws Throwable {
+        String bizName = request.getBizName();
+        String bizVersion = request.getBizVersion();
+        String bizUrl = request.getBizUrl();
+        String[] args =request.getArgs();
+        Map<String, String> envs = request.getEnvs();
+        String bizAlias = request.getBizAlias();
+
         // uninstall first
         List<Biz> bizListToUninstall = ArkClient.getBizManagerService().getBiz(bizName);
         LOGGER.info("start to uninstall bizLists: {}", bizListToUninstall);
@@ -86,18 +89,17 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
 
         LOGGER.info("success uninstall bizLists: {}", bizListToUninstall);
         LOGGER.info("start to install biz: {},{},{}", bizName, bizVersion, bizUrl);
+
         // install
         BizOperation bizOperation = new BizOperation()
             .setOperationType(BizOperation.OperationType.INSTALL);
         bizOperation.setBizName(bizName);
         bizOperation.setBizVersion(bizVersion);
         bizOperation.putParameter(Constants.CONFIG_BIZ_URL, bizUrl);
-        return ArkClient.installOperation(bizOperation, args, envs);
+        return ArkClient.installOperation(bizOperation, args, envs,bizAlias);
     }
 
-    private ClientResponse doInstallThenUninstallStrategy(String bizName, String bizVersion,
-                                                          String bizUrl, String[] args,
-                                                          Map<String, String> envs) throws Throwable {
+    private ClientResponse doInstallThenUninstallStrategy(InstallRequest installRequest) throws Throwable {
         throw new UnsupportedOperationException(
             "have not implemented uninstallAfterInstallStrategy");
     }
@@ -116,8 +118,14 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
                 .getMainAttributes(bizAbsolutePath);
             String bizName = (String) mainAttributes.get(Constants.ARK_BIZ_NAME);
             String bizVersion = (String) mainAttributes.get(Constants.ARK_BIZ_VERSION);
-            return install(bizName, bizVersion, bizUrl, null, null,
-                useUninstallThenInstallStrategy);
+
+            InstallRequest installRequest = InstallRequest.builder()
+                    .bizUrl(bizUrl)
+                    .bizName(bizName)
+                    .bizVersion(bizVersion)
+                    .useUninstallThenInstallStrategy(useUninstallThenInstallStrategy)
+                    .build();
+            return install(installRequest);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
             return new ClientResponse().setCode(ResponseCode.FAILED)

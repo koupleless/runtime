@@ -33,6 +33,7 @@ import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletRuntimeExce
 import com.alipay.sofa.koupleless.arklet.core.common.exception.CommandValidationException;
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger;
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
+import com.alipay.sofa.koupleless.arklet.core.common.model.InstallRequest;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -63,9 +64,7 @@ public class InstallBizHandler extends
         long startSpace = metaSpaceMXBean.getUsage().getUsed();
         try {
             InstallBizClientResponse installBizClientResponse = convertClientResponse(
-                getOperationService().install(input.getBizName(), input.getBizVersion(),
-                    input.getBizUrl(), input.getArgs(), input.getEnvs(),
-                    input.isUseUninstallThenInstallStrategy()));
+                getOperationService().install(convertInstallRequest(input)));
             installBizClientResponse
                 .setElapsedSpace(metaSpaceMXBean.getUsage().getUsed() - startSpace);
             if (ResponseCode.SUCCESS.equals(installBizClientResponse.getCode())) {
@@ -76,6 +75,18 @@ public class InstallBizHandler extends
         } catch (Throwable e) {
             throw new ArkletRuntimeException(e);
         }
+    }
+
+    private InstallRequest convertInstallRequest(Input input) {
+        return InstallRequest.builder()
+            .bizName(input.getBizName())
+            .bizVersion(input.getBizVersion())
+            .bizUrl(input.getBizUrl())
+            .args(input.getArgs())
+            .envs(input.getEnvs())
+            .useUninstallThenInstallStrategy(input.isUseUninstallThenInstallStrategy())
+            .bizAlias(input.getBizAlias())
+            .build();
     }
 
     private MemoryPoolMXBean getMetaSpaceMXBean() {
@@ -165,6 +176,8 @@ public class InstallBizHandler extends
          * default value is true, if set false, installing the new biz, the old biz will be uninstalled
          */
         private boolean             useUninstallThenInstallStrategy = true;
+
+        private String              bizAlias;
     }
 
     @Getter
