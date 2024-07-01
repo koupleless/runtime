@@ -95,15 +95,9 @@ public class UnifiedOperationServiceImplTests {
             arkClientMockedStatic.when(ArkClient::getBizManagerService)
                 .thenReturn(new MockBizManagerService());
 
-            InstallRequest request = InstallRequest.builder()
-                    .bizUrl("http://example.com/biz.jar")
-                    .bizName("testBiz1")
-                    .bizVersion("bizVersion")
-                    .useUninstallThenInstallStrategy(true)
-                    .bizAlias("bizAlias")
-                    .args(new String[] {})
-                    .envs(new HashMap<>())
-                    .build();
+            InstallRequest request = InstallRequest.builder().bizUrl("http://example.com/biz.jar")
+                .bizName("testBiz1").bizVersion("bizVersion").useUninstallThenInstallStrategy(true)
+                .bizAlias("bizAlias").args(new String[] {}).envs(new HashMap<>()).build();
             ClientResponse response = unifiedOperationService.install(request);
             arkClientMockedStatic
                 .verify(() -> ArkClient.installOperation(Mockito.any(BizOperation.class),
