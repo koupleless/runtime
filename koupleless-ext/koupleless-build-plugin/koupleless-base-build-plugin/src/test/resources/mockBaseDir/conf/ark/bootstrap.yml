@@ -1,0 +1,5 @@
+integrateBizURLs:
+  - file:///aaa.jar
+integrateLocalDirs:
+  - /aaa
+  - /bbb

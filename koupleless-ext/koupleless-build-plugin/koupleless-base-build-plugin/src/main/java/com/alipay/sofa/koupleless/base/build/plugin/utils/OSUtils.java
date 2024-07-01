@@ -14,33 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.base.build.plugin.model;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.apache.maven.model.Dependency;
+package com.alipay.sofa.koupleless.base.build.plugin.utils;
 
 /**
- * <p>MavenDependencyAdapterMapping class.</p>
- *
- * @author CodeNoobKing
- * @since 2024/2/6
- * @version 1.0.0
+ * @author lianglipeng.llp@alibaba-inc.com
+ * @version $Id: OSUtils.java, v 0.1 2024年06月27日 20:34 立蓬 Exp $
  */
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
-@Builder
-public class MavenDependencyAdapterMapping {
-    /**
-     * 匹配用户的依赖。
-     */
-    private MavenDependencyMatcher matcher;
+public class OSUtils {
+    static String OS_NAME_KEY = "os.name"; // 操作系统名称。
 
     /**
-     * 适配的依赖。
+     * 获取本地文件协议前缀。
+     *
+     * @return 本地文件协议前缀。
      */
-    private Dependency             adapter;
+    public static String getLocalFileProtocolPrefix() {
+        String os = System.getProperty(OS_NAME_KEY);
+        if (os.toLowerCase().startsWith("win")) {
+            return "file:///";
+        } else {
+            return "file://";
+        }
+    }
 }

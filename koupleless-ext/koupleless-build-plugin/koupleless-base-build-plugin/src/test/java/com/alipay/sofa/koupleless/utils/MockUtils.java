@@ -14,33 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.base.build.plugin.model;
+package com.alipay.sofa.koupleless.utils;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.apache.maven.model.Dependency;
+import java.io.File;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 /**
- * <p>MavenDependencyAdapterMapping class.</p>
- *
- * @author CodeNoobKing
- * @since 2024/2/6
- * @version 1.0.0
+ * @author lianglipeng.llp@alibaba-inc.com
+ * @version $Id: MockUtils.java, v 0.1 2024年06月27日 20:10 立蓬 Exp $
  */
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
-@Builder
-public class MavenDependencyAdapterMapping {
-    /**
-     * 匹配用户的依赖。
-     */
-    private MavenDependencyMatcher matcher;
-
-    /**
-     * 适配的依赖。
-     */
-    private Dependency             adapter;
+public class MockUtils {
+    public static File getResourceAsFile(String resourcePath) throws URISyntaxException {
+        URL url = MockUtils.class.getClassLoader().getResource(resourcePath);
+        return new File(url.toURI());
+    }
 }

@@ -16,13 +16,16 @@
  */
 package com.alipay.sofa.koupleless.base.build.plugin.common;
 
+import com.google.common.base.Preconditions;
 import lombok.SneakyThrows;
 
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
+import java.util.jar.Manifest;
 import java.util.regex.Pattern;
 
 /**
@@ -67,6 +70,17 @@ public class JarFileUtils {
             }
         }
         return result;
+    }
+
+    @SneakyThrows
+    public static Map<String, Object> getMainAttributes(String bizUrl) {
+        try (JarFile jarFile = new JarFile(bizUrl)) {
+            Manifest manifest = jarFile.getManifest();
+            Preconditions.checkState(manifest != null, "Manifest file not found in the JAR.");
+            Map<String, Object> result = new HashMap<>();
+            manifest.getMainAttributes().forEach((k, v) -> result.put(k.toString(), v));
+            return result;
+        }
     }
 
 }
