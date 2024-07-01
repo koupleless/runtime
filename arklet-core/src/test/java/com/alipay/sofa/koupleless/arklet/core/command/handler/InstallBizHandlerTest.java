@@ -60,14 +60,9 @@ public class InstallBizHandlerTest extends BaseHandlerTest {
         input.setBizUrl("testUrl");
         input.setBizName("testBiz1");
 
-        InstallRequest installRequest = InstallRequest.builder()
-                .bizName(input.getBizName())
-                .bizVersion(input.getBizVersion())
-                .bizUrl(input.getBizUrl())
-                .args(input.getArgs())
-                .envs(input.getEnvs())
-                .useUninstallThenInstallStrategy(true)
-                .build();
+        InstallRequest installRequest = InstallRequest.builder().bizName(input.getBizName())
+            .bizVersion(input.getBizVersion()).bizUrl(input.getBizUrl()).args(input.getArgs())
+            .envs(input.getEnvs()).useUninstallThenInstallStrategy(true).build();
         when(handler.getOperationService().install(installRequest)).thenReturn(success);
 
         Output<InstallBizHandler.InstallBizClientResponse> result = handler.handle(input);
@@ -84,14 +79,9 @@ public class InstallBizHandlerTest extends BaseHandlerTest {
         input.setBizUrl("testUrl");
         input.setBizName("testBiz1");
 
-        InstallRequest installRequest = InstallRequest.builder()
-                .bizName(input.getBizName())
-                .bizVersion(input.getBizVersion())
-                .bizUrl(input.getBizUrl())
-                .args(input.getArgs())
-                .envs(input.getEnvs())
-                .useUninstallThenInstallStrategy(true)
-                .build();
+        InstallRequest installRequest = InstallRequest.builder().bizName(input.getBizName())
+            .bizVersion(input.getBizVersion()).bizUrl(input.getBizUrl()).args(input.getArgs())
+            .envs(input.getEnvs()).useUninstallThenInstallStrategy(true).build();
         when(handler.getOperationService().install(installRequest)).thenReturn(failed);
 
         Output<InstallBizHandler.InstallBizClientResponse> result = handler.handle(input);
