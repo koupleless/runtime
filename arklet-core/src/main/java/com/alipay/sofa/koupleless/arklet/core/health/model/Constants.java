@@ -66,6 +66,10 @@ public class Constants {
     /** Constant <code>READINESS_HEALTHY="ACCEPTING_TRAFFIC"</code> */
     public static final String READINESS_HEALTHY     = "ACCEPTING_TRAFFIC";
 
+    public static final int    BYTE_TO_MB            = 1024 * 1024;
+
+    public static final String MB                    = "MB";
+
     /**
      * <p>typeOfQuery.</p>
      *

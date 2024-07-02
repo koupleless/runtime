@@ -18,6 +18,7 @@ package com.alipay.sofa.koupleless.arklet.springboot.starter.health;
 
 import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.common.util.EnvironmentUtils;
+import com.alipay.sofa.koupleless.arklet.springboot.starter.properties.ArkletProperties;
 import com.alipay.sofa.koupleless.common.environment.ConditionalOnMasterBiz;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -65,5 +66,10 @@ public class HealthAutoConfiguration {
     @Bean("compositeAllBizHealthIndicator")
     public CompositeAllBizHealthIndicator compositeAllBizHealthIndicator() {
         return new CompositeAllBizHealthIndicator();
+    }
+
+    @Bean("metricsHealthIndicator")
+    public MetricsHealthIndicator metricsHealthIndicator(ArkletProperties arkletProperties) {
+        return new MetricsHealthIndicator(arkletProperties.getMonitor());
     }
 }

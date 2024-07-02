@@ -17,7 +17,9 @@
 package com.alipay.sofa.koupleless.arklet.springboot.starter;
 
 import com.alipay.sofa.koupleless.arklet.springboot.starter.command.MasterBizCmdHandlerCollector;
+import com.alipay.sofa.koupleless.arklet.springboot.starter.properties.ArkletProperties;
 import com.alipay.sofa.koupleless.common.environment.ConditionalOnMasterBiz;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -29,6 +31,7 @@ import org.springframework.context.annotation.Configuration;
  * @version 1.0.0
  */
 @Configuration
+@EnableConfigurationProperties(ArkletProperties.class)
 public class ArkletAutoConfiguration {
 
     /**
