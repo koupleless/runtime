@@ -17,11 +17,12 @@
 package com.alipay.sofa.koupleless.arklet.springboot.starter.health;
 
 import com.alipay.sofa.koupleless.arklet.core.health.model.ClientMetrics;
+import com.alipay.sofa.koupleless.arklet.core.monitor.MetricsMonitor;
 import com.alipay.sofa.koupleless.arklet.springboot.starter.properties.ArkletProperties.MonitorProperties;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health.Builder;
 
-import static com.alipay.sofa.koupleless.arklet.springboot.starter.health.MetricsMonitor.validateMetaspace;
+import static com.alipay.sofa.koupleless.arklet.core.monitor.MetricsMonitor.validateMetaspace;
 
 /**
  * @author lianglipeng.llp@alibaba-inc.com
