@@ -14,24 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.arklet.springboot.starter.health;
+package com.alipay.sofa.koupleless.arklet.core.monitor;
 
-import com.alipay.sofa.koupleless.arklet.springboot.starter.properties.ArkletProperties.MonitorProperties;
+import com.alipay.sofa.koupleless.arklet.core.health.model.ClientMetrics;
+import com.alipay.sofa.koupleless.arklet.core.health.model.ClientMetrics.ClientMemoryMetrics;
+import com.alipay.sofa.koupleless.arklet.core.monitor.MetricsMonitor;
 import org.junit.Test;
-import org.springframework.boot.actuate.health.Status;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author lianglipeng.llp@alibaba-inc.com
- * @version $Id: MetricsHealthIndicatorTest.java, v 0.1 2024年07月02日 14:32 立蓬 Exp $
+ * @version $Id: MetricsMonitorTest.java, v 0.1 2024年07月02日 14:47 立蓬 Exp $
  */
-public class MetricsHealthIndicatorTest {
-
+public class MetricsMonitorTest {
     @Test
-    public void testMetaspace() {
-        MonitorProperties monitorProperties = new MonitorProperties();
-        MetricsHealthIndicator indicator = new MetricsHealthIndicator(monitorProperties);
-        assertEquals(Status.UP, indicator.health().getStatus());
+    public void testCaptureMetrics() {
+        ClientMetrics metrics = ClientMetrics.builder()
+            .clientMetaspaceMetrics(
+                ClientMemoryMetrics.builder().max(100000).committed(85000).used(80000).build())
+            .build();
+
+        assertTrue(MetricsMonitor.validateMetaspace(90, metrics));
+        assertFalse(MetricsMonitor.validateMetaspace(80, metrics));
     }
 }

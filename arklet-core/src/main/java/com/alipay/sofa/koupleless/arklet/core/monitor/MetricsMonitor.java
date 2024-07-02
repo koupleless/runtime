@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.arklet.springboot.starter.health;
+package com.alipay.sofa.koupleless.arklet.core.monitor;
 
 import com.alipay.sofa.koupleless.arklet.core.health.model.ClientMetrics;
 import com.alipay.sofa.koupleless.arklet.core.util.DateUtils;
