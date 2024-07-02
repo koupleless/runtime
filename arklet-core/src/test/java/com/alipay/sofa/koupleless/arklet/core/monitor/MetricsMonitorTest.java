@@ -16,9 +16,8 @@
  */
 package com.alipay.sofa.koupleless.arklet.core.monitor;
 
-import com.alipay.sofa.koupleless.arklet.core.health.model.ClientMetrics;
-import com.alipay.sofa.koupleless.arklet.core.health.model.ClientMetrics.ClientMemoryMetrics;
-import com.alipay.sofa.koupleless.arklet.core.monitor.MetricsMonitor;
+import com.alipay.sofa.koupleless.arklet.core.monitor.model.ClientMetrics;
+import com.alipay.sofa.koupleless.arklet.core.monitor.model.ClientMetrics.ClientMemoryMetrics;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
@@ -32,7 +31,7 @@ public class MetricsMonitorTest {
     @Test
     public void testCaptureMetrics() {
         ClientMetrics metrics = ClientMetrics.builder()
-            .clientMetaspaceMetrics(
+            .metaspaceMetrics(
                 ClientMemoryMetrics.builder().max(100000).committed(85000).used(80000).build())
             .build();
 

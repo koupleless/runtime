@@ -16,7 +16,7 @@
  */
 package com.alipay.sofa.koupleless.arklet.springboot.starter.health;
 
-import com.alipay.sofa.koupleless.arklet.core.health.model.ClientMetrics;
+import com.alipay.sofa.koupleless.arklet.core.monitor.model.ClientMetrics;
 import com.alipay.sofa.koupleless.arklet.core.monitor.MetricsMonitor;
 import com.alipay.sofa.koupleless.arklet.springboot.starter.properties.ArkletProperties.MonitorProperties;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
