@@ -34,7 +34,7 @@ import static com.alipay.sofa.koupleless.arklet.springboot.starter.properties.Ar
 @NoArgsConstructor
 @ConfigurationProperties(PREFIX)
 public class ArkletProperties {
-    public static final String PREFIX  = "com.alipay.sofa.koupleless.arklet";
+    public static final String PREFIX  = "com.alipay.sofa.koupleless.runtime";
 
     private MonitorProperties  monitor = new MonitorProperties();
 
