@@ -60,6 +60,7 @@ public class InstallBizHandlerTest extends BaseHandlerTest {
         Input input = new Input();
         input.setBizUrl("testUrl");
         input.setBizName("testBiz1");
+        input.setUseUninstallThenInstallStrategy(true);
 
         InstallRequest installRequest = InstallRequest.builder().bizName(input.getBizName())
             .bizVersion(input.getBizVersion()).bizUrl(input.getBizUrl()).args(input.getArgs())
@@ -79,6 +80,7 @@ public class InstallBizHandlerTest extends BaseHandlerTest {
         Input input = new Input();
         input.setBizUrl("testUrl");
         input.setBizName("testBiz1");
+        input.setUseUninstallThenInstallStrategy(true);
 
         InstallRequest installRequest = InstallRequest.builder().bizName(input.getBizName())
             .bizVersion(input.getBizVersion()).bizUrl(input.getBizUrl()).args(input.getArgs())

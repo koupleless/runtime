@@ -39,7 +39,7 @@ public class BatchInstallRequest {
      */
     private String bizDirAbsolutePath;
     /**
-     * 使用先卸载后安装策略
+     * 静态合并部署，默认没有老版本模块，可以直接使用普通安装策略。
      */
     @Builder.Default
     private String installStrategy = INSTALL_ONLY_STRATEGY_NAME;
