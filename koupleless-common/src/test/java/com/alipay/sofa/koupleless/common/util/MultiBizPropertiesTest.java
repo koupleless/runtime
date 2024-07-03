@@ -227,27 +227,26 @@ public class MultiBizPropertiesTest {
     }
 
     @Test
-    public void testGetWriteProperties(){
-//        base: set key3=value3, base get key3=value3,
+    public void testGetWriteProperties() {
+        //        base: set key3=value3, base get key3=value3,
         Thread thread = Thread.currentThread();
         thread.setContextClassLoader(baseClassLoader);
-        System.setProperty(key3,value3);
+        System.setProperty(key3, value3);
 
         Thread.currentThread().setContextClassLoader(new TestClassLoader());
-//        biz: set key5=value5, biz get key5=value5
+        //        biz: set key5=value5, biz get key5=value5
         System.setProperty(key5, value5);
         String value5 = System.getProperty(key5);
-//        biz: get key3=value3
+        //        biz: get key3=value3
         String value3 = System.getProperty(key3);
         //when com.alipay.sofa.koupleless.common.util.MultiBizProperties.getWriteProperties return baseProperties
-//        biz: get key5= null
-//        Assert.assertNull(value5);
+        //        biz: get key5= null
+        //        Assert.assertNull(value5);
         //bug fix later,when com.alipay.sofa.koupleless.common.util.MultiBizProperties.getWriteProperties return props
-//        biz: get key5=value5
+        //        biz: get key5=value5
         Assert.assertNotNull(value5);
-//        biz: get key3=value3
+        //        biz: get key3=value3
         Assert.assertNotNull(value3);
-
 
     }
 
