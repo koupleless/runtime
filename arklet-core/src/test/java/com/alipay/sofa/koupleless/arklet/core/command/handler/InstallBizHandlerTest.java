@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import static com.alipay.sofa.koupleless.arklet.core.common.model.Constants.UNINSTALL_THEN_INSTALL_NAME;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
@@ -62,7 +63,7 @@ public class InstallBizHandlerTest extends BaseHandlerTest {
 
         InstallRequest installRequest = InstallRequest.builder().bizName(input.getBizName())
             .bizVersion(input.getBizVersion()).bizUrl(input.getBizUrl()).args(input.getArgs())
-            .envs(input.getEnvs()).useUninstallThenInstallStrategy(true).build();
+            .envs(input.getEnvs()).installStrategy(UNINSTALL_THEN_INSTALL_NAME).build();
         when(handler.getOperationService().install(installRequest)).thenReturn(success);
 
         Output<InstallBizHandler.InstallBizClientResponse> result = handler.handle(input);
@@ -81,7 +82,7 @@ public class InstallBizHandlerTest extends BaseHandlerTest {
 
         InstallRequest installRequest = InstallRequest.builder().bizName(input.getBizName())
             .bizVersion(input.getBizVersion()).bizUrl(input.getBizUrl()).args(input.getArgs())
-            .envs(input.getEnvs()).useUninstallThenInstallStrategy(true).build();
+            .envs(input.getEnvs()).installStrategy(UNINSTALL_THEN_INSTALL_NAME).build();
         when(handler.getOperationService().install(installRequest)).thenReturn(failed);
 
         Output<InstallBizHandler.InstallBizClientResponse> result = handler.handle(input);

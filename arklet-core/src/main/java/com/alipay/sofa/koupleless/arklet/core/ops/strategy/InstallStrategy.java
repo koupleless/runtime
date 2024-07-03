@@ -14,33 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.arklet.core.common.model;
+package com.alipay.sofa.koupleless.arklet.core.ops.strategy;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import static com.alipay.sofa.koupleless.arklet.core.common.model.Constants.INSTALL_ONLY_STRATEGY_NAME;
+import com.alipay.sofa.ark.api.ClientResponse;
+import com.alipay.sofa.koupleless.arklet.core.common.model.InstallRequest;
 
 /**
- * 合并部署请求。
- *
- * @author CodeNoobKingKc2
- * @version $Id: BatchInstallRequest, v 0.1 2023-11-20 15:21 CodeNoobKingKc2 Exp $
+ * @author lianglipeng.llp@alibaba-inc.com
+ * @version $Id: InstallStrategy.java, v 0.1 2024年07月03日 16:58 立蓬 Exp $
  */
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
-@Builder
-public class BatchInstallRequest {
-    /**
-     * 本地文件系统目录。
-     */
-    private String bizDirAbsolutePath;
-    /**
-     * 使用先卸载后安装策略
-     */
-    @Builder.Default
-    private String installStrategy = INSTALL_ONLY_STRATEGY_NAME;
+public interface InstallStrategy {
+    ClientResponse install(InstallRequest request) throws Throwable;
 }

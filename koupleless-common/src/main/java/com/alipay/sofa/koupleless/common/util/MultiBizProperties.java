@@ -47,8 +47,11 @@ public class MultiBizProperties extends Properties {
     private final Properties              baseProperties;
     private Map<ClassLoader, Properties>  bizPropertiesMap;
 
+    private Map<ClassLoader, Properties>  testMap;
+
     private MultiBizProperties(String bizClassLoaderName, Properties baseProperties) {
         this.bizPropertiesMap = new HashMap<>();
+        this.testMap = new HashMap<>();
         this.baseProperties = baseProperties;
         this.bizClassLoaderName = bizClassLoaderName;
     }
@@ -485,7 +488,7 @@ public class MultiBizProperties extends Properties {
             ? bizPropertiesMap.computeIfAbsent(classLoader, k -> new Properties())
             : baseProperties;
         bizPropertiesMap.put(invokeClassLoader, props);
-        return baseProperties;
+        return props;
     }
 
     private synchronized Set<String> getModifiedKeys() {

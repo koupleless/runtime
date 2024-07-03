@@ -34,6 +34,7 @@ import com.alipay.sofa.koupleless.arklet.core.common.exception.CommandValidation
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger;
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
 import com.alipay.sofa.koupleless.arklet.core.common.model.InstallRequest;
+import com.alipay.sofa.koupleless.arklet.core.common.model.InstallRequest.InstallStrategyEnum;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -44,6 +45,8 @@ import java.lang.management.MemoryPoolMXBean;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+
+import static com.alipay.sofa.koupleless.arklet.core.common.model.Constants.INSTALL_ONLY_STRATEGY_NAME;
 
 /**
  * <p>InstallBizHandler class.</p>
@@ -80,9 +83,7 @@ public class InstallBizHandler extends
     private InstallRequest convertInstallRequest(Input input) {
         return InstallRequest.builder().bizName(input.getBizName())
             .bizVersion(input.getBizVersion()).bizUrl(input.getBizUrl()).args(input.getArgs())
-            .envs(input.getEnvs())
-            .useUninstallThenInstallStrategy(input.isUseUninstallThenInstallStrategy())
-            .bizAlias(input.getBizAlias()).build();
+            .envs(input.getEnvs()).installStrategy(input.getInstallStrategy()).build();
     }
 
     private MemoryPoolMXBean getMetaSpaceMXBean() {
@@ -168,12 +169,10 @@ public class InstallBizHandler extends
          */
         private Map<String, String> envs;
         /**
-         * uninstall bizs with same name as the new biz, then install the new biz
-         * default value is true, if set false, installing the new biz, the old biz will be uninstalled
+         * install biz strategy
+         * default value is installOnly
          */
-        private boolean             useUninstallThenInstallStrategy = true;
-
-        private String              bizAlias;
+        private String              installStrategy = INSTALL_ONLY_STRATEGY_NAME;
     }
 
     @Getter
