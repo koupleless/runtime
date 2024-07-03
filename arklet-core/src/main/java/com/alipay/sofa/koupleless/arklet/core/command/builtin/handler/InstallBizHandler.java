@@ -171,7 +171,7 @@ public class InstallBizHandler extends
          * uninstall bizs with same name as the new biz, then install the new biz
          * default value is true, if set false, installing the new biz, the old biz will be uninstalled
          */
-        private boolean             useUninstallThenInstallStrategy = true;
+        private boolean             useUninstallThenInstallStrategy = false;
 
         private String              bizAlias;
     }
