@@ -16,12 +16,19 @@
  */
 package com.alipay.sofa.koupleless.arklet.core.common.model;
 
+import com.alipay.sofa.koupleless.arklet.core.ops.strategy.InstallOnlyStrategy;
+import com.alipay.sofa.koupleless.arklet.core.ops.strategy.InstallStrategy;
+import com.alipay.sofa.koupleless.arklet.core.ops.strategy.UninstallThenInstallStrategy;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.Map;
+
+import static com.alipay.sofa.koupleless.arklet.core.common.model.Constants.INSTALL_ONLY_STRATEGY_NAME;
+import static com.alipay.sofa.koupleless.arklet.core.common.model.Constants.UNINSTALL_THEN_INSTALL_NAME;
 
 /**
  * @author lianglipeng.llp@alibaba-inc.com
@@ -38,6 +45,30 @@ public class InstallRequest {
     String              bizUrl;
     String[]            args;
     Map<String, String> envs;
-    boolean             useUninstallThenInstallStrategy;
-    String              bizAlias;
+    String              installStrategy;
+
+    public enum InstallStrategyEnum {
+                                     UNINSTALL_THEN_INSTALL(UNINSTALL_THEN_INSTALL_NAME,
+                                                            new UninstallThenInstallStrategy()), INSTALL_ONLY(INSTALL_ONLY_STRATEGY_NAME,
+                                                                                                              new InstallOnlyStrategy());
+
+        private String          name;
+
+        @Getter
+        private InstallStrategy installStrategy;
+
+        InstallStrategyEnum(String name, InstallStrategy installStrategy) {
+            this.name = name;
+            this.installStrategy = installStrategy;
+        }
+
+        public static InstallStrategy getStrategyByName(String name) {
+            for (InstallStrategyEnum installStrategyEnum : InstallStrategyEnum.values()) {
+                if (installStrategyEnum.name.equals(name)) {
+                    return installStrategyEnum.installStrategy;
+                }
+            }
+            return INSTALL_ONLY.installStrategy;
+        }
+    }
 }
