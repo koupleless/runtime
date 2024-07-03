@@ -58,6 +58,7 @@ public class InstallBizHandlerTest extends BaseHandlerTest {
         Input input = new Input();
         input.setBizUrl("testUrl");
         input.setBizName("testBiz1");
+        input.setUseUninstallThenInstallStrategy(true);
 
         when(handler.getOperationService().install(input.getBizName(), input.getBizVersion(),
             input.getBizUrl(), input.getArgs(), input.getEnvs(), true)).thenReturn(success);
@@ -75,6 +76,7 @@ public class InstallBizHandlerTest extends BaseHandlerTest {
         Input input = new Input();
         input.setBizUrl("testUrl");
         input.setBizName("testBiz1");
+        input.setUseUninstallThenInstallStrategy(true);
 
         when(handler.getOperationService().install(input.getBizName(), input.getBizVersion(),
             input.getBizUrl(), input.getArgs(), input.getEnvs(), true)).thenReturn(failed);
