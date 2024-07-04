@@ -55,9 +55,6 @@ public class BaseStartUpHealthIndicator extends AbstractHealthIndicator
 
     private boolean                                 associateWithAllBizReadiness;
 
-    /** Constant <code>WITH_ALL_BIZ_READINESS="koupleless.healthcheck.base.readiness.w"{trunked}</code> */
-    public static final String                      WITH_ALL_BIZ_READINESS = "koupleless.healthcheck.base.readiness.withAllBizReadiness";
-
     /**
      * this is ugly, but we need to support both springboot1.x, 2.x and above, we need to use reflection to support both
      */

@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
-import static com.alipay.sofa.koupleless.arklet.springboot.starter.health.BaseStartUpHealthIndicator.WITH_ALL_BIZ_READINESS;
+import static com.alipay.sofa.koupleless.arklet.springboot.starter.model.Constants.WITH_ALL_BIZ_READINESS;
 
 /**
  * <p>HealthAutoConfiguration class.</p>
