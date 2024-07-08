@@ -17,8 +17,6 @@
 package com.alipay.sofa.koupleless.arklet.core.api.tunnel.http;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.common.util.AssertUtils;
 import com.alipay.sofa.ark.common.util.EnvironmentUtils;
 import com.alipay.sofa.ark.common.util.PortSelectUtils;
@@ -60,8 +58,6 @@ public class HttpTunnel implements Tunnel {
     public void init(CommandService commandService) {
         if (init.compareAndSet(false, true)) {
             this.commandService = commandService;
-
-
             String httpPort = EnvironmentUtils.getProperty(HTTP_PORT_ATTRIBUTE);
             try {
                 if (!StringUtils.isEmpty(httpPort)) {

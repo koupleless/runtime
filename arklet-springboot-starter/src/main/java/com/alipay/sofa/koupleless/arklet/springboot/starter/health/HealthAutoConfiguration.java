@@ -42,7 +42,7 @@ public class HealthAutoConfiguration {
      * @return a {@link com.alipay.sofa.koupleless.arklet.springboot.starter.health.BizInfoContributor} object
      */
     @Bean
-    @ConditionalOnClass(name = {"org.springframework.boot.actuate.info.InfoContributor"})
+    @ConditionalOnClass(name = { "org.springframework.boot.actuate.info.InfoContributor" })
     public BizInfoContributor bizInfoContributor() {
         return new BizInfoContributor();
     }
@@ -53,7 +53,7 @@ public class HealthAutoConfiguration {
      * @return a {@link com.alipay.sofa.koupleless.arklet.springboot.starter.health.BaseStartUpHealthIndicator} object
      */
     @Bean("baseStartUpHealthIndicator")
-    @ConditionalOnClass(name = {"org.springframework.boot.actuate.health.AbstractHealthIndicator"})
+    @ConditionalOnClass(name = { "org.springframework.boot.actuate.health.AbstractHealthIndicator" })
     public BaseStartUpHealthIndicator baseStartUpHealthIndicator() {
         BaseStartUpHealthIndicator indicator = new BaseStartUpHealthIndicator(
             Boolean.parseBoolean(EnvironmentUtils.getProperty(WITH_ALL_BIZ_READINESS, "false")));
