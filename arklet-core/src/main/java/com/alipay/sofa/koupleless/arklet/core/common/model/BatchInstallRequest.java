@@ -21,7 +21,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import static com.alipay.sofa.koupleless.arklet.core.common.model.Constants.INSTALL_ONLY_STRATEGY_NAME;
+import static com.alipay.sofa.koupleless.arklet.core.common.model.Constants.STRATEGY_INSTALL_ONLY_STRATEGY;
 
 /**
  * 合并部署请求。
@@ -42,5 +42,5 @@ public class BatchInstallRequest {
      * 静态合并部署，默认没有老版本模块，可以直接使用普通安装策略。
      */
     @Builder.Default
-    private String installStrategy = INSTALL_ONLY_STRATEGY_NAME;
+    private String installStrategy = STRATEGY_INSTALL_ONLY_STRATEGY;
 }
