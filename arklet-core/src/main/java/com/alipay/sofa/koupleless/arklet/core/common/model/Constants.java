@@ -25,10 +25,10 @@ public class Constants {
     /**
      * 先卸后装
      */
-    public static final String UNINSTALL_THEN_INSTALL_NAME = "uninstallThenInstall";
+    public static final String STRATEGY_UNINSTALL_THEN_INSTALL = "uninstallThenInstall";
 
     /**
      * 仅安装
      */
-    public static final String INSTALL_ONLY_STRATEGY_NAME  = "installOnly";
+    public static final String STRATEGY_INSTALL_ONLY_STRATEGY = "installOnly";
 }

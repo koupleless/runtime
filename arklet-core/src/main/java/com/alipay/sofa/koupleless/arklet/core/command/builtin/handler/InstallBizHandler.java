@@ -34,7 +34,6 @@ import com.alipay.sofa.koupleless.arklet.core.common.exception.CommandValidation
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger;
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
 import com.alipay.sofa.koupleless.arklet.core.common.model.InstallRequest;
-import com.alipay.sofa.koupleless.arklet.core.common.model.InstallRequest.InstallStrategyEnum;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -46,7 +45,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
-import static com.alipay.sofa.koupleless.arklet.core.common.model.Constants.INSTALL_ONLY_STRATEGY_NAME;
+import static com.alipay.sofa.koupleless.arklet.core.common.model.Constants.STRATEGY_INSTALL_ONLY_STRATEGY;
 
 /**
  * <p>InstallBizHandler class.</p>
@@ -172,7 +171,7 @@ public class InstallBizHandler extends
          * install biz strategy
          * default value is installOnly
          */
-        private String              installStrategy = INSTALL_ONLY_STRATEGY_NAME;
+        private String              installStrategy = STRATEGY_INSTALL_ONLY_STRATEGY;
     }
 
     @Getter

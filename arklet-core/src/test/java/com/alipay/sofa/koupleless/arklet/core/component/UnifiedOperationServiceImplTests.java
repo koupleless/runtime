@@ -41,8 +41,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.alipay.sofa.koupleless.arklet.core.common.model.Constants.INSTALL_ONLY_STRATEGY_NAME;
-import static com.alipay.sofa.koupleless.arklet.core.common.model.Constants.UNINSTALL_THEN_INSTALL_NAME;
+import static com.alipay.sofa.koupleless.arklet.core.common.model.Constants.STRATEGY_INSTALL_ONLY_STRATEGY;
+import static com.alipay.sofa.koupleless.arklet.core.common.model.Constants.STRATEGY_UNINSTALL_THEN_INSTALL;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
@@ -99,7 +99,7 @@ public class UnifiedOperationServiceImplTests {
 
             InstallRequest request = InstallRequest.builder().bizUrl("http://example.com/biz.jar")
                 .bizName("testBiz1").bizVersion("bizVersion")
-                .installStrategy(UNINSTALL_THEN_INSTALL_NAME).args(new String[] {})
+                .installStrategy(STRATEGY_UNINSTALL_THEN_INSTALL).args(new String[] {})
                 .envs(new HashMap<>()).build();
             ClientResponse response = unifiedOperationService.install(request);
             arkClientMockedStatic
@@ -122,7 +122,7 @@ public class UnifiedOperationServiceImplTests {
 
             InstallRequest request = InstallRequest.builder().bizUrl("http://example.com/biz.jar")
                 .bizName("testBiz1").bizVersion("bizVersion")
-                .installStrategy(INSTALL_ONLY_STRATEGY_NAME).args(new String[] {})
+                .installStrategy(STRATEGY_INSTALL_ONLY_STRATEGY).args(new String[] {})
                 .envs(new HashMap<>()).build();
             ClientResponse response = unifiedOperationService.install(request);
             arkClientMockedStatic
