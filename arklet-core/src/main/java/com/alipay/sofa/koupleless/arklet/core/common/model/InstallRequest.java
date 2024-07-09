@@ -49,8 +49,7 @@ public class InstallRequest {
 
     public enum InstallStrategyEnum {
                                      UNINSTALL_THEN_INSTALL(STRATEGY_UNINSTALL_THEN_INSTALL,
-                                                            new UninstallThenInstallStrategy()), INSTALL_ONLY(
-                STRATEGY_INSTALL_ONLY_STRATEGY,
+                                                            new UninstallThenInstallStrategy()), INSTALL_ONLY(STRATEGY_INSTALL_ONLY_STRATEGY,
                                                                                                               new InstallOnlyStrategy());
 
         private String          name;

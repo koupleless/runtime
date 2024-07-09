@@ -30,5 +30,5 @@ public class Constants {
     /**
      * 仅安装
      */
-    public static final String STRATEGY_INSTALL_ONLY_STRATEGY = "installOnly";
+    public static final String STRATEGY_INSTALL_ONLY_STRATEGY  = "installOnly";
 }
