@@ -27,8 +27,8 @@ import lombok.NoArgsConstructor;
 
 import java.util.Map;
 
-import static com.alipay.sofa.koupleless.arklet.core.common.model.Constants.INSTALL_ONLY_STRATEGY_NAME;
-import static com.alipay.sofa.koupleless.arklet.core.common.model.Constants.UNINSTALL_THEN_INSTALL_NAME;
+import static com.alipay.sofa.koupleless.arklet.core.common.model.Constants.STRATEGY_INSTALL_ONLY_STRATEGY;
+import static com.alipay.sofa.koupleless.arklet.core.common.model.Constants.STRATEGY_UNINSTALL_THEN_INSTALL;
 
 /**
  * @author lianglipeng.llp@alibaba-inc.com
@@ -48,8 +48,9 @@ public class InstallRequest {
     String              installStrategy;
 
     public enum InstallStrategyEnum {
-                                     UNINSTALL_THEN_INSTALL(UNINSTALL_THEN_INSTALL_NAME,
-                                                            new UninstallThenInstallStrategy()), INSTALL_ONLY(INSTALL_ONLY_STRATEGY_NAME,
+                                     UNINSTALL_THEN_INSTALL(STRATEGY_UNINSTALL_THEN_INSTALL,
+                                                            new UninstallThenInstallStrategy()), INSTALL_ONLY(
+                STRATEGY_INSTALL_ONLY_STRATEGY,
                                                                                                               new InstallOnlyStrategy());
 
         private String          name;
