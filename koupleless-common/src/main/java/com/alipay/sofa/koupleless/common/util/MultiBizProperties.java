@@ -47,11 +47,8 @@ public class MultiBizProperties extends Properties {
     private final Properties              baseProperties;
     private Map<ClassLoader, Properties>  bizPropertiesMap;
 
-    private Map<ClassLoader, Properties>  testMap;
-
     private MultiBizProperties(String bizClassLoaderName, Properties baseProperties) {
         this.bizPropertiesMap = new HashMap<>();
-        this.testMap = new HashMap<>();
         this.baseProperties = baseProperties;
         this.bizClassLoaderName = bizClassLoaderName;
     }
