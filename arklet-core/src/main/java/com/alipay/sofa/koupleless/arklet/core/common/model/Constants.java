@@ -16,31 +16,19 @@
  */
 package com.alipay.sofa.koupleless.arklet.core.common.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import static com.alipay.sofa.koupleless.arklet.core.common.model.Constants.STRATEGY_INSTALL_ONLY_STRATEGY;
-
 /**
- * 合并部署请求。
- *
- * @author CodeNoobKingKc2
- * @version $Id: BatchInstallRequest, v 0.1 2023-11-20 15:21 CodeNoobKingKc2 Exp $
+ * @author lianglipeng.llp@alibaba-inc.com
+ * @version $Id: Constants.java, v 0.1 2024年07月03日 16:47 立蓬 Exp $
  */
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
-@Builder
-public class BatchInstallRequest {
+public class Constants {
+
     /**
-     * 本地文件系统目录。
+     * 先卸后装
      */
-    private String bizDirAbsolutePath;
+    public static final String STRATEGY_UNINSTALL_THEN_INSTALL = "uninstallThenInstall";
+
     /**
-     * 静态合并部署，默认没有老版本模块，可以直接使用普通安装策略。
+     * 仅安装
      */
-    @Builder.Default
-    private String installStrategy = STRATEGY_INSTALL_ONLY_STRATEGY;
+    public static final String STRATEGY_INSTALL_ONLY_STRATEGY  = "installOnly";
 }

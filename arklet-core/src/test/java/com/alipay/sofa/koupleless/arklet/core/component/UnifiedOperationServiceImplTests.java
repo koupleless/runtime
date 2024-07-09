@@ -18,10 +18,10 @@ package com.alipay.sofa.koupleless.arklet.core.component;
 
 import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.api.ClientResponse;
-import com.alipay.sofa.ark.spi.constant.Constants;
 import com.alipay.sofa.ark.spi.model.BizOperation;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BatchInstallRequest;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BatchInstallResponse;
+import com.alipay.sofa.koupleless.arklet.core.common.model.InstallRequest;
 import com.alipay.sofa.koupleless.arklet.core.health.custom.MockBizManagerService;
 import com.alipay.sofa.koupleless.arklet.core.ops.BatchInstallHelper;
 import com.alipay.sofa.koupleless.arklet.core.ops.UnifiedOperationServiceImpl;
@@ -41,6 +41,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.alipay.sofa.koupleless.arklet.core.common.model.Constants.STRATEGY_INSTALL_ONLY_STRATEGY;
+import static com.alipay.sofa.koupleless.arklet.core.common.model.Constants.STRATEGY_UNINSTALL_THEN_INSTALL;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doReturn;
@@ -95,8 +97,34 @@ public class UnifiedOperationServiceImplTests {
             arkClientMockedStatic.when(ArkClient::getBizManagerService)
                 .thenReturn(new MockBizManagerService());
 
-            ClientResponse response = unifiedOperationService.install("testBiz1", "bizVersion",
-                "http://example.com/biz.jar", new String[] {}, new HashMap<>(), true);
+            InstallRequest request = InstallRequest.builder().bizUrl("http://example.com/biz.jar")
+                .bizName("testBiz1").bizVersion("bizVersion")
+                .installStrategy(STRATEGY_UNINSTALL_THEN_INSTALL).args(new String[] {})
+                .envs(new HashMap<>()).build();
+            ClientResponse response = unifiedOperationService.install(request);
+            arkClientMockedStatic
+                .verify(() -> ArkClient.installOperation(Mockito.any(BizOperation.class),
+                    Mockito.any(String[].class), Mockito.anyMap()));
+            Assert.assertEquals(clientResponse, response);
+        }
+    }
+
+    @Test
+    public void testInstallOnlyWithValidUrl() throws Throwable {
+        try (MockedStatic<ArkClient> arkClientMockedStatic = Mockito.mockStatic(ArkClient.class)) {
+            ClientResponse clientResponse = Mockito.mock(ClientResponse.class);
+            arkClientMockedStatic
+                .when(() -> ArkClient.installOperation(Mockito.any(BizOperation.class),
+                    Mockito.any(String[].class), Mockito.anyMap()))
+                .thenReturn(clientResponse);
+            arkClientMockedStatic.when(ArkClient::getBizManagerService)
+                .thenReturn(new MockBizManagerService());
+
+            InstallRequest request = InstallRequest.builder().bizUrl("http://example.com/biz.jar")
+                .bizName("testBiz1").bizVersion("bizVersion")
+                .installStrategy(STRATEGY_INSTALL_ONLY_STRATEGY).args(new String[] {})
+                .envs(new HashMap<>()).build();
+            ClientResponse response = unifiedOperationService.install(request);
             arkClientMockedStatic
                 .verify(() -> ArkClient.installOperation(Mockito.any(BizOperation.class),
                     Mockito.any(String[].class), Mockito.anyMap()));
