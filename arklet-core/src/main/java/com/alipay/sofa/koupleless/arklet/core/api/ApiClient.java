@@ -21,6 +21,7 @@ import java.util.List;
 
 import com.alipay.sofa.koupleless.arklet.core.api.tunnel.Tunnel;
 import com.alipay.sofa.koupleless.arklet.core.api.tunnel.http.HttpTunnel;
+import com.alipay.sofa.koupleless.arklet.core.api.tunnel.mqtt.MqttTunnel;
 import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
 import com.alipay.sofa.koupleless.arklet.core.ArkletComponent;
 import com.google.inject.AbstractModule;
@@ -88,6 +89,7 @@ public class ApiClient implements ArkletComponent {
             Multibinder<Tunnel> tunnelMultibinder = Multibinder.newSetBinder(binder(),
                 Tunnel.class);
             tunnelMultibinder.addBinding().to(HttpTunnel.class);
+            tunnelMultibinder.addBinding().to(MqttTunnel.class);
         }
     }
 
