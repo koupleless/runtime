@@ -30,8 +30,12 @@ import java.util.concurrent.TimeUnit;
  */
 public class ExecutorServiceManager {
 
-    private static ThreadPoolExecutor ARK_BIZ_OPS_EXECUTOR = new ThreadPoolExecutor(20, 50, 30,
+    private static ThreadPoolExecutor ARK_BIZ_OPS_EXECUTOR  = new ThreadPoolExecutor(20, 50, 30,
         TimeUnit.SECONDS, new ArrayBlockingQueue<>(100), new NamedThreadFactory("ark-biz-ops"),
+        new ThreadPoolExecutor.CallerRunsPolicy());
+
+    private static ThreadPoolExecutor ARK_MQTT_OPS_EXECUTOR = new ThreadPoolExecutor(3, 5, 30,
+        TimeUnit.SECONDS, new ArrayBlockingQueue<>(100), new NamedThreadFactory("ark-mqtt-ops"),
         new ThreadPoolExecutor.CallerRunsPolicy());
 
     /**
@@ -41,5 +45,14 @@ public class ExecutorServiceManager {
      */
     public static ThreadPoolExecutor getArkBizOpsExecutor() {
         return ARK_BIZ_OPS_EXECUTOR;
+    }
+
+    /**
+     * <p>getArkBizOpsExecutor.</p>
+     *
+     * @return a {@link java.util.concurrent.ThreadPoolExecutor} object
+     */
+    public static ThreadPoolExecutor getArkMqttOpsExecutor() {
+        return ARK_MQTT_OPS_EXECUTOR;
     }
 }
