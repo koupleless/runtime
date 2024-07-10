@@ -147,9 +147,9 @@ public class PahoMqttClient {
             // connect success callback, start subscriptions watch here
             if (reconnect) {
                 LOGGER.info("mqtt client reconnect successfully");
-                return;
+            } else {
+                LOGGER.info("mqtt client connect successfully");
             }
-            LOGGER.info("mqtt client connect successfully");
             messageHandler.run();
         }
 
