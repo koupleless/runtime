@@ -168,7 +168,7 @@ public class PahoMqttClient {
 
         @Override
         public void deliveryComplete(IMqttDeliveryToken iMqttDeliveryToken) {
-            // 发送成功
+            // send message successfully, no former process here
         }
 
     }
