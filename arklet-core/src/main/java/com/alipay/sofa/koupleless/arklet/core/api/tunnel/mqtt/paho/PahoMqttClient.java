@@ -17,20 +17,22 @@
 package com.alipay.sofa.koupleless.arklet.core.api.tunnel.mqtt.paho;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alipay.sofa.koupleless.arklet.core.api.model.MqttResponse;
 import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
+import com.alipay.sofa.koupleless.arklet.core.command.builtin.BuiltinCommand;
 import com.alipay.sofa.koupleless.arklet.core.command.executor.ExecutorServiceManager;
 import com.alipay.sofa.koupleless.arklet.core.command.meta.Output;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletInitException;
+import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletRuntimeException;
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger;
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
+import com.alipay.sofa.koupleless.arklet.core.health.model.Constants;
 import com.alipay.sofa.koupleless.arklet.core.health.model.Health;
-import io.netty.handler.codec.mqtt.MqttQoS;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -38,7 +40,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 import static org.eclipse.paho.client.mqttv3.MqttException.REASON_CODE_SOCKET_FACTORY_MISMATCH;
 
@@ -54,7 +55,7 @@ import static org.eclipse.paho.client.mqttv3.MqttException.REASON_CODE_SOCKET_FA
 public class PahoMqttClient {
 
     private final MqttClient          mqttClient;
-    private UUID                      deviceID;
+    private final UUID                deviceID;
     private final MqttConnectOptions  options = new MqttConnectOptions();
 
     private final CommandService      commandService;
@@ -74,7 +75,6 @@ public class PahoMqttClient {
         this.deviceID = deviceID;
         this.mqttClient = new MqttClient(String.format("tcp://%s:%d", broker, port),
             String.format("%s@@@%s", "koupleless", deviceID), new MemoryPersistence());
-        this.options.setKeepAliveInterval(60);
         this.options.setAutomaticReconnect(true);
         this.options.setMaxInflight(1000);
         this.options.setUserName(username);
@@ -100,7 +100,6 @@ public class PahoMqttClient {
         this.mqttClient = new MqttClient(String.format("ssl://%s:%d", broker, port),
             String.format("%s@@@%s", "koupleless", deviceID), new MemoryPersistence());
         this.options.setCleanSession(true);
-        this.options.setKeepAliveInterval(60);
         this.options.setAutomaticReconnect(true);
         this.options.setMaxInflight(1000);
         try {
@@ -136,7 +135,7 @@ public class PahoMqttClient {
 
     static class PahoMqttCallback implements MqttCallbackExtended {
 
-        private MqttMessageHandler messageHandler;
+        private final MqttMessageHandler messageHandler;
 
         public PahoMqttCallback(MqttClient mqttClient, CommandService commandService,
                                 UUID deviceID) {
@@ -145,14 +144,13 @@ public class PahoMqttClient {
 
         @Override
         public void connectComplete(boolean reconnect, String serverURI) {
-            messageHandler.onStart();
             // connect success callback, start subscriptions watch here
             if (reconnect) {
                 LOGGER.info("mqtt client reconnect successfully");
                 return;
             }
             LOGGER.info("mqtt client connect successfully");
-
+            messageHandler.run();
         }
 
         @Override
@@ -176,9 +174,10 @@ public class PahoMqttClient {
     }
 
     public static class MqttMessageHandler {
-        private CommandService commandService;
-        private MqttClient     mqttClient;
-        private UUID           deviceID;
+
+        private final CommandService commandService;
+        private final MqttClient     mqttClient;
+        private final UUID           deviceID;
 
         public MqttMessageHandler(CommandService commandService, MqttClient mqttClient,
                                   UUID deviceID) {
@@ -225,9 +224,9 @@ public class PahoMqttClient {
 
         static class HeartBeatScheduledMission implements Runnable {
 
-            private String         topic;
-            private MqttClient     mqttClient;
-            private CommandService commandService;
+            private final String         topic;
+            private final MqttClient     mqttClient;
+            private final CommandService commandService;
 
             public HeartBeatScheduledMission(String topic, MqttClient mqttClient,
                                              CommandService commandService) {
@@ -238,28 +237,44 @@ public class PahoMqttClient {
 
             @Override
             public void run() {
-                Object healthData;
+                // send heart beat message
+                Map<String, Object> heartBeatData = new HashMap<>();
 
                 try {
-                    Output<?> output = commandService.process("health", new HashMap());
+                    Output<?> output = commandService.process(BuiltinCommand.HEALTH.getId(),
+                        new HashMap());
                     Health data = (Health) output.getData();
-                    healthData = data.getHealthData().get("masterBizInfo");
+                    heartBeatData.put(Constants.MASTER_BIZ_INFO,
+                        data.getHealthData().get(Constants.MASTER_BIZ_INFO));
                 } catch (InterruptedException e) {
                     LOGGER.info("get health status failed");
-                    throw new ArkletInitException("get health status failed", e);
+                    throw new ArkletRuntimeException("get health status failed", e);
                 }
 
+                Map<String, String> networkInfo = new HashMap<>();
+
                 try {
-                    mqttClient.publish(topic, JSONObject.toJSONString(healthData).getBytes(), 0,
+                    InetAddress localHost = InetAddress.getLocalHost();
+                    networkInfo.put(Constants.LOCAL_IP, localHost.getHostAddress());
+                    networkInfo.put(Constants.LOCAL_HOST_NAME, localHost.getHostName());
+                } catch (UnknownHostException e) {
+                    throw new ArkletRuntimeException("get local host failed", e);
+                }
+
+                heartBeatData.put(Constants.NETWORK_INFO, networkInfo);
+
+                try {
+                    mqttClient.publish(topic,
+                        JSONObject.toJSONString(MqttResponse.withData(heartBeatData)).getBytes(), 0,
                         false);
                 } catch (MqttException e) {
                     LOGGER.info("mqtt client publish health status failed");
-                    throw new ArkletInitException("mqtt client publish health status failed", e);
+                    throw new ArkletRuntimeException("mqtt client publish health status failed", e);
                 }
             }
         }
 
-        public void onStart() {
+        public void run() {
             try {
                 mqttClient.subscribe(getCommandTopic(), 1);
             } catch (MqttException e) {
@@ -271,46 +286,53 @@ public class PahoMqttClient {
 
             executor.scheduleAtFixedRate(
                 new HeartBeatScheduledMission(getHeartBeatTopic(), mqttClient, commandService), 0,
-                2000L, TimeUnit.MILLISECONDS);
+                3000L, TimeUnit.MILLISECONDS);
         }
 
-        public void handle(String cmd, MqttMessage msg) {
-            LOGGER.info(String.format("handle message: %s, cmd: %s", msg.toString(), cmd));
+        public void handle(String cmd, MqttMessage msg) throws Exception {
+            // process mqtt message, use thread pool to handle command
             ThreadPoolExecutor executor = ExecutorServiceManager.getArkMqttOpsExecutor();
             executor.submit(() -> {
                 RequestValidation validation = RequestValidation.passed(true, cmd,
                     JSONObject.parseObject(msg.toString(), HashMap.class));
                 Output<?> output;
-                if (cmd.equals("installBiz")) {
-                    LOGGER.info(validation.getCmd(),
-                        JSONObject.toJSONString(validation.getCmdContent()));
-                }
                 try {
+                    // process the command
                     output = commandService.process(validation.getCmd(),
                         validation.getCmdContent());
                 } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                    LOGGER.error("process command failed", e);
+                    throw new ArkletRuntimeException(e);
                 }
+
                 try {
-                    if (cmd.equals("health")) {
+                    if (cmd.equals(BuiltinCommand.HEALTH.getId())) {
+                        // health command, send result to health topic
                         mqttClient.publish(getHealthTopic(),
-                            JSONObject.toJSONString(output).getBytes(), 1, false);
-                    } else if (cmd.equals("queryAllBiz")) {
+                            JSONObject.toJSONString(MqttResponse.withData(output)).getBytes(), 1,
+                            false);
+                    } else if (cmd.equals(BuiltinCommand.QUERY_ALL_BIZ.getId())) {
+                        // queryAllBiz command, send result to biz topic
                         mqttClient.publish(getBizTopic(),
-                            JSONObject.toJSONString(output).getBytes(), 1, false);
+                            JSONObject.toJSONString(MqttResponse.withData(output)).getBytes(), 1,
+                            false);
                     } else {
-                        // biz operation, need to sync biz status
+                        // biz operation, need to sync biz status, queryAllBiz and send result to biz topic
                         Output<?> allBizOutput;
                         try {
-                            allBizOutput = commandService.process("queryAllBiz", new HashMap());
+                            allBizOutput = commandService
+                                .process(BuiltinCommand.QUERY_ALL_BIZ.getId(), new HashMap());
                         } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+                            LOGGER.error("queryAllBiz command process failed", e);
+                            throw new ArkletRuntimeException(e);
                         }
                         mqttClient.publish(getBizTopic(),
-                            JSONObject.toJSONString(allBizOutput).getBytes(), 1, false);
+                            JSONObject.toJSONString(MqttResponse.withData(allBizOutput)).getBytes(),
+                            1, false);
                     }
                 } catch (MqttException e) {
-                    throw new RuntimeException(e);
+                    LOGGER.error("mqtt publish failed", e);
+                    throw new ArkletRuntimeException(e);
                 }
             });
         }

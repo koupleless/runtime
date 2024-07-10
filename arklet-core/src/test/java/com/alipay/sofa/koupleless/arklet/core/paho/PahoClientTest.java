@@ -17,19 +17,12 @@
 package com.alipay.sofa.koupleless.arklet.core.paho;
 
 import com.alipay.sofa.koupleless.arklet.core.BaseTest;
-import com.alipay.sofa.koupleless.arklet.core.api.tunnel.http.netty.NettyHttpServer;
 import com.alipay.sofa.koupleless.arklet.core.api.tunnel.mqtt.paho.PahoMqttClient;
-import io.netty.buffer.Unpooled;
-import io.netty.handler.codec.http.DefaultFullHttpRequest;
-import io.netty.handler.codec.http.HttpMethod;
-import io.netty.handler.codec.http.HttpVersion;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 /**
@@ -37,6 +30,22 @@ import java.util.UUID;
  * @since 2024/7/5
  */
 public class PahoClientTest extends BaseTest {
+
+    static class HealthMessageListener implements IMqttMessageListener {
+
+        private UUID deviceID;
+
+        HealthMessageListener(UUID deviceID) {
+            this.deviceID = deviceID;
+        }
+
+        @Override
+        public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
+            System.out.println(topic);
+            System.out.println(Arrays.toString(mqttMessage.getPayload()));
+            assert topic.equals(String.format("koupleless/%s/base/health", deviceID));
+        }
+    }
 
     @Test
     public void command() throws Exception {
@@ -56,7 +65,8 @@ public class PahoClientTest extends BaseTest {
         client.connect(options);
         client.publish(String.format("koupleless/%s/health", deviceID),
             new MqttMessage("{}".getBytes()));
-        Thread.sleep(1000 * 5);
+        client.subscribe(String.format("koupleless/%s/base/health", deviceID),
+            new HealthMessageListener(deviceID));
     }
 
     @Test
