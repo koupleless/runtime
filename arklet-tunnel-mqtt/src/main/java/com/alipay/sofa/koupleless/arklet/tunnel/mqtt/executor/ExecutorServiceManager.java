@@ -29,9 +29,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class ExecutorServiceManager {
 
-    private static ThreadPoolExecutor ARK_TUNNEL_MQTT_EXECUTOR = new ThreadPoolExecutor(20, 50, 30,
-            TimeUnit.SECONDS, new ArrayBlockingQueue<>(100), new NamedThreadFactory("ark-tunnel-mqtt"),
-            new ThreadPoolExecutor.CallerRunsPolicy());
+    private static ThreadPoolExecutor ARK_TUNNEL_MQTT_EXECUTOR = new ThreadPoolExecutor(5, 10, 30,
+        TimeUnit.SECONDS, new ArrayBlockingQueue<>(100), new NamedThreadFactory("ark-tunnel-mqtt"),
+        new ThreadPoolExecutor.CallerRunsPolicy());
 
     /**
      * <p>getArkTunnelMqttExecutor.</p>
