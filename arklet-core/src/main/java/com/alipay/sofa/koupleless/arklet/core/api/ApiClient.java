@@ -18,10 +18,11 @@ package com.alipay.sofa.koupleless.arklet.core.api;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+import java.util.Set;
 
 import com.alipay.sofa.koupleless.arklet.core.api.tunnel.Tunnel;
 import com.alipay.sofa.koupleless.arklet.core.api.tunnel.http.HttpTunnel;
-import com.alipay.sofa.koupleless.arklet.core.api.tunnel.mqtt.MqttTunnel;
 import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
 import com.alipay.sofa.koupleless.arklet.core.ArkletComponent;
 import com.google.inject.AbstractModule;
@@ -32,6 +33,10 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.Multibinder;
+import org.reflections.Reflections;
+import org.reflections.scanners.SubTypesScanner;
+
+import static org.reflections.scanners.Scanners.SubTypes;
 
 /**
  * <p>ApiClient class.</p>
@@ -89,7 +94,11 @@ public class ApiClient implements ArkletComponent {
             Multibinder<Tunnel> tunnelMultibinder = Multibinder.newSetBinder(binder(),
                 Tunnel.class);
             tunnelMultibinder.addBinding().to(HttpTunnel.class);
-            tunnelMultibinder.addBinding().to(MqttTunnel.class);
+            Reflections reflections = new Reflections("com.alipay.sofa.koupleless.arklet.tunnel");
+            Set<Class<? extends Tunnel>> classes = reflections.getSubTypesOf(Tunnel.class);
+            for (Class<? extends Tunnel> c : classes) {
+                tunnelMultibinder.addBinding().to(c);
+            }
         }
     }
 

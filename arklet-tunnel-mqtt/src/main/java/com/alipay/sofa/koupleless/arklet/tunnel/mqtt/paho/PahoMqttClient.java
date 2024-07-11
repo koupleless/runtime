@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.arklet.core.api.tunnel.mqtt.paho;
+package com.alipay.sofa.koupleless.arklet.tunnel.mqtt.paho;
 
 import com.alibaba.fastjson.JSONObject;
-import com.alipay.sofa.koupleless.arklet.core.api.model.MqttResponse;
+import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.model.MqttResponse;
 import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
 import com.alipay.sofa.koupleless.arklet.core.command.builtin.BuiltinCommand;
 import com.alipay.sofa.koupleless.arklet.core.command.executor.ExecutorServiceManager;
@@ -68,7 +68,7 @@ public class PahoMqttClient {
      * @param port int
      * @param username String
      * @param password char[]
-     * @param commandService a {@link CommandService} object
+     * @param commandService a {@link com.alipay.sofa.koupleless.arklet.core.command.CommandService} object
      */
     public PahoMqttClient(String broker, int port, UUID deviceID, String username, String password,
                           CommandService commandService) throws MqttException {
@@ -91,7 +91,7 @@ public class PahoMqttClient {
      * @param caFilePath String
      * @param clientCrtFilePath String
      * @param clientKeyFilePath String
-     * @param commandService a {@link CommandService} object
+     * @param commandService a {@link com.alipay.sofa.koupleless.arklet.core.command.CommandService} object
      */
     public PahoMqttClient(String broker, int port, UUID deviceID, String caFilePath,
                           String clientCrtFilePath, String clientKeyFilePath,

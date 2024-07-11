@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.arklet.core.api.model;
+package com.alipay.sofa.koupleless.arklet.tunnel.mqtt.model;
 
 import java.util.Date;
 

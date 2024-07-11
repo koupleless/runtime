@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.arklet.core.api.tunnel.mqtt;
+package com.alipay.sofa.koupleless.arklet.tunnel.mqtt;
 
 import com.alipay.sofa.ark.common.util.AssertUtils;
 import com.alipay.sofa.ark.common.util.EnvironmentUtils;
 import com.alipay.sofa.ark.common.util.StringUtils;
 import com.alipay.sofa.koupleless.arklet.core.api.tunnel.Tunnel;
-import com.alipay.sofa.koupleless.arklet.core.api.tunnel.mqtt.paho.PahoMqttClient;
+import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.paho.PahoMqttClient;
 import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletInitException;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletRuntimeException;
@@ -43,34 +43,35 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Singleton
 public class MqttTunnel implements Tunnel {
 
-    private static final ArkletLogger LOGGER                              = ArkletLoggerFactory
+    private static final ArkletLogger                                         LOGGER                              = ArkletLoggerFactory
         .getDefaultLogger();
-    private static final UUID         deviceID                            = UUID.randomUUID();
-    private final static String       MQTT_ENABLE_ATTRIBUTE               = "koupleless.arklet.mqtt.enable";
-    private final static String       MQTT_BROKER_ATTRIBUTE               = "koupleless.arklet.mqtt.broker";
-    private final static String       MQTT_PORT_ATTRIBUTE                 = "koupleless.arklet.mqtt.port";
-    private final static String       MQTT_USERNAME_ATTRIBUTE             = "koupleless.arklet.mqtt.username";
-    private final static String       MQTT_PASSWORD_ATTRIBUTE             = "koupleless.arklet.mqtt.password";
-    private final static String       MQTT_CA_FILE_PATH_ATTRIBUTE         = "koupleless.arklet.mqtt.ca_path";
-    private final static String       MQTT_CLIENT_CRT_FILE_PATH_ATTRIBUTE = "koupleless.arklet.mqtt.client_crt_path";
-    private final static String       MQTT_CLIENT_KEY_FILE_PATH_ATTRIBUTE = "koupleless.arklet.mqtt.client_key_path";
-    private PahoMqttClient            pahoMqttClient;
-    private final AtomicBoolean       shutdown                            = new AtomicBoolean(
+    private static final UUID                                                 deviceID                            = UUID
+        .randomUUID();
+    private final static String                                               MQTT_ENABLE_ATTRIBUTE               = "koupleless.arklet.mqtt.enable";
+    private final static String                                               MQTT_BROKER_ATTRIBUTE               = "koupleless.arklet.mqtt.broker";
+    private final static String                                               MQTT_PORT_ATTRIBUTE                 = "koupleless.arklet.mqtt.port";
+    private final static String                                               MQTT_USERNAME_ATTRIBUTE             = "koupleless.arklet.mqtt.username";
+    private final static String                                               MQTT_PASSWORD_ATTRIBUTE             = "koupleless.arklet.mqtt.password";
+    private final static String                                               MQTT_CA_FILE_PATH_ATTRIBUTE         = "koupleless.arklet.mqtt.ca_path";
+    private final static String                                               MQTT_CLIENT_CRT_FILE_PATH_ATTRIBUTE = "koupleless.arklet.mqtt.client_crt_path";
+    private final static String                                               MQTT_CLIENT_KEY_FILE_PATH_ATTRIBUTE = "koupleless.arklet.mqtt.client_key_path";
+    private com.alipay.sofa.koupleless.arklet.tunnel.mqtt.paho.PahoMqttClient pahoMqttClient;
+    private final AtomicBoolean                                               shutdown                            = new AtomicBoolean(
         false);
-    private final AtomicBoolean       init                                = new AtomicBoolean(
+    private final AtomicBoolean                                               init                                = new AtomicBoolean(
         false);
-    private final AtomicBoolean       run                                 = new AtomicBoolean(
+    private final AtomicBoolean                                               run                                 = new AtomicBoolean(
         false);
 
-    private CommandService            commandService;
-    private boolean                   enable                              = false;
-    private int                       port;
-    private String                    brokerUrl;
-    private String                    username;
-    private String                    password;
-    private String                    caFilePath;
-    private String                    clientCrtFilePath;
-    private String                    clientKeyFilePath;
+    private com.alipay.sofa.koupleless.arklet.core.command.CommandService     commandService;
+    private boolean                                                           enable                              = false;
+    private int                                                               port;
+    private String                                                            brokerUrl;
+    private String                                                            username;
+    private String                                                            password;
+    private String                                                            caFilePath;
+    private String                                                            clientCrtFilePath;
+    private String                                                            clientKeyFilePath;
 
     /** {@inheritDoc} */
     @Override
@@ -96,14 +97,16 @@ public class MqttTunnel implements Tunnel {
 
             if (StringUtils.isEmpty(brokerPort)) {
                 LOGGER.error("Invalid arklet mqtt port: empty");
-                throw new ArkletInitException("Invalid arklet mqtt port: empty");
+                throw new com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletInitException(
+                    "Invalid arklet mqtt port: empty");
             }
 
             try {
                 this.port = Integer.parseInt(brokerPort);
             } catch (NumberFormatException e) {
                 LOGGER.error(String.format("Invalid arklet http port in %s", brokerPort), e);
-                throw new ArkletInitException(e);
+                throw new com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletInitException(
+                    e);
             }
 
             if (StringUtils.isEmpty(this.brokerUrl)) {

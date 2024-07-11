@@ -81,6 +81,7 @@
         <module>koupleless-base-plugin</module>
         <module>koupleless-app-starter</module>
         <module>arklet-core</module>
+        <module>arklet-tunnel-mqtt</module>
         <module>arklet-springboot-starter</module>
         <module>koupleless-ext</module>
     </modules>
