@@ -17,6 +17,7 @@
 package com.alipay.sofa.koupleless.base.build.plugin.model;
 
 import lombok.SneakyThrows;
+import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
@@ -39,6 +40,8 @@ public class ArkConfigHolder {
 
     private static Map<String, Object> arkYaml;
 
+    private static SystemStreamLog     log = new SystemStreamLog();
+
     public static Properties getArkProperties(String baseDir) {
         return arkProperties == null ? initArkProperties(baseDir) : arkProperties;
     }
@@ -53,23 +56,22 @@ public class ArkConfigHolder {
                             + ARK_YML_FILE;
         File configFile = new File(configPath);
         if (!configFile.exists()) {
-            System.out.printf(
+            log.info(String.format(
                 "koupleless-base-build-plugin: extension-config %s not found, will not config it",
-                configPath);
+                configPath));
             return newHashMap();
         }
 
-        System.out.printf(
-            "koupleless-base-build-plugin: find extension-config %s and will config it\n",
-            configPath);
+        log.info(String.format(
+            "koupleless-base-build-plugin: find extension-config %s and will config it",
+            configPath));
 
         try (FileInputStream fis = new FileInputStream(configPath)) {
             Yaml yaml = new Yaml();
             arkYaml = yaml.load(fis);
             return arkYaml;
         } catch (IOException ex) {
-            System.out.printf(
-                String.format("failed to parse excludes artifacts from %s.", configPath), ex);
+            log.error(String.format("failed to parse excludes artifacts from %s.", configPath), ex);
             throw ex;
         }
     }
@@ -80,15 +82,15 @@ public class ArkConfigHolder {
                             + ARK_PROPERTIES_FILE;
         File configFile = new File(configPath);
         if (!configFile.exists()) {
-            System.out.printf(
-                "koupleless-base-build-plugin: extension-config %s not found, will not config it%n\n",
-                configPath);
+            log.info(String.format(
+                "koupleless-base-build-plugin: extension-config %s not found, will not config it",
+                configPath));
             return new Properties();
         }
 
-        System.out.printf(
+        log.info(String.format(
             "koupleless-base-build-plugin: find extension-config %s and will config it",
-            configPath);
+            configPath));
 
         Properties prop = new Properties();
         try (FileInputStream fis = new FileInputStream(configPath)) {
@@ -96,10 +98,9 @@ public class ArkConfigHolder {
             arkProperties = prop;
             return prop;
         } catch (IOException ex) {
-            System.out.printf(
-                String.format("koupleless-base-build-plugin: failed to read extension-config %s.",
-                    configPath),
-                ex);
+            log.error(String.format(
+                "koupleless-base-build-plugin: failed to read extension-config from %s.",
+                configPath), ex);
             throw ex;
         }
     }
