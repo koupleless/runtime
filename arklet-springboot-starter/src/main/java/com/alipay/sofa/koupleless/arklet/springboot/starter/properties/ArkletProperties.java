@@ -44,6 +44,8 @@ public class ArkletProperties {
     @NoArgsConstructor
     public static class MonitorProperties {
 
-        private int metaspaceThreshold = 85;
+        private int     metaspaceThreshold = 85;
+
+        private boolean metaspaceCheck     = false;
     }
 }

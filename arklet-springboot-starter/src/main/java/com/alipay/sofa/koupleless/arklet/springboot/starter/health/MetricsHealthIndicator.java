@@ -16,8 +16,8 @@
  */
 package com.alipay.sofa.koupleless.arklet.springboot.starter.health;
 
-import com.alipay.sofa.koupleless.arklet.core.monitor.model.ClientMetrics;
 import com.alipay.sofa.koupleless.arklet.core.monitor.MetricsMonitor;
+import com.alipay.sofa.koupleless.arklet.core.monitor.model.ClientMetrics;
 import com.alipay.sofa.koupleless.arklet.springboot.starter.properties.ArkletProperties.MonitorProperties;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health.Builder;
@@ -40,10 +40,16 @@ public class MetricsHealthIndicator extends AbstractHealthIndicator {
         ClientMetrics clientMetrics = MetricsMonitor.captureMetrics();
         builder.withDetail("metrics", clientMetrics);
 
-        if (validateMetaspace(monitorProperties.getMetaspaceThreshold(), clientMetrics)) {
-            builder.up();
-        } else {
+        if (unhealthy(clientMetrics)) {
             builder.down();
+        } else {
+            builder.up();
         }
+    }
+
+    private boolean unhealthy(ClientMetrics clientMetrics) {
+        // metaspace is checked
+        return monitorProperties.isMetaspaceCheck()
+               && !validateMetaspace(monitorProperties.getMetaspaceThreshold(), clientMetrics);
     }
 }
