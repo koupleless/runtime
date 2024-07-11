@@ -18,7 +18,6 @@ package com.alipay.sofa.koupleless.arklet.core.api;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.Set;
 
 import com.alipay.sofa.koupleless.arklet.core.api.tunnel.Tunnel;
@@ -34,9 +33,6 @@ import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.Multibinder;
 import org.reflections.Reflections;
-import org.reflections.scanners.SubTypesScanner;
-
-import static org.reflections.scanners.Scanners.SubTypes;
 
 /**
  * <p>ApiClient class.</p>
