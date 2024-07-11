@@ -18,29 +18,37 @@ package com.alipay.sofa.koupleless.base.build.plugin.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.maven.model.Dependency;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * <p>MavenDependencyAdapterMapping class.</p>
- *
- * @author CodeNoobKing
- * @since 2024/2/6
- * @version 1.0.0
+ * @author lianglipeng.llp@alibaba-inc.com
+ * @version $Id: KouplelessIntegrateBizConfig.java, v 0.1 2024年06月25日 12:03 立蓬 Exp $
  */
+
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
-@Builder
-public class MavenDependencyAdapterMapping {
+@Getter
+public class KouplelessIntegrateBizConfig {
     /**
-     * 匹配用户的依赖。
+     * 指定文件URL，将拷贝到 classpath 下的 SOFA-ARK/biz，支持：file:///,http://, https://
      */
-    private MavenDependencyMatcher matcher;
+    Set<String> fileURLs  = new HashSet<>();
 
     /**
-     * 适配的依赖。
+     * 指定本地目录，将拷贝该目录下的所有 ark-biz 到 classpath 下的 SOFA-ARK/biz
      */
-    private Dependency             adapter;
+    Set<String> localDirs = new HashSet<>();
+
+    public void addFileURLs(Set<String> urls) {
+        fileURLs.addAll(urls);
+    }
+
+    public void addLocalDirs(Set<String> absolutePath) {
+        localDirs.addAll(absolutePath);
+    }
 }

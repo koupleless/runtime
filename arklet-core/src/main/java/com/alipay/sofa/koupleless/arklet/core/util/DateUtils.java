@@ -14,33 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.base.build.plugin.model;
+package com.alipay.sofa.koupleless.arklet.core.util;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.apache.maven.model.Dependency;
+import java.text.SimpleDateFormat;
+import java.util.TimeZone;
 
 /**
- * <p>MavenDependencyAdapterMapping class.</p>
- *
- * @author CodeNoobKing
- * @since 2024/2/6
- * @version 1.0.0
+ * @author lianglipeng.llp@alibaba-inc.com
+ * @version $Id: DateUtils.java, v 0.1 2024年07月02日 14:13 立蓬 Exp $
  */
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
-@Builder
-public class MavenDependencyAdapterMapping {
-    /**
-     * 匹配用户的依赖。
-     */
-    private MavenDependencyMatcher matcher;
+public class DateUtils {
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
-    /**
-     * 适配的依赖。
-     */
-    private Dependency             adapter;
+    static {
+        sdf.setTimeZone(TimeZone.getDefault());
+    }
+
+    public static String format(long time) {
+        return sdf.format(time);
+    }
+
+    public static String getCurrentTime() {
+        return sdf.format(System.currentTimeMillis());
+    }
 }

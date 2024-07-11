@@ -14,33 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.base.build.plugin.model;
+package com.alipay.sofa.koupleless.arklet.springboot.starter.properties;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.maven.model.Dependency;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import static com.alipay.sofa.koupleless.arklet.springboot.starter.properties.ArkletProperties.PREFIX;
 
 /**
- * <p>MavenDependencyAdapterMapping class.</p>
- *
- * @author CodeNoobKing
- * @since 2024/2/6
- * @version 1.0.0
+ * @author lianglipeng.llp@alibaba-inc.com
+ * @version $Id: ArkletProperties.java, v 0.1 2024年07月02日 13:48 立蓬 Exp $
  */
-@NoArgsConstructor
+@Getter
+@Setter
 @AllArgsConstructor
-@Data
-@Builder
-public class MavenDependencyAdapterMapping {
-    /**
-     * 匹配用户的依赖。
-     */
-    private MavenDependencyMatcher matcher;
+@NoArgsConstructor
+@ConfigurationProperties(PREFIX)
+public class ArkletProperties {
+    public static final String PREFIX  = "com.alipay.sofa.koupleless.runtime";
 
-    /**
-     * 适配的依赖。
-     */
-    private Dependency             adapter;
+    private MonitorProperties  monitor = new MonitorProperties();
+
+    @Setter
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class MonitorProperties {
+
+        private int     metaspaceThreshold = 85;
+
+        private boolean metaspaceCheck     = false;
+    }
 }
