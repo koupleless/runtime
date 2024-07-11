@@ -46,10 +46,10 @@ public class PahoClientTest extends BaseTest {
     @Test
     public void command() throws Exception {
         PahoMqttClient pahoMqttClient = null;
-        try{
+        try {
             UUID deviceID = UUID.randomUUID();
-            pahoMqttClient = new PahoMqttClient("broker.emqx.io", 1883, deviceID, "emqx",
-                    "public", commandService);
+            pahoMqttClient = new PahoMqttClient("broker.emqx.io", 1883, deviceID, "emqx", "public",
+                commandService);
             pahoMqttClient.open();
 
             String broker = "tcp://broker.emqx.io:1883";
@@ -62,9 +62,9 @@ public class PahoClientTest extends BaseTest {
             options.setPassword(password.toCharArray());
             client.connect(options);
             client.publish(String.format("koupleless/%s/health", deviceID),
-                    new MqttMessage("{}".getBytes()));
+                new MqttMessage("{}".getBytes()));
             client.subscribe(String.format("koupleless/%s/base/health", deviceID),
-                    new HealthMessageListener(deviceID));
+                new HealthMessageListener(deviceID));
         } finally {
             if (pahoMqttClient != null) {
                 pahoMqttClient.close();

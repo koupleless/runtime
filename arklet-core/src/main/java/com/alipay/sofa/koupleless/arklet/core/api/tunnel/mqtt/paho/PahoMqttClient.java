@@ -293,12 +293,12 @@ public class PahoMqttClient {
             // process mqtt message, use thread pool to handle command
             ThreadPoolExecutor executor = ExecutorServiceManager.getArkMqttOpsExecutor();
             executor.submit(() -> {
-                Map<String, Object> cmdContent = JSONObject.parseObject(msg.toString(), HashMap.class);
+                Map<String, Object> cmdContent = JSONObject.parseObject(msg.toString(),
+                    HashMap.class);
                 Output<?> output;
                 try {
                     // process the command
-                    output = commandService.process(cmd,
-                            cmdContent);
+                    output = commandService.process(cmd, cmdContent);
                 } catch (InterruptedException e) {
                     LOGGER.error("process command failed", e);
                     throw new ArkletRuntimeException(e);
