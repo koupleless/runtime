@@ -93,7 +93,7 @@ public class ApiClient implements ArkletComponent {
                 Tunnel.class);
             tunnelMultibinder.addBinding().to(HttpTunnel.class);
             String customTunnelClass = EnvironmentUtils.getProperty(CUSTOM_TUNNEL_CLASS);
-            if (!customTunnelClass.isEmpty()) {
+            if (customTunnelClass != null && !customTunnelClass.isEmpty()) {
                 Class<?> tunnelClass;
                 try {
                     tunnelClass = Class.forName(customTunnelClass);
