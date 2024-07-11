@@ -241,8 +241,7 @@ public class PahoMqttClient {
                 Map<String, Object> heartBeatData = new HashMap<>();
 
                 try {
-                    Output<?> output = commandService.process(BuiltinCommand.HEALTH.getId(),
-                        new HashMap());
+                    Output<?> output = commandService.process(BuiltinCommand.HEALTH.getId(), null);
                     Health data = (Health) output.getData();
                     heartBeatData.put(Constants.MASTER_BIZ_INFO,
                         data.getHealthData().get(Constants.MASTER_BIZ_INFO));
@@ -320,7 +319,7 @@ public class PahoMqttClient {
                         Output<?> allBizOutput;
                         try {
                             allBizOutput = commandService
-                                .process(BuiltinCommand.QUERY_ALL_BIZ.getId(), new HashMap());
+                                .process(BuiltinCommand.QUERY_ALL_BIZ.getId(), null);
                         } catch (InterruptedException e) {
                             LOGGER.error("queryAllBiz command process failed", e);
                             throw new ArkletRuntimeException(e);
