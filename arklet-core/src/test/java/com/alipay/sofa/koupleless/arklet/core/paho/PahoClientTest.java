@@ -18,6 +18,8 @@ package com.alipay.sofa.koupleless.arklet.core.paho;
 
 import com.alipay.sofa.koupleless.arklet.core.BaseTest;
 import com.alipay.sofa.koupleless.arklet.core.api.tunnel.mqtt.paho.PahoMqttClient;
+import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletException;
+import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletRuntimeException;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.junit.Test;
@@ -41,32 +43,37 @@ public class PahoClientTest extends BaseTest {
 
         @Override
         public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
-            System.out.println(topic);
-            System.out.println(Arrays.toString(mqttMessage.getPayload()));
             assert topic.equals(String.format("koupleless/%s/base/health", deviceID));
         }
     }
 
     @Test
     public void command() throws Exception {
-        UUID deviceID = UUID.randomUUID();
-        PahoMqttClient pahoMqttClient = new PahoMqttClient("broker.emqx.io", 1883, deviceID, "emqx",
-            "public", commandService);
-        pahoMqttClient.open();
+        PahoMqttClient pahoMqttClient = null;
+        try{
+            UUID deviceID = UUID.randomUUID();
+            pahoMqttClient = new PahoMqttClient("broker.emqx.io", 1883, deviceID, "emqx",
+                    "public", commandService);
+            pahoMqttClient.open();
 
-        String broker = "tcp://broker.emqx.io:1883";
-        String username = "emqx";
-        String password = "public";
-        String clientid = "publish_client";
-        MqttClient client = new MqttClient(broker, clientid, new MemoryPersistence());
-        MqttConnectOptions options = new MqttConnectOptions();
-        options.setUserName(username);
-        options.setPassword(password.toCharArray());
-        client.connect(options);
-        client.publish(String.format("koupleless/%s/health", deviceID),
-            new MqttMessage("{}".getBytes()));
-        client.subscribe(String.format("koupleless/%s/base/health", deviceID),
-            new HealthMessageListener(deviceID));
+            String broker = "tcp://broker.emqx.io:1883";
+            String username = "emqx";
+            String password = "public";
+            String clientid = "publish_client";
+            MqttClient client = new MqttClient(broker, clientid, new MemoryPersistence());
+            MqttConnectOptions options = new MqttConnectOptions();
+            options.setUserName(username);
+            options.setPassword(password.toCharArray());
+            client.connect(options);
+            client.publish(String.format("koupleless/%s/health", deviceID),
+                    new MqttMessage("{}".getBytes()));
+            client.subscribe(String.format("koupleless/%s/base/health", deviceID),
+                    new HealthMessageListener(deviceID));
+        } finally {
+            if (pahoMqttClient != null) {
+                pahoMqttClient.close();
+            }
+        }
     }
 
     @Test
