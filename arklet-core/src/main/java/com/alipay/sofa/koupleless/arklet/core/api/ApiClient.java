@@ -18,12 +18,13 @@ package com.alipay.sofa.koupleless.arklet.core.api;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
+import com.alipay.sofa.ark.common.util.EnvironmentUtils;
 import com.alipay.sofa.koupleless.arklet.core.api.tunnel.Tunnel;
 import com.alipay.sofa.koupleless.arklet.core.api.tunnel.http.HttpTunnel;
 import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
 import com.alipay.sofa.koupleless.arklet.core.ArkletComponent;
+import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletInitException;
 import com.google.inject.AbstractModule;
 import com.google.inject.Binding;
 import com.google.inject.Guice;
@@ -32,7 +33,6 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.Multibinder;
-import org.reflections.Reflections;
 
 /**
  * <p>ApiClient class.</p>
@@ -45,7 +45,9 @@ import org.reflections.Reflections;
 @Singleton
 public class ApiClient implements ArkletComponent {
 
-    private static final List<Tunnel> tunnelList = new ArrayList<>(8);
+    private static final List<Tunnel> tunnelList          = new ArrayList<>(8);
+
+    private final static String       CUSTOM_TUNNEL_CLASS = "koupleless.arklet.custom.tunnel.classname";
 
     @Inject
     private CommandService            commandService;
@@ -90,10 +92,19 @@ public class ApiClient implements ArkletComponent {
             Multibinder<Tunnel> tunnelMultibinder = Multibinder.newSetBinder(binder(),
                 Tunnel.class);
             tunnelMultibinder.addBinding().to(HttpTunnel.class);
-            Reflections reflections = new Reflections("com.alipay.sofa.koupleless.arklet.tunnel");
-            Set<Class<? extends Tunnel>> classes = reflections.getSubTypesOf(Tunnel.class);
-            for (Class<? extends Tunnel> c : classes) {
-                tunnelMultibinder.addBinding().to(c);
+            String customTunnelClass = EnvironmentUtils.getProperty(CUSTOM_TUNNEL_CLASS);
+            if (!customTunnelClass.isEmpty()) {
+                Class<?> tunnelClass;
+                try {
+                    tunnelClass = Class.forName(customTunnelClass);
+                } catch (ClassNotFoundException e) {
+                    throw new ArkletInitException(e);
+                }
+                if (!Tunnel.class.isAssignableFrom(tunnelClass)) {
+                    throw new ArkletInitException(
+                        "custom tunnel class didn't implement tunnel interface");
+                }
+                tunnelMultibinder.addBinding().to((Class<? extends Tunnel>) tunnelClass);
             }
         }
     }
