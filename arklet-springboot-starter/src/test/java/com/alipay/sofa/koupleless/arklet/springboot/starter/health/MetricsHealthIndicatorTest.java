@@ -16,11 +16,16 @@
  */
 package com.alipay.sofa.koupleless.arklet.springboot.starter.health;
 
+import com.alipay.sofa.koupleless.arklet.core.monitor.MetricsMonitor;
+import com.alipay.sofa.koupleless.arklet.core.monitor.model.ClientMetrics;
 import com.alipay.sofa.koupleless.arklet.springboot.starter.properties.ArkletProperties.MonitorProperties;
 import org.junit.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.springframework.boot.actuate.health.Status;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 
 /**
  * @author lianglipeng.llp@alibaba-inc.com
@@ -32,6 +37,24 @@ public class MetricsHealthIndicatorTest {
     public void testMetaspace() {
         MonitorProperties monitorProperties = new MonitorProperties();
         MetricsHealthIndicator indicator = new MetricsHealthIndicator(monitorProperties);
+
+        // set metaspaceCheck as false
         assertEquals(Status.UP, indicator.health().getStatus());
+
+        // set metaspaceCheck as true and metaspace is healthy
+        monitorProperties.setMetaspaceCheck(true);
+        assertEquals(Status.UP, indicator.health().getStatus());
+
+        // set metaspaceCheck as true and metaspace is unhealthy
+        monitorProperties.setMetaspaceThreshold(0);
+        try (MockedStatic<MetricsMonitor> metricsMonitorMockedStatic = Mockito
+            .mockStatic(MetricsMonitor.class)) {
+            metricsMonitorMockedStatic.when(() -> MetricsMonitor
+                .validateMetaspace(Mockito.anyLong(), Mockito.any(ClientMetrics.class)))
+                .thenReturn(false);
+            metricsMonitorMockedStatic.when(MetricsMonitor::captureMetrics)
+                .thenReturn(new ClientMetrics());
+            assertEquals(Status.DOWN, indicator.health().getStatus());
+        }
     }
 }
