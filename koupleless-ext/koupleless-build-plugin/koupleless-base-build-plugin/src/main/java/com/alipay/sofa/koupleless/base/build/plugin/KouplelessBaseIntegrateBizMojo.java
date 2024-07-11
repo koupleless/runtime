@@ -42,12 +42,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.SOFA_ARK_MODULE;
 import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.EXTENSION_INTEGRATE_LOCAL_DIRS;
 import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.EXTENSION_INTEGRATE_URLS;
 import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.FILE_PREFIX;
 import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.HTTPS_PREFIX;
 import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.HTTP_PREFIX;
+import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.SOFA_ARK_MODULE;
 
 /**
  * @author lianglipeng.llp@alibaba-inc.com
@@ -105,7 +105,8 @@ public class KouplelessBaseIntegrateBizMojo extends AbstractMojo {
             return StringUtils.substringAfterLast(bizUrl, "/");
         }
 
-        return "unknownBizName-unknownBizVersion.jar";
+        throw new UnsupportedOperationException(String.format(
+            "Unsupported protocol for %s, only support file://, http:// and https://", bizUrl));
     }
 
     protected void copyLocalDirsToResource() throws IOException {
