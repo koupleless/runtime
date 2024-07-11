@@ -17,10 +17,10 @@
 package com.alipay.sofa.koupleless.arklet.tunnel.mqtt.paho;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.executor.ExecutorServiceManager;
 import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.model.MqttResponse;
 import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
 import com.alipay.sofa.koupleless.arklet.core.command.builtin.BuiltinCommand;
-import com.alipay.sofa.koupleless.arklet.core.command.executor.ExecutorServiceManager;
 import com.alipay.sofa.koupleless.arklet.core.command.meta.Output;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletInitException;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletRuntimeException;
@@ -290,7 +290,7 @@ public class PahoMqttClient {
 
         public void handle(String cmd, MqttMessage msg) throws Exception {
             // process mqtt message, use thread pool to handle command
-            ThreadPoolExecutor executor = ExecutorServiceManager.getArkMqttOpsExecutor();
+            ThreadPoolExecutor executor = ExecutorServiceManager.getArkTunnelMqttExecutor();
             executor.submit(() -> {
                 Map<String, Object> cmdContent = JSONObject.parseObject(msg.toString(),
                     HashMap.class);

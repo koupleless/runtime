@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.arklet.core.command.executor;
+package com.alipay.sofa.koupleless.arklet.tunnel.mqtt.executor;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -23,23 +23,22 @@ import java.util.concurrent.TimeUnit;
 /**
  * <p>ExecutorServiceManager class.</p>
  *
- * @author yuanyuan
- * @author zzl_i
- * @since 2023/8/31 4:12 下午
+ * @author dongnan
+ * @since 2024/7/11
  * @version 1.0.0
  */
 public class ExecutorServiceManager {
 
-    private static ThreadPoolExecutor ARK_BIZ_OPS_EXECUTOR  = new ThreadPoolExecutor(20, 50, 30,
-        TimeUnit.SECONDS, new ArrayBlockingQueue<>(100), new NamedThreadFactory("ark-biz-ops"),
-        new ThreadPoolExecutor.CallerRunsPolicy());
+    private static ThreadPoolExecutor ARK_TUNNEL_MQTT_EXECUTOR = new ThreadPoolExecutor(20, 50, 30,
+            TimeUnit.SECONDS, new ArrayBlockingQueue<>(100), new NamedThreadFactory("ark-tunnel-mqtt"),
+            new ThreadPoolExecutor.CallerRunsPolicy());
 
     /**
-     * <p>getArkBizOpsExecutor.</p>
+     * <p>getArkTunnelMqttExecutor.</p>
      *
      * @return a {@link java.util.concurrent.ThreadPoolExecutor} object
      */
-    public static ThreadPoolExecutor getArkBizOpsExecutor() {
-        return ARK_BIZ_OPS_EXECUTOR;
+    public static ThreadPoolExecutor getArkTunnelMqttExecutor() {
+        return ARK_TUNNEL_MQTT_EXECUTOR;
     }
 }
