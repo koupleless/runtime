@@ -18,13 +18,9 @@ package com.alipay.sofa.koupleless.arklet.core.paho;
 
 import com.alipay.sofa.koupleless.arklet.core.BaseTest;
 import com.alipay.sofa.koupleless.arklet.core.api.tunnel.mqtt.paho.PahoMqttClient;
-import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletException;
-import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletRuntimeException;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.junit.Test;
-
-import java.util.Arrays;
 import java.util.UUID;
 
 /**
