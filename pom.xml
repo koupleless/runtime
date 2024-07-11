@@ -397,6 +397,7 @@
                         <exclude>**/org/apache/logging/slf4j/**/*</exclude>
                         <exclude>**/com/ctrip/framework/apollo/spring/boot/**/*</exclude>
                         <exclude>**/common/service/ServiceState.java</exclude>
+                        <exclude>**/com/alipay/sofa/koupleless/arklet/core/monitor/model/ClientMetrics.java</exclude>
                     </excludes>
                 </configuration>
                 <executions>
