@@ -16,15 +16,15 @@
  */
 package com.alipay.sofa.koupleless.arklet.core.ops;
 
-import java.util.List;
-import java.util.Map;
-
 import com.alipay.sofa.ark.api.ClientResponse;
 import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.koupleless.arklet.core.ArkletComponent;
-import com.alipay.sofa.koupleless.arklet.core.command.meta.bizops.ArkBizMeta;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BatchInstallRequest;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BatchInstallResponse;
+import com.alipay.sofa.koupleless.arklet.core.common.model.InstallRequest;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * Unified operation service interface, mainly interacts with the sofa-ark container
@@ -35,20 +35,7 @@ import com.alipay.sofa.koupleless.arklet.core.common.model.BatchInstallResponse;
  */
 public interface UnifiedOperationService extends ArkletComponent {
 
-    /**
-     * install biz
-     *
-     * @param bizUrl biz URL
-     * @return response
-     * @throws java.lang.Throwable error
-     * @param bizName a {@link java.lang.String} object
-     * @param bizVersion a {@link java.lang.String} object
-     * @param args an array of {@link java.lang.String} objects
-     * @param envs a {@link java.util.Map} object
-     */
-    ClientResponse install(String bizName, String bizVersion, String bizUrl, String[] args,
-                           Map<String, String> envs,
-                           boolean useUninstallBeforeInstallStrategy) throws Throwable;
+    ClientResponse install(InstallRequest request) throws Throwable;
 
     /**
      * uninstall biz

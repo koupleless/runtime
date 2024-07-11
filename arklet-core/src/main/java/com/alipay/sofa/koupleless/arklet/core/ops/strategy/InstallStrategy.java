@@ -14,33 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.base.build.plugin.model;
+package com.alipay.sofa.koupleless.arklet.core.ops.strategy;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.apache.maven.model.Dependency;
+import com.alipay.sofa.ark.api.ClientResponse;
+import com.alipay.sofa.koupleless.arklet.core.common.model.InstallRequest;
 
 /**
- * <p>MavenDependencyAdapterMapping class.</p>
- *
- * @author CodeNoobKing
- * @since 2024/2/6
- * @version 1.0.0
+ * @author lianglipeng.llp@alibaba-inc.com
+ * @version $Id: InstallStrategy.java, v 0.1 2024年07月03日 16:58 立蓬 Exp $
  */
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
-@Builder
-public class MavenDependencyAdapterMapping {
-    /**
-     * 匹配用户的依赖。
-     */
-    private MavenDependencyMatcher matcher;
-
-    /**
-     * 适配的依赖。
-     */
-    private Dependency             adapter;
+public interface InstallStrategy {
+    ClientResponse install(InstallRequest request) throws Throwable;
 }

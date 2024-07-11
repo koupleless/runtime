@@ -14,33 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.base.build.plugin.model;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.apache.maven.model.Dependency;
+package com.alipay.sofa.koupleless.arklet.core.common.model;
 
 /**
- * <p>MavenDependencyAdapterMapping class.</p>
- *
- * @author CodeNoobKing
- * @since 2024/2/6
- * @version 1.0.0
+ * @author lianglipeng.llp@alibaba-inc.com
+ * @version $Id: Constants.java, v 0.1 2024年07月03日 16:47 立蓬 Exp $
  */
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
-@Builder
-public class MavenDependencyAdapterMapping {
-    /**
-     * 匹配用户的依赖。
-     */
-    private MavenDependencyMatcher matcher;
+public class Constants {
 
     /**
-     * 适配的依赖。
+     * 先卸后装
      */
-    private Dependency             adapter;
+    public static final String STRATEGY_UNINSTALL_THEN_INSTALL = "uninstallThenInstall";
+
+    /**
+     * 仅安装
+     */
+    public static final String STRATEGY_INSTALL_ONLY_STRATEGY  = "installOnly";
 }

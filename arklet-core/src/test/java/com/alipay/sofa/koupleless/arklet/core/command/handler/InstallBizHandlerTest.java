@@ -23,6 +23,7 @@ import com.alipay.sofa.koupleless.arklet.core.command.builtin.handler.InstallBiz
 import com.alipay.sofa.koupleless.arklet.core.command.builtin.handler.InstallBizHandler.Input;
 import com.alipay.sofa.koupleless.arklet.core.command.meta.Output;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.CommandValidationException;
+import com.alipay.sofa.koupleless.arklet.core.common.model.InstallRequest;
 import com.alipay.sofa.koupleless.arklet.core.health.custom.model.MockBiz;
 import org.junit.Assert;
 import org.junit.Before;
@@ -33,6 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import static com.alipay.sofa.koupleless.arklet.core.common.model.Constants.STRATEGY_UNINSTALL_THEN_INSTALL;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.times;
@@ -58,9 +60,12 @@ public class InstallBizHandlerTest extends BaseHandlerTest {
         Input input = new Input();
         input.setBizUrl("testUrl");
         input.setBizName("testBiz1");
+        input.setInstallStrategy(STRATEGY_UNINSTALL_THEN_INSTALL);
 
-        when(handler.getOperationService().install(input.getBizName(), input.getBizVersion(),
-            input.getBizUrl(), input.getArgs(), input.getEnvs(), true)).thenReturn(success);
+        InstallRequest installRequest = InstallRequest.builder().bizName(input.getBizName())
+            .bizVersion(input.getBizVersion()).bizUrl(input.getBizUrl()).args(input.getArgs())
+            .envs(input.getEnvs()).installStrategy(STRATEGY_UNINSTALL_THEN_INSTALL).build();
+        when(handler.getOperationService().install(installRequest)).thenReturn(success);
 
         Output<InstallBizHandler.InstallBizClientResponse> result = handler.handle(input);
 
@@ -75,9 +80,12 @@ public class InstallBizHandlerTest extends BaseHandlerTest {
         Input input = new Input();
         input.setBizUrl("testUrl");
         input.setBizName("testBiz1");
+        input.setInstallStrategy(STRATEGY_UNINSTALL_THEN_INSTALL);
 
-        when(handler.getOperationService().install(input.getBizName(), input.getBizVersion(),
-            input.getBizUrl(), input.getArgs(), input.getEnvs(), true)).thenReturn(failed);
+        InstallRequest installRequest = InstallRequest.builder().bizName(input.getBizName())
+            .bizVersion(input.getBizVersion()).bizUrl(input.getBizUrl()).args(input.getArgs())
+            .envs(input.getEnvs()).installStrategy(STRATEGY_UNINSTALL_THEN_INSTALL).build();
+        when(handler.getOperationService().install(installRequest)).thenReturn(failed);
 
         Output<InstallBizHandler.InstallBizClientResponse> result = handler.handle(input);
 

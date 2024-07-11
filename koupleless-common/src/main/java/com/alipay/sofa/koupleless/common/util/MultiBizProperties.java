@@ -485,7 +485,7 @@ public class MultiBizProperties extends Properties {
             ? bizPropertiesMap.computeIfAbsent(classLoader, k -> new Properties())
             : baseProperties;
         bizPropertiesMap.put(invokeClassLoader, props);
-        return baseProperties;
+        return props;
     }
 
     private synchronized Set<String> getModifiedKeys() {
