@@ -74,7 +74,7 @@ public class Constants {
 
     /** Constant <code>LOCAL_HOST_NAME="localHostName"</code> */
     public static final String LOCAL_HOST_NAME       = "localHostName";
-  
+
     public static final int    BYTE_TO_MB            = 1024 * 1024;
 
     public static final String MB                    = "MB";
