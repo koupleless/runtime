@@ -40,7 +40,6 @@ import com.alipay.sofa.koupleless.base.build.plugin.model.MavenDependencyMatcher
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.base.Preconditions;
-import lombok.SneakyThrows;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -60,7 +59,6 @@ import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResult;
 
 import java.io.*;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.regex.Pattern;
 
