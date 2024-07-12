@@ -285,7 +285,7 @@ public class PahoMqttClient {
 
             executor.scheduleAtFixedRate(
                 new HeartBeatScheduledMission(getHeartBeatTopic(), mqttClient, commandService), 0,
-                3000L, TimeUnit.MILLISECONDS);
+                120000L, TimeUnit.MILLISECONDS);
         }
 
         public void handle(String cmd, MqttMessage msg) throws Exception {
