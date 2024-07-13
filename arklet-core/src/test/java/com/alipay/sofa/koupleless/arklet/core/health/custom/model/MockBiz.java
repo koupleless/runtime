@@ -25,18 +25,18 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class CustomBiz implements Biz {
+public class MockBiz implements Biz {
 
     private final String bizName;
     private final String bizVersion;
     private URL          bizUrl;
 
-    public CustomBiz(String bizName, String bizVersion) {
+    public MockBiz(String bizName, String bizVersion) {
         this.bizName = bizName;
         this.bizVersion = bizVersion;
     }
 
-    public CustomBiz(String bizName, String bizVersion, URL bizUrl) {
+    public MockBiz(String bizName, String bizVersion, URL bizUrl) {
         this.bizName = bizName;
         this.bizVersion = bizVersion;
         this.bizUrl = bizUrl;
