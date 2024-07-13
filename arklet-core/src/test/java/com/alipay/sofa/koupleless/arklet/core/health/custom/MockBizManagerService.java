@@ -19,7 +19,7 @@ package com.alipay.sofa.koupleless.arklet.core.health.custom;
 import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.ark.spi.model.BizState;
 import com.alipay.sofa.ark.spi.service.biz.BizManagerService;
-import com.alipay.sofa.koupleless.arklet.core.health.custom.model.CustomBiz;
+import com.alipay.sofa.koupleless.arklet.core.health.custom.model.MockBiz;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,14 +27,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class CustomBizManagerService implements BizManagerService {
+public class MockBizManagerService implements BizManagerService {
 
     private final List<Biz> bizList = Arrays
-        .asList(new Biz[] { new CustomBiz("masterBiz", "masterBizVersion"),
-                            new CustomBiz("testBiz1", "testBizVersion1"),
-                            new CustomBiz("testBiz1", "testBizVersion2"),
-                            new CustomBiz("testBiz2", "testBizVersion2"),
-                            new CustomBiz("testBiz3", "testBizVersion3") });
+        .asList(new Biz[] { new MockBiz("masterBiz", "masterBizVersion"),
+                            new MockBiz("testBiz1", "testBizVersion1"),
+                            new MockBiz("testBiz1", "testBizVersion2"),
+                            new MockBiz("testBiz2", "testBizVersion2"),
+                            new MockBiz("testBiz3", "testBizVersion3") });
 
     public Biz getMasterBiz() {
         return bizList.get(0);

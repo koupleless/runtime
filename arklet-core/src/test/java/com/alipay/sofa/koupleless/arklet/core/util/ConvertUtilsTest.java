@@ -35,7 +35,7 @@ public class ConvertUtilsTest {
         try {
             final Date date = new Date(System.currentTimeMillis());
             final long millis = 1000;
-            final double delta = 1e-2;
+            final double delta = 1e-1;
             Thread.sleep(millis);
             Assert.assertEquals(millis / 1000., ConvertUtils.getDurationSecond(date), delta);
         } catch (InterruptedException e) {

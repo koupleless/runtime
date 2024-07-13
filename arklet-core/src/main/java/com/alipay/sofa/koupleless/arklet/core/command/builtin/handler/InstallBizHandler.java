@@ -33,7 +33,7 @@ import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletRuntimeExce
 import com.alipay.sofa.koupleless.arklet.core.common.exception.CommandValidationException;
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger;
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
-import com.google.common.base.Preconditions;
+import com.alipay.sofa.koupleless.arklet.core.common.model.InstallRequest;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -44,6 +44,8 @@ import java.lang.management.MemoryPoolMXBean;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
+
+import static com.alipay.sofa.koupleless.arklet.core.common.model.Constants.STRATEGY_INSTALL_ONLY_STRATEGY;
 
 /**
  * <p>InstallBizHandler class.</p>
@@ -64,8 +66,7 @@ public class InstallBizHandler extends
         long startSpace = metaSpaceMXBean.getUsage().getUsed();
         try {
             InstallBizClientResponse installBizClientResponse = convertClientResponse(
-                getOperationService().install(input.getBizName(), input.getBizVersion(),
-                    input.getBizUrl(), input.getArgs(), input.getEnvs()));
+                getOperationService().install(convertInstallRequest(input)));
             installBizClientResponse
                 .setElapsedSpace(metaSpaceMXBean.getUsage().getUsed() - startSpace);
             if (ResponseCode.SUCCESS.equals(installBizClientResponse.getCode())) {
@@ -76,6 +77,12 @@ public class InstallBizHandler extends
         } catch (Throwable e) {
             throw new ArkletRuntimeException(e);
         }
+    }
+
+    private InstallRequest convertInstallRequest(Input input) {
+        return InstallRequest.builder().bizName(input.getBizName())
+            .bizVersion(input.getBizVersion()).bizUrl(input.getBizUrl()).args(input.getArgs())
+            .envs(input.getEnvs()).installStrategy(input.getInstallStrategy()).build();
     }
 
     private MemoryPoolMXBean getMetaSpaceMXBean() {
@@ -160,6 +167,11 @@ public class InstallBizHandler extends
          * Don't use this in non-multi-tenant jdk.
          */
         private Map<String, String> envs;
+        /**
+         * install biz strategy
+         * default value is installOnly
+         */
+        private String              installStrategy = STRATEGY_INSTALL_ONLY_STRATEGY;
     }
 
     @Getter
