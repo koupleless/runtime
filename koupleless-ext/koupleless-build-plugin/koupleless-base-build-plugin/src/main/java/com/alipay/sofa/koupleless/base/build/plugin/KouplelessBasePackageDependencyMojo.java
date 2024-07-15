@@ -163,6 +163,9 @@ public class KouplelessBasePackageDependencyMojo extends AbstractMojo {
                 if (!"jar".equals(it.getType())) {
                     d.setType(it.getType());
                 }
+                if(it.hasClassifier()){
+                    d.setClassifier(it.getClassifier());
+                }
                 return d;
             }).collect(Collectors.toList());
         dependencyManagement.setDependencies(dependencies);
