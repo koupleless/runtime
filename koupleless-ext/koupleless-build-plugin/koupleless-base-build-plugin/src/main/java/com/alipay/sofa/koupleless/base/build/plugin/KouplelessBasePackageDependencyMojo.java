@@ -76,8 +76,8 @@ public class KouplelessBasePackageDependencyMojo extends AbstractMojo {
 
     private File         dependencyRootDir;
 
-    //@Override
-    public void doExecute() {
+    @Override
+    public void execute() throws MojoExecutionException, MojoFailureException {
         try {
             createBaseDependency();
         } catch (Throwable t) {
@@ -86,10 +86,6 @@ public class KouplelessBasePackageDependencyMojo extends AbstractMojo {
         } finally {
             clearDependencyRootDir();
         }
-    }
-
-    private void clearDependencyRootDir() {
-        FileUtils.deleteQuietly(dependencyRootDir);
     }
 
     private void createBaseDependency() throws Exception {
@@ -181,12 +177,11 @@ public class KouplelessBasePackageDependencyMojo extends AbstractMojo {
         MavenUtils.writePomModel(getBaseDependenciesPom(), pom);
     }
 
-    private File getBaseDependenciesPom() {
-        return new File(dependencyRootDir, "pom.xml");
+    private void clearDependencyRootDir() {
+        FileUtils.deleteQuietly(dependencyRootDir);
     }
 
-    @Override
-    public void execute() throws MojoExecutionException, MojoFailureException {
-        doExecute();
+    private File getBaseDependenciesPom() {
+        return new File(dependencyRootDir, "pom.xml");
     }
 }
