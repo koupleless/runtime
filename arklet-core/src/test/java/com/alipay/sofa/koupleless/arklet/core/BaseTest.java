@@ -29,7 +29,8 @@ import org.mockito.Mock;
 public class BaseTest {
 
     static {
-        System.setProperty("koupleless.arklet.custom.tunnel.classname", "com.alipay.sofa.koupleless.arklet.core.tunnel.custom.MockTunnel");
+        System.setProperty("koupleless.arklet.custom.tunnel.classname",
+            "com.alipay.sofa.koupleless.arklet.core.tunnel.custom.MockTunnel");
     }
 
     @Mock

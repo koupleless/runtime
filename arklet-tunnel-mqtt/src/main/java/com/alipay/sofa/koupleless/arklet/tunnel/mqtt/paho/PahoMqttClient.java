@@ -249,8 +249,10 @@ public class PahoMqttClient {
                 try {
                     Output<?> output = commandService.process(BuiltinCommand.HEALTH.getId(), null);
                     Health data = (Health) output.getData();
-                    heartBeatData.put(com.alipay.sofa.koupleless.arklet.core.health.model.Constants.MASTER_BIZ_INFO,
-                        data.getHealthData().get(com.alipay.sofa.koupleless.arklet.core.health.model.Constants.MASTER_BIZ_INFO));
+                    heartBeatData.put(
+                        com.alipay.sofa.koupleless.arklet.core.health.model.Constants.MASTER_BIZ_INFO,
+                        data.getHealthData().get(
+                            com.alipay.sofa.koupleless.arklet.core.health.model.Constants.MASTER_BIZ_INFO));
                 } catch (InterruptedException e) {
                     LOGGER.info("get health status failed");
                     throw new ArkletRuntimeException("get health status failed", e);
