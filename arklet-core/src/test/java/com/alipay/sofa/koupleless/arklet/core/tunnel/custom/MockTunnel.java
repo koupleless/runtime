@@ -14,38 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.arklet.core;
 
+package com.alipay.sofa.koupleless.arklet.core.tunnel.custom;
+
+import com.alipay.sofa.koupleless.arklet.core.api.tunnel.Tunnel;
 import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
-import com.alipay.sofa.koupleless.arklet.core.health.HealthService;
-import com.alipay.sofa.koupleless.arklet.core.ops.UnifiedOperationService;
-import org.junit.Before;
-import org.mockito.Mock;
 
 /**
  * @author mingmen
  * @since 2023/9/5
  */
-public class BaseTest {
+public class MockTunnel implements Tunnel {
 
-    static {
-        System.setProperty("koupleless.arklet.custom.tunnel.classname", "com.alipay.sofa.koupleless.arklet.core.tunnel.custom.MockTunnel");
+    @Override
+    public void init(CommandService commandService) {
     }
 
-    @Mock
-    public static CommandService          commandService;
-
-    @Mock
-    public static UnifiedOperationService operationService;
-
-    @Mock
-    public static HealthService           healthService;
-
-    @Before
-    public void setup() {
-        commandService = ArkletComponentRegistry.getCommandServiceInstance();
-        operationService = ArkletComponentRegistry.getOperationServiceInstance();
-        healthService = ArkletComponentRegistry.getHealthServiceInstance();
+    @Override
+    public void run() {
     }
 
+    @Override
+    public void shutdown() {
+    }
 }

@@ -45,9 +45,6 @@ public class Constants {
     /** Constant <code>MASTER_BIZ_INFO="masterBizInfo"</code> */
     public static final String MASTER_BIZ_INFO       = "masterBizInfo";
 
-    /** Constant <code>NETWORK_INFO="networkInfo"</code> */
-    public static final String NETWORK_INFO          = "networkInfo";
-
     /** Constant <code>HEALTH_ERROR="error"</code> */
     public static final String HEALTH_ERROR          = "error";
 
@@ -68,12 +65,6 @@ public class Constants {
 
     /** Constant <code>READINESS_HEALTHY="ACCEPTING_TRAFFIC"</code> */
     public static final String READINESS_HEALTHY     = "ACCEPTING_TRAFFIC";
-
-    /** Constant <code>LOCAL_IP="localIP"</code> */
-    public static final String LOCAL_IP              = "localIP";
-
-    /** Constant <code>LOCAL_HOST_NAME="localHostName"</code> */
-    public static final String LOCAL_HOST_NAME       = "localHostName";
 
     public static final int    BYTE_TO_MB            = 1024 * 1024;
 

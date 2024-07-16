@@ -26,7 +26,7 @@ import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletInitExcepti
 import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletRuntimeException;
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger;
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
-import com.alipay.sofa.koupleless.arklet.core.health.model.Constants;
+import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.model.Constants;
 import com.alipay.sofa.koupleless.arklet.core.health.model.Health;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
@@ -249,8 +249,8 @@ public class PahoMqttClient {
                 try {
                     Output<?> output = commandService.process(BuiltinCommand.HEALTH.getId(), null);
                     Health data = (Health) output.getData();
-                    heartBeatData.put(Constants.MASTER_BIZ_INFO,
-                        data.getHealthData().get(Constants.MASTER_BIZ_INFO));
+                    heartBeatData.put(com.alipay.sofa.koupleless.arklet.core.health.model.Constants.MASTER_BIZ_INFO,
+                        data.getHealthData().get(com.alipay.sofa.koupleless.arklet.core.health.model.Constants.MASTER_BIZ_INFO));
                 } catch (InterruptedException e) {
                     LOGGER.info("get health status failed");
                     throw new ArkletRuntimeException("get health status failed", e);
