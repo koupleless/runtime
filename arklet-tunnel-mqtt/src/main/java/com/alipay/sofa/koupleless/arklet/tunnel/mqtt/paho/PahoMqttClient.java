@@ -270,7 +270,7 @@ public class PahoMqttClient {
 
                 try {
                     mqttClient.publish(topic,
-                        JSONObject.toJSONString(MqttResponse.withData(heartBeatData)).getBytes(), 0,
+                        JSONObject.toJSONString(MqttResponse.withData(heartBeatData)).getBytes(), 1,
                         false);
                 } catch (MqttException e) {
                     LOGGER.info("mqtt client publish health status failed");
