@@ -40,6 +40,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.eclipse.paho.client.mqttv3.MqttException.REASON_CODE_SOCKET_FACTORY_MISMATCH;
 
@@ -70,11 +71,12 @@ public class PahoMqttClient {
      * @param password char[]
      * @param commandService a {@link com.alipay.sofa.koupleless.arklet.core.command.CommandService} object
      */
-    public PahoMqttClient(String broker, int port, UUID deviceID, String username, String password,
+    public PahoMqttClient(String broker, int port, UUID deviceID, String clientPrefix,
+                          String username, String password,
                           CommandService commandService) throws MqttException {
         this.deviceID = deviceID;
         this.mqttClient = new MqttClient(String.format("tcp://%s:%d", broker, port),
-            String.format("%s@@@%s", "koupleless", deviceID), new MemoryPersistence());
+            String.format("%s@@@%s", clientPrefix, deviceID), new MemoryPersistence());
         this.options.setAutomaticReconnect(true);
         this.options.setMaxInflight(1000);
         this.options.setUserName(username);
@@ -93,15 +95,18 @@ public class PahoMqttClient {
      * @param clientKeyFilePath String
      * @param commandService a {@link com.alipay.sofa.koupleless.arklet.core.command.CommandService} object
      */
-    public PahoMqttClient(String broker, int port, UUID deviceID, String caFilePath,
+    public PahoMqttClient(String broker, int port, UUID deviceID, String clientPrefix,
+                          String username, String password, String caFilePath,
                           String clientCrtFilePath, String clientKeyFilePath,
                           CommandService commandService) throws MqttException {
         this.deviceID = deviceID;
         this.mqttClient = new MqttClient(String.format("ssl://%s:%d", broker, port),
-            String.format("%s@@@%s", "koupleless", deviceID), new MemoryPersistence());
+            String.format("%s@@@%s", clientPrefix, deviceID), new MemoryPersistence());
         this.options.setCleanSession(true);
         this.options.setAutomaticReconnect(true);
         this.options.setMaxInflight(1000);
+        this.options.setUserName(username);
+        this.options.setPassword(password.toCharArray());
         try {
             this.options.setSocketFactory(
                 SSLUtils.getSocketFactory(caFilePath, clientCrtFilePath, clientKeyFilePath, ""));
@@ -178,6 +183,7 @@ public class PahoMqttClient {
         private final CommandService commandService;
         private final MqttClient     mqttClient;
         private final UUID           deviceID;
+        private final AtomicBoolean  run = new AtomicBoolean(false);
 
         public MqttMessageHandler(CommandService commandService, MqttClient mqttClient,
                                   UUID deviceID) {
@@ -280,12 +286,13 @@ public class PahoMqttClient {
                 LOGGER.info("mqtt client subscribe command topic failed");
                 throw new ArkletInitException("mqtt client subscribe command topic failed", e);
             }
+            if (run.compareAndSet(false, true)) {
+                ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
-            ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
-
-            executor.scheduleAtFixedRate(
-                new HeartBeatScheduledMission(getHeartBeatTopic(), mqttClient, commandService), 0,
-                120000L, TimeUnit.MILLISECONDS);
+                executor.scheduleAtFixedRate(
+                    new HeartBeatScheduledMission(getHeartBeatTopic(), mqttClient, commandService),
+                    0, 120000L, TimeUnit.MILLISECONDS);
+            }
         }
 
         public void handle(String cmd, MqttMessage msg) throws Exception {

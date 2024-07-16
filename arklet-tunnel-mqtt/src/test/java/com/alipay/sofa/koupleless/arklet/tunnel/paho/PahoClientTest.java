@@ -48,8 +48,8 @@ public class PahoClientTest extends BaseTest {
         PahoMqttClient pahoMqttClient = null;
         try {
             UUID deviceID = UUID.randomUUID();
-            pahoMqttClient = new PahoMqttClient("broker.emqx.io", 1883, deviceID, "emqx", "public",
-                commandService);
+            pahoMqttClient = new PahoMqttClient("broker.emqx.io", 1883, deviceID, "koupleless",
+                "emqx", "public", commandService);
             pahoMqttClient.open();
 
             String broker = "tcp://broker.emqx.io:1883";
@@ -75,7 +75,7 @@ public class PahoClientTest extends BaseTest {
     @Test
     public void open() throws MqttException {
         PahoMqttClient pahoMqttClient = new PahoMqttClient("broker.emqx.io", 1883,
-            UUID.randomUUID(), "emqx", "public", commandService);
+            UUID.randomUUID(), "koupleless", "emqx", "public", commandService);
         pahoMqttClient.open();
     }
 }
