@@ -16,6 +16,7 @@
  */
 package com.alipay.sofa.koupleless.base.build.plugin;
 
+import com.alipay.sofa.koupleless.base.build.plugin.model.ArtifactItem;
 import com.alipay.sofa.koupleless.base.build.plugin.utils.MavenUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
@@ -40,12 +41,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.alipay.sofa.koupleless.base.build.plugin.utils.CollectionUtils.nonNull;
 import static com.alipay.sofa.koupleless.base.build.plugin.utils.MavenUtils.getDependencyArtifacts;
-import static com.alipay.sofa.koupleless.base.build.plugin.utils.MavenUtils.getModuleArtifactIds;
+import static com.alipay.sofa.koupleless.base.build.plugin.utils.MavenUtils.getAllBundleArtifact;
 import static com.alipay.sofa.koupleless.base.build.plugin.utils.MavenUtils.getRootProject;
 import static com.alipay.sofa.koupleless.base.build.plugin.utils.MavenUtils.invoke;
 
@@ -126,7 +128,7 @@ public class KouplelessBasePackageDependencyMojo extends AbstractMojo {
         dependencyRootDir = facadeRootDir;
     }
 
-    private void integrateBaseDependencies() throws MojoExecutionException {
+    private void integrateBaseDependencies() throws MojoExecutionException, IOException {
         Model pom = new Model();
         // 设置 xml 头
         pom.setModelEncoding("UTF-8");
@@ -150,24 +152,14 @@ public class KouplelessBasePackageDependencyMojo extends AbstractMojo {
         pom.setLicenses(Collections.singletonList(license));
 
         // 配置 dependencyManagement
-        Set<String> baseModuleArtifactIds = getModuleArtifactIds(this.mavenProject);
-        getLog().info("find maven module of base: " + baseModuleArtifactIds);
+        Set<ArtifactItem> baseModuleArtifacts = getAllBundleArtifact(this.mavenProject);
+        getLog().info("find maven module of base: " + baseModuleArtifacts);
         Set<Artifact> dependencyArtifacts = getDependencyArtifacts(this.mavenProject);
         DependencyManagement dependencyManagement = new DependencyManagement();
         List<Dependency> dependencies = nonNull(dependencyArtifacts).stream()
-            .filter(it -> !baseModuleArtifactIds.contains(it.getArtifactId())).map(it -> {
-                Dependency d = new Dependency();
-                d.setArtifactId(it.getArtifactId());
-                d.setVersion(it.getVersion());
-                d.setGroupId(it.getGroupId());
-                if (!"jar".equals(it.getType())) {
-                    d.setType(it.getType());
-                }
-                if(it.hasClassifier()){
-                    d.setClassifier(it.getClassifier());
-                }
-                return d;
-            }).collect(Collectors.toList());
+                // 过滤出不属于项目的依赖
+            .filter(d -> baseModuleArtifacts.stream().noneMatch(baseModule -> Objects.equals(baseModule.getGroupId(),d.getGroupId()) && Objects.equals(baseModule.getArtifactId(), d.getArtifactId())))
+                .map(MavenUtils::createDependency).collect(Collectors.toList());
         dependencyManagement.setDependencies(dependencies);
         pom.setDependencyManagement(dependencyManagement);
 

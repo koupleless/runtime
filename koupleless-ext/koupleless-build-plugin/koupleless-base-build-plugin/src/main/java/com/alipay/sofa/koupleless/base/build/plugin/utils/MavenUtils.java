@@ -16,12 +16,15 @@
  */
 package com.alipay.sofa.koupleless.base.build.plugin.utils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.apache.maven.plugin.MojoExecutionException;
+import com.alipay.sofa.koupleless.base.build.plugin.model.ArtifactItem;
 import org.apache.maven.plugins.dependency.resolvers.ListMojo;
 import org.apache.maven.plugins.dependency.utils.DependencyStatusSets;
 import org.apache.maven.project.MavenProject;
@@ -65,18 +68,50 @@ public class MavenUtils {
         return parent;
     }
 
-    public static Set<String> getModuleArtifactIds(MavenProject project) {
-        List<String> modules = getRootProject(project).getModel().getModules();
+    public static Set<ArtifactItem> getAllBundleArtifact(MavenProject project) {
         File basedir = getRootProject(project).getBasedir();
-        Set<String> moduleArtifactIds = new HashSet<>();
-        for (String module : modules) {
-            String modulePath = new File(basedir, module).getAbsolutePath();
-            Model modulePom = buildPomModel(modulePath + File.separator + "pom.xml");
-            String artifactId = modulePom.getArtifactId();
+        return getBundlesArtifact(basedir.getAbsolutePath());
+    }
 
-            moduleArtifactIds.add(artifactId);
+    public static Dependency createDependency(Artifact artifact) {
+        Dependency d = new Dependency();
+        d.setArtifactId(artifact.getArtifactId());
+        d.setVersion(artifact.getVersion());
+        d.setGroupId(artifact.getGroupId());
+        if (!"jar".equals(artifact.getType())) {
+            d.setType(artifact.getType());
         }
-        return moduleArtifactIds;
+        if(artifact.hasClassifier()){
+            d.setClassifier(artifact.getClassifier());
+        }
+        return d;
+    }
+
+    private static Set<ArtifactItem> getBundlesArtifact(String bundlePath){
+        Set<ArtifactItem> results = new HashSet<>();
+        Model pom = buildPomModel(getPomFileOfBundle(bundlePath));
+        results.add(buildArtifact(pom));
+        for(String moduleRelativePath:pom.getModules()){
+            String moduleAbsPath = StringUtils.joinWith(File.separator,bundlePath,moduleRelativePath);
+            results.addAll(getBundlesArtifact(moduleAbsPath));
+        }
+        return results;
+    }
+
+    private static ArtifactItem buildArtifact(Model model){
+        String groupId = model.getGroupId() == null? model.getParent().getGroupId() : model.getGroupId();
+        String version = model.getVersion() == null? model.getParent().getVersion() : model.getVersion();
+        String type = model.getPackaging() == null? "jar":model.getPackaging();
+        return ArtifactItem.builder()
+                .groupId(groupId)
+                .artifactId(model.getArtifactId())
+                .version(version)
+                .type(type)
+                .build();
+    }
+
+    public static File getPomFileOfBundle(String bundlePath){
+        return new File(bundlePath,"pom.xml");
     }
 
     public static Model buildPomModel(String filePath) {
