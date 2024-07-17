@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.arklet.core;
+package com.alipay.sofa.koupleless.arklet.tunnel;
 
+import com.alipay.sofa.koupleless.arklet.core.ArkletComponentRegistry;
+import com.alipay.sofa.koupleless.arklet.core.ops.UnifiedOperationService;
 import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
 import com.alipay.sofa.koupleless.arklet.core.health.HealthService;
-import com.alipay.sofa.koupleless.arklet.core.ops.UnifiedOperationService;
 import org.junit.Before;
 import org.mockito.Mock;
 
@@ -27,11 +28,6 @@ import org.mockito.Mock;
  * @since 2023/9/5
  */
 public class BaseTest {
-
-    static {
-        System.setProperty("koupleless.arklet.custom.tunnel.classname",
-            "com.alipay.sofa.koupleless.arklet.core.tunnel.custom.MockTunnel");
-    }
 
     @Mock
     public static CommandService          commandService;
