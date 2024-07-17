@@ -16,24 +16,9 @@
  */
 package com.alipay.sofa.koupleless.arklet.core.tunnel.custom;
 
-import com.alipay.sofa.koupleless.arklet.core.api.tunnel.Tunnel;
-import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
-
 /**
  * @author dongnan
  * @since 2024/7/16
  */
-public class MockTunnel implements Tunnel {
-
-    @Override
-    public void init(CommandService commandService) {
-    }
-
-    @Override
-    public void run() {
-    }
-
-    @Override
-    public void shutdown() {
-    }
+public class MockTunnelNotImplemented {
 }
