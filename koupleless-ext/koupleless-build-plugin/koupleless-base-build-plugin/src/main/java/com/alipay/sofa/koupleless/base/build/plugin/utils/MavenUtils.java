@@ -81,37 +81,36 @@ public class MavenUtils {
         if (!"jar".equals(artifact.getType())) {
             d.setType(artifact.getType());
         }
-        if(artifact.hasClassifier()){
+        if (artifact.hasClassifier()) {
             d.setClassifier(artifact.getClassifier());
         }
         return d;
     }
 
-    private static Set<ArtifactItem> getBundlesArtifact(String bundlePath){
+    private static Set<ArtifactItem> getBundlesArtifact(String bundlePath) {
         Set<ArtifactItem> results = new HashSet<>();
         Model pom = buildPomModel(getPomFileOfBundle(bundlePath));
         results.add(buildArtifact(pom));
-        for(String moduleRelativePath:pom.getModules()){
-            String moduleAbsPath = StringUtils.joinWith(File.separator,bundlePath,moduleRelativePath);
+        for (String moduleRelativePath : pom.getModules()) {
+            String moduleAbsPath = StringUtils.joinWith(File.separator, bundlePath,
+                moduleRelativePath);
             results.addAll(getBundlesArtifact(moduleAbsPath));
         }
         return results;
     }
 
-    private static ArtifactItem buildArtifact(Model model){
-        String groupId = model.getGroupId() == null? model.getParent().getGroupId() : model.getGroupId();
-        String version = model.getVersion() == null? model.getParent().getVersion() : model.getVersion();
-        String type = model.getPackaging() == null? "jar":model.getPackaging();
-        return ArtifactItem.builder()
-                .groupId(groupId)
-                .artifactId(model.getArtifactId())
-                .version(version)
-                .type(type)
-                .build();
+    private static ArtifactItem buildArtifact(Model model) {
+        String groupId = model.getGroupId() == null ? model.getParent().getGroupId()
+            : model.getGroupId();
+        String version = model.getVersion() == null ? model.getParent().getVersion()
+            : model.getVersion();
+        String type = model.getPackaging() == null ? "jar" : model.getPackaging();
+        return ArtifactItem.builder().groupId(groupId).artifactId(model.getArtifactId())
+            .version(version).type(type).build();
     }
 
-    public static File getPomFileOfBundle(String bundlePath){
-        return new File(bundlePath,"pom.xml");
+    public static File getPomFileOfBundle(String bundlePath) {
+        return new File(bundlePath, "pom.xml");
     }
 
     public static Model buildPomModel(String filePath) {

@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -151,15 +152,20 @@ public class KouplelessBasePackageDependencyMojo extends AbstractMojo {
         license.setUrl("http://www.apache.org/licenses/LICENSE-2.0.txt");
         pom.setLicenses(Collections.singletonList(license));
 
+        // 配置 properties
+        pom.setProperties(this.mavenProject.getProperties());
+
         // 配置 dependencyManagement
         Set<ArtifactItem> baseModuleArtifacts = getAllBundleArtifact(this.mavenProject);
         getLog().info("find maven module of base: " + baseModuleArtifacts);
         Set<Artifact> dependencyArtifacts = getDependencyArtifacts(this.mavenProject);
         DependencyManagement dependencyManagement = new DependencyManagement();
         List<Dependency> dependencies = nonNull(dependencyArtifacts).stream()
-                // 过滤出不属于项目的依赖
-            .filter(d -> baseModuleArtifacts.stream().noneMatch(baseModule -> Objects.equals(baseModule.getGroupId(),d.getGroupId()) && Objects.equals(baseModule.getArtifactId(), d.getArtifactId())))
-                .map(MavenUtils::createDependency).collect(Collectors.toList());
+            // 过滤出不属于项目的依赖
+            .filter(d -> baseModuleArtifacts.stream().noneMatch(
+                baseModule -> Objects.equals(baseModule.getGroupId(), d.getGroupId())
+                              && Objects.equals(baseModule.getArtifactId(), d.getArtifactId())))
+            .map(MavenUtils::createDependency).collect(Collectors.toList());
         dependencyManagement.setDependencies(dependencies);
         pom.setDependencyManagement(dependencyManagement);
 
