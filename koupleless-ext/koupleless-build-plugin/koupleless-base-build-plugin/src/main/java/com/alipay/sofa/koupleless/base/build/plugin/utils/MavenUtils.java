@@ -113,6 +113,10 @@ public class MavenUtils {
         return new File(bundlePath, "pom.xml");
     }
 
+    public static File getPomFileOfBundle(File bundle) {
+        return new File(bundle, "pom.xml");
+    }
+
     public static Model buildPomModel(String filePath) {
         return buildPomModel(new File(filePath));
     }

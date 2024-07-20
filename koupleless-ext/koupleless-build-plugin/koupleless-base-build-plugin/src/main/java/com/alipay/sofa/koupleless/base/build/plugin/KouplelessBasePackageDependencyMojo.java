@@ -39,6 +39,8 @@ import org.apache.maven.shared.invoker.InvocationResult;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -46,9 +48,11 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.alipay.sofa.koupleless.base.build.plugin.common.FileUtils.createNewDirectory;
 import static com.alipay.sofa.koupleless.base.build.plugin.utils.CollectionUtils.nonNull;
 import static com.alipay.sofa.koupleless.base.build.plugin.utils.MavenUtils.getDependencyArtifacts;
 import static com.alipay.sofa.koupleless.base.build.plugin.utils.MavenUtils.getAllBundleArtifact;
+import static com.alipay.sofa.koupleless.base.build.plugin.utils.MavenUtils.getPomFileOfBundle;
 import static com.alipay.sofa.koupleless.base.build.plugin.utils.MavenUtils.getRootProject;
 import static com.alipay.sofa.koupleless.base.build.plugin.utils.MavenUtils.invoke;
 
@@ -69,13 +73,13 @@ public class KouplelessBasePackageDependencyMojo extends AbstractMojo {
     private File         baseDir;
 
     @Parameter(defaultValue = "${project.version}")
-    private String       version;
+    private String       dependencyVersion;
 
-    @Parameter(defaultValue = "artifact")
-    private String       artifactId;
+    @Parameter(defaultValue = "dependencyArtifact")
+    private String       dependencyArtifactId;
 
     @Parameter(defaultValue = "${project.groupId}", required = true)
-    private String       groupId;
+    private String       dependencyGroupId;
 
     private File         dependencyRootDir;
 
@@ -95,11 +99,21 @@ public class KouplelessBasePackageDependencyMojo extends AbstractMojo {
         createDependencyRootDir();
         integrateBaseDependencies();
         installBaseDependencies();
+        moveToOutputs();
+    }
+
+    private void moveToOutputs() throws IOException {
+        File outputsDir = new File(baseDir, "outputs");
+        createNewDirectory(outputsDir);
+
+        File newPomFile = new File(outputsDir, "pom.xml");
+        Files.copy(getPomFileOfBundle(dependencyRootDir).toPath(), newPomFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        getLog().info("copy pom.xml to " + newPomFile.getAbsolutePath() + " success.");
     }
 
     private void installBaseDependencies() {
         try {
-            InvocationResult result = invoke(mavenSession, "install", getBaseDependenciesPom());
+            InvocationResult result = invoke(mavenSession, "install", getPomFileOfBundle(dependencyRootDir));
             if (result.getExitCode() != 0) {
                 throw new MojoExecutionException("execute mvn install failed for base dependencies",
                     result.getExecutionException());
@@ -112,21 +126,16 @@ public class KouplelessBasePackageDependencyMojo extends AbstractMojo {
 
     private void createDependencyRootDir() throws IOException {
         //0. 创建一个空maven工程
-        File facadeRootDir = new File(baseDir, artifactId);
-        if (facadeRootDir.exists()) {
-            FileUtils.deleteQuietly(facadeRootDir);
-        }
-        if (!facadeRootDir.exists()) {
-            facadeRootDir.mkdirs();
-        }
+        File rootDir = new File(baseDir, dependencyArtifactId);
+        createNewDirectory(rootDir);
 
-        File facadePom = new File(facadeRootDir, "pom.xml");
+        File facadePom = new File(rootDir, "pom.xml");
         if (!facadePom.exists()) {
             facadePom.createNewFile();
         }
         getLog()
-            .info("create base dependency directory success." + facadeRootDir.getAbsolutePath());
-        dependencyRootDir = facadeRootDir;
+            .info("create base dependency directory success." + rootDir.getAbsolutePath());
+        dependencyRootDir = rootDir;
     }
 
     private void integrateBaseDependencies() throws MojoExecutionException, IOException {
@@ -141,9 +150,9 @@ public class KouplelessBasePackageDependencyMojo extends AbstractMojo {
         pom.setParent(rootProject.getOriginalModel().getParent());
 
         // 设置 groupId, artifactId, version
-        pom.setGroupId(groupId);
-        pom.setArtifactId(artifactId);
-        pom.setVersion(version);
+        pom.setGroupId(dependencyGroupId);
+        pom.setArtifactId(dependencyArtifactId);
+        pom.setVersion(dependencyVersion);
         pom.setPackaging("pom");
 
         // 配置 license
@@ -175,14 +184,10 @@ public class KouplelessBasePackageDependencyMojo extends AbstractMojo {
         Build build = baseDependencyPomTemplate.getBuild().clone();
         pom.setBuild(build);
 
-        MavenUtils.writePomModel(getBaseDependenciesPom(), pom);
+        MavenUtils.writePomModel(getPomFileOfBundle(dependencyRootDir), pom);
     }
 
     private void clearDependencyRootDir() {
         FileUtils.deleteQuietly(dependencyRootDir);
-    }
-
-    private File getBaseDependenciesPom() {
-        return new File(dependencyRootDir, "pom.xml");
     }
 }

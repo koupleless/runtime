@@ -53,4 +53,9 @@ public class Constants {
 
     public final static String EXTENSION_INTEGRATE_LOCAL_DIRS = "integrateLocalDirs";
 
+    /**
+     * tag
+     */
+    public final static String       PACKAGE_PREFIX_MARK                           = "*";
+
 }
