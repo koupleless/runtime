@@ -180,7 +180,9 @@ public class KouplelessBasePackageDependencyMojo extends AbstractMojo {
             .filter(d -> baseModuleArtifacts.stream().noneMatch(
                 baseModule -> Objects.equals(baseModule.getGroupId(), d.getGroupId())
                               && Objects.equals(baseModule.getArtifactId(), d.getArtifactId())))
-            .map(MavenUtils::createDependency).collect(Collectors.toList());
+            // 过滤出 scope 不是 test 的依赖
+            .filter(d -> !"test".equals(d.getScope())).map(MavenUtils::createDependency)
+            .collect(Collectors.toList());
         dependencyManagement.setDependencies(dependencies);
         pom.setDependencyManagement(dependencyManagement);
 
