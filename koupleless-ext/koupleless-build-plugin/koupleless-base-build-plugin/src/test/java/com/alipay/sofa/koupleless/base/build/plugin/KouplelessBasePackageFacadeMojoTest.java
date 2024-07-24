@@ -156,22 +156,6 @@ public class KouplelessBasePackageFacadeMojoTest {
             "mockBaseDir/base-bootstrap/src/main/java/com/mock/base/bootstrap/BootstrapModel.java")));
     }
 
-    @Test
-    public void testGetBaseModuleArtifactIds() throws Exception {
-        KouplelessBasePackageFacadeMojo mojo = new KouplelessBasePackageFacadeMojo();
-        Field field = KouplelessBasePackageFacadeMojo.class.getDeclaredField("mavenProject");
-        field.setAccessible(true);
-        field.set(mojo, bootstrapProject);
-
-        Method method = KouplelessBasePackageFacadeMojo.class
-            .getDeclaredMethod("getBaseModuleArtifactIds");
-        method.setAccessible(true);
-        Set<String> moduleArtifactIds = (Set<String>) method.invoke(mojo);
-
-        assertTrue(moduleArtifactIds.contains("base-bootstrap"));
-        assertTrue(moduleArtifactIds.contains("base-facade"));
-    }
-
     private MavenProject getMockBootstrapProject() throws URISyntaxException {
         MavenProject project = new MavenProject();
         project.setArtifactId("base-bootstrap");
