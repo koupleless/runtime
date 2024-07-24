@@ -36,6 +36,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.invoker.InvocationResult;
+import org.apache.maven.shared.invoker.MavenInvocationException;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,14 +45,13 @@ import java.nio.file.StandardCopyOption;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.alipay.sofa.koupleless.base.build.plugin.common.FileUtils.createNewDirectory;
 import static com.alipay.sofa.koupleless.base.build.plugin.utils.CollectionUtils.nonNull;
-import static com.alipay.sofa.koupleless.base.build.plugin.utils.MavenUtils.getDependencyArtifacts;
 import static com.alipay.sofa.koupleless.base.build.plugin.utils.MavenUtils.getAllBundleArtifact;
+import static com.alipay.sofa.koupleless.base.build.plugin.utils.MavenUtils.getDependencyArtifacts;
 import static com.alipay.sofa.koupleless.base.build.plugin.utils.MavenUtils.getPomFileOfBundle;
 import static com.alipay.sofa.koupleless.base.build.plugin.utils.MavenUtils.getRootProject;
 import static com.alipay.sofa.koupleless.base.build.plugin.utils.MavenUtils.invoke;
@@ -83,6 +83,9 @@ public class KouplelessBasePackageDependencyMojo extends AbstractMojo {
 
     private File         dependencyRootDir;
 
+    @Parameter(defaultValue = "true")
+    private String       cleanAfterPackageDependencies;
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         try {
@@ -107,19 +110,23 @@ public class KouplelessBasePackageDependencyMojo extends AbstractMojo {
         createNewDirectory(outputsDir);
 
         File newPomFile = new File(outputsDir, "pom.xml");
-        Files.copy(getPomFileOfBundle(dependencyRootDir).toPath(), newPomFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(getPomFileOfBundle(dependencyRootDir).toPath(), newPomFile.toPath(),
+            StandardCopyOption.REPLACE_EXISTING);
         getLog().info("copy pom.xml to " + newPomFile.getAbsolutePath() + " success.");
     }
 
-    private void installBaseDependencies() {
+    protected void installBaseDependencies() throws MojoExecutionException,
+                                             MavenInvocationException {
         try {
-            InvocationResult result = invoke(mavenSession, "install", getPomFileOfBundle(dependencyRootDir));
+            InvocationResult result = invoke(mavenSession, "install",
+                getPomFileOfBundle(dependencyRootDir));
             if (result.getExitCode() != 0) {
                 throw new MojoExecutionException("execute mvn install failed for base dependencies",
                     result.getExecutionException());
             }
         } catch (Exception e) {
             getLog().error("execute mvn install failed for base dependencies", e);
+            throw e;
         }
         getLog().info("package base dependencies success.");
     }
@@ -133,8 +140,7 @@ public class KouplelessBasePackageDependencyMojo extends AbstractMojo {
         if (!facadePom.exists()) {
             facadePom.createNewFile();
         }
-        getLog()
-            .info("create base dependency directory success." + rootDir.getAbsolutePath());
+        getLog().info("create base dependency directory success." + rootDir.getAbsolutePath());
         dependencyRootDir = rootDir;
     }
 
@@ -188,6 +194,8 @@ public class KouplelessBasePackageDependencyMojo extends AbstractMojo {
     }
 
     private void clearDependencyRootDir() {
-        FileUtils.deleteQuietly(dependencyRootDir);
+        if (Boolean.parseBoolean(cleanAfterPackageDependencies) && dependencyRootDir != null) {
+            FileUtils.deleteQuietly(dependencyRootDir);
+        }
     }
 }

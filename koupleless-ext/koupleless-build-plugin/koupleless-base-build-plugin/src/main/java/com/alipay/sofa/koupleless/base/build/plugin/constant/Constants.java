@@ -56,6 +56,6 @@ public class Constants {
     /**
      * tag
      */
-    public final static String       PACKAGE_PREFIX_MARK                           = "*";
+    public final static String PACKAGE_PREFIX_MARK            = "*";
 
 }

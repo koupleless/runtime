@@ -41,12 +41,12 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author lianglipeng.llp@alibaba-inc.com
@@ -157,7 +157,7 @@ public class MavenUtils {
 
         InvocationRequest request = new DefaultInvocationRequest();
         request.setPomFile(pomFile);
-        List<String> goals = Stream.of("install").collect(Collectors.toList());
+        List<String> goals = new ArrayList<>(Collections.singletonList(goal));
         Properties userProperties = mavenSession.getCurrentProject().getProjectBuildingRequest()
             .getUserProperties();
         if (userProperties != null) {

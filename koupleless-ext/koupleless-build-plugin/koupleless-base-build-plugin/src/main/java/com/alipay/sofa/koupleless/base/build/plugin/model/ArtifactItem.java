@@ -55,4 +55,10 @@ public class ArtifactItem {
         return Objects.hash(this.groupId, this.artifactId, this.type, this.version,
             this.classifier);
     }
+
+    @Override
+    public String toString() {
+        return this.groupId + GAV_SPLIT + this.artifactId + GAV_SPLIT + this.version + GAV_SPLIT
+               + this.type + GAV_SPLIT + this.classifier + GAV_SPLIT + this.scope;
+    }
 }

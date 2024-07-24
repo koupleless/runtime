@@ -37,6 +37,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.invoker.InvocationResult;
+import org.apache.maven.shared.invoker.MavenInvocationException;
 
 import java.io.File;
 import java.io.IOException;
@@ -65,35 +66,36 @@ import static com.alipay.sofa.koupleless.base.build.plugin.utils.MavenUtils.invo
  * @author lianglipeng.llp@alibaba-inc.com
  * @version $Id: KouplelessBasePackageFacadeMojo.java, v 0.1 2024年07月15日 11:58 立蓬 Exp $
  */
-@Mojo(name = "packageDependency", defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true, threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
+@Mojo(name = "packageFacade", defaultPhase = LifecyclePhase.PACKAGE, requiresProject = true, threadSafe = true, requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME)
 public class KouplelessBasePackageFacadeMojo extends AbstractMojo {
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
-    private MavenProject mavenProject;
+    private MavenProject                       mavenProject;
 
     @Component
-    private MavenSession mavenSession;
+    private MavenSession                       mavenSession;
 
     @Parameter(defaultValue = "${project.basedir}", required = true)
-    private File baseDir;
+    private File                               baseDir;
 
     @Parameter(defaultValue = "${project.version}")
-    private String       facadeVersion;
+    private String                             facadeVersion;
 
     @Parameter(defaultValue = "facadeArtifact")
-    private String       facadeArtifactId;
+    private String                             facadeArtifactId;
 
     @Parameter(defaultValue = "${project.groupId}", required = true)
-    private String       facadeGroupId;
+    private String                             facadeGroupId;
 
     @Parameter(defaultValue = "")
-    private LinkedHashSet<String> jvmFiles = new LinkedHashSet<>();
+    private LinkedHashSet<String>              jvmFiles                  = new LinkedHashSet<>();
+
+    @Parameter(defaultValue = "true")
+    private String                             cleanAfterPackageFacade;
 
     private static final List<JVMFileTypeEnum> SUPPORT_FILE_TYPE_TO_COPY = Stream.of(JAVA, KOTLIN)
-            .collect(
-                    Collectors
-                            .toList());
+        .collect(Collectors.toList());
 
-    private File         facadeRootDir;
+    private File                               facadeRootDir;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -114,25 +116,31 @@ public class KouplelessBasePackageFacadeMojo extends AbstractMojo {
         moveToOutputs();
     }
 
-    private void moveToOutputs() throws IOException {
+    protected void moveToOutputs() throws IOException {
         File outputsDir = new File(baseDir, "outputs");
         createNewDirectory(outputsDir);
 
         File facadeTargetDir = new File(facadeRootDir, "target");
+        if (!facadeTargetDir.exists()) {
+            throw new RuntimeException(
+                "facade target dir not exists: " + facadeTargetDir.getAbsolutePath());
+        }
         File[] targetFiles = facadeTargetDir.listFiles();
         for (File f : targetFiles) {
             if (f.getName().endsWith(".jar")) {
                 File newFile = new File(outputsDir, f.getName());
                 Files.copy(f.toPath(), newFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                getLog().info("copy " + f.getAbsolutePath() + " to " + newFile.getAbsolutePath() + " success.");
+                getLog().info("copy " + f.getAbsolutePath() + " to " + newFile.getAbsolutePath()
+                              + " success.");
             }
         }
         File newPomFile = new File(outputsDir, "pom.xml");
-        Files.copy(getPomFileOfBundle(facadeRootDir).toPath(), newPomFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(getPomFileOfBundle(facadeRootDir).toPath(), newPomFile.toPath(),
+            StandardCopyOption.REPLACE_EXISTING);
         getLog().info("copy pom.xml to " + newPomFile.getAbsolutePath() + " success.");
     }
 
-    private void extractBaseFacades() throws Exception{
+    protected void extractBaseFacades() throws Exception {
         //1. 复制指定的jvm文件到该module
         copyMatchedJVMFiles();
         getLog().info("copy supported jvm files success.");
@@ -164,20 +172,20 @@ public class KouplelessBasePackageFacadeMojo extends AbstractMojo {
         getLog().info("find maven module of base: " + baseModuleArtifacts);
         Set<Artifact> dependencyArtifacts = getDependencyArtifacts(this.mavenProject);
         List<Dependency> dependencies = nonNull(dependencyArtifacts).stream()
-                // 过滤出不属于项目的依赖
-                .filter(d -> baseModuleArtifacts.stream().noneMatch(
-                        baseModule -> Objects.equals(baseModule.getGroupId(), d.getGroupId())
-                                && Objects.equals(baseModule.getArtifactId(), d.getArtifactId())))
-                .map(d->{
-                    Dependency res = MavenUtils.createDependency(d);
-                    res.setScope("provided");
-                    return res;
-                }).collect(Collectors.toList());
+            // 过滤出不属于项目的依赖
+            .filter(d -> baseModuleArtifacts.stream().noneMatch(
+                baseModule -> Objects.equals(baseModule.getGroupId(), d.getGroupId())
+                              && Objects.equals(baseModule.getArtifactId(), d.getArtifactId())))
+            .map(d -> {
+                Dependency res = MavenUtils.createDependency(d);
+                res.setScope("provided");
+                return res;
+            }).collect(Collectors.toList());
         pom.setDependencies(dependencies);
 
         // 配置 build
-        Model baseFacadePomTemplate = MavenUtils.buildPomModel(this.getClass().getClassLoader()
-                .getResourceAsStream("base-facade-pom-template.xml"));
+        Model baseFacadePomTemplate = MavenUtils.buildPomModel(
+            this.getClass().getClassLoader().getResourceAsStream("base-facade-pom-template.xml"));
         Build build = baseFacadePomTemplate.getBuild().clone();
         pom.setBuild(build);
 
@@ -185,23 +193,22 @@ public class KouplelessBasePackageFacadeMojo extends AbstractMojo {
     }
 
     private void copyMatchedJVMFiles() throws IOException {
-        List<File> allSupportedJVMFiles = getSupportedJVMFiles(getRootProject(this.mavenProject)
-                .getBasedir());
+        List<File> allSupportedJVMFiles = getSupportedJVMFiles(
+            getRootProject(this.mavenProject).getBasedir());
 
         for (File file : allSupportedJVMFiles) {
             JVMFileTypeEnum type = getMatchedType(file);
             String fullClassName = type.parseFullClassName(file);
             if (shouldCopy(fullClassName)) {
                 File newFile = new File(facadeRootDir.getAbsolutePath() + File.separator
-                        + type.parseRelativePath(file));
+                                        + type.parseRelativePath(file));
                 if (!newFile.getParentFile().exists()) {
                     newFile.getParentFile().mkdirs();
                 }
 
                 Files.copy(file.toPath(), newFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                getLog().info(
-                        "copy file from " + file.getAbsolutePath() + " to " + newFile.getAbsolutePath()
-                                + " success.");
+                getLog().info("copy file from " + file.getAbsolutePath() + " to "
+                              + newFile.getAbsolutePath() + " success.");
             }
         }
     }
@@ -248,20 +255,22 @@ public class KouplelessBasePackageFacadeMojo extends AbstractMojo {
         return false;
     }
 
-    private void installBaseFacades(){
+    protected void installBaseFacades() throws MojoExecutionException, MavenInvocationException {
         try {
-            InvocationResult result = invoke(mavenSession, "install", getPomFileOfBundle(facadeRootDir));
+            InvocationResult result = invoke(mavenSession, "install",
+                getPomFileOfBundle(facadeRootDir));
             if (result.getExitCode() != 0) {
                 throw new MojoExecutionException("execute mvn install failed for base facades",
-                        result.getExecutionException());
+                    result.getExecutionException());
             }
         } catch (Exception e) {
             getLog().error("execute mvn install failed for base facades", e);
+            throw e;
         }
         getLog().info("package base facades success.");
     }
 
-    private void createFacadeRootDir() throws IOException {
+    protected void createFacadeRootDir() throws IOException {
         //0. 创建一个空maven工程
         File rootDir = new File(baseDir, facadeArtifactId);
         createNewDirectory(rootDir);
@@ -270,19 +279,26 @@ public class KouplelessBasePackageFacadeMojo extends AbstractMojo {
         if (!facadePom.exists()) {
             facadePom.createNewFile();
         }
-        getLog()
-                .info("create base dependency directory success." + rootDir.getAbsolutePath());
+        getLog().info("create base dependency directory success." + rootDir.getAbsolutePath());
         facadeRootDir = rootDir;
     }
 
     private void clearFacadeRootDir() {
-        FileUtils.deleteQuietly(facadeRootDir);
+        if (Boolean.parseBoolean(cleanAfterPackageFacade) && facadeRootDir != null) {
+            FileUtils.deleteQuietly(facadeRootDir);
+        }
     }
 
     enum JVMFileTypeEnum {
-        JAVA("java", ".java", StringUtils.join(new String[] { "src", "main", "java" },
-                File.separator) + File.separator), KOTLIN("kotlin", ".kt", StringUtils.join(
-                new String[] { "src", "main", "kotlin" }, File.separator) + File.separator);
+                          JAVA("java", ".java", StringUtils.join(new String[] { "src", "main",
+                                                                                "java" },
+                              File.separator) + File.separator), KOTLIN("kotlin", ".kt",
+                                                                        StringUtils.join(
+                                                                            new String[] { "src",
+                                                                                           "main",
+                                                                                           "kotlin" },
+                                                                            File.separator)
+                                                                                         + File.separator);
 
         private String name;
         private String suffix;
@@ -298,7 +314,7 @@ public class KouplelessBasePackageFacadeMojo extends AbstractMojo {
             String absPath = file.getAbsolutePath();
             boolean inParentRootDir = absPath.contains(parentRootDir);
             boolean onlyOneParentRootDir = absPath.indexOf(parentRootDir) == absPath
-                    .lastIndexOf(parentRootDir);
+                .lastIndexOf(parentRootDir);
             boolean matchedType = absPath.endsWith(suffix);
             return inParentRootDir && onlyOneParentRootDir && matchedType;
         }
@@ -308,9 +324,8 @@ public class KouplelessBasePackageFacadeMojo extends AbstractMojo {
                 return null;
             }
             String absPath = file.getAbsolutePath();
-            return StringUtils
-                    .removeEnd(StringUtils.substringAfter(absPath, parentRootDir), suffix).replace(
-                            File.separator, ".");
+            return StringUtils.removeEnd(StringUtils.substringAfter(absPath, parentRootDir), suffix)
+                .replace(File.separator, ".");
         }
 
         public String parseRelativePath(File file) {
