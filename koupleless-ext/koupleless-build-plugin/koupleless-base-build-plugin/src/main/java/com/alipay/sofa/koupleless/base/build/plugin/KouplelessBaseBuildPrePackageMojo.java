@@ -58,8 +58,13 @@ import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResult;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 /**
@@ -112,7 +117,9 @@ public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
     String getDependencyId(Dependency dependency) {
         return dependency.getGroupId() + ":" + dependency.getArtifactId() + ":"
                + dependency.getVersion() + ":" + dependency.getType()
-               + (dependency.getClassifier() != null ? ":" + dependency.getClassifier() : "");
+               + (StringUtils.isNotEmpty(dependency.getClassifier())
+                   ? ":" + dependency.getClassifier()
+                   : "");
     }
 
     // visible for testing
