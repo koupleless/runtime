@@ -145,6 +145,8 @@ public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
                     String dependencyId = getDependencyId(dependency);
                     if (Pattern.compile(regexp).matcher(dependencyId).matches()) {
                         adapterDependencies.add(adapterMapping.getAdapter());
+                        getLog().info(String.format("koupleless adapter matched %s with %s", regexp,
+                            dependency.toString()));
                         break;
                     }
                 }
@@ -176,6 +178,7 @@ public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
                 getLog().info("success add dependency: " + dependency.toString());
             } catch (Throwable t) {
                 getLog().error("error add dependency: " + dependency.toString(), t);
+                throw new RuntimeException(t);
             }
         }
     }
