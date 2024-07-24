@@ -283,7 +283,7 @@ public class KouplelessBasePackageFacadeMojo extends AbstractMojo {
         facadeRootDir = rootDir;
     }
 
-    private void clearFacadeRootDir() {
+    protected void clearFacadeRootDir() {
         if (Boolean.parseBoolean(cleanAfterPackageFacade) && facadeRootDir != null) {
             FileUtils.deleteQuietly(facadeRootDir);
         }

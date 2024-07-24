@@ -85,6 +85,9 @@ public class KouplelessBasePackageFacadeMojoTest {
         // 2. verify the kotlin file copy
         assertTrue(CommonUtils.resourceExists(
             "mockBaseDir/base-bootstrap/base-all-dependencies-facade/src/main/kotlin/com/mock/base/facade/ModuleDescriptionInfo.kt"));
+
+        setField("cleanAfterPackageFacade", mojo, "true");
+        mojo.clearFacadeRootDir();
     }
 
     @Test
