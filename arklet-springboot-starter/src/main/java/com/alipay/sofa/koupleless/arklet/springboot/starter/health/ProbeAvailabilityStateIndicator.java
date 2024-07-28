@@ -55,18 +55,10 @@ public class ProbeAvailabilityStateIndicator extends AbstractHealthIndicator {
 
     @Override
     protected void doHealthCheck(Builder builder) throws Exception {
-        BizAvailabilityState baseAvailabilityState = BizAvailabilityState
-            .build(applicationAvailability);
-        Map<String, BizAvailabilityState> allBizAvailabilityState = getAllBizAvailabilityState();
-
         builder.up();
-        if (!baseAvailabilityState.isHealthy() || allBizAvailabilityState.values().stream()
-            .map(BizAvailabilityState::isHealthy).anyMatch(Boolean.FALSE::equals)) {
-            builder.down();
-        }
-
-        builder.withDetail("bizAvailability", allBizAvailabilityState);
-        builder.withDetail("baseAvailability", baseAvailabilityState);
+        builder.withDetail("baseAvailability", BizAvailabilityState
+                .build(applicationAvailability));
+        builder.withDetail("bizAvailability", getAllBizAvailabilityState());
     }
 
     private Map<String, BizAvailabilityState> getAllBizAvailabilityState() {
