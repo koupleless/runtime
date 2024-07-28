@@ -56,8 +56,8 @@ public class HealthAutoConfiguration {
     @Bean("baseStartUpHealthIndicator")
     @ConditionalOnClass(name = { "org.springframework.boot.actuate.health.AbstractHealthIndicator" })
     public BaseStartUpHealthIndicator baseStartUpHealthIndicator(Environment masterBizEnvironment) {
-        BaseStartUpHealthIndicator indicator = new BaseStartUpHealthIndicator(
-            Boolean.parseBoolean(masterBizEnvironment.getProperty(WITH_ALL_BIZ_READINESS,"false")));
+        BaseStartUpHealthIndicator indicator = new BaseStartUpHealthIndicator(Boolean
+            .parseBoolean(masterBizEnvironment.getProperty(WITH_ALL_BIZ_READINESS, "false")));
         ArkClient.getEventAdminService().register(indicator);
         return indicator;
     }
