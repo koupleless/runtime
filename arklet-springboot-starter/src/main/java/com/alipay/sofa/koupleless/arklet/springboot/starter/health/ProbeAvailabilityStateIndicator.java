@@ -56,8 +56,7 @@ public class ProbeAvailabilityStateIndicator extends AbstractHealthIndicator {
     @Override
     protected void doHealthCheck(Builder builder) throws Exception {
         builder.up();
-        builder.withDetail("baseAvailability", BizAvailabilityState
-                .build(applicationAvailability));
+        builder.withDetail("baseAvailability", BizAvailabilityState.build(applicationAvailability));
         builder.withDetail("bizAvailability", getAllBizAvailabilityState());
     }
 
