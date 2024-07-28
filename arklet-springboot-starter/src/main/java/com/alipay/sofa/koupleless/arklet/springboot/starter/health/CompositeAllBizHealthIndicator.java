@@ -82,10 +82,21 @@ public class CompositeAllBizHealthIndicator extends AbstractHealthIndicator {
                 return; // only skips this iteration.
             }
 
-            Biz biz = ArkClient.getBizManagerService().getBizByClassLoader(classLoader);
-            Map<String, HealthIndicator> bizIndicators = bizRuntimeContext
-                .getRootApplicationContext().getBeansOfType(HealthIndicator.class);
             Health.Builder bizBuilder = new Health.Builder().up();
+
+            Biz biz = ArkClient.getBizManagerService().getBizByClassLoader(classLoader);
+            Map<String, HealthIndicator> bizIndicators;
+
+            try {
+                bizIndicators = bizRuntimeContext.getRootApplicationContext()
+                    .getBeansOfType(HealthIndicator.class);
+            } catch (Exception e) {
+                bizBuilder.down();
+                bizBuilder.withDetail("applicationContext", "haven't refreshed");
+                Health bizHealth = bizBuilder.build();
+                bizHealthMap.put(biz.getIdentity(), bizHealth);
+                return;
+            }
 
             bizIndicators.forEach((bizIndicatorBeanName, bizIndicator) -> {
                 String bizIndicatorName = bizIndicatorBeanName.substring(0,
