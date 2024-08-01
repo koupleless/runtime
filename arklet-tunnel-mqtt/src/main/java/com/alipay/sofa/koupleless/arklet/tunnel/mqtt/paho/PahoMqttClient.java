@@ -57,6 +57,7 @@ public class PahoMqttClient {
 
     private final MqttClient          mqttClient;
     private final UUID                deviceID;
+    private final String              envKey;
     private final MqttConnectOptions  options = new MqttConnectOptions();
 
     private final CommandService      commandService;
@@ -72,7 +73,7 @@ public class PahoMqttClient {
      * @param commandService a {@link com.alipay.sofa.koupleless.arklet.core.command.CommandService} object
      */
     public PahoMqttClient(String broker, int port, UUID deviceID, String clientPrefix,
-                          String username, String password,
+                          String envKey, String username, String password,
                           CommandService commandService) throws MqttException {
         this.deviceID = deviceID;
         this.mqttClient = new MqttClient(String.format("tcp://%s:%d", broker, port),
@@ -81,6 +82,8 @@ public class PahoMqttClient {
         this.options.setMaxInflight(1000);
         this.options.setUserName(username);
         this.options.setPassword(password.toCharArray());
+
+        this.envKey = envKey;
 
         this.commandService = commandService;
     }
@@ -96,7 +99,7 @@ public class PahoMqttClient {
      * @param commandService a {@link com.alipay.sofa.koupleless.arklet.core.command.CommandService} object
      */
     public PahoMqttClient(String broker, int port, UUID deviceID, String clientPrefix,
-                          String username, String password, String caFilePath,
+                          String envKey, String username, String password, String caFilePath,
                           String clientCrtFilePath, String clientKeyFilePath,
                           CommandService commandService) throws MqttException {
         this.deviceID = deviceID;
@@ -107,6 +110,7 @@ public class PahoMqttClient {
         this.options.setMaxInflight(1000);
         this.options.setUserName(username);
         this.options.setPassword(password.toCharArray());
+        this.envKey = envKey;
         try {
             this.options.setSocketFactory(
                 SSLUtils.getSocketFactory(caFilePath, clientCrtFilePath, clientKeyFilePath, ""));
@@ -123,8 +127,8 @@ public class PahoMqttClient {
      * @throws MqttException if any.
      */
     public void open() throws MqttException {
-        this.mqttClient
-            .setCallback(new PahoMqttCallback(this.mqttClient, this.commandService, this.deviceID));
+        this.mqttClient.setCallback(
+            new PahoMqttCallback(this.mqttClient, this.commandService, this.deviceID, this.envKey));
         this.mqttClient.connect(this.options);
     }
 
@@ -142,9 +146,10 @@ public class PahoMqttClient {
 
         private final MqttMessageHandler messageHandler;
 
-        public PahoMqttCallback(MqttClient mqttClient, CommandService commandService,
-                                UUID deviceID) {
-            this.messageHandler = new MqttMessageHandler(commandService, mqttClient, deviceID);
+        public PahoMqttCallback(MqttClient mqttClient, CommandService commandService, UUID deviceID,
+                                String envKey) {
+            this.messageHandler = new MqttMessageHandler(commandService, mqttClient, deviceID,
+                envKey);
         }
 
         @Override
@@ -183,13 +188,18 @@ public class PahoMqttClient {
         private final CommandService commandService;
         private final MqttClient     mqttClient;
         private final UUID           deviceID;
+        private String               baseEnv;
         private final AtomicBoolean  run = new AtomicBoolean(false);
 
         public MqttMessageHandler(CommandService commandService, MqttClient mqttClient,
-                                  UUID deviceID) {
+                                  UUID deviceID, String envKey) {
             this.commandService = commandService;
             this.mqttClient = mqttClient;
             this.deviceID = deviceID;
+            this.baseEnv = System.getenv(envKey);
+            if (this.baseEnv == null || this.baseEnv.isEmpty()) {
+                this.baseEnv = Constants.DEFAULT_BASE_ENV;
+            }
         }
 
         /**
@@ -198,7 +208,7 @@ public class PahoMqttClient {
          * @return String
          */
         private String getHealthTopic() {
-            return String.format("koupleless/%s/base/health", deviceID);
+            return String.format("koupleless_%s/%s/base/health", baseEnv, deviceID);
         }
 
         /**
@@ -207,7 +217,7 @@ public class PahoMqttClient {
          * @return String
          */
         private String getHeartBeatTopic() {
-            return String.format("koupleless/%s/base/heart", deviceID);
+            return String.format("koupleless_%s/%s/base/heart", baseEnv, deviceID);
         }
 
         /**
@@ -216,7 +226,7 @@ public class PahoMqttClient {
          * @return String
          */
         private String getBizTopic() {
-            return String.format("koupleless/%s/base/biz", deviceID);
+            return String.format("koupleless_%s/%s/base/biz", baseEnv, deviceID);
         }
 
         /**
@@ -225,7 +235,7 @@ public class PahoMqttClient {
          * @return String
          */
         private String getCommandTopic() {
-            return String.format("koupleless/%s/+", deviceID);
+            return String.format("koupleless_%s/%s/+", baseEnv, deviceID);
         }
 
         static class HeartBeatScheduledMission implements Runnable {
