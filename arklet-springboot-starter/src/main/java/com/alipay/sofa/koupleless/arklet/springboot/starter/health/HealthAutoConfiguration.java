@@ -23,6 +23,7 @@ import com.alipay.sofa.koupleless.common.environment.ConditionalOnMasterBiz;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 import static com.alipay.sofa.koupleless.arklet.springboot.starter.health.BaseStartUpHealthIndicator.WITH_ALL_BIZ_READINESS;
 
@@ -54,9 +55,9 @@ public class HealthAutoConfiguration {
      */
     @Bean("baseStartUpHealthIndicator")
     @ConditionalOnClass(name = { "org.springframework.boot.actuate.health.AbstractHealthIndicator" })
-    public BaseStartUpHealthIndicator baseStartUpHealthIndicator() {
-        BaseStartUpHealthIndicator indicator = new BaseStartUpHealthIndicator(
-            Boolean.parseBoolean(EnvironmentUtils.getProperty(WITH_ALL_BIZ_READINESS, "false")));
+    public BaseStartUpHealthIndicator baseStartUpHealthIndicator(Environment masterBizEnvironment) {
+        BaseStartUpHealthIndicator indicator = new BaseStartUpHealthIndicator(Boolean
+            .parseBoolean(masterBizEnvironment.getProperty(WITH_ALL_BIZ_READINESS, "false")));
         ArkClient.getEventAdminService().register(indicator);
         return indicator;
     }
