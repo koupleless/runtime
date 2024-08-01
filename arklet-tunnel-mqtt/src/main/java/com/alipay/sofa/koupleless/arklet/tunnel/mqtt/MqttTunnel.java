@@ -52,6 +52,7 @@ public class MqttTunnel implements Tunnel {
     private final static String                                           MQTT_PORT_ATTRIBUTE                 = "koupleless.arklet.mqtt.port";
     private final static String                                           MQTT_USERNAME_ATTRIBUTE             = "koupleless.arklet.mqtt.username";
     private final static String                                           MQTT_PASSWORD_ATTRIBUTE             = "koupleless.arklet.mqtt.password";
+    private final static String                                           MQTT_ENV_KEY_ATTRIBUTE              = "koupleless.arklet.mqtt.env.key";
     private final static String                                           MQTT_CA_FILE_PATH_ATTRIBUTE         = "koupleless.arklet.mqtt.ca_path";
     private final static String                                           MQTT_CLIENT_CRT_FILE_PATH_ATTRIBUTE = "koupleless.arklet.mqtt.client_crt_path";
     private final static String                                           MQTT_CLIENT_KEY_FILE_PATH_ATTRIBUTE = "koupleless.arklet.mqtt.client_key_path";
@@ -70,6 +71,7 @@ public class MqttTunnel implements Tunnel {
     private String                                                        brokerUrl;
     private String                                                        username;
     private String                                                        password;
+    private String                                                        envKey;
     private String                                                        clientPrefix;
     private String                                                        caFilePath;
     private String                                                        clientCrtFilePath;
@@ -91,6 +93,7 @@ public class MqttTunnel implements Tunnel {
             this.brokerUrl = EnvironmentUtils.getProperty(MQTT_BROKER_ATTRIBUTE);
             this.username = EnvironmentUtils.getProperty(MQTT_USERNAME_ATTRIBUTE);
             this.password = EnvironmentUtils.getProperty(MQTT_PASSWORD_ATTRIBUTE);
+            this.envKey = EnvironmentUtils.getProperty(MQTT_ENV_KEY_ATTRIBUTE);
             this.clientPrefix = EnvironmentUtils.getProperty(MQTT_CLIENT_PREFIX_ATTRIBUTE);
             this.caFilePath = EnvironmentUtils.getProperty(MQTT_CA_FILE_PATH_ATTRIBUTE);
             this.clientCrtFilePath = EnvironmentUtils
@@ -102,12 +105,6 @@ public class MqttTunnel implements Tunnel {
                 LOGGER.error("Invalid arklet mqtt port: empty");
                 throw new com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletInitException(
                     "Invalid arklet mqtt port: empty");
-            }
-
-            if (StringUtils.isEmpty(this.brokerUrl)) {
-                LOGGER.error("Invalid arklet mqtt broker: empty");
-                throw new com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletInitException(
-                    "Invalid arklet mqtt broker: empty");
             }
 
             if (StringUtils.isEmpty(this.username)) {
@@ -139,6 +136,11 @@ public class MqttTunnel implements Tunnel {
                 LOGGER.error("Invalid arklet mqtt broker url: empty");
                 throw new ArkletInitException("Invalid arklet mqtt broker url: empty");
             }
+
+            if (StringUtils.isEmpty(this.envKey)) {
+                LOGGER.error("Invalid arklet mqtt envKey: empty");
+                throw new ArkletInitException("Invalid arklet mqtt envKey: empty");
+            }
         }
     }
 
@@ -159,12 +161,12 @@ public class MqttTunnel implements Tunnel {
                 if (!StringUtils.isEmpty(this.caFilePath)) {
                     // init mqtt client with ca and client crt
                     pahoMqttClient = new PahoMqttClient(brokerUrl, port, deviceID, clientPrefix,
-                        username, password, caFilePath, clientCrtFilePath, clientKeyFilePath,
-                        commandService);
+                        this.envKey, username, password, caFilePath, clientCrtFilePath,
+                        clientKeyFilePath, commandService);
                 } else {
                     // init mqtt client with username and password
                     pahoMqttClient = new PahoMqttClient(brokerUrl, port, deviceID, clientPrefix,
-                        username, password, commandService);
+                        this.envKey, username, password, commandService);
                 }
                 pahoMqttClient.open();
             } catch (MqttException e) {
