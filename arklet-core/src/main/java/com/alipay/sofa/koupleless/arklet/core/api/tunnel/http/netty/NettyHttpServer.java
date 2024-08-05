@@ -22,6 +22,7 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alipay.sofa.koupleless.arklet.core.api.model.Response;
 import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
 import com.alipay.sofa.koupleless.arklet.core.command.meta.Output;
@@ -190,7 +191,7 @@ public class NettyHttpServer {
         private void returnResponse(ChannelHandlerContext ctx, Response response) {
             DefaultFullHttpResponse httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1,
                 HttpResponseStatus.OK,
-                Unpooled.copiedBuffer(JSONObject.toJSONString(response), CharsetUtil.UTF_8));
+                Unpooled.copiedBuffer(JSONObject.toJSONString(response, SerializerFeature.WriteEnumUsingName), CharsetUtil.UTF_8));
             ChannelFuture future = ctx.writeAndFlush(httpResponse);
             if (future != null) {
                 future.addListener(ChannelFutureListener.CLOSE);
