@@ -115,9 +115,28 @@ public class ServiceProxyFactory {
         }
 
         BizRuntimeContext bizRuntimeContext = BizRuntimeContextRegistry.getBizRuntimeContext(biz);
-        if (bizRuntimeContext.getRootApplicationContext() == null) {
+        if (bizRuntimeContext.getRootApplicationContext() == null
+            && bizRuntimeContext.getMainBizApplicationContext() == null) {
             throw new BizRuntimeException(E100002,
                 String.format("biz %s:%s spring context is null", bizName, bizVersion));
+        }
+
+        if (bizRuntimeContext.getMainBizApplicationContext() != null) {
+            if (!StringUtils.isEmpty(name)) {
+                return bizRuntimeContext.getMainBizApplicationContext().getObject(name);
+            }
+
+            if (clientType != null) {
+                Class<?> serviceType;
+                try {
+                    serviceType = biz.getBizClassLoader().loadClass(clientType.getName());
+                } catch (ClassNotFoundException e) {
+                    throw new BizRuntimeException(E100005,
+                        String.format("Cannot find class %s from the biz %s", clientType.getName(),
+                            biz.getIdentity()));
+                }
+                return bizRuntimeContext.getMainBizApplicationContext().getObjectMap(serviceType);
+            }
         }
 
         if (!StringUtils.isEmpty(name)) {
@@ -142,6 +161,12 @@ public class ServiceProxyFactory {
     private static <T> Map<String, T> listService(Biz biz, Class<T> serviceType) {
         BizRuntimeContext bizRuntimeContext = checkBizStateAndGetBizRuntimeContext(biz.getBizName(),
             biz.getBizVersion(), biz);
+        MainBizApplicationContext mainBizApplicationContext = bizRuntimeContext
+            .getMainBizApplicationContext();
+        if (mainBizApplicationContext != null) {
+            return mainBizApplicationContext.getObjectMap(serviceType);
+        }
+
         ApplicationContext rootApplicationContext = bizRuntimeContext.getRootApplicationContext();
         if (rootApplicationContext instanceof AbstractApplicationContext) {
             ConfigurableListableBeanFactory beanFactory = ((AbstractApplicationContext) rootApplicationContext)

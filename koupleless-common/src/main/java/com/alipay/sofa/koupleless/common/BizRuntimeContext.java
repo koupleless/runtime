@@ -23,6 +23,7 @@ import com.alipay.sofa.koupleless.common.service.AbstractComponent;
 import com.alipay.sofa.koupleless.common.service.AbstractServiceComponent;
 import com.alipay.sofa.koupleless.common.service.BeanRegistry;
 import com.alipay.sofa.koupleless.common.service.ComponentRegistry;
+import com.alipay.sofa.koupleless.common.service.MainBizApplicationContext;
 import com.alipay.sofa.koupleless.common.service.ServiceProxyCache;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -43,6 +44,8 @@ public class BizRuntimeContext implements ComponentRegistry {
     private ClassLoader                                                          appClassLoader;
 
     private ApplicationContext                                                   rootApplicationContext;
+
+    private MainBizApplicationContext                                            mainBizApplicationContext;
 
     private Map<ClassLoader, Map<String, ServiceProxyCache>>                     serviceProxyCaches = new ConcurrentHashMap<>();
 
@@ -101,6 +104,14 @@ public class BizRuntimeContext implements ComponentRegistry {
      */
     public void setRootApplicationContext(ApplicationContext rootApplicationContext) {
         this.rootApplicationContext = rootApplicationContext;
+    }
+
+    public MainBizApplicationContext getMainBizApplicationContext() {
+        return mainBizApplicationContext;
+    }
+
+    public void setMainBizApplicationContext(MainBizApplicationContext mainBizApplicationContext) {
+        this.mainBizApplicationContext = mainBizApplicationContext;
     }
 
     /**
