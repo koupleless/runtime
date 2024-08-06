@@ -92,7 +92,7 @@ public class KouplelessBasePackageFacadeMojo extends AbstractMojo {
     @Parameter(defaultValue = "true")
     private String                             cleanAfterPackageFacade;
 
-    private static final List<JVMFileTypeEnum> SUPPORT_FILE_TYPE_TO_COPY = Stream.of(JAVA, KOTLIN)
+    private static final List<JVMFileTypeEnum> SUPPORT_FILE_TYPE_TO_COPY = Stream.of(JAVA)
         .collect(Collectors.toList());
 
     private File                               facadeRootDir;

@@ -10,7 +10,7 @@
 
     <properties>
         <revision>2.1.4</revision>
-        <sofa.ark.version>3.1.5</sofa.ark.version>
+        <sofa.ark.version>3.1.5-SNAPSHOT</sofa.ark.version>
         <spring.boot.version>3.2.1</spring.boot.version>
         <project.encoding>UTF-8</project.encoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
