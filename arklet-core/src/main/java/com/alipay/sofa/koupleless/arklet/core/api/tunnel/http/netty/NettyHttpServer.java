@@ -192,7 +192,7 @@ public class NettyHttpServer {
             DefaultFullHttpResponse httpResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1,
                 HttpResponseStatus.OK,
                 Unpooled.copiedBuffer(
-                    JSONObject.toJSONString(response, SerializerFeature.WriteEnumUsingName),
+                    JSONObject.toJSONString(response, SerializerFeature.WriteEnumUsingToString),
                     CharsetUtil.UTF_8));
             ChannelFuture future = ctx.writeAndFlush(httpResponse);
             if (future != null) {
