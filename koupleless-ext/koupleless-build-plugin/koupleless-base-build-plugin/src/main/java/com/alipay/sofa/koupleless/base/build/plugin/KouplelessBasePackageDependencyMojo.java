@@ -89,7 +89,7 @@ public class KouplelessBasePackageDependencyMojo extends AbstractMojo {
     private String       cleanAfterPackageDependencies;
 
     @Parameter(defaultValue = "1.8")
-    private String       jdkVersion;
+    private String       jvmTarget;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -201,8 +201,8 @@ public class KouplelessBasePackageDependencyMojo extends AbstractMojo {
         Plugin mavenCompilerPlugin = build.getPlugins().stream()
             .filter(it -> it.getArtifactId().equals("maven-compiler-plugin")).findFirst().get();
         Xpp3Dom configuration = (Xpp3Dom) mavenCompilerPlugin.getConfiguration();
-        configuration.getChild("source").setValue(jdkVersion);
-        configuration.getChild("target").setValue(jdkVersion);
+        configuration.getChild("source").setValue(jvmTarget);
+        configuration.getChild("target").setValue(jvmTarget);
 
         MavenUtils.writePomModel(getPomFileOfBundle(dependencyRootDir), pom);
     }

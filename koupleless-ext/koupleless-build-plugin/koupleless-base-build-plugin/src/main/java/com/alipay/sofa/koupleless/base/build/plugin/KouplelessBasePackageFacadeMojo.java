@@ -96,7 +96,7 @@ public class KouplelessBasePackageFacadeMojo extends AbstractMojo {
     private String                             cleanAfterPackageFacade;
 
     @Parameter(defaultValue = "1.8")
-    private String                             jdkVersion;
+    private String                             jvmTarget;
 
     private static final List<JVMFileTypeEnum> SUPPORT_FILE_TYPE_TO_COPY = Stream.of(JAVA, KOTLIN)
         .collect(Collectors.toList());
@@ -203,14 +203,14 @@ public class KouplelessBasePackageFacadeMojo extends AbstractMojo {
         Plugin mavenCompilerPlugin = build.getPlugins().stream()
             .filter(it -> it.getArtifactId().equals("maven-compiler-plugin")).findFirst().get();
         Xpp3Dom mavenCompilerConfig = (Xpp3Dom) mavenCompilerPlugin.getConfiguration();
-        mavenCompilerConfig.getChild("source").setValue(jdkVersion);
-        mavenCompilerConfig.getChild("target").setValue(jdkVersion);
+        mavenCompilerConfig.getChild("source").setValue(jvmTarget);
+        mavenCompilerConfig.getChild("target").setValue(jvmTarget);
 
         // 配置 kotlin-maven-plugin 中的 jdk 版本
         Plugin kotlinMavenPlugin = build.getPlugins().stream()
             .filter(it -> it.getArtifactId().equals("kotlin-maven-plugin")).findFirst().get();
         Xpp3Dom kotlinMavenConfig = (Xpp3Dom) kotlinMavenPlugin.getConfiguration();
-        kotlinMavenConfig.getChild("jdkVersion").setValue(jdkVersion);
+        kotlinMavenConfig.getChild("jvmTarget").setValue(jvmTarget);
 
         MavenUtils.writePomModel(getPomFileOfBundle(facadeRootDir), pom);
     }
