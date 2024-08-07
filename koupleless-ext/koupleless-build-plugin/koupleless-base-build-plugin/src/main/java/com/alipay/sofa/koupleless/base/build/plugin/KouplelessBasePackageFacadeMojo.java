@@ -95,7 +95,7 @@ public class KouplelessBasePackageFacadeMojo extends AbstractMojo {
     private String                             cleanAfterPackageFacade;
 
     @Parameter(defaultValue = "17")
-    private String jdkVersion;
+    private String                             jdkVersion;
 
     private static final List<JVMFileTypeEnum> SUPPORT_FILE_TYPE_TO_COPY = Stream.of(JAVA)
         .collect(Collectors.toList());
@@ -199,8 +199,8 @@ public class KouplelessBasePackageFacadeMojo extends AbstractMojo {
         pom.setBuild(build);
 
         // 配置 maven-compiler-plugin 中的 jdk 版本
-        Plugin mavenCompilerPlugin = build.getPlugins().stream().filter(it -> it.getArtifactId().equals("maven-compiler-plugin"))
-                .findFirst().get();
+        Plugin mavenCompilerPlugin = build.getPlugins().stream()
+            .filter(it -> it.getArtifactId().equals("maven-compiler-plugin")).findFirst().get();
         Xpp3Dom mavenCompilerConfig = (Xpp3Dom) mavenCompilerPlugin.getConfiguration();
         mavenCompilerConfig.getChild("source").setValue(jdkVersion);
         mavenCompilerConfig.getChild("target").setValue(jdkVersion);
