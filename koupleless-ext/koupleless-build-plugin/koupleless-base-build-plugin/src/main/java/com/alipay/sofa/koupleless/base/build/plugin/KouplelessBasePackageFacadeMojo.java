@@ -25,6 +25,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Exclusion;
 import org.apache.maven.model.License;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.AbstractMojo;
@@ -179,6 +180,10 @@ public class KouplelessBasePackageFacadeMojo extends AbstractMojo {
             .map(d -> {
                 Dependency res = MavenUtils.createDependency(d);
                 res.setScope("provided");
+                Exclusion exclusion = new Exclusion();
+                exclusion.setArtifactId("*");
+                exclusion.setGroupId("*");
+                res.setExclusions(Collections.singletonList(exclusion));
                 return res;
             }).collect(Collectors.toList());
         pom.setDependencies(dependencies);
