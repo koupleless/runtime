@@ -89,7 +89,7 @@ public class KouplelessBasePackageDependencyMojo extends AbstractMojo {
     private String       cleanAfterPackageDependencies;
 
     @Parameter(defaultValue = "1.8")
-    private String jdkVersion;
+    private String       jdkVersion;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -198,8 +198,8 @@ public class KouplelessBasePackageDependencyMojo extends AbstractMojo {
         pom.setBuild(build);
 
         // 配置 maven compiler plugin 中的 jdk 版本
-        Plugin mavenCompilerPlugin = build.getPlugins().stream().filter(it -> it.getArtifactId().equals("maven-compiler-plugin"))
-            .findFirst().get();
+        Plugin mavenCompilerPlugin = build.getPlugins().stream()
+            .filter(it -> it.getArtifactId().equals("maven-compiler-plugin")).findFirst().get();
         Xpp3Dom configuration = (Xpp3Dom) mavenCompilerPlugin.getConfiguration();
         configuration.getChild("source").setValue(jdkVersion);
         configuration.getChild("target").setValue(jdkVersion);
