@@ -28,8 +28,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>${JDK_VERSION}</source>
-                    <target>${JDK_VERSION}</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -37,7 +37,7 @@
                 <artifactId>kotlin-maven-plugin</artifactId>
                 <version>1.8.10</version>
                 <configuration>
-                    <jvmTarget>${JDK_VERSION}</jvmTarget>
+                    <jvmTarget>1.8</jvmTarget>
                 </configuration>
                 <executions>
                     <execution>

@@ -18,18 +18,12 @@ package com.alipay.sofa.koupleless.utils;
 
 import com.alipay.sofa.koupleless.base.build.plugin.model.ArtifactItem;
 import com.alipay.sofa.koupleless.base.build.plugin.utils.MavenUtils;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
 import org.junit.Test;
 
 import java.net.URISyntaxException;
-import java.util.Collections;
 import java.util.Set;
-
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * @author lianglipeng.llp@alibaba-inc.com
