@@ -28,6 +28,7 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Exclusion;
 import org.apache.maven.model.License;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -39,6 +40,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.invoker.InvocationResult;
 import org.apache.maven.shared.invoker.MavenInvocationException;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 import java.io.File;
 import java.io.IOException;
@@ -92,7 +94,10 @@ public class KouplelessBasePackageFacadeMojo extends AbstractMojo {
     @Parameter(defaultValue = "true")
     private String                             cleanAfterPackageFacade;
 
-    private static final List<JVMFileTypeEnum> SUPPORT_FILE_TYPE_TO_COPY = Stream.of(JAVA)
+    @Parameter(defaultValue = "17")
+    private String jdkVersion;
+
+    private static final List<JVMFileTypeEnum> SUPPORT_FILE_TYPE_TO_COPY = Stream.of(JAVA, KOTLIN)
         .collect(Collectors.toList());
 
     private File                               facadeRootDir;
@@ -192,6 +197,13 @@ public class KouplelessBasePackageFacadeMojo extends AbstractMojo {
             this.getClass().getClassLoader().getResourceAsStream("base-facade-pom-template.xml"));
         Build build = baseFacadePomTemplate.getBuild().clone();
         pom.setBuild(build);
+
+        // 配置 maven-compiler-plugin 中的 jdk 版本
+        Plugin mavenCompilerPlugin = build.getPlugins().stream().filter(it -> it.getArtifactId().equals("maven-compiler-plugin"))
+                .findFirst().get();
+        Xpp3Dom mavenCompilerConfig = (Xpp3Dom) mavenCompilerPlugin.getConfiguration();
+        mavenCompilerConfig.getChild("source").setValue(jdkVersion);
+        mavenCompilerConfig.getChild("target").setValue(jdkVersion);
 
         MavenUtils.writePomModel(getPomFileOfBundle(facadeRootDir), pom);
     }
