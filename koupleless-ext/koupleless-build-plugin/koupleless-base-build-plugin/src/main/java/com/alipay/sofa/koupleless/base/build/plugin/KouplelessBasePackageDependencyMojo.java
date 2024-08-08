@@ -44,10 +44,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.alipay.sofa.koupleless.base.build.plugin.common.FileUtils.createNewDirectory;
@@ -173,7 +170,9 @@ public class KouplelessBasePackageDependencyMojo extends AbstractMojo {
         pom.setLicenses(Collections.singletonList(license));
 
         // 配置 properties
-        pom.setProperties(this.mavenProject.getProperties());
+        Properties properties = this.mavenProject.getProperties();
+        properties.putIfAbsent("maven-source-plugin.version", "3.2.1");
+        pom.setProperties(properties);
 
         // 配置 dependencyManagement
         Set<ArtifactItem> baseModuleArtifacts = getAllBundleArtifact(this.mavenProject);
