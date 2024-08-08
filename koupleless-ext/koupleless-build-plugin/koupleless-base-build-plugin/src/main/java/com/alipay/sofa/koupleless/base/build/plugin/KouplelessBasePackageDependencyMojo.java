@@ -26,6 +26,7 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.License;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -37,6 +38,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.invoker.InvocationResult;
 import org.apache.maven.shared.invoker.MavenInvocationException;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 import java.io.File;
 import java.io.IOException;
@@ -85,6 +87,9 @@ public class KouplelessBasePackageDependencyMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "true")
     private String       cleanAfterPackageDependencies;
+
+    @Parameter(defaultValue = "1.8")
+    private String       jvmTarget;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -191,6 +196,13 @@ public class KouplelessBasePackageDependencyMojo extends AbstractMojo {
             .getResourceAsStream("base-dependency-pom-template.xml"));
         Build build = baseDependencyPomTemplate.getBuild().clone();
         pom.setBuild(build);
+
+        // 配置 maven compiler plugin 中的 jdk 版本
+        Plugin mavenCompilerPlugin = build.getPlugins().stream()
+            .filter(it -> it.getArtifactId().equals("maven-compiler-plugin")).findFirst().get();
+        Xpp3Dom configuration = (Xpp3Dom) mavenCompilerPlugin.getConfiguration();
+        configuration.getChild("source").setValue(jvmTarget);
+        configuration.getChild("target").setValue(jvmTarget);
 
         MavenUtils.writePomModel(getPomFileOfBundle(dependencyRootDir), pom);
     }
