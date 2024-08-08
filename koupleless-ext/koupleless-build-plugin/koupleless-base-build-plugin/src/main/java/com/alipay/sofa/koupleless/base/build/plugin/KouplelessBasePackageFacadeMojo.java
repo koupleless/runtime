@@ -46,12 +46,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -172,6 +167,11 @@ public class KouplelessBasePackageFacadeMojo extends AbstractMojo {
         license.setName("The Apache License, Version 2.0");
         license.setUrl("http://www.apache.org/licenses/LICENSE-2.0.txt");
         pom.setLicenses(Collections.singletonList(license));
+
+        // 配置 properties
+        Properties properties = this.mavenProject.getProperties();
+        properties.putIfAbsent("maven-source-plugin.version", "3.2.1");
+        pom.setProperties(properties);
 
         // 配置依赖，全都设置成 provided
         Set<ArtifactItem> baseModuleArtifacts = getAllBundleArtifact(this.mavenProject);
