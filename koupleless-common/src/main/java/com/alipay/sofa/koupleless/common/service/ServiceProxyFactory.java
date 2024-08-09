@@ -23,6 +23,7 @@ import com.alipay.sofa.ark.spi.model.BizState;
 import com.alipay.sofa.koupleless.common.BizRuntimeContext;
 import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
 import com.alipay.sofa.koupleless.common.exception.BizRuntimeException;
+import com.alipay.sofa.koupleless.common.model.MainBizApplicationContext;
 import com.alipay.sofa.koupleless.common.util.ReflectionUtils;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;

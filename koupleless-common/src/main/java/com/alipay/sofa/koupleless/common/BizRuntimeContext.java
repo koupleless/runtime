@@ -19,11 +19,12 @@ package com.alipay.sofa.koupleless.common;
 import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.koupleless.common.exception.BizRuntimeException;
 import com.alipay.sofa.koupleless.common.exception.ErrorCodes;
+import com.alipay.sofa.koupleless.common.model.BizApplicationContext;
 import com.alipay.sofa.koupleless.common.service.AbstractComponent;
 import com.alipay.sofa.koupleless.common.service.AbstractServiceComponent;
 import com.alipay.sofa.koupleless.common.service.BeanRegistry;
 import com.alipay.sofa.koupleless.common.service.ComponentRegistry;
-import com.alipay.sofa.koupleless.common.service.MainBizApplicationContext;
+import com.alipay.sofa.koupleless.common.model.MainBizApplicationContext;
 import com.alipay.sofa.koupleless.common.service.ServiceProxyCache;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -42,6 +43,8 @@ public class BizRuntimeContext implements ComponentRegistry {
     private String                                                               bizName;
 
     private ClassLoader                                                          appClassLoader;
+
+    private BizApplicationContext applicationContext;
 
     private ApplicationContext                                                   rootApplicationContext;
 
@@ -95,6 +98,24 @@ public class BizRuntimeContext implements ComponentRegistry {
      */
     public ApplicationContext getRootApplicationContext() {
         return rootApplicationContext;
+    }
+
+    /**
+     * <p>Getter for the field <code>applicationContext</code>.</p>
+     *
+     * @return a {@link BizApplicationContext} object
+     */
+    public Object getApplicationContext() {
+        return applicationContext == null? null: applicationContext.get();
+    }
+
+    /**
+     * <p>Setter for the field <code>applicationContext</code>.</p>
+     *
+     * @param applicationContext a {@link BizApplicationContext} object
+     */
+    public void setApplicationContext(BizApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     /**

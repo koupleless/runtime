@@ -14,10 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.common.service;
+package com.alipay.sofa.koupleless.common.model;
 
-import com.alipay.sofa.koupleless.common.BizRuntimeContext;
-import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Arrays;
@@ -31,17 +29,23 @@ import static com.alipay.sofa.koupleless.common.util.ClassUtils.getSuperClasses;
  * @version $Id: MainBizApplicationContext.java, v 0.1 2024年08月03日 21:22 立蓬 Exp $
  */
 public class MainBizApplicationContext {
-    // 以key为索引，默认为实现类的全限定名，这样不会冲突
+    // default key: Class Name, also can be set by alias
     private Map<String, Object>                objectMap = new ConcurrentHashMap<>();
 
     // 以Class为索引(可以是接口Class或者实现Class)
     private Map<Class<?>, Map<String, Object>> typeMap   = new ConcurrentHashMap<>();
 
-    public static void init() {
-        BizRuntimeContext bizRuntimeContext = BizRuntimeContextRegistry
-            .getBizRuntimeContextByClassLoader(Thread.currentThread().getContextClassLoader());
-        bizRuntimeContext.setMainBizApplicationContext(new MainBizApplicationContext());
-    }
+    //public static void init() {
+    //    BizRuntimeContext bizRuntimeContext = BizRuntimeContextRegistry
+    //        .getBizRuntimeContextByClassLoader(Thread.currentThread().getContextClassLoader());
+    //    bizRuntimeContext.setMainBizApplicationContext(new MainBizApplicationContext());
+    //}
+    //
+    //public static MainBizApplicationContext get() {
+    //    BizRuntimeContext bizRuntimeContext = BizRuntimeContextRegistry
+    //        .getBizRuntimeContextByClassLoader(Thread.currentThread().getContextClassLoader());
+    //    return bizRuntimeContext.getMainBizApplicationContext();
+    //}
 
     public Object getObject(String key) {
         return objectMap.get(key);
@@ -53,33 +57,46 @@ public class MainBizApplicationContext {
     }
 
     public void register(Object obj) {
-        String key = obj.getClass().getName();
-        register(key, obj);
-        register(obj.getClass(), key, obj);
+        doRegister(obj.getClass().getName(), obj);
+    }
 
+    public void register(String alias, Object obj) {
+        doRegister(obj.getClass().getName(), obj);
+        doRegister(alias,obj);
+    }
+
+    private void doRegister(String key, Object obj) {
+        // register by key
+        innerRegister(key, obj);
+
+        // register by class type
+        innerRegister(obj.getClass(), key, obj);
+
+        // register by interface type
         Class<?>[] interfaces = obj.getClass().getInterfaces();
-        Arrays.stream(interfaces).forEach(i -> register(i, key, obj));
+        Arrays.stream(interfaces).forEach(i -> innerRegister(i, key, obj));
 
-        getSuperClasses(obj.getClass()).forEach(i -> register(i, key, obj));
+        // register by super class
+        getSuperClasses(obj.getClass()).forEach(i -> innerRegister(i, key, obj));
     }
 
     /**
-     * <p>register.</p>
+     * <p>innerRegister.</p>
      *
      * @param key a {@link java.lang.String} object
      * @param obj a Object object
      */
-    private void register(String key, Object obj) {
+    private void innerRegister(String key, Object obj) {
         objectMap.put(key, obj);
     }
 
     /**
-     * <p>register.</p>
+     * <p>innerRegister.</p>
      *
      * @param key a {@link java.lang.String} object
      * @param obj a Object object
      */
-    private void register(Class<?> type, String key, Object obj) {
+    private void innerRegister(Class<?> type, String key, Object obj) {
         Map<String, Object> map = typeMap.getOrDefault(type, new ConcurrentHashMap<>());
         map.put(key, obj);
         typeMap.put(type, map);
