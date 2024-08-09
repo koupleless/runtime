@@ -48,9 +48,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class BaseStartUpHealthIndicator extends AbstractHealthIndicator
                                         implements EventHandler<AbstractArkEvent>,
                                         ApplicationListener<SpringApplicationEvent> {
-    private Status                                  baseStartUpStatus      = Status.UNKNOWN;
+    private Status                                  baseStartUpStatus = Status.UNKNOWN;
 
-    private final ConcurrentHashMap<String, Status> bizStartUpStatus       = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Status> bizStartUpStatus  = new ConcurrentHashMap<>();
 
     private boolean                                 associateWithAllBizReadiness;
 
