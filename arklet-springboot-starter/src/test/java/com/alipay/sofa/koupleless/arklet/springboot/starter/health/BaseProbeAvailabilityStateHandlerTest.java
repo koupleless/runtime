@@ -59,7 +59,7 @@ public class BaseProbeAvailabilityStateHandlerTest {
         doNothing().when(baseContext).publishEvent(ArgumentMatchers.any());
 
         BaseProbeAvailabilityStateHandler handler = new BaseProbeAvailabilityStateHandler(
-            baseContext, false);
+            baseContext, false, 0);
 
         try (MockedStatic<ArkClient> arkClient = Mockito.mockStatic(ArkClient.class)) {
             arkClient.when(ArkClient::getMasterBiz).thenReturn(masterBiz);
@@ -86,7 +86,7 @@ public class BaseProbeAvailabilityStateHandlerTest {
         doNothing().when(baseContext).publishEvent(ArgumentMatchers.any());
 
         BaseProbeAvailabilityStateHandler handler = new BaseProbeAvailabilityStateHandler(
-            baseContext, true);
+            baseContext, true, 0);
 
         try (MockedStatic<ArkClient> arkClient = Mockito.mockStatic(ArkClient.class)) {
             arkClient.when(ArkClient::getMasterBiz).thenReturn(masterBiz);
@@ -102,6 +102,33 @@ public class BaseProbeAvailabilityStateHandlerTest {
             handler.handleEvent(new AfterBizStopEvent(biz1));
 
             verify(baseContext, times(3)).publishEvent(ArgumentMatchers.any());
+        }
+    }
+
+    @Test
+    public void testSilence() {
+        Biz masterBiz = Mockito.mock(Biz.class);
+        Biz biz1 = Mockito.mock(Biz.class);
+        doReturn("biz1-v1").when(biz1).getIdentity();
+        doReturn("masterBiz").when(masterBiz).getIdentity();
+
+        ApplicationAvailability baseAvailability = Mockito.mock(ApplicationAvailability.class);
+        when(baseAvailability.getReadinessState()).thenReturn(ReadinessState.ACCEPTING_TRAFFIC);
+        when(baseAvailability.getLivenessState()).thenReturn(LivenessState.CORRECT);
+
+        ApplicationContext baseContext = Mockito.mock(ApplicationContext.class);
+        when(baseContext.getBean("applicationAvailability")).thenReturn(baseAvailability);
+        doNothing().when(baseContext).publishEvent(ArgumentMatchers.any());
+
+        BaseProbeAvailabilityStateHandler handler = new BaseProbeAvailabilityStateHandler(
+            baseContext, true, 1);
+
+        try (MockedStatic<ArkClient> arkClient = Mockito.mockStatic(ArkClient.class)) {
+            arkClient.when(ArkClient::getMasterBiz).thenReturn(masterBiz);
+
+            handler.handleEvent(new BeforeBizStopEvent(biz1));
+
+            verify(baseContext, times(1)).publishEvent(ArgumentMatchers.any());
         }
     }
 }

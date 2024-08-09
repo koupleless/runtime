@@ -46,15 +46,19 @@ public class BaseProbeAvailabilityStateHandler implements EventHandler<AbstractA
 
     private boolean                        associateWithAllBizReadiness;
 
+    private int                            silenceSecondsBeforeUninstall;
+
     private ApplicationContext             baseContext;
     private final ApplicationAvailability  applicationAvailability;
 
     public BaseProbeAvailabilityStateHandler(ApplicationContext applicationContext,
-                                             boolean withAllBizReadiness) {
+                                             boolean withAllBizReadiness,
+                                             int silenceSecondsBeforeUninstall) {
         baseContext = applicationContext;
         associateWithAllBizReadiness = withAllBizReadiness;
         applicationAvailability = (ApplicationAvailability) baseContext
             .getBean("applicationAvailability");
+        this.silenceSecondsBeforeUninstall = silenceSecondsBeforeUninstall;
     }
 
     @Override
@@ -105,6 +109,7 @@ public class BaseProbeAvailabilityStateHandler implements EventHandler<AbstractA
         // 模块卸载前：关闭流量
         if (event instanceof BeforeBizStopEvent) {
             AvailabilityChangeEvent.publish(baseContext, ReadinessState.REFUSING_TRAFFIC);
+            silenceBeforeUninstall(silenceSecondsBeforeUninstall);
             return;
         }
 
@@ -112,6 +117,17 @@ public class BaseProbeAvailabilityStateHandler implements EventHandler<AbstractA
         if (event instanceof AfterBizStopEvent) {
             startingBizSet.remove(biz);
         }
+    }
+
+    private void silenceBeforeUninstall(int seconds) {
+        if (seconds > 0) {
+            try {
+                Thread.sleep(seconds * 1000L);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
     }
 
     private ReadinessState getCompositeStartingBizReadiness() {

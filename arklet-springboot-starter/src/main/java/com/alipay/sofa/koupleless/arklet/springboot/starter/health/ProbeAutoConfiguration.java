@@ -17,8 +17,10 @@
 package com.alipay.sofa.koupleless.arklet.springboot.starter.health;
 
 import com.alipay.sofa.ark.api.ArkClient;
+import com.alipay.sofa.koupleless.arklet.springboot.starter.properties.ArkletProperties;
 import com.alipay.sofa.koupleless.common.environment.ConditionalOnMasterBiz;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,6 +35,7 @@ import static com.alipay.sofa.koupleless.arklet.springboot.starter.model.Constan
 @Configuration
 @ConditionalOnMasterBiz
 @ConditionalOnClass(name = "org.springframework.boot.availability.ApplicationAvailability")
+@EnableConfigurationProperties(ArkletProperties.class)
 public class ProbeAutoConfiguration {
 
     @Bean
@@ -42,10 +45,12 @@ public class ProbeAutoConfiguration {
 
     @Bean
     public BaseProbeAvailabilityStateHandler baseProbeAvailabilityStateHandler(ApplicationContext applicationContext,
-                                                                               Environment env) {
+                                                                               Environment env,
+                                                                               ArkletProperties arkletProperties) {
         BaseProbeAvailabilityStateHandler handler = new BaseProbeAvailabilityStateHandler(
             applicationContext,
-            Boolean.parseBoolean(env.getProperty(WITH_ALL_BIZ_READINESS, "false")));
+            Boolean.parseBoolean(env.getProperty(WITH_ALL_BIZ_READINESS, "false")),
+            arkletProperties.getOperation().getSilenceSecondsBeforeUninstall());
         ArkClient.getEventAdminService().register(handler);
         return handler;
     }
