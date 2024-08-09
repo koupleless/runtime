@@ -124,7 +124,7 @@ public class BaseProbeAvailabilityStateHandler implements EventHandler<AbstractA
             try {
                 Thread.sleep(seconds * 1000L);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                Thread.currentThread().interrupt();
             }
         }
 
