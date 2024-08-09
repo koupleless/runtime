@@ -90,10 +90,10 @@ public class KouplelessBasePackageFacadeMojo extends AbstractMojo {
     @Parameter(defaultValue = "true")
     private String                             cleanAfterPackageFacade;
 
-    @Parameter(defaultValue = "1.8")
+    @Parameter(defaultValue = "17")
     private String                             jvmTarget;
 
-    private static final List<JVMFileTypeEnum> SUPPORT_FILE_TYPE_TO_COPY = Stream.of(JAVA, KOTLIN)
+    private static final List<JVMFileTypeEnum> SUPPORT_FILE_TYPE_TO_COPY = Stream.of(JAVA)
         .collect(Collectors.toList());
 
     private File                               facadeRootDir;
@@ -205,12 +205,6 @@ public class KouplelessBasePackageFacadeMojo extends AbstractMojo {
         Xpp3Dom mavenCompilerConfig = (Xpp3Dom) mavenCompilerPlugin.getConfiguration();
         mavenCompilerConfig.getChild("source").setValue(jvmTarget);
         mavenCompilerConfig.getChild("target").setValue(jvmTarget);
-
-        // 配置 kotlin-maven-plugin 中的 jdk 版本
-        Plugin kotlinMavenPlugin = build.getPlugins().stream()
-            .filter(it -> it.getArtifactId().equals("kotlin-maven-plugin")).findFirst().get();
-        Xpp3Dom kotlinMavenConfig = (Xpp3Dom) kotlinMavenPlugin.getConfiguration();
-        kotlinMavenConfig.getChild("jvmTarget").setValue(jvmTarget);
 
         MavenUtils.writePomModel(getPomFileOfBundle(facadeRootDir), pom);
     }
