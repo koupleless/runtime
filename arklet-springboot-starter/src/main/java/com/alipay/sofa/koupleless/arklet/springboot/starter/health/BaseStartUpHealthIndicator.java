@@ -18,10 +18,11 @@ package com.alipay.sofa.koupleless.arklet.springboot.starter.health;
 
 import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.spi.event.AbstractArkEvent;
+import com.alipay.sofa.ark.spi.event.biz.AfterBizFailedEvent;
 import com.alipay.sofa.ark.spi.event.biz.AfterBizStartupEvent;
 import com.alipay.sofa.ark.spi.event.biz.AfterBizStopEvent;
 import com.alipay.sofa.ark.spi.event.biz.BeforeBizStartupEvent;
-import com.alipay.sofa.ark.spi.event.biz.AfterBizFailedEvent;
+import com.alipay.sofa.ark.spi.event.biz.BeforeBizStopEvent;
 import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.ark.spi.service.event.EventHandler;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
@@ -55,20 +56,20 @@ public class BaseStartUpHealthIndicator extends AbstractHealthIndicator
 
     private boolean                                 associateWithAllBizReadiness;
 
-    /** Constant <code>WITH_ALL_BIZ_READINESS="koupleless.healthcheck.base.readiness.w"{trunked}</code> */
-    public static final String                      WITH_ALL_BIZ_READINESS = "koupleless.healthcheck.base.readiness.withAllBizReadiness";
-
     /**
      * this is ugly, but we need to support both springboot1.x, 2.x and above, we need to use reflection to support both
      */
     public Method                                   healthBuildWithDetails = null;
+
+    private int                                     silenceSecondsBeforeUninstall;
 
     /**
      * <p>Constructor for BaseStartUpHealthIndicator.</p>
      *
      * @param withAllBizReadiness a boolean
      */
-    public BaseStartUpHealthIndicator(boolean withAllBizReadiness) {
+    public BaseStartUpHealthIndicator(boolean withAllBizReadiness,
+                                      int silenceSecondsBeforeUninstall) {
         super();
         try {
             this.healthBuildWithDetails = Health.Builder.class.getMethod("withDetails", Map.class);
@@ -77,6 +78,7 @@ public class BaseStartUpHealthIndicator extends AbstractHealthIndicator
         }
 
         this.associateWithAllBizReadiness = withAllBizReadiness;
+        this.silenceSecondsBeforeUninstall = silenceSecondsBeforeUninstall;
     }
 
     /** {@inheritDoc} */
@@ -94,15 +96,30 @@ public class BaseStartUpHealthIndicator extends AbstractHealthIndicator
             return;
         }
 
-        if (event instanceof BeforeBizStartupEvent) {
+        if (event instanceof BeforeBizStartupEvent) { // 模块启动前，关闭流量，添加该模块
             bizStartUpStatus.put(biz.getIdentity(), Status.UNKNOWN);
-        } else if (event instanceof AfterBizStartupEvent) {
+        } else if (event instanceof AfterBizStartupEvent) { // 模块启动后，将模块置为启动成功
             bizStartUpStatus.put(biz.getIdentity(), Status.UP);
-        } else if (event instanceof AfterBizFailedEvent) {
+        } else if (event instanceof AfterBizFailedEvent) { // 模块启动失败，保持流量关闭
             bizStartUpStatus.put(biz.getIdentity(), Status.DOWN);
+        } else if (event instanceof BeforeBizStopEvent) { // 模块卸载前：关闭流量
+            bizStartUpStatus.put(biz.getIdentity(), Status.DOWN);
+            silenceBeforeUninstall(silenceSecondsBeforeUninstall);
+            // 模块卸载后，移除该模块
         } else if (event instanceof AfterBizStopEvent) {
             bizStartUpStatus.remove(biz.getIdentity());
         }
+    }
+
+    private void silenceBeforeUninstall(int seconds) {
+        if (seconds > 0) {
+            try {
+                Thread.sleep(seconds * 1000L);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
     }
 
     /** {@inheritDoc} */
@@ -147,7 +164,7 @@ public class BaseStartUpHealthIndicator extends AbstractHealthIndicator
             return;
         }
 
-        // 不健康的情况：基座或模块启动失败
+        // 不健康的情况：基座或模块启动失败，或模块开始卸载
         builder.status(Status.DOWN);
     }
 

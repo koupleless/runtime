@@ -34,9 +34,11 @@ import static com.alipay.sofa.koupleless.arklet.springboot.starter.properties.Ar
 @NoArgsConstructor
 @ConfigurationProperties(PREFIX)
 public class ArkletProperties {
-    public static final String PREFIX  = "com.alipay.sofa.koupleless.runtime";
+    public static final String  PREFIX    = "com.alipay.sofa.koupleless.runtime";
 
-    private MonitorProperties  monitor = new MonitorProperties();
+    private MonitorProperties   monitor   = new MonitorProperties();
+
+    private OperationProperties operation = new OperationProperties();
 
     @Setter
     @Getter
@@ -47,5 +49,14 @@ public class ArkletProperties {
         private int     metaspaceThreshold = 85;
 
         private boolean metaspaceCheck     = false;
+    }
+
+    @Setter
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class OperationProperties {
+
+        private int silenceSecondsBeforeUninstall = 0;
     }
 }
