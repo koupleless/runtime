@@ -18,11 +18,17 @@ package com.alipay.sofa.koupleless.arklet.core.api;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
+import com.alipay.sofa.ark.common.util.EnvironmentUtils;
 import com.alipay.sofa.koupleless.arklet.core.api.tunnel.Tunnel;
 import com.alipay.sofa.koupleless.arklet.core.api.tunnel.http.HttpTunnel;
 import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
 import com.alipay.sofa.koupleless.arklet.core.ArkletComponent;
+import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletInitException;
+import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger;
+import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
+import com.alipay.sofa.koupleless.arklet.core.util.ClassUtils;
 import com.google.inject.AbstractModule;
 import com.google.inject.Binding;
 import com.google.inject.Guice;
@@ -43,7 +49,9 @@ import com.google.inject.multibindings.Multibinder;
 @Singleton
 public class ApiClient implements ArkletComponent {
 
-    private static final List<Tunnel> tunnelList = new ArrayList<>(8);
+    private static final List<Tunnel> tunnelList          = new ArrayList<>(8);
+
+    private final static String       CUSTOM_TUNNEL_CLASS = "koupleless.arklet.custom.tunnel.classname";
 
     @Inject
     private CommandService            commandService;
@@ -88,6 +96,13 @@ public class ApiClient implements ArkletComponent {
             Multibinder<Tunnel> tunnelMultibinder = Multibinder.newSetBinder(binder(),
                 Tunnel.class);
             tunnelMultibinder.addBinding().to(HttpTunnel.class);
+            String customTunnelClassName = EnvironmentUtils.getProperty(CUSTOM_TUNNEL_CLASS);
+
+            if (customTunnelClassName != null && !customTunnelClassName.isEmpty()) {
+                Class<? extends Tunnel> customTunnelClass = ClassUtils
+                    .getCustomTunnelClass(customTunnelClassName);
+                tunnelMultibinder.addBinding().to(customTunnelClass);
+            }
         }
     }
 
