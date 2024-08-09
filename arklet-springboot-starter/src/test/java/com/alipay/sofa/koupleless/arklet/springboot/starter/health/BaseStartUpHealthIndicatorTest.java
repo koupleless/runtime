@@ -21,6 +21,7 @@ import com.alipay.sofa.ark.spi.event.biz.AfterBizStartupEvent;
 import com.alipay.sofa.ark.spi.event.biz.AfterBizStopEvent;
 import com.alipay.sofa.ark.spi.event.biz.BeforeBizStartupEvent;
 import com.alipay.sofa.ark.spi.event.biz.AfterBizFailedEvent;
+import com.alipay.sofa.ark.spi.event.biz.BeforeBizStopEvent;
 import com.alipay.sofa.ark.spi.model.Biz;
 import org.junit.Test;
 import org.mockito.MockedStatic;
@@ -47,7 +48,7 @@ public class BaseStartUpHealthIndicatorTest {
         try (MockedStatic<ArkClient> arkClient = Mockito.mockStatic(ArkClient.class)) {
             arkClient.when(ArkClient::getMasterBiz).thenReturn(masterBiz);
 
-            BaseStartUpHealthIndicator indicator = new BaseStartUpHealthIndicator(true);
+            BaseStartUpHealthIndicator indicator = new BaseStartUpHealthIndicator(true, 0);
 
             // case1-1: base starting:
             assertEquals(Status.UNKNOWN, indicator.health().getStatus());
@@ -73,7 +74,57 @@ public class BaseStartUpHealthIndicatorTest {
             indicator.handleEvent(new AfterBizFailedEvent(biz1, new Throwable()));
             assertEquals(Status.DOWN, indicator.health().getStatus());
 
-            // case2-5: base started && biz stop:
+            // case2-5: base started && before biz stop:
+            indicator.handleEvent(new BeforeBizStopEvent(biz1));
+            assertEquals(Status.DOWN, indicator.health().getStatus());
+
+            // case2-6: base started && biz stop:
+            indicator.handleEvent(new AfterBizStopEvent(biz1));
+            assertEquals(Status.UP, indicator.health().getStatus());
+        }
+    }
+
+    @Test
+    public void testMasterBizStartUpHealthWithArkBizAndSilence() {
+        Biz masterBiz = Mockito.mock(Biz.class);
+        Biz biz1 = Mockito.mock(Biz.class);
+        doReturn("biz1-v1").when(biz1).getIdentity();
+        doReturn("masterBiz").when(masterBiz).getIdentity();
+
+        try (MockedStatic<ArkClient> arkClient = Mockito.mockStatic(ArkClient.class)) {
+            arkClient.when(ArkClient::getMasterBiz).thenReturn(masterBiz);
+
+            BaseStartUpHealthIndicator indicator = new BaseStartUpHealthIndicator(true, 1);
+
+            // case1-1: base starting:
+            assertEquals(Status.UNKNOWN, indicator.health().getStatus());
+
+            // case1-2: base startUp:
+            indicator.onApplicationEvent(Mockito.mock(ApplicationReadyEvent.class));
+            assertEquals(Status.UP, indicator.health().getStatus());
+
+            // case1-3: base failed:
+            indicator.onApplicationEvent(Mockito.mock(ApplicationFailedEvent.class));
+            assertEquals(Status.DOWN, indicator.health().getStatus());
+
+            // case2-1: base started && biz starting:
+            indicator.onApplicationEvent(Mockito.mock(ApplicationReadyEvent.class));
+            indicator.handleEvent(new BeforeBizStartupEvent(biz1));
+            assertEquals(Status.UNKNOWN, indicator.health().getStatus());
+
+            // case2-3: base started && biz startUp:
+            indicator.handleEvent(new AfterBizStartupEvent(biz1));
+            assertEquals(Status.UP, indicator.health().getStatus());
+
+            // case2-4: base started && biz failed:
+            indicator.handleEvent(new AfterBizFailedEvent(biz1, new Throwable()));
+            assertEquals(Status.DOWN, indicator.health().getStatus());
+
+            // case2-5: base started && before biz stop:
+            indicator.handleEvent(new BeforeBizStopEvent(biz1));
+            assertEquals(Status.DOWN, indicator.health().getStatus());
+
+            // case2-6: base started && biz stop:
             indicator.handleEvent(new AfterBizStopEvent(biz1));
             assertEquals(Status.UP, indicator.health().getStatus());
         }
@@ -89,7 +140,7 @@ public class BaseStartUpHealthIndicatorTest {
         try (MockedStatic<ArkClient> arkClient = Mockito.mockStatic(ArkClient.class)) {
             arkClient.when(ArkClient::getMasterBiz).thenReturn(masterBiz);
 
-            BaseStartUpHealthIndicator indicator = new BaseStartUpHealthIndicator(false);
+            BaseStartUpHealthIndicator indicator = new BaseStartUpHealthIndicator(false, 0);
 
             // case1-1: base starting:
             assertEquals(Status.UNKNOWN, indicator.health().getStatus());
