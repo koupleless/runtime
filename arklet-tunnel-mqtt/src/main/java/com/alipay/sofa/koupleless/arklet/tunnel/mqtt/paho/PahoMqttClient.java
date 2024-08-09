@@ -199,6 +199,8 @@ public class PahoMqttClient {
             this.baseEnv = System.getenv(envKey);
             if (this.baseEnv == null || this.baseEnv.isEmpty()) {
                 this.baseEnv = Constants.DEFAULT_BASE_ENV;
+            } else {
+                this.baseEnv = this.baseEnv.toLowerCase();
             }
         }
 
