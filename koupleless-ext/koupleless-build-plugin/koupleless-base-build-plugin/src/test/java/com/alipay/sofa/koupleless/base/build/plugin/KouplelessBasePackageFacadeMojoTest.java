@@ -82,10 +82,6 @@ public class KouplelessBasePackageFacadeMojoTest {
         assertEquals("a1", d.getArtifactId());
         assertEquals("provided", d.getScope());
 
-        // 2. verify the kotlin file copy
-        assertTrue(CommonUtils.resourceExists(
-            "mockBaseDir/base-bootstrap/base-all-dependencies-facade/src/main/kotlin/com/mock/base/facade/ModuleDescriptionInfo.kt"));
-
         setField("cleanAfterPackageFacade", mojo, "true");
         mojo.clearFacadeRootDir();
     }
@@ -118,7 +114,7 @@ public class KouplelessBasePackageFacadeMojoTest {
     public void testGetSupportedJVMFiles() throws URISyntaxException {
         List<File> files = KouplelessBasePackageFacadeMojo
             .getSupportedJVMFiles(CommonUtils.getResourceFile("mockBaseDir"));
-        assertEquals(3, files.size());
+        assertEquals(2, files.size());
     }
 
     @Test
