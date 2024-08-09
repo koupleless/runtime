@@ -76,7 +76,9 @@ public class MavenUtils {
     public static Dependency createDependency(Artifact artifact) {
         Dependency d = new Dependency();
         d.setArtifactId(artifact.getArtifactId());
-        d.setVersion(artifact.getVersion());
+        // baseVersion is the version in pom, not the version parsed by maven repository
+        // e.g. if a dependency is set as 1.0.0-SNAPSHOT, the baseVersion is 1.0.0-SNAPSHOT, but the version maybe 1.0.0-20240805.013141-59
+        d.setVersion(artifact.getBaseVersion());
         d.setGroupId(artifact.getGroupId());
         if (!"jar".equals(artifact.getType())) {
             d.setType(artifact.getType());
