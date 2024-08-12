@@ -73,7 +73,7 @@ public class BatchInstallHelper {
         List<Map.Entry<Integer, List<String>>> keyInOrder = new ArrayList<>(
             bizUrlsWithPriority.entrySet());
         keyInOrder.sort(Map.Entry.comparingByKey());
-        Map<Integer, List<String>> bizUrlsInOrder = new HashMap<>();
+        Map<Integer, List<String>> bizUrlsInOrder = new LinkedHashMap<>();
         for (Map.Entry<Integer, List<String>> entry : keyInOrder) {
             bizUrlsInOrder.put(entry.getKey(), entry.getValue());
         }
