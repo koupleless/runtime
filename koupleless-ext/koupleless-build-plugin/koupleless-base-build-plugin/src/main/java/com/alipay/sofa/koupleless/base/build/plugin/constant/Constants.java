@@ -58,6 +58,6 @@ public class Constants {
      */
     public final static String PACKAGE_PREFIX_MARK            = "*";
 
-    public final static String STRING_COLON         = ":";
+    public final static String STRING_COLON                   = ":";
 
 }

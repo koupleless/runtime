@@ -177,7 +177,7 @@ public class KouplelessBasePackageDependencyMojo extends AbstractMojo {
         // 配置 dependencyManagement
         Set<ArtifactItem> baseModuleArtifacts = getAllBundleArtifact(this.mavenProject);
         getLog().info("find maven module of base: " + baseModuleArtifacts);
-        Map<String,Dependency> resolvedProjectDependencyManagement = getResolvedProjectDependencyManagement();
+        Map<String, Dependency> resolvedProjectDependencyManagement = getResolvedProjectDependencyManagement();
         Set<Artifact> dependencyArtifacts = getDependencyArtifacts(this.mavenProject);
         DependencyManagement dependencyManagement = new DependencyManagement();
         List<Dependency> dependencies = nonNull(dependencyArtifacts).stream()
@@ -187,15 +187,16 @@ public class KouplelessBasePackageDependencyMojo extends AbstractMojo {
                               && Objects.equals(baseModule.getArtifactId(), d.getArtifactId())))
             // 过滤出 scope 不是 test 的依赖
             .filter(d -> !"test".equals(d.getScope()))
-                // 转换为 dependency
-                .map(d ->{
-                    // 如果项目的依赖管理中有该依赖，则复用项目的依赖管理
-                    if(resolvedProjectDependencyManagement.containsKey(MavenUtils.getArtifactIdentity(d))){
-                        return resolvedProjectDependencyManagement.get(MavenUtils.getArtifactIdentity(d)).clone();
-                    }
-                    return MavenUtils.createDependency(d);
-                })
-            .collect(Collectors.toList());
+            // 转换为 dependency
+            .map(d -> {
+                // 如果项目的依赖管理中有该依赖，则复用项目的依赖管理
+                if (resolvedProjectDependencyManagement
+                    .containsKey(MavenUtils.getArtifactIdentity(d))) {
+                    return resolvedProjectDependencyManagement
+                        .get(MavenUtils.getArtifactIdentity(d)).clone();
+                }
+                return MavenUtils.createDependency(d);
+            }).collect(Collectors.toList());
         dependencyManagement.setDependencies(dependencies);
         pom.setDependencyManagement(dependencyManagement);
 
@@ -208,7 +209,10 @@ public class KouplelessBasePackageDependencyMojo extends AbstractMojo {
         MavenUtils.writePomModel(getPomFileOfBundle(dependencyRootDir), pom);
     }
 
-    protected Map<String,Dependency> getResolvedProjectDependencyManagement(){
+    protected Map<String, Dependency> getResolvedProjectDependencyManagement() {
+        if (null == this.mavenProject.getDependencyManagement()) {
+            return Collections.emptyMap();
+        }
         return this.mavenProject.getDependencyManagement().getDependencies().stream()
             .collect(Collectors.toMap(MavenUtils::getDependencyIdentity, d -> d));
     }

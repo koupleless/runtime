@@ -18,10 +18,14 @@ package com.alipay.sofa.koupleless.base.build.plugin;
 
 import com.alipay.sofa.koupleless.base.build.plugin.utils.MavenUtils;
 import com.alipay.sofa.koupleless.utils.CommonUtils;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.execution.DefaultMavenExecutionRequest;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
+import org.apache.maven.model.DependencyManagement;
+import org.apache.maven.model.Exclusion;
 import org.apache.maven.model.Model;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -35,10 +39,10 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.net.URISyntaxException;
-import java.util.Collections;
 
 import static com.alipay.sofa.koupleless.utils.ReflectionUtils.setField;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -70,8 +74,13 @@ public class KouplelessBasePackageDependencyMojoTest {
 
         Model pom = MavenUtils.buildPomModel(CommonUtils
             .getResourceFile("mockBaseDir/base-bootstrap/base-all-dependencies-starter/pom.xml"));
-        Dependency d = pom.getDependencyManagement().getDependencies().stream().findFirst().get();
-        assertEquals("a1", d.getArtifactId());
+
+        assertEquals(2, pom.getDependencyManagement().getDependencies().size());
+        assertEquals(1, pom.getDependencyManagement().getDependencies().stream()
+            .filter(d -> d.getArtifactId().equals("a1")).count());
+        Dependency d2 = pom.getDependencyManagement().getDependencies().stream()
+            .filter(d -> d.getArtifactId().equals("a2")).findFirst().get();
+        assertFalse(d2.getExclusions().isEmpty());
     }
 
     @Test
@@ -113,8 +122,26 @@ public class KouplelessBasePackageDependencyMojoTest {
         when(a1.getArtifactId()).thenReturn("a1");
         when(a1.getGroupId()).thenReturn("com.mock.outside");
         when(a1.getVersion()).thenReturn("1.0.0");
-        project.setArtifacts(Collections.singleton(a1));
-        return project;
+        when(a1.getBaseVersion()).thenReturn("1.0.0");
+
+        Artifact a2 = mock(Artifact.class);
+        when(a2.getArtifactId()).thenReturn("a2");
+        when(a2.getGroupId()).thenReturn("com.mock.outside");
+        when(a2.getVersion()).thenReturn("1.0.0");
+        when(a2.getBaseVersion()).thenReturn("1.0.0");
+        project.setArtifacts(Sets.newHashSet(a1, a2));
+
+        MavenProject spyProject = spy(project);
+        DependencyManagement dm = new DependencyManagement();
+        Dependency d2 = MavenUtils.createDependency(a2);
+
+        Exclusion exclusion = new Exclusion();
+        exclusion.setArtifactId("e1");
+        exclusion.setGroupId("com.mock.exclustion");
+        d2.setExclusions(Lists.newArrayList(exclusion));
+        dm.setDependencies(Lists.newArrayList(d2));
+        doReturn(dm).when(spyProject).getDependencyManagement();
+        return spyProject;
     }
 
     private MavenProject getRootProject() throws URISyntaxException {
