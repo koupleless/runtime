@@ -43,8 +43,17 @@ import java.security.cert.X509Certificate;
  * @since 2024/7/5
  * @version 1.0.0
  */
-
 public class SSLUtils {
+    /**
+     * <p>getSocketFactory.</p>
+     *
+     * @param caCrtFile a {@link java.lang.String} object
+     * @param crtFile a {@link java.lang.String} object
+     * @param keyFile a {@link java.lang.String} object
+     * @param password a {@link java.lang.String} object
+     * @return a {@link javax.net.ssl.SSLSocketFactory} object
+     * @throws java.lang.Exception if any.
+     */
     public static SSLSocketFactory getSocketFactory(final String caCrtFile, final String crtFile,
                                                     final String keyFile,
                                                     final String password) throws Exception {
