@@ -51,7 +51,7 @@ public class MqttResponse {
     }
 
     /**
-     * Getter method for property <tt>data</tt>.
+     * Getter method for property data.
      *
      * @return property value of data
      */
@@ -60,7 +60,7 @@ public class MqttResponse {
     }
 
     /**
-     * Setter method for property <tt>data</tt>.
+     * Setter method for property data.
      *
      * @param data value to be assigned to property data
      */
@@ -69,7 +69,7 @@ public class MqttResponse {
     }
 
     /**
-     * Getter method for property <tt>publishTimestamp</tt>.
+     * Getter method for property publishTimestamp.
      *
      * @return property value of publishTimestamp
      */
@@ -78,7 +78,7 @@ public class MqttResponse {
     }
 
     /**
-     * Setter method for property <tt>publishTimestamp</tt>.
+     * Setter method for property publishTimestamp.
      *
      * @param publishTimestamp value to be assigned to property publishTimestamp
      */
