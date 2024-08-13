@@ -40,8 +40,8 @@ public class MqttResponse {
     /**
      * <p>fromCommandOutput.</p>
      *
-     * @param data a {@link Object} object
-     * @return a {@link MqttResponse} object
+     * @param data a {@link java.lang.Object} object
+     * @return a {@link com.alipay.sofa.koupleless.arklet.tunnel.mqtt.model.MqttResponse} object
      */
     public static MqttResponse withData(Object data) {
         MqttResponse response = new MqttResponse();
