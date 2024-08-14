@@ -56,3 +56,11 @@ adapterMappings:
       regexp: ".*(org\\.apache\\.rocketmq:rocketmq-client:4\\.4\\.0).*"
     adapter:
       artifactId: koupleless-adapter-rocketmq-4.4
+  - matcher:
+      regexp: ".*(org\\.springframework:spring-aop:5\\.3\\.27).*"
+    adapter:
+      artifactId: koupleless-adapter-spring-aop-5.3.27
+  - matcher:
+      regexp: ".*(org\\.springframework:spring-aop:6\\.0\\.(8|9)).*"
+    adapter:
+      artifactId: koupleless-adapter-spring-aop-6.0.8
