@@ -92,6 +92,22 @@ public class ServiceProxyFactory {
         return proxyMap;
     }
 
+    public static <T> T filterServiceProxy(String bizName, String bizVersion, String name,
+                                           Class<T> serviceType, ClassLoader clientClassLoader) {
+        Biz biz = ArkClient.getBizManagerService().getBiz(bizName, bizVersion);
+        Class<?> serviceClass = checkBizStateAndGetTargetClass(bizName, bizVersion, biz,
+            serviceType);
+        Map<String, ?> serviceMap = listService(biz, serviceClass);
+        for (String beanName : serviceMap.keySet()) {
+            if (beanName.equals(name)) {
+                return doCreateServiceProxy(biz.getBizName(), biz.getBizVersion(),
+                    serviceMap.get(beanName), null, serviceType, clientClassLoader);
+            }
+
+        }
+        return null;
+    }
+
     /**
      * <p>getService.</p>
      *

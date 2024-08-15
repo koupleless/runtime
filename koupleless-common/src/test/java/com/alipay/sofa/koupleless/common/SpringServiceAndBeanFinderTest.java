@@ -67,6 +67,9 @@ public class SpringServiceAndBeanFinderTest {
     private Biz               biz2;
 
     @Mock
+    private Biz               biz3;
+
+    @Mock
     private BizManagerService bizManagerService;
 
     @Before
@@ -74,8 +77,13 @@ public class SpringServiceAndBeanFinderTest {
         ConfigurableApplicationContext masterCtx = buildApplicationContext("masterBiz");
         masterCtx.getBeanFactory().registerSingleton("baseBean", new BaseBean());
 
-        ConfigurableApplicationContext bizCtx = buildApplicationContext("biz1");
-        bizCtx.getBeanFactory().registerSingleton("moduleBean", new ModuleBean());
+        ConfigurableApplicationContext bizCtx1 = buildApplicationContext("biz1");
+        bizCtx1.getBeanFactory().registerSingleton("moduleBean", new ModuleBean());
+        bizCtx1.getBeanFactory().registerSingleton("duplicatedBean", new DuplicatedBean());
+
+        ConfigurableApplicationContext bizCtx3 = buildApplicationContext("biz3");
+        bizCtx3.getBeanFactory().registerSingleton("moduleBean3", new ModuleBean());
+        bizCtx3.getBeanFactory().registerSingleton("duplicatedBean", new DuplicatedBean());
 
         ArkClient.setBizManagerService(bizManagerService);
 
@@ -93,11 +101,19 @@ public class SpringServiceAndBeanFinderTest {
         when(biz1.getBizClassLoader()).thenReturn(new URLClassLoader(new URL[0]));
         when(biz1.getBizName()).thenReturn("biz1");
         when(biz1.getBizVersion()).thenReturn("version1");
-        BizRuntimeContext bizRuntime = new BizRuntimeContext(biz1, bizCtx);
+        BizRuntimeContext bizRuntime = new BizRuntimeContext(biz1, bizCtx1);
         BizRuntimeContextRegistry.registerBizRuntimeManager(bizRuntime);
 
+        when(bizManagerService.getBiz("biz3", "version1")).thenReturn(biz3);
+        when(biz3.getBizState()).thenReturn(BizState.ACTIVATED);
+        when(biz3.getBizClassLoader()).thenReturn(new URLClassLoader(new URL[0]));
+        when(biz3.getBizName()).thenReturn("biz3");
+        when(biz3.getBizVersion()).thenReturn("version1");
+        BizRuntimeContext bizRuntime3 = new BizRuntimeContext(biz3, bizCtx3);
+        BizRuntimeContextRegistry.registerBizRuntimeManager(bizRuntime3);
+
         when(bizManagerService.getBizInOrder())
-            .thenReturn(Lists.asList(masterBiz, new Biz[] { biz1 }));
+            .thenReturn(Lists.asList(masterBiz, new Biz[] { biz1, biz3 }));
     }
 
     @Test
@@ -152,7 +168,7 @@ public class SpringServiceAndBeanFinderTest {
         Map<Biz, Map<String, ModuleBean>> allModuleBeanMap = SpringServiceFinder
             .listAllModuleServices(ModuleBean.class);
         Assert.assertNotNull(allModuleBeanMap);
-        Assert.assertEquals(1, allModuleBeanMap.size());
+        Assert.assertEquals(2, allModuleBeanMap.size());
         Assert.assertEquals(1, allModuleBeanMap.get(biz1).size());
 
         Assert.assertEquals("base", baseBean.test());
@@ -182,6 +198,30 @@ public class SpringServiceAndBeanFinderTest {
         Assert.assertNotNull(foundModuleBean);
         Assert.assertEquals(newModuleBean.toString(), foundModuleBean.toString());
         Assert.assertEquals("module", foundModuleBean.test());
+    }
+
+    @Test
+    public void testGetModuleService() {
+        ModuleBean moduleBean = SpringServiceFinder.getModuleService("moduleBean",
+            ModuleBean.class);
+        Assert.assertNotNull(moduleBean);
+
+        ModuleBean moduleBean2 = SpringServiceFinder.getModuleService("moduleBean2",
+            ModuleBean.class);
+        Assert.assertNull(moduleBean2);
+
+        ModuleBean moduleBean3 = SpringServiceFinder.getModuleService("moduleBean3",
+            ModuleBean.class);
+        Assert.assertNotNull(moduleBean3);
+
+        Model module1 = SpringServiceFinder.getModuleService("model1", Model.class);
+        Assert.assertNull(module1);
+
+        Exception exception = Assert.assertThrows(RuntimeException.class, () -> {
+            SpringServiceFinder.getModuleService("duplicatedBean", DuplicatedBean.class);
+        });
+        Assert.assertEquals("name duplicatedBean is not unique in modules [biz1, biz3]",
+            exception.getMessage());
     }
 
     // test with expected exception
@@ -357,6 +397,9 @@ public class SpringServiceAndBeanFinderTest {
         public String test() {
             return "base";
         }
+    }
+
+    public static class DuplicatedBean {
     }
 
     public static class ModuleBean {

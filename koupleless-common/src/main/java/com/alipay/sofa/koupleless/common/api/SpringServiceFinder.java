@@ -92,6 +92,41 @@ public class SpringServiceFinder {
     }
 
     /**
+     * 遍历所有模块，找name对应的服务，存在多个则报错，不存在则返回null
+     * @param name a {@link java.lang.String} object
+     * @param serviceType a {@link java.lang.Class} object
+     * @return T
+     */
+    public static <T> T getModuleService(String name, Class<T> serviceType) {
+        // 遍历所有模块，找name对应的服务
+        Biz masterBiz = ArkClient.getMasterBiz();
+        List<Biz> bizList = ArkClient.getBizManagerService().getBizInOrder().stream()
+            .filter(biz -> biz != masterBiz).collect(Collectors.toList());
+
+        Map<Biz, T> bizMap = new HashMap<>();
+        for (Biz biz : bizList) {
+            // ensure filterServiceProxy called by listAllModuleServices directly，rather than called in the stream()
+            T proxy = ServiceProxyFactory.filterServiceProxy(biz.getBizName(), biz.getBizVersion(),
+                name, serviceType, null);
+
+            if (proxy != null) {
+                bizMap.put(biz, proxy);
+            }
+        }
+
+        if (bizMap.isEmpty()) {
+            return null;
+        }
+
+        if (1 < bizMap.size()) {
+            throw new RuntimeException(
+                "name " + name + " is not unique in modules " + bizMap.keySet());
+        }
+
+        return bizMap.values().stream().findFirst().get();
+    }
+
+    /**
      * <p>getModuleService.</p>
      *
      * @param moduleName a {@link java.lang.String} object
