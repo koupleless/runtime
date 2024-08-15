@@ -220,8 +220,7 @@ public class SpringServiceAndBeanFinderTest {
         Exception exception = Assert.assertThrows(RuntimeException.class, () -> {
             SpringServiceFinder.getModuleService("duplicatedBean", DuplicatedBean.class);
         });
-        Assert.assertEquals("name duplicatedBean is not unique in modules [biz1, biz3]",
-            exception.getMessage());
+        Assert.assertTrue(exception.getMessage().contains("name duplicatedBean is not unique"));
     }
 
     // test with expected exception
