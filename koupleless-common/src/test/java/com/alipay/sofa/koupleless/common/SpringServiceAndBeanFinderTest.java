@@ -34,6 +34,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -42,6 +43,7 @@ import org.springframework.util.ReflectionUtils;
 
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -96,6 +98,8 @@ public class SpringServiceAndBeanFinderTest {
         BizRuntimeContext masterBizRuntime = new BizRuntimeContext(masterBiz, masterCtx);
         BizRuntimeContextRegistry.registerBizRuntimeManager(masterBizRuntime);
 
+        when(bizManagerService.getBiz("biz1")).thenReturn(Collections.singletonList(biz1));
+        when(bizManagerService.getActiveBiz("biz1")).thenReturn(biz1);
         when(bizManagerService.getBiz("biz1", "version1")).thenReturn(biz1);
         when(biz1.getBizState()).thenReturn(BizState.ACTIVATED);
         when(biz1.getBizClassLoader()).thenReturn(new URLClassLoader(new URL[0]));
@@ -201,26 +205,38 @@ public class SpringServiceAndBeanFinderTest {
     }
 
     @Test
-    public void testGetModuleService() {
-        ModuleBean moduleBean = SpringServiceFinder.getModuleService("moduleBean",
-            ModuleBean.class);
-        Assert.assertNotNull(moduleBean);
+    public void testGetActivatedModuleServices() {
+        Map<Biz, ModuleBean> moduleBeanList = SpringServiceFinder
+            .getActivatedModuleServices("moduleBean", ModuleBean.class);
+        Assert.assertEquals(1, moduleBeanList.size());
 
-        ModuleBean moduleBean2 = SpringServiceFinder.getModuleService("moduleBean2",
-            ModuleBean.class);
-        Assert.assertNull(moduleBean2);
+        Map<Biz, ModuleBean> moduleBean2List = SpringServiceFinder
+            .getActivatedModuleServices("moduleBean2", ModuleBean.class);
+        Assert.assertTrue(moduleBean2List.isEmpty());
 
-        ModuleBean moduleBean3 = SpringServiceFinder.getModuleService("moduleBean3",
-            ModuleBean.class);
-        Assert.assertNotNull(moduleBean3);
+        Map<Biz, ModuleBean> moduleBean3List = SpringServiceFinder
+            .getActivatedModuleServices("moduleBean3", ModuleBean.class);
+        Assert.assertEquals(1, moduleBean3List.size());
 
-        Model module1 = SpringServiceFinder.getModuleService("model1", Model.class);
-        Assert.assertNull(module1);
+        Map<Biz, Model> moduleList = SpringServiceFinder.getActivatedModuleServices("model1",
+            Model.class);
+        Assert.assertTrue(moduleList.isEmpty());
 
+        Map<Biz, DuplicatedBean> duplicatedBeanList = SpringServiceFinder
+            .getActivatedModuleServices("duplicatedBean", DuplicatedBean.class);
+
+        Assert.assertEquals(2, duplicatedBeanList.size());
+    }
+
+    @Test
+    public void testGetModuleServiceWithoutVersion() {
+        Assert.assertNotNull(SpringServiceFinder.getActivatedModuleServiceWithoutVersion("biz1",
+            "moduleBean", ModuleBean.class));
         Exception exception = Assert.assertThrows(RuntimeException.class, () -> {
-            SpringServiceFinder.getModuleService("duplicatedBean", DuplicatedBean.class);
+            SpringServiceFinder.getActivatedModuleServiceWithoutVersion("biz1", "moduleBean2",
+                ModuleBean.class);
         });
-        Assert.assertTrue(exception.getMessage().contains("name duplicatedBean is not unique"));
+        Assert.assertTrue(exception instanceof NoSuchBeanDefinitionException);
     }
 
     // test with expected exception

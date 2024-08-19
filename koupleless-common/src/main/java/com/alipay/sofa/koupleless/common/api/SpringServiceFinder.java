@@ -18,12 +18,15 @@ package com.alipay.sofa.koupleless.common.api;
 
 import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.spi.model.Biz;
+import com.alipay.sofa.ark.spi.model.BizState;
 import com.alipay.sofa.koupleless.common.service.ServiceProxyFactory;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.alipay.sofa.koupleless.common.util.ArkUtils.checkModuleExists;
 
 /**
  * <p>SpringServiceFinder class.</p>
@@ -92,16 +95,16 @@ public class SpringServiceFinder {
     }
 
     /**
-     * 遍历所有模块，找name对应的服务，存在多个则报错，不存在则返回null
+     * 查找所有生效的模块中 name 对应的服务
      * @param name a {@link java.lang.String} object
      * @param serviceType a {@link java.lang.Class} object
-     * @return T
+     * @return a Map<Biz, T> object
      */
-    public static <T> T getModuleService(String name, Class<T> serviceType) {
-        // 遍历所有模块，找name对应的服务
+    public static <T> Map<Biz, T> getActivatedModuleServices(String name, Class<T> serviceType) {
         Biz masterBiz = ArkClient.getMasterBiz();
         List<Biz> bizList = ArkClient.getBizManagerService().getBizInOrder().stream()
-            .filter(biz -> biz != masterBiz).collect(Collectors.toList());
+            .filter(biz -> biz != masterBiz && biz.getBizState().equals(BizState.ACTIVATED))
+            .collect(Collectors.toList());
 
         Map<Biz, T> bizMap = new HashMap<>();
         for (Biz biz : bizList) {
@@ -113,17 +116,27 @@ public class SpringServiceFinder {
                 bizMap.put(biz, proxy);
             }
         }
+        return bizMap;
+    }
 
-        if (bizMap.isEmpty()) {
+    /**
+     * 找指定模块的 name 对应的服务，如果模块不存在或未激活，则抛出异常；如果模块没有该服务，则抛出异常；
+     * @param moduleName a {@link java.lang.String} object
+     * @param serviceName a {@link java.lang.String} object
+     * @param serviceType a {@link java.lang.Class} object
+     * @return T
+     */
+    public static <T> T getActivatedModuleServiceWithoutVersion(String moduleName,
+                                                                String serviceName,
+                                                                Class<T> serviceType) {
+        checkModuleExists(moduleName);
+
+        Biz biz = ArkClient.getBizManagerService().getActiveBiz(moduleName);
+        if (biz == null) {
             return null;
         }
-
-        if (1 < bizMap.size()) {
-            throw new RuntimeException(
-                "name " + name + " is not unique in modules " + bizMap.keySet());
-        }
-
-        return bizMap.values().stream().findFirst().get();
+        return ServiceProxyFactory.createServiceProxy(biz.getBizName(), biz.getBizVersion(),
+            serviceName, serviceType, null);
     }
 
     /**
