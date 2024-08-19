@@ -182,7 +182,7 @@ public class SpringServiceAndBeanFinderTest {
         Object newModuleBean = null;
         try {
             Class<?> aClass = loader.loadClass(
-                "com.alipay.sofa.koupleless.common.SpringServiceAndBeanFinderTest$ModuleBean");
+                "com.alipay.sofa.koupleless.common.api.SpringServiceAndBeanFinderTest$ModuleBean");
             newModuleBean = aClass.newInstance();
         } catch (Exception e) {
             System.out.println(e);
@@ -219,7 +219,7 @@ public class SpringServiceAndBeanFinderTest {
         URLClassLoader loader = new URLClassLoader(new URL[] { url }, null);
         try {
             Class<?> aClass = loader.loadClass(
-                "com.alipay.sofa.koupleless.common.SpringServiceAndBeanFinderTest$ModuleBean");
+                "com.alipay.sofa.koupleless.common.api.SpringServiceAndBeanFinderTest$ModuleBean");
             newModuleBean = aClass.newInstance();
         } catch (Exception e) {
             System.out.println(e);
@@ -254,7 +254,7 @@ public class SpringServiceAndBeanFinderTest {
         Object newModuleBean = null;
         try {
             Class<?> aClass = loader.loadClass(
-                "com.alipay.sofa.koupleless.common.SpringServiceAndBeanFinderTest$ModuleBean");
+                "com.alipay.sofa.koupleless.common.api.SpringServiceAndBeanFinderTest$ModuleBean");
             newModuleBean = aClass.newInstance();
         } catch (Exception e) {
             System.out.println(e);
@@ -311,7 +311,7 @@ public class SpringServiceAndBeanFinderTest {
         Object newModuleBean = null;
         try {
             Class<?> aClass = loader.loadClass(
-                "com.alipay.sofa.koupleless.common.SpringServiceAndBeanFinderTest$ModuleBean");
+                "com.alipay.sofa.koupleless.common.api.SpringServiceAndBeanFinderTest$ModuleBean");
             newModuleBean = aClass.newInstance();
         } catch (Exception e) {
             System.out.println(e);
