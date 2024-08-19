@@ -14,16 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.common;
+package com.alipay.sofa.koupleless.common.api;
 
 import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.ark.spi.model.BizState;
 import com.alipay.sofa.ark.spi.service.biz.BizManagerService;
-import com.alipay.sofa.koupleless.common.api.AutowiredFromBase;
-import com.alipay.sofa.koupleless.common.api.AutowiredFromBiz;
-import com.alipay.sofa.koupleless.common.api.SpringBeanFinder;
-import com.alipay.sofa.koupleless.common.api.SpringServiceFinder;
+import com.alipay.sofa.koupleless.common.BizRuntimeContext;
+import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
 import com.alipay.sofa.koupleless.common.exception.BizRuntimeException;
 import com.alipay.sofa.koupleless.common.service.ArkAutowiredBeanPostProcessor;
 import com.google.common.collect.Lists;
@@ -204,41 +202,6 @@ public class SpringServiceAndBeanFinderTest {
         Assert.assertEquals("module", foundModuleBean.test());
     }
 
-    @Test
-    public void testGetActivatedModuleServices() {
-        Map<Biz, ModuleBean> moduleBeanList = SpringServiceFinder
-            .getActivatedModuleServices("moduleBean", ModuleBean.class);
-        Assert.assertEquals(1, moduleBeanList.size());
-
-        Map<Biz, ModuleBean> moduleBean2List = SpringServiceFinder
-            .getActivatedModuleServices("moduleBean2", ModuleBean.class);
-        Assert.assertTrue(moduleBean2List.isEmpty());
-
-        Map<Biz, ModuleBean> moduleBean3List = SpringServiceFinder
-            .getActivatedModuleServices("moduleBean3", ModuleBean.class);
-        Assert.assertEquals(1, moduleBean3List.size());
-
-        Map<Biz, Model> moduleList = SpringServiceFinder.getActivatedModuleServices("model1",
-            Model.class);
-        Assert.assertTrue(moduleList.isEmpty());
-
-        Map<Biz, DuplicatedBean> duplicatedBeanList = SpringServiceFinder
-            .getActivatedModuleServices("duplicatedBean", DuplicatedBean.class);
-
-        Assert.assertEquals(2, duplicatedBeanList.size());
-    }
-
-    @Test
-    public void testGetModuleServiceWithoutVersion() {
-        Assert.assertNotNull(SpringServiceFinder.getActivatedModuleServiceWithoutVersion("biz1",
-            "moduleBean", ModuleBean.class));
-        Exception exception = Assert.assertThrows(RuntimeException.class, () -> {
-            SpringServiceFinder.getActivatedModuleServiceWithoutVersion("biz1", "moduleBean2",
-                ModuleBean.class);
-        });
-        Assert.assertTrue(exception instanceof NoSuchBeanDefinitionException);
-    }
-
     // test with expected exception
     @Test
     public void testSpringServiceFinderWithoutBiz() {
@@ -368,6 +331,75 @@ public class SpringServiceAndBeanFinderTest {
             "moduleBean", ModuleBean.class);
         Assert.assertEquals("test model name",
             moduleBean1.crossInvoker(new Model("test model name")));
+    }
+
+    @Test
+    public void testGetActivatedModuleServices() {
+        Map<Biz, ModuleBean> moduleBeanList = SpringServiceFinder
+            .getActivatedModuleServices("moduleBean", ModuleBean.class);
+        Assert.assertEquals(1, moduleBeanList.size());
+
+        Map<Biz, ModuleBean> moduleBean2List = SpringServiceFinder
+            .getActivatedModuleServices("moduleBean2", ModuleBean.class);
+        Assert.assertTrue(moduleBean2List.isEmpty());
+
+        Map<Biz, ModuleBean> moduleBean3List = SpringServiceFinder
+            .getActivatedModuleServices("moduleBean3", ModuleBean.class);
+        Assert.assertEquals(1, moduleBean3List.size());
+
+        Map<Biz, Model> moduleList = SpringServiceFinder.getActivatedModuleServices("model1",
+            Model.class);
+        Assert.assertTrue(moduleList.isEmpty());
+
+        Map<Biz, DuplicatedBean> duplicatedBeanList = SpringServiceFinder
+            .getActivatedModuleServices("duplicatedBean", DuplicatedBean.class);
+
+        Assert.assertEquals(2, duplicatedBeanList.size());
+    }
+
+    @Test
+    public void testGetModuleServices() {
+        Map<Biz, ModuleBean> moduleBeanList = SpringServiceFinder.getModuleServices("moduleBean",
+            ModuleBean.class);
+        Assert.assertEquals(1, moduleBeanList.size());
+
+        Map<Biz, ModuleBean> moduleBean2List = SpringServiceFinder.getModuleServices("moduleBean2",
+            ModuleBean.class);
+        Assert.assertTrue(moduleBean2List.isEmpty());
+
+        Map<Biz, ModuleBean> moduleBean3List = SpringServiceFinder.getModuleServices("moduleBean3",
+            ModuleBean.class);
+        Assert.assertEquals(1, moduleBean3List.size());
+
+        Map<Biz, Model> moduleList = SpringServiceFinder.getModuleServices("model1", Model.class);
+        Assert.assertTrue(moduleList.isEmpty());
+
+        Map<Biz, DuplicatedBean> duplicatedBeanList = SpringServiceFinder
+            .getModuleServices("duplicatedBean", DuplicatedBean.class);
+
+        Assert.assertEquals(2, duplicatedBeanList.size());
+    }
+
+    @Test
+    public void testGetModuleServiceWithoutVersion() {
+        Assert.assertNotNull(SpringServiceFinder.getModuleServiceWithoutVersion("biz1",
+            "moduleBean", ModuleBean.class));
+        Exception exception = Assert.assertThrows(RuntimeException.class, () -> {
+            SpringServiceFinder.getModuleServiceWithoutVersion("biz1", "moduleBean2",
+                ModuleBean.class);
+        });
+        Assert.assertTrue(exception instanceof NoSuchBeanDefinitionException);
+    }
+
+    @Test
+    public void testActivatedGetModuleServiceWithoutVersion() {
+        Assert.assertNotNull(SpringServiceFinder.getActivatedModuleServiceWithoutVersion("biz1",
+            "moduleBean", ModuleBean.class));
+        Exception exception = Assert.assertThrows(RuntimeException.class, () -> {
+            SpringServiceFinder.getActivatedModuleServiceWithoutVersion("biz1", "moduleBean2",
+                ModuleBean.class);
+        });
+        Assert.assertTrue(exception instanceof NoSuchBeanDefinitionException);
     }
 
     @Test

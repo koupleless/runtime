@@ -95,12 +95,23 @@ public class SpringServiceFinder {
     }
 
     /**
+     * 查找所有模块 name 对应的可用服务
+     * @param name a {@link java.lang.String} object
+     * @param serviceType a {@link java.lang.Class} object
+     * @return a Map<Biz, T> object
+     */
+    public static <T> Map<Biz, T> getModuleServices(String name, Class<T> serviceType) {
+        // 默认不分发，直接查找所有生效的模块中 name 对应的服务
+        return getActivatedModuleServices(name, serviceType);
+    }
+
+    /**
      * 查找所有生效的模块中 name 对应的服务
      * @param name a {@link java.lang.String} object
      * @param serviceType a {@link java.lang.Class} object
      * @return a Map<Biz, T> object
      */
-    public static <T> Map<Biz, T> getActivatedModuleServices(String name, Class<T> serviceType) {
+    protected static <T> Map<Biz, T> getActivatedModuleServices(String name, Class<T> serviceType) {
         Biz masterBiz = ArkClient.getMasterBiz();
         List<Biz> bizList = ArkClient.getBizManagerService().getBizInOrder().stream()
             .filter(biz -> biz != masterBiz && biz.getBizState().equals(BizState.ACTIVATED))
@@ -120,15 +131,28 @@ public class SpringServiceFinder {
     }
 
     /**
+     * 找指定模块的 name 对应的可用服务
+     * @param moduleName a {@link java.lang.String} object
+     * @param serviceName a {@link java.lang.String} object
+     * @param serviceType a {@link java.lang.Class} object
+     * @return T
+     */
+    public static <T> T getModuleServiceWithoutVersion(String moduleName, String serviceName,
+                                                       Class<T> serviceType) {
+        // 默认不分发，直接查找指定模块中 name 对应的服务。要求模块是已激活状态。
+        return getActivatedModuleServiceWithoutVersion(moduleName, serviceName, serviceType);
+    }
+
+    /**
      * 找指定模块的 name 对应的服务，如果模块不存在或未激活，则抛出异常；如果模块没有该服务，则抛出异常；
      * @param moduleName a {@link java.lang.String} object
      * @param serviceName a {@link java.lang.String} object
      * @param serviceType a {@link java.lang.Class} object
      * @return T
      */
-    public static <T> T getActivatedModuleServiceWithoutVersion(String moduleName,
-                                                                String serviceName,
-                                                                Class<T> serviceType) {
+    protected static <T> T getActivatedModuleServiceWithoutVersion(String moduleName,
+                                                                   String serviceName,
+                                                                   Class<T> serviceType) {
         checkModuleExists(moduleName);
 
         Biz biz = ArkClient.getBizManagerService().getActiveBiz(moduleName);
