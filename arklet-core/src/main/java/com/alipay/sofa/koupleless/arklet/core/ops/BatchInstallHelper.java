@@ -26,6 +26,7 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.jar.JarFile;
@@ -71,7 +72,7 @@ public class BatchInstallHelper {
         List<Map.Entry<Integer, List<String>>> keyInOrder = new ArrayList<>(
             bizUrlsWithPriority.entrySet());
         keyInOrder.sort(Map.Entry.comparingByKey());
-        Map<Integer, List<String>> bizUrlsInOrder = new HashMap<>();
+        Map<Integer, List<String>> bizUrlsInOrder = new LinkedHashMap<>();
         for (Map.Entry<Integer, List<String>> entry : keyInOrder) {
             bizUrlsInOrder.put(entry.getKey(), entry.getValue());
         }
