@@ -35,11 +35,14 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -114,14 +117,18 @@ public class KouplelessBaseBuildPrePackageMojoTest {
 
         {
             // init maven project
-            List<Dependency> dependencies = new ArrayList<>();
-            Dependency mockDependency = new Dependency();
-            mockDependency.setGroupId("A");
-            mockDependency.setArtifactId("B");
-            mockDependency.setVersion("C");
-            dependencies.add(mockDependency);
-
-            doReturn(dependencies).when(project).getDependencies();
+            Set<org.apache.maven.artifact.Artifact> artifacts = new HashSet<>();
+            org.apache.maven.artifact.Artifact artifact = mock(
+                org.apache.maven.artifact.Artifact.class);
+            doReturn("A").when(artifact).getGroupId();
+            //            doReturn("B").when(artifact).getArtifactId();
+            doReturn("C").when(artifact).getBaseVersion();
+            artifacts.add(artifact);
+            project.setArtifacts(artifacts);
+            // set resolvedArtifacts in project
+            Field field = MavenProject.class.getDeclaredField("resolvedArtifacts");
+            field.setAccessible(true);
+            field.set(project, artifacts);
         }
 
         {

@@ -123,12 +123,14 @@ public class KouplelessBasePackageDependencyMojoTest {
         when(a1.getGroupId()).thenReturn("com.mock.outside");
         when(a1.getVersion()).thenReturn("1.0.0");
         when(a1.getBaseVersion()).thenReturn("1.0.0");
+        when(a1.getType()).thenReturn("jar");
 
         Artifact a2 = mock(Artifact.class);
         when(a2.getArtifactId()).thenReturn("a2");
         when(a2.getGroupId()).thenReturn("com.mock.outside");
         when(a2.getVersion()).thenReturn("1.0.0");
         when(a2.getBaseVersion()).thenReturn("1.0.0");
+        when(a2.getType()).thenReturn("jar");
         project.setArtifacts(Sets.newHashSet(a1, a2));
 
         MavenProject spyProject = spy(project);

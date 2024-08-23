@@ -197,20 +197,21 @@ public class MavenUtils {
         if (StringUtils.isNotEmpty(dependency.getClassifier())) {
             return dependency.getGroupId() + STRING_COLON + dependency.getArtifactId()
                    + STRING_COLON + dependency.getVersion() + STRING_COLON
-                   + dependency.getClassifier();
+                   + dependency.getClassifier() + STRING_COLON + dependency.getType();
         } else {
             return dependency.getGroupId() + STRING_COLON + dependency.getArtifactId()
-                   + STRING_COLON + dependency.getVersion();
+                   + STRING_COLON + dependency.getVersion() + STRING_COLON + dependency.getType();
         }
     }
 
     public static String getArtifactIdentity(Artifact artifact) {
         if (artifact.hasClassifier()) {
             return artifact.getGroupId() + STRING_COLON + artifact.getArtifactId() + STRING_COLON
-                   + artifact.getVersion() + ":" + artifact.getClassifier();
+                   + artifact.getVersion() + STRING_COLON + artifact.getClassifier() + STRING_COLON
+                   + artifact.getType();
         } else {
             return artifact.getGroupId() + STRING_COLON + artifact.getArtifactId() + STRING_COLON
-                   + artifact.getVersion();
+                   + artifact.getVersion() + STRING_COLON + artifact.getType();
         }
 
     }
