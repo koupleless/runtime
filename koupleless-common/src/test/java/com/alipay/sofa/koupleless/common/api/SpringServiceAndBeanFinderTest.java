@@ -400,6 +400,12 @@ public class SpringServiceAndBeanFinderTest {
                 ModuleBean.class);
         });
         Assert.assertTrue(exception instanceof NoSuchBeanDefinitionException);
+
+        Exception exception1 = Assert.assertThrows(RuntimeException.class, () -> {
+            SpringServiceFinder.getActivatedModuleServiceWithoutVersion("biz6", "moduleBean2",
+                ModuleBean.class);
+        });
+        Assert.assertTrue(exception1 instanceof BizRuntimeException);
     }
 
     @Test
