@@ -1,6 +1,18 @@
-/**
- * Alipay.com Inc.
- * Copyright (c) 2004-2024 All Rights Reserved.
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.alipay.sofa.koupleless.common.model;
 
@@ -10,30 +22,35 @@ import java.util.Map;
  * @author lianglipeng.llp@alibaba-inc.com
  * @version $Id: MainBizApplicationContext.java, v 0.1 2024年08月25日 23:35 立蓬 Exp $
  */
-public class MainBizApplicationContext extends BizApplicationContext<MainApplicationContext>{
+public class MainBizApplicationContext extends BizApplicationContext<MainApplicationContext> {
     MainBizApplicationContext(MainApplicationContext applicationContext) {
         super(applicationContext);
     }
 
     @Override
-    <A> Map<String, A> getObjectsOfType(Class<A> type) throws Exception {
+    public <A> Map<String, A> getObjectsOfType(Class<A> type) {
         return applicationContext.getObjectMap(type);
     }
 
     @Override
-    Object getObject(String key) throws Exception {
+    public Object getObject(String key) {
         return applicationContext.getObject(key);
     }
 
     @Override
-    <A> A getObject(Class<A> requiredType) throws Exception {
-        Map<String,A> objMap = applicationContext.getObjectMap(requiredType);
-        if(objMap.isEmpty()){
+    public <A> A getObject(Class<A> requiredType) {
+        Map<String, A> objMap = applicationContext.getObjectMap(requiredType);
+        if (objMap.isEmpty()) {
             return null;
         }
-        if(objMap.size() > 1){
+        if (objMap.size() > 1) {
             throw new RuntimeException("more than one object of type " + requiredType.getName());
         }
         return objMap.values().stream().findFirst().get();
+    }
+
+    @Override
+    public void close() {
+        applicationContext.close();
     }
 }

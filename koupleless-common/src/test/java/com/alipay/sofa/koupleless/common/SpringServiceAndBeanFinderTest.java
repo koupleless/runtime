@@ -216,7 +216,8 @@ public class SpringServiceAndBeanFinderTest {
             SpringServiceFinder.getModuleService("biz1", "version1", "moduleBean",
                 ModuleBean.class);
         });
-        Assert.assertEquals("biz biz1:version1 spring context is null", exception2.getMessage());
+        Assert.assertEquals("biz biz1:version1 application context is null",
+            exception2.getMessage());
     }
 
     @Test
