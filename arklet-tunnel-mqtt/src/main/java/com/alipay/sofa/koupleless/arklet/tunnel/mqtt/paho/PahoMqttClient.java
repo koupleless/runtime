@@ -71,6 +71,10 @@ public class PahoMqttClient {
      * @param username String
      * @param password char[]
      * @param commandService a {@link com.alipay.sofa.koupleless.arklet.core.command.CommandService} object
+     * @param deviceID a {@link java.util.UUID} object
+     * @param clientPrefix a {@link java.lang.String} object
+     * @param envKey a {@link java.lang.String} object
+     * @throws org.eclipse.paho.client.mqttv3.MqttException if any.
      */
     public PahoMqttClient(String broker, int port, UUID deviceID, String clientPrefix,
                           String envKey, String username, String password,
@@ -97,6 +101,12 @@ public class PahoMqttClient {
      * @param clientCrtFilePath String
      * @param clientKeyFilePath String
      * @param commandService a {@link com.alipay.sofa.koupleless.arklet.core.command.CommandService} object
+     * @param deviceID a {@link java.util.UUID} object
+     * @param clientPrefix a {@link java.lang.String} object
+     * @param envKey a {@link java.lang.String} object
+     * @param username a {@link java.lang.String} object
+     * @param password a {@link java.lang.String} object
+     * @throws org.eclipse.paho.client.mqttv3.MqttException if any.
      */
     public PahoMqttClient(String broker, int port, UUID deviceID, String clientPrefix,
                           String envKey, String username, String password, String caFilePath,
@@ -124,7 +134,7 @@ public class PahoMqttClient {
     /**
      * <p>open.</p>
      *
-     * @throws MqttException if any.
+     * @throws org.eclipse.paho.client.mqttv3.MqttException if any.
      */
     public void open() throws MqttException {
         this.mqttClient.setCallback(
@@ -135,7 +145,7 @@ public class PahoMqttClient {
     /**
      * <p>close.</p>
      *
-     * @throws MqttException is any
+     * @throws org.eclipse.paho.client.mqttv3.MqttException is any
      */
     public void close() throws MqttException {
         this.mqttClient.disconnect();

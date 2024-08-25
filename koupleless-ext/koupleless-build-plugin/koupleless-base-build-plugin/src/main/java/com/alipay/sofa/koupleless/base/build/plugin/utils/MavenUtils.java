@@ -48,6 +48,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.STRING_COLON;
+
 /**
  * @author lianglipeng.llp@alibaba-inc.com
  * @version $Id: MavenUtils.java, v 0.1 2024年07月15日 13:58 立蓬 Exp $
@@ -189,6 +191,29 @@ public class MavenUtils {
         DependencyListMojo mojo = new DependencyListMojo(mavenProject);
         DependencyStatusSets statusSets = mojo.getDependencySets();
         return statusSets.getResolvedDependencies();
+    }
+
+    public static String getDependencyIdentity(Dependency dependency) {
+        if (StringUtils.isNotEmpty(dependency.getClassifier())) {
+            return dependency.getGroupId() + STRING_COLON + dependency.getArtifactId()
+                   + STRING_COLON + dependency.getVersion() + STRING_COLON
+                   + dependency.getClassifier() + STRING_COLON + dependency.getType();
+        } else {
+            return dependency.getGroupId() + STRING_COLON + dependency.getArtifactId()
+                   + STRING_COLON + dependency.getVersion() + STRING_COLON + dependency.getType();
+        }
+    }
+
+    public static String getArtifactIdentity(Artifact artifact) {
+        if (artifact.hasClassifier()) {
+            return artifact.getGroupId() + STRING_COLON + artifact.getArtifactId() + STRING_COLON
+                   + artifact.getVersion() + STRING_COLON + artifact.getClassifier() + STRING_COLON
+                   + artifact.getType();
+        } else {
+            return artifact.getGroupId() + STRING_COLON + artifact.getArtifactId() + STRING_COLON
+                   + artifact.getVersion() + STRING_COLON + artifact.getType();
+        }
+
     }
 
     private static class DependencyListMojo extends ListMojo {
