@@ -12,8 +12,8 @@ import java.util.Map;
  * @author lianglipeng.llp@alibaba-inc.com
  * @version $Id: SpringApplicationContextAdaptor.java, v 0.1 2024年08月09日 16:17 立蓬 Exp $
  */
-public class SpringApplicationContextAdaptor extends BizApplicationContext<ApplicationContext> {
-    public SpringApplicationContextAdaptor(ApplicationContext applicationContext) {
+public class SpringBizApplicationContext extends BizApplicationContext<ApplicationContext> {
+    public SpringBizApplicationContext(ApplicationContext applicationContext) {
         super(applicationContext);
     }
 

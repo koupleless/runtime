@@ -20,11 +20,11 @@ import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.koupleless.common.exception.BizRuntimeException;
 import com.alipay.sofa.koupleless.common.exception.ErrorCodes;
 import com.alipay.sofa.koupleless.common.model.BizApplicationContext;
+import com.alipay.sofa.koupleless.common.model.MainApplicationContext;
 import com.alipay.sofa.koupleless.common.service.AbstractComponent;
 import com.alipay.sofa.koupleless.common.service.AbstractServiceComponent;
 import com.alipay.sofa.koupleless.common.service.BeanRegistry;
 import com.alipay.sofa.koupleless.common.service.ComponentRegistry;
-import com.alipay.sofa.koupleless.common.model.MainBizApplicationContext;
 import com.alipay.sofa.koupleless.common.service.ServiceProxyCache;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -48,7 +48,7 @@ public class BizRuntimeContext implements ComponentRegistry {
 
     private ApplicationContext                                                   rootApplicationContext;
 
-    private MainBizApplicationContext                                            mainBizApplicationContext;
+    private MainApplicationContext mainApplicationContext;
 
     private Map<ClassLoader, Map<String, ServiceProxyCache>>                     serviceProxyCaches = new ConcurrentHashMap<>();
 
@@ -97,7 +97,10 @@ public class BizRuntimeContext implements ComponentRegistry {
      * @return a {@link org.springframework.context.ApplicationContext} object
      */
     public ApplicationContext getRootApplicationContext() {
-        return rootApplicationContext;
+        if(applicationContext.get() instanceof ApplicationContext){
+            return (ApplicationContext) applicationContext.get();
+        }
+        return null;
     }
 
     /**
@@ -125,14 +128,6 @@ public class BizRuntimeContext implements ComponentRegistry {
      */
     public void setRootApplicationContext(ApplicationContext rootApplicationContext) {
         this.rootApplicationContext = rootApplicationContext;
-    }
-
-    public MainBizApplicationContext getMainBizApplicationContext() {
-        return mainBizApplicationContext;
-    }
-
-    public void setMainBizApplicationContext(MainBizApplicationContext mainBizApplicationContext) {
-        this.mainBizApplicationContext = mainBizApplicationContext;
     }
 
     /**

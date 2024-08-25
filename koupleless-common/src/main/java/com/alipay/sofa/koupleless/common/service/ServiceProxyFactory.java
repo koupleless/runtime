@@ -23,7 +23,7 @@ import com.alipay.sofa.ark.spi.model.BizState;
 import com.alipay.sofa.koupleless.common.BizRuntimeContext;
 import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
 import com.alipay.sofa.koupleless.common.exception.BizRuntimeException;
-import com.alipay.sofa.koupleless.common.model.MainBizApplicationContext;
+import com.alipay.sofa.koupleless.common.model.MainApplicationContext;
 import com.alipay.sofa.koupleless.common.util.ReflectionUtils;
 import org.springframework.aop.framework.ProxyFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -162,10 +162,10 @@ public class ServiceProxyFactory {
     private static <T> Map<String, T> listService(Biz biz, Class<T> serviceType) {
         BizRuntimeContext bizRuntimeContext = checkBizStateAndGetBizRuntimeContext(biz.getBizName(),
             biz.getBizVersion(), biz);
-        MainBizApplicationContext mainBizApplicationContext = bizRuntimeContext
+        MainApplicationContext mainApplicationContext = bizRuntimeContext
             .getMainBizApplicationContext();
-        if (mainBizApplicationContext != null) {
-            return mainBizApplicationContext.getObjectMap(serviceType);
+        if (mainApplicationContext != null) {
+            return mainApplicationContext.getObjectMap(serviceType);
         }
 
         ApplicationContext rootApplicationContext = bizRuntimeContext.getRootApplicationContext();

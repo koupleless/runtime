@@ -16,7 +16,7 @@ public abstract class  BizApplicationContext<T> {
     BizApplicationContext(T applicationContext) {
         this.applicationContext = applicationContext;
     }
-    public T get(){
+    final public T get(){
         return this.applicationContext;
     }
 
