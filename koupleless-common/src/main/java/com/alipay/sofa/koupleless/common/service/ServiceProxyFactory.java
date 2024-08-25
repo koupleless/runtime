@@ -102,13 +102,12 @@ public class ServiceProxyFactory {
         }
 
         Map<String, ?> serviceMap = listService(biz, serviceClass);
-        for (String beanName : serviceMap.keySet()) {
-            if (beanName.equals(name)) {
-                return doCreateServiceProxy(biz.getBizName(), biz.getBizVersion(),
-                    serviceMap.get(beanName), null, serviceType, clientClassLoader);
-            }
 
+        if (serviceMap.containsKey(name)) {
+            return doCreateServiceProxy(biz.getBizName(), biz.getBizVersion(), serviceMap.get(name),
+                null, serviceType, clientClassLoader);
         }
+
         return null;
     }
 
