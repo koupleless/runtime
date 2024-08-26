@@ -150,7 +150,10 @@ public class BizRuntimeContext implements ComponentRegistry {
     public BizRuntimeContext(Biz biz, ApplicationContext applicationContext) {
         this.bizName = biz.getBizName();
         this.appClassLoader = biz.getBizClassLoader();
-        this.applicationContext = new SpringBizApplicationContext(applicationContext);
+
+        if(applicationContext != null) {
+            this.applicationContext = new SpringBizApplicationContext(applicationContext);
+        }
     }
 
     /**
