@@ -23,6 +23,7 @@ import com.alipay.sofa.ark.spi.service.biz.BizManagerService;
 import com.alipay.sofa.koupleless.common.BizRuntimeContext;
 import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
 import com.alipay.sofa.koupleless.common.api.SpringServiceAndBeanFinderTest.BaseBean;
+import com.alipay.sofa.koupleless.common.api.SpringServiceAndBeanFinderTest.DuplicatedBean;
 import com.alipay.sofa.koupleless.common.api.SpringServiceAndBeanFinderTest.Model;
 import com.alipay.sofa.koupleless.common.api.SpringServiceAndBeanFinderTest.ModuleBean;
 import com.alipay.sofa.koupleless.common.exception.BizRuntimeException;
@@ -37,15 +38,19 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.ReflectionUtils;
 
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
 import static com.alipay.sofa.koupleless.common.api.SpringServiceAndBeanFinderTest.buildApplicationContext;
+import static com.alipay.sofa.koupleless.common.exception.ErrorCodes.SpringContextManager.E100003;
+import static com.alipay.sofa.koupleless.common.exception.ErrorCodes.SpringContextManager.E100007;
 import static org.mockito.Mockito.when;
 
 /**
@@ -64,12 +69,24 @@ public class SpringServiceFinderWithMainBizTest {
     private Biz               biz2;
 
     @Mock
+    private Biz               biz3;
+
+    @Mock
     private BizManagerService bizManagerService;
 
     @Before
     public void prepare() {
         ConfigurableApplicationContext masterCtx = buildApplicationContext("masterBiz");
         masterCtx.getBeanFactory().registerSingleton("baseBean", new BaseBean());
+
+        MainBizApplicationContext mainBizApplicationContext = new MainBizApplicationContext(
+            new MainApplicationContext());
+        mainBizApplicationContext.get().register("moduleBean", new ModuleBean());
+        mainBizApplicationContext.get().register("duplicatedBean", new DuplicatedBean());
+
+        ConfigurableApplicationContext bizCtx3 = buildApplicationContext("biz3");
+        bizCtx3.getBeanFactory().registerSingleton("moduleBean3", new ModuleBean());
+        bizCtx3.getBeanFactory().registerSingleton("duplicatedBean", new DuplicatedBean());
 
         ArkClient.setBizManagerService(bizManagerService);
 
@@ -82,6 +99,8 @@ public class SpringServiceFinderWithMainBizTest {
         BizRuntimeContext masterBizRuntime = new BizRuntimeContext(masterBiz, masterCtx);
         BizRuntimeContextRegistry.registerBizRuntimeManager(masterBizRuntime);
 
+        when(bizManagerService.getBiz("biz1")).thenReturn(Collections.singletonList(biz1));
+        when(bizManagerService.getActiveBiz("biz1")).thenReturn(biz1);
         when(bizManagerService.getBiz("biz1", "version1")).thenReturn(biz1);
         when(biz1.getBizState()).thenReturn(BizState.ACTIVATED);
         ClassLoader bizClassloader = new URLClassLoader(new URL[0]);
@@ -89,14 +108,19 @@ public class SpringServiceFinderWithMainBizTest {
         when(biz1.getBizName()).thenReturn("biz1");
         when(biz1.getBizVersion()).thenReturn("version1");
         BizRuntimeContext bizRuntime = new BizRuntimeContext(biz1, null);
-        MainBizApplicationContext mainBizApplicationContext = new MainBizApplicationContext(
-            new MainApplicationContext());
-        mainBizApplicationContext.get().register("moduleBean", new ModuleBean());
         bizRuntime.setApplicationContext(mainBizApplicationContext);
         BizRuntimeContextRegistry.registerBizRuntimeManager(bizRuntime);
 
+        when(bizManagerService.getBiz("biz3", "version1")).thenReturn(biz3);
+        when(biz3.getBizState()).thenReturn(BizState.ACTIVATED);
+        when(biz3.getBizClassLoader()).thenReturn(new URLClassLoader(new URL[0]));
+        when(biz3.getBizName()).thenReturn("biz3");
+        when(biz3.getBizVersion()).thenReturn("version1");
+        BizRuntimeContext bizRuntime3 = new BizRuntimeContext(biz3, bizCtx3);
+        BizRuntimeContextRegistry.registerBizRuntimeManager(bizRuntime3);
+
         when(bizManagerService.getBizInOrder())
-            .thenReturn(Lists.asList(masterBiz, new Biz[] { biz1 }));
+            .thenReturn(Lists.asList(masterBiz, new Biz[] { biz1, biz3 }));
     }
 
     @Test
@@ -151,19 +175,19 @@ public class SpringServiceFinderWithMainBizTest {
         Map<Biz, Map<String, ModuleBean>> allModuleBeanMap = SpringServiceFinder
             .listAllModuleServices(ModuleBean.class);
         Assert.assertNotNull(allModuleBeanMap);
-        Assert.assertEquals(1, allModuleBeanMap.size());
+        Assert.assertEquals(2, allModuleBeanMap.size());
         Assert.assertEquals(2, allModuleBeanMap.get(biz1).size());
 
         Assert.assertEquals("base", baseBean.test());
         Assert.assertEquals("module", moduleBean.test());
 
         // test to invoke crossing classloader
-        URL url = SpringServiceAndBeanFinderTest.class.getClassLoader().getResource("");
+        URL url = SpringServiceFinderWithMainBizTest.class.getClassLoader().getResource("");
         URLClassLoader loader = new URLClassLoader(new URL[] { url }, null);
         Object newModuleBean = null;
         try {
             Class<?> aClass = loader.loadClass(
-                "com.alipay.sofa.koupleless.common.SpringServiceAndBeanFinderTest$ModuleBean");
+                "com.alipay.sofa.koupleless.common.api.SpringServiceAndBeanFinderTest$ModuleBean");
             newModuleBean = aClass.newInstance();
         } catch (Exception e) {
             System.out.println(e);
@@ -200,7 +224,7 @@ public class SpringServiceFinderWithMainBizTest {
         URLClassLoader loader = new URLClassLoader(new URL[] { url }, null);
         try {
             Class<?> aClass = loader.loadClass(
-                "com.alipay.sofa.koupleless.common.SpringServiceAndBeanFinderTest$ModuleBean");
+                "com.alipay.sofa.koupleless.common.api.SpringServiceAndBeanFinderTest$ModuleBean");
             newModuleBean = aClass.newInstance();
         } catch (Exception e) {
             System.out.println(e);
@@ -236,7 +260,7 @@ public class SpringServiceFinderWithMainBizTest {
         Object newModuleBean = null;
         try {
             Class<?> aClass = loader.loadClass(
-                "com.alipay.sofa.koupleless.common.SpringServiceAndBeanFinderTest$ModuleBean");
+                "com.alipay.sofa.koupleless.common.api.SpringServiceAndBeanFinderTest$ModuleBean");
             newModuleBean = aClass.newInstance();
         } catch (Exception e) {
             System.out.println(e);
@@ -296,7 +320,7 @@ public class SpringServiceFinderWithMainBizTest {
         Object newModuleBean = null;
         try {
             Class<?> aClass = loader.loadClass(
-                "com.alipay.sofa.koupleless.common.SpringServiceAndBeanFinderTest$ModuleBean");
+                "com.alipay.sofa.koupleless.common.api.SpringServiceAndBeanFinderTest$ModuleBean");
             newModuleBean = aClass.newInstance();
         } catch (Exception e) {
             System.out.println(e);
@@ -320,4 +344,83 @@ public class SpringServiceFinderWithMainBizTest {
         Assert.assertEquals("test model name",
             moduleBean1.crossInvoker(new Model("test model name")));
     }
+
+    @Test
+    public void testGetActivatedModuleServices() {
+        Map<Biz, ModuleBean> moduleBeanList = SpringServiceFinder
+            .getActivatedModuleServices("moduleBean", ModuleBean.class);
+        Assert.assertEquals(1, moduleBeanList.size());
+
+        Map<Biz, ModuleBean> moduleBean2List = SpringServiceFinder
+            .getActivatedModuleServices("moduleBean2", ModuleBean.class);
+        Assert.assertTrue(moduleBean2List.isEmpty());
+
+        Map<Biz, ModuleBean> moduleBean3List = SpringServiceFinder
+            .getActivatedModuleServices("moduleBean3", ModuleBean.class);
+        Assert.assertEquals(1, moduleBean3List.size());
+
+        Map<Biz, Model> moduleList = SpringServiceFinder.getActivatedModuleServices("model1",
+            Model.class);
+        Assert.assertTrue(moduleList.isEmpty());
+
+        Map<Biz, DuplicatedBean> duplicatedBeanList = SpringServiceFinder
+            .getActivatedModuleServices("duplicatedBean", DuplicatedBean.class);
+
+        Assert.assertEquals(2, duplicatedBeanList.size());
+    }
+
+    @Test
+    public void testGetModuleServices() {
+        Map<Biz, ModuleBean> moduleBeanList = SpringServiceFinder.getModuleServices("moduleBean",
+            ModuleBean.class);
+        Assert.assertEquals(1, moduleBeanList.size());
+
+        Map<Biz, ModuleBean> moduleBean2List = SpringServiceFinder.getModuleServices("moduleBean2",
+            ModuleBean.class);
+        Assert.assertTrue(moduleBean2List.isEmpty());
+
+        Map<Biz, ModuleBean> moduleBean3List = SpringServiceFinder.getModuleServices("moduleBean3",
+            ModuleBean.class);
+        Assert.assertEquals(1, moduleBean3List.size());
+
+        Map<Biz, Model> moduleList = SpringServiceFinder.getModuleServices("model1", Model.class);
+        Assert.assertTrue(moduleList.isEmpty());
+
+        Map<Biz, DuplicatedBean> duplicatedBeanList = SpringServiceFinder
+            .getModuleServices("duplicatedBean", DuplicatedBean.class);
+
+        Assert.assertEquals(2, duplicatedBeanList.size());
+    }
+
+    @Test
+    public void testGetModuleServiceWithoutVersion() {
+        Assert.assertNotNull(SpringServiceFinder.getModuleServiceWithoutVersion("biz1",
+            "moduleBean", ModuleBean.class));
+        Exception exception = Assert.assertThrows(RuntimeException.class, () -> {
+            SpringServiceFinder.getModuleServiceWithoutVersion("biz1", "moduleBean2",
+                ModuleBean.class);
+        });
+        Assert.assertTrue(exception instanceof BizRuntimeException);
+        Assert.assertEquals(E100007, ((BizRuntimeException) exception).getErrorCode());
+    }
+
+    @Test
+    public void testActivatedGetModuleServiceWithoutVersion() {
+        Assert.assertNotNull(SpringServiceFinder.getActivatedModuleServiceWithoutVersion("biz1",
+            "moduleBean", ModuleBean.class));
+        Exception exception = Assert.assertThrows(RuntimeException.class, () -> {
+            SpringServiceFinder.getActivatedModuleServiceWithoutVersion("biz1", "moduleBean2",
+                ModuleBean.class);
+        });
+        Assert.assertTrue(exception instanceof BizRuntimeException);
+        Assert.assertEquals(E100007, ((BizRuntimeException) exception).getErrorCode());
+
+        Exception exception1 = Assert.assertThrows(RuntimeException.class, () -> {
+            SpringServiceFinder.getActivatedModuleServiceWithoutVersion("biz6", "moduleBean2",
+                ModuleBean.class);
+        });
+        Assert.assertTrue(exception1 instanceof BizRuntimeException);
+        Assert.assertEquals(E100003, ((BizRuntimeException) exception1).getErrorCode());
+    }
+
 }

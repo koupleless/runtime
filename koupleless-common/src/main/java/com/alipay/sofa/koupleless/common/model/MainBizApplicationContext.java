@@ -16,10 +16,13 @@
  */
 package com.alipay.sofa.koupleless.common.model;
 
+import com.alipay.sofa.koupleless.common.exception.BizRuntimeException;
+
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import static com.alipay.sofa.koupleless.common.exception.ErrorCodes.SpringContextManager.E100007;
 
 /**
  * @author lianglipeng.llp@alibaba-inc.com
@@ -37,6 +40,9 @@ public class MainBizApplicationContext extends BizApplicationContext<MainApplica
 
     @Override
     public Object getObject(String key) {
+        if (applicationContext.getObject(key) == null) {
+            throw new BizRuntimeException(E100007, "object not found: " + key);
+        }
         return applicationContext.getObject(key);
     }
 

@@ -54,6 +54,11 @@ public class ErrorCodes {
          * 模块 MainApplicationContext 未初始化
          */
         public static final String E100006 = "100006";
+
+        /**
+         * 模块 MainApplicationContext 没有该实例
+         */
+        public static final String E100007 = "100007";
     }
 
     public static class ServiceManager {
