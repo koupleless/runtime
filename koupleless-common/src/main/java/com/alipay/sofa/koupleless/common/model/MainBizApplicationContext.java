@@ -16,14 +16,17 @@
  */
 package com.alipay.sofa.koupleless.common.model;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * @author lianglipeng.llp@alibaba-inc.com
  * @version $Id: MainBizApplicationContext.java, v 0.1 2024年08月25日 23:35 立蓬 Exp $
  */
 public class MainBizApplicationContext extends BizApplicationContext<MainApplicationContext> {
-    MainBizApplicationContext(MainApplicationContext applicationContext) {
+    public MainBizApplicationContext(MainApplicationContext applicationContext) {
         super(applicationContext);
     }
 
@@ -43,7 +46,8 @@ public class MainBizApplicationContext extends BizApplicationContext<MainApplica
         if (objMap.isEmpty()) {
             return null;
         }
-        if (objMap.size() > 1) {
+        Set<A> values = new HashSet<>(objMap.values());
+        if (values.size() > 1) {
             throw new RuntimeException("more than one object of type " + requiredType.getName());
         }
         return objMap.values().stream().findFirst().get();
