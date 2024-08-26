@@ -19,13 +19,14 @@ package com.alipay.sofa.koupleless.common;
 import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.koupleless.common.exception.BizRuntimeException;
 import com.alipay.sofa.koupleless.common.exception.ErrorCodes;
+import com.alipay.sofa.koupleless.common.model.ApplicationContextHolder;
+import com.alipay.sofa.koupleless.common.model.SpringApplicationContextHolder;
 import com.alipay.sofa.koupleless.common.service.AbstractComponent;
 import com.alipay.sofa.koupleless.common.service.AbstractServiceComponent;
 import com.alipay.sofa.koupleless.common.service.BeanRegistry;
 import com.alipay.sofa.koupleless.common.service.ComponentRegistry;
 import com.alipay.sofa.koupleless.common.service.ServiceProxyCache;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.AbstractApplicationContext;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,7 +43,7 @@ public class BizRuntimeContext implements ComponentRegistry {
 
     private ClassLoader                                                          appClassLoader;
 
-    private ApplicationContext                                                   rootApplicationContext;
+    private ApplicationContextHolder                                             applicationContext;
 
     private Map<ClassLoader, Map<String, ServiceProxyCache>>                     serviceProxyCaches = new ConcurrentHashMap<>();
 
@@ -90,8 +91,35 @@ public class BizRuntimeContext implements ComponentRegistry {
      *
      * @return a {@link org.springframework.context.ApplicationContext} object
      */
+    @Deprecated
     public ApplicationContext getRootApplicationContext() {
-        return rootApplicationContext;
+        if (applicationContext == null) {
+            return null;
+        }
+
+        if (applicationContext.get() instanceof ApplicationContext) {
+            return (ApplicationContext) applicationContext.get();
+        }
+
+        return null;
+    }
+
+    /**
+     * <p>Getter for the field <code>applicationContext</code>.</p>
+     *
+     * @return a {@link ApplicationContextHolder} object
+     */
+    public ApplicationContextHolder getApplicationContext() {
+        return applicationContext;
+    }
+
+    /**
+     * <p>Setter for the field <code>applicationContext</code>.</p>
+     *
+     * @param applicationContext a {@link ApplicationContextHolder} object
+     */
+    public void setApplicationContext(ApplicationContextHolder applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
     /**
@@ -99,8 +127,9 @@ public class BizRuntimeContext implements ComponentRegistry {
      *
      * @param rootApplicationContext a {@link org.springframework.context.ApplicationContext} object
      */
+    @Deprecated
     public void setRootApplicationContext(ApplicationContext rootApplicationContext) {
-        this.rootApplicationContext = rootApplicationContext;
+        this.applicationContext = new SpringApplicationContextHolder(rootApplicationContext);
     }
 
     /**
@@ -121,7 +150,10 @@ public class BizRuntimeContext implements ComponentRegistry {
     public BizRuntimeContext(Biz biz, ApplicationContext applicationContext) {
         this.bizName = biz.getBizName();
         this.appClassLoader = biz.getBizClassLoader();
-        this.rootApplicationContext = applicationContext;
+
+        if (applicationContext != null) {
+            this.applicationContext = new SpringApplicationContextHolder(applicationContext);
+        }
     }
 
     /**
@@ -147,11 +179,7 @@ public class BizRuntimeContext implements ComponentRegistry {
      */
     public void shutdownContext() {
         try {
-            AbstractApplicationContext applicationContext = (AbstractApplicationContext) rootApplicationContext;
-            // only need shutdown when root context is active
-            if (applicationContext.isActive()) {
-                applicationContext.close();
-            }
+            applicationContext.close();
             appClassLoader = null;
         } catch (Throwable throwable) {
             throw new BizRuntimeException(ErrorCodes.SpringContextManager.E100001, throwable);
