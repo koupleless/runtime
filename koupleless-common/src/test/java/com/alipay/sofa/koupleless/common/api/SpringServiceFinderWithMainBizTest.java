@@ -14,16 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.common;
+package com.alipay.sofa.koupleless.common.api;
 
 import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.ark.spi.model.BizState;
 import com.alipay.sofa.ark.spi.service.biz.BizManagerService;
-import com.alipay.sofa.koupleless.common.SpringServiceAndBeanFinderTest.BaseBean;
-import com.alipay.sofa.koupleless.common.SpringServiceAndBeanFinderTest.Model;
-import com.alipay.sofa.koupleless.common.SpringServiceAndBeanFinderTest.ModuleBean;
-import com.alipay.sofa.koupleless.common.api.SpringServiceFinder;
+import com.alipay.sofa.koupleless.common.BizRuntimeContext;
+import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
+import com.alipay.sofa.koupleless.common.api.SpringServiceAndBeanFinderTest.BaseBean;
+import com.alipay.sofa.koupleless.common.api.SpringServiceAndBeanFinderTest.Model;
+import com.alipay.sofa.koupleless.common.api.SpringServiceAndBeanFinderTest.ModuleBean;
 import com.alipay.sofa.koupleless.common.exception.BizRuntimeException;
 import com.alipay.sofa.koupleless.common.model.MainApplicationContext;
 import com.alipay.sofa.koupleless.common.model.MainBizApplicationContext;
@@ -44,7 +45,7 @@ import java.net.URLClassLoader;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.alipay.sofa.koupleless.common.SpringServiceAndBeanFinderTest.buildApplicationContext;
+import static com.alipay.sofa.koupleless.common.api.SpringServiceAndBeanFinderTest.buildApplicationContext;
 import static org.mockito.Mockito.when;
 
 /**
