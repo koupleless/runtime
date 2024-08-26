@@ -89,6 +89,25 @@ public class ServiceProxyFactory {
         return proxyMap;
     }
 
+    public static <T> T filterServiceProxy(String bizName, String bizVersion, String name,
+                                           Class<T> serviceType, ClassLoader clientClassLoader) {
+        Biz biz = ArkClient.getBizManagerService().getBiz(bizName, bizVersion);
+        Class<?> serviceClass = tryToGetTargetClass(bizName, bizVersion, biz, serviceType);
+
+        if (null == serviceClass) {
+            return null;
+        }
+
+        Map<String, ?> serviceMap = listService(biz, serviceClass);
+
+        if (serviceMap.containsKey(name)) {
+            return doCreateServiceProxy(biz.getBizName(), biz.getBizVersion(), serviceMap.get(name),
+                null, serviceType, clientClassLoader);
+        }
+
+        return null;
+    }
+
     /**
      * <p>getService.</p>
      *
@@ -230,6 +249,16 @@ public class ServiceProxyFactory {
         } catch (ClassNotFoundException e) {
             throw new BizRuntimeException(E100005, "Cannot find class " + sourceClass.getName()
                                                    + " from the biz " + biz.getIdentity());
+        }
+    }
+
+    private static Class<?> tryToGetTargetClass(String bizName, String bizVersion, Biz biz,
+                                                Class<?> sourceClass) {
+        checkBizState(bizName, bizVersion, biz);
+        try {
+            return biz.getBizClassLoader().loadClass(sourceClass.getName());
+        } catch (ClassNotFoundException e) {
+            return null;
         }
     }
 
