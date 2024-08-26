@@ -64,6 +64,8 @@ public class MainBizApplicationTest {
                 "com.alipay.sofa.koupleless.common.MainBizApplicationTest$TestObject"));
             assertEquals(testFacadeMap.get("testObject"), testFacadeMap
                 .get("com.alipay.sofa.koupleless.common.MainBizApplicationTest$TestObject"));
+
+            bizRuntimeContext.getApplicationContext().close();
         }
 
     }
