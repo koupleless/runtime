@@ -19,8 +19,8 @@ package com.alipay.sofa.koupleless.common;
 import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.koupleless.common.exception.BizRuntimeException;
 import com.alipay.sofa.koupleless.common.exception.ErrorCodes;
-import com.alipay.sofa.koupleless.common.model.BizApplicationContext;
-import com.alipay.sofa.koupleless.common.model.SpringBizApplicationContext;
+import com.alipay.sofa.koupleless.common.model.ApplicationContextHolder;
+import com.alipay.sofa.koupleless.common.model.SpringApplicationContextHolder;
 import com.alipay.sofa.koupleless.common.service.AbstractComponent;
 import com.alipay.sofa.koupleless.common.service.AbstractServiceComponent;
 import com.alipay.sofa.koupleless.common.service.BeanRegistry;
@@ -43,7 +43,7 @@ public class BizRuntimeContext implements ComponentRegistry {
 
     private ClassLoader                                                          appClassLoader;
 
-    private BizApplicationContext                                                applicationContext;
+    private ApplicationContextHolder                                             applicationContext;
 
     private Map<ClassLoader, Map<String, ServiceProxyCache>>                     serviceProxyCaches = new ConcurrentHashMap<>();
 
@@ -107,18 +107,18 @@ public class BizRuntimeContext implements ComponentRegistry {
     /**
      * <p>Getter for the field <code>applicationContext</code>.</p>
      *
-     * @return a {@link BizApplicationContext} object
+     * @return a {@link ApplicationContextHolder} object
      */
-    public BizApplicationContext getApplicationContext() {
+    public ApplicationContextHolder getApplicationContext() {
         return applicationContext;
     }
 
     /**
      * <p>Setter for the field <code>applicationContext</code>.</p>
      *
-     * @param applicationContext a {@link BizApplicationContext} object
+     * @param applicationContext a {@link ApplicationContextHolder} object
      */
-    public void setApplicationContext(BizApplicationContext applicationContext) {
+    public void setApplicationContext(ApplicationContextHolder applicationContext) {
         this.applicationContext = applicationContext;
     }
 
@@ -129,7 +129,7 @@ public class BizRuntimeContext implements ComponentRegistry {
      */
     @Deprecated
     public void setRootApplicationContext(ApplicationContext rootApplicationContext) {
-        this.applicationContext = new SpringBizApplicationContext(rootApplicationContext);
+        this.applicationContext = new SpringApplicationContextHolder(rootApplicationContext);
     }
 
     /**
@@ -152,7 +152,7 @@ public class BizRuntimeContext implements ComponentRegistry {
         this.appClassLoader = biz.getBizClassLoader();
 
         if (applicationContext != null) {
-            this.applicationContext = new SpringBizApplicationContext(applicationContext);
+            this.applicationContext = new SpringApplicationContextHolder(applicationContext);
         }
     }
 

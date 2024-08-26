@@ -17,7 +17,6 @@
 package com.alipay.sofa.koupleless.common;
 
 import com.alipay.sofa.ark.spi.model.Biz;
-import com.alipay.sofa.koupleless.common.model.MainApplication;
 import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;

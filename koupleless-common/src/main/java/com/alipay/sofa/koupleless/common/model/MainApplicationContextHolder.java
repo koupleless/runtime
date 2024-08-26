@@ -16,48 +16,51 @@
  */
 package com.alipay.sofa.koupleless.common.model;
 
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.AbstractApplicationContext;
+import com.alipay.sofa.koupleless.common.exception.BizRuntimeException;
 
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+
+import static com.alipay.sofa.koupleless.common.exception.ErrorCodes.SpringContextManager.E100007;
 
 /**
  * @author lianglipeng.llp@alibaba-inc.com
- * @version $Id: SpringApplicationContextAdaptor.java, v 0.1 2024年08月09日 16:17 立蓬 Exp $
+ * @version $Id: MainBizApplicationContext.java, v 0.1 2024年08月25日 23:35 立蓬 Exp $
  */
-public class SpringBizApplicationContext extends BizApplicationContext<ApplicationContext> {
-    public SpringBizApplicationContext(ApplicationContext applicationContext) {
+public class MainApplicationContextHolder extends ApplicationContextHolder<MainApplicationContext> {
+    public MainApplicationContextHolder(MainApplicationContext applicationContext) {
         super(applicationContext);
     }
 
     @Override
     public <A> Map<String, A> getObjectsOfType(Class<A> type) {
-        if (applicationContext instanceof AbstractApplicationContext) {
-            ConfigurableListableBeanFactory beanFactory = ((AbstractApplicationContext) applicationContext)
-                .getBeanFactory();
-            return beanFactory.getBeansOfType(type);
-        }
-        return new HashMap<>();
+        return applicationContext.getObjectMap(type);
     }
 
     @Override
     public Object getObject(String key) {
-        return applicationContext.getBean(key);
+        if (applicationContext.getObject(key) == null) {
+            throw new BizRuntimeException(E100007, "object not found: " + key);
+        }
+        return applicationContext.getObject(key);
     }
 
     @Override
     public <A> A getObject(Class<A> requiredType) {
-        return applicationContext.getBean(requiredType);
+        Map<String, A> objMap = applicationContext.getObjectMap(requiredType);
+        if (objMap.isEmpty()) {
+            return null;
+        }
+        Set<A> values = new HashSet<>(objMap.values());
+        if (values.size() > 1) {
+            throw new RuntimeException("more than one object of type " + requiredType.getName());
+        }
+        return objMap.values().stream().findFirst().get();
     }
 
     @Override
     public void close() {
-        AbstractApplicationContext ctx = (AbstractApplicationContext) applicationContext;
-        // only need shutdown when root context is active
-        if (ctx.isActive()) {
-            ctx.close();
-        }
+        applicationContext.close();
     }
 }

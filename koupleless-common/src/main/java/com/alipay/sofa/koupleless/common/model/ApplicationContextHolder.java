@@ -22,10 +22,10 @@ import java.util.Map;
  * @author lianglipeng.llp@alibaba-inc.com
  * @version $Id: BizApplicationContext.java, v 0.1 2024年08月09日 15:44 立蓬 Exp $
  */
-public abstract class BizApplicationContext<T> {
+public abstract class ApplicationContextHolder<T> {
     protected T applicationContext;
 
-    BizApplicationContext(T applicationContext) {
+    ApplicationContextHolder(T applicationContext) {
         this.applicationContext = applicationContext;
     }
 

@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.common.model;
+package com.alipay.sofa.koupleless.common;
 
-import com.alipay.sofa.koupleless.common.BizRuntimeContext;
-import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
 import com.alipay.sofa.koupleless.common.exception.BizRuntimeException;
+import com.alipay.sofa.koupleless.common.model.MainApplicationContext;
+import com.alipay.sofa.koupleless.common.model.MainApplicationContextHolder;
 
 import java.util.Map;
 
@@ -34,8 +34,8 @@ public class MainApplication {
             .getBizRuntimeContextByClassLoader(Thread.currentThread().getContextClassLoader());
 
         if (null == bizRuntimeContext.getApplicationContext()) {
-            bizRuntimeContext
-                .setApplicationContext(new MainBizApplicationContext(new MainApplicationContext()));
+            bizRuntimeContext.setApplicationContext(
+                new MainApplicationContextHolder(new MainApplicationContext()));
         }
     }
 
@@ -44,8 +44,8 @@ public class MainApplication {
             .getBizRuntimeContextByClassLoader(Thread.currentThread().getContextClassLoader());
 
         if (null != bizRuntimeContext.getApplicationContext()
-            && bizRuntimeContext.getApplicationContext() instanceof MainBizApplicationContext) {
-            return ((MainBizApplicationContext) bizRuntimeContext.getApplicationContext()).get();
+            && bizRuntimeContext.getApplicationContext() instanceof MainApplicationContextHolder) {
+            return ((MainApplicationContextHolder) bizRuntimeContext.getApplicationContext()).get();
         }
         return null;
     }

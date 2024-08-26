@@ -28,7 +28,7 @@ import com.alipay.sofa.koupleless.common.api.SpringServiceAndBeanFinderTest.Mode
 import com.alipay.sofa.koupleless.common.api.SpringServiceAndBeanFinderTest.ModuleBean;
 import com.alipay.sofa.koupleless.common.exception.BizRuntimeException;
 import com.alipay.sofa.koupleless.common.model.MainApplicationContext;
-import com.alipay.sofa.koupleless.common.model.MainBizApplicationContext;
+import com.alipay.sofa.koupleless.common.model.MainApplicationContextHolder;
 import com.alipay.sofa.koupleless.common.service.ArkAutowiredBeanPostProcessor;
 import com.google.common.collect.Lists;
 import org.junit.Assert;
@@ -38,7 +38,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.util.ReflectionUtils;
 
@@ -79,7 +78,7 @@ public class SpringServiceFinderWithMainBizTest {
         ConfigurableApplicationContext masterCtx = buildApplicationContext("masterBiz");
         masterCtx.getBeanFactory().registerSingleton("baseBean", new BaseBean());
 
-        MainBizApplicationContext mainBizApplicationContext = new MainBizApplicationContext(
+        MainApplicationContextHolder mainBizApplicationContext = new MainApplicationContextHolder(
             new MainApplicationContext());
         mainBizApplicationContext.get().register("moduleBean", new ModuleBean());
         mainBizApplicationContext.get().register("duplicatedBean", new DuplicatedBean());
@@ -273,7 +272,7 @@ public class SpringServiceFinderWithMainBizTest {
         Mockito.when(biz1.getBizName()).thenReturn("biz1");
 
         BizRuntimeContext bizRuntime = new BizRuntimeContext(biz1, null);
-        MainBizApplicationContext mainBizApplicationContext = new MainBizApplicationContext(
+        MainApplicationContextHolder mainBizApplicationContext = new MainApplicationContextHolder(
             new MainApplicationContext());
         mainBizApplicationContext.get().register("moduleBean", newModuleBean);
         bizRuntime.setApplicationContext(mainBizApplicationContext);
@@ -333,7 +332,7 @@ public class SpringServiceFinderWithMainBizTest {
         Mockito.when(biz1.getBizName()).thenReturn("biz1");
 
         BizRuntimeContext bizRuntime = new BizRuntimeContext(biz1, null);
-        MainBizApplicationContext mainBizApplicationContext = new MainBizApplicationContext(
+        MainApplicationContextHolder mainBizApplicationContext = new MainApplicationContextHolder(
             new MainApplicationContext());
         mainBizApplicationContext.get().register("moduleBean", newModuleBean);
         bizRuntime.setApplicationContext(mainBizApplicationContext);
