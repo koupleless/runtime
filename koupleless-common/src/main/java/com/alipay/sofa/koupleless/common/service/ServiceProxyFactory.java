@@ -25,9 +25,6 @@ import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
 import com.alipay.sofa.koupleless.common.exception.BizRuntimeException;
 import com.alipay.sofa.koupleless.common.util.ReflectionUtils;
 import org.springframework.aop.framework.ProxyFactory;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.AbstractApplicationContext;
 
 import java.util.HashMap;
 import java.util.List;
@@ -134,13 +131,14 @@ public class ServiceProxyFactory {
         }
 
         BizRuntimeContext bizRuntimeContext = BizRuntimeContextRegistry.getBizRuntimeContext(biz);
-        if (bizRuntimeContext.getRootApplicationContext() == null) {
+        if (bizRuntimeContext.getApplicationContext() == null
+            || bizRuntimeContext.getApplicationContext().get() == null) {
             throw new BizRuntimeException(E100002,
-                String.format("biz %s:%s spring context is null", bizName, bizVersion));
+                String.format("biz %s:%s application context is null", bizName, bizVersion));
         }
 
         if (!StringUtils.isEmpty(name)) {
-            return bizRuntimeContext.getRootApplicationContext().getBean(name);
+            return bizRuntimeContext.getApplicationContext().getObject(name);
         }
 
         if (clientType != null) {
@@ -152,7 +150,7 @@ public class ServiceProxyFactory {
                     String.format("Cannot find class %s from the biz %s", clientType.getName(),
                         biz.getIdentity()));
             }
-            return bizRuntimeContext.getRootApplicationContext().getBean(serviceType);
+            return bizRuntimeContext.getApplicationContext().getObject(serviceType);
         }
 
         throw new BizRuntimeException(E100002, "invalid config");
@@ -161,13 +159,8 @@ public class ServiceProxyFactory {
     private static <T> Map<String, T> listService(Biz biz, Class<T> serviceType) {
         BizRuntimeContext bizRuntimeContext = checkBizStateAndGetBizRuntimeContext(biz.getBizName(),
             biz.getBizVersion(), biz);
-        ApplicationContext rootApplicationContext = bizRuntimeContext.getRootApplicationContext();
-        if (rootApplicationContext instanceof AbstractApplicationContext) {
-            ConfigurableListableBeanFactory beanFactory = ((AbstractApplicationContext) rootApplicationContext)
-                .getBeanFactory();
-            return beanFactory.getBeansOfType(serviceType);
-        }
-        return new HashMap<>();
+
+        return bizRuntimeContext.getApplicationContext().getObjectsOfType(serviceType);
     }
 
     /**
@@ -277,8 +270,9 @@ public class ServiceProxyFactory {
         if (bizRuntimeContext == null) {
             throw new BizRuntimeException(E100002, "biz runtime context is null");
         }
-        if (bizRuntimeContext.getRootApplicationContext() == null) {
-            throw new BizRuntimeException(E100002, "biz spring context is null");
+        if (bizRuntimeContext.getApplicationContext() == null
+            || bizRuntimeContext.getApplicationContext().get() == null) {
+            throw new BizRuntimeException(E100002, "biz application context is null");
         }
         return bizRuntimeContext;
     }
