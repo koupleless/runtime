@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.alipay.sofa.koupleless.common.util.ArkUtils.checkModuleExists;
+import static com.alipay.sofa.koupleless.common.util.ArkUtils.checkBizExists;
 
 /**
  * <p>SpringServiceFinder class.</p>
@@ -81,17 +81,16 @@ public class SpringServiceFinder {
     /**
      * <p>getModuleService.</p>
      *
-     * @param moduleName a {@link java.lang.String} object
-     * @param moduleVersion a {@link java.lang.String} object
+     * @param bizName a {@link java.lang.String} object
+     * @param bizVersion a {@link java.lang.String} object
      * @param name a {@link java.lang.String} object
      * @param serviceType a {@link java.lang.Class} object
      * @param <T> a T class
      * @return a T object
      */
-    public static <T> T getModuleService(String moduleName, String moduleVersion, String name,
+    public static <T> T getModuleService(String bizName, String bizVersion, String name,
                                          Class<T> serviceType) {
-        return ServiceProxyFactory.createServiceProxy(moduleName, moduleVersion, name, serviceType,
-            null);
+        return ServiceProxyFactory.createServiceProxy(bizName, bizVersion, name, serviceType, null);
     }
 
     /**
@@ -132,30 +131,30 @@ public class SpringServiceFinder {
 
     /**
      * 找指定模块的 name 对应的可用服务
-     * @param moduleName a {@link java.lang.String} object
+     * @param bizName a {@link java.lang.String} object
      * @param serviceName a {@link java.lang.String} object
      * @param serviceType a {@link java.lang.Class} object
      * @return T
      */
-    public static <T> T getModuleServiceWithoutVersion(String moduleName, String serviceName,
+    public static <T> T getModuleServiceWithoutVersion(String bizName, String serviceName,
                                                        Class<T> serviceType) {
         // 默认不分发，直接查找指定模块中 name 对应的服务。要求模块是已激活状态。
-        return getActivatedModuleServiceWithoutVersion(moduleName, serviceName, serviceType);
+        return getActivatedModuleServiceWithoutVersion(bizName, serviceName, serviceType);
     }
 
     /**
      * 找指定模块的 name 对应的服务，如果模块不存在或未激活，则抛出异常；如果模块没有该服务，则抛出异常；
-     * @param moduleName a {@link java.lang.String} object
+     * @param bizName a {@link java.lang.String} object
      * @param serviceName a {@link java.lang.String} object
      * @param serviceType a {@link java.lang.Class} object
      * @return T
      */
-    protected static <T> T getActivatedModuleServiceWithoutVersion(String moduleName,
+    protected static <T> T getActivatedModuleServiceWithoutVersion(String bizName,
                                                                    String serviceName,
                                                                    Class<T> serviceType) {
-        checkModuleExists(moduleName);
+        checkBizExists(bizName);
 
-        Biz biz = ArkClient.getBizManagerService().getActiveBiz(moduleName);
+        Biz biz = ArkClient.getBizManagerService().getActiveBiz(bizName);
         if (biz == null) {
             return null;
         }
@@ -166,31 +165,28 @@ public class SpringServiceFinder {
     /**
      * <p>getModuleService.</p>
      *
-     * @param moduleName a {@link java.lang.String} object
-     * @param moduleVersion a {@link java.lang.String} object
+     * @param bizName a {@link java.lang.String} object
+     * @param bizVersion a {@link java.lang.String} object
      * @param serviceType a {@link java.lang.Class} object
      * @param <T> a T class
      * @return a T object
      */
-    public static <T> T getModuleService(String moduleName, String moduleVersion,
-                                         Class<T> serviceType) {
-        return ServiceProxyFactory.createServiceProxy(moduleName, moduleVersion, null, serviceType,
-            null);
+    public static <T> T getModuleService(String bizName, String bizVersion, Class<T> serviceType) {
+        return ServiceProxyFactory.createServiceProxy(bizName, bizVersion, null, serviceType, null);
     }
 
     /**
      * <p>listModuleServices.</p>
      *
-     * @param moduleName a {@link java.lang.String} object
-     * @param moduleVersion a {@link java.lang.String} object
+     * @param bizName a {@link java.lang.String} object
+     * @param bizVersion a {@link java.lang.String} object
      * @param serviceType a {@link java.lang.Class} object
      * @param <T> a T class
      * @return a {@link java.util.Map} object
      */
-    public static <T> Map<String, T> listModuleServices(String moduleName, String moduleVersion,
+    public static <T> Map<String, T> listModuleServices(String bizName, String bizVersion,
                                                         Class<T> serviceType) {
-        return ServiceProxyFactory.batchCreateServiceProxy(moduleName, moduleVersion, serviceType,
-            null);
+        return ServiceProxyFactory.batchCreateServiceProxy(bizName, bizVersion, serviceType, null);
     }
 
     /**

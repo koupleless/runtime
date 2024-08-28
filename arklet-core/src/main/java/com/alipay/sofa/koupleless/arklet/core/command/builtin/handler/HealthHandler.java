@@ -63,8 +63,8 @@ public class HealthHandler extends AbstractCommandHandler<HealthHandler.Input, H
             builder.putAllHealthData(getHealthService().getHealth(input.getMetrics()));
         }
         if (StringUtils.isEmpty(type) || Constants.typeOfInfo(type)) {
-            String name = input.getModuleName();
-            String version = input.getModuleVersion();
+            String name = input.getBizName();
+            String version = input.getBizVersion();
             builder.putAllHealthData(getHealthService().queryModuleInfo(type, name, version));
         }
         Health health = builder.build();
@@ -86,8 +86,8 @@ public class HealthHandler extends AbstractCommandHandler<HealthHandler.Input, H
     @Setter
     public static class Input extends ArkBizMeta {
         private String   type;
-        private String   moduleName;
-        private String   moduleVersion;
+        private String   bizName;
+        private String   bizVersion;
         private String[] metrics;
     }
 }

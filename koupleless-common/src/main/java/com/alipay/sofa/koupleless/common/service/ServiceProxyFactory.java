@@ -222,21 +222,21 @@ public class ServiceProxyFactory {
     /**
      * <p>determineMostSuitableBiz.</p>
      *
-     * @param moduleName a {@link java.lang.String} object
-     * @param moduleVersion a {@link java.lang.String} object
+     * @param bizName a {@link java.lang.String} object
+     * @param bizVersion a {@link java.lang.String} object
      * @return a {@link com.alipay.sofa.ark.spi.model.Biz} object
      */
-    public static Biz determineMostSuitableBiz(String moduleName, String moduleVersion) {
+    public static Biz determineMostSuitableBiz(String bizName, String bizVersion) {
         Biz biz;
-        if (StringUtils.isEmpty(moduleVersion)) {
-            List<Biz> bizList = ArkClient.getBizManagerService().getBiz(moduleName);
+        if (StringUtils.isEmpty(bizVersion)) {
+            List<Biz> bizList = ArkClient.getBizManagerService().getBiz(bizName);
             if (bizList.size() == 0) {
                 return null;
             }
             biz = bizList.stream().filter(it -> BizState.ACTIVATED == it.getBizState()).findFirst()
                 .orElse(null);
         } else {
-            biz = ArkClient.getBizManagerService().getBiz(moduleName, moduleVersion);
+            biz = ArkClient.getBizManagerService().getBiz(bizName, bizVersion);
         }
         return biz;
     }
