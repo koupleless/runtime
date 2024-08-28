@@ -24,7 +24,7 @@ import java.util.function.Function;
 
 /**
  * Support multi-business Properties
- * Isolating configuration separation between different business modules
+ * Isolating configuration separation between different business bizs
  * The default value of the configuration of the base application is used
  * <p>
  * If you want to use, you need to write the code in you base application

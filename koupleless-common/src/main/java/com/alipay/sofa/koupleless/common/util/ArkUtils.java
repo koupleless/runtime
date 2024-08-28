@@ -52,11 +52,10 @@ public class ArkUtils {
             .getContextClassLoader();
     }
 
-    public static void checkModuleExists(String moduleName) {
-        List<Biz> bizList = ArkClient.getBizManagerService().getBiz(moduleName);
+    public static void checkBizExists(String bizName) {
+        List<Biz> bizList = ArkClient.getBizManagerService().getBiz(bizName);
         if (bizList.isEmpty()) {
-            throw new BizRuntimeException(E100003,
-                String.format("biz %s does not exist", moduleName));
+            throw new BizRuntimeException(E100003, String.format("biz %s does not exist", bizName));
         }
     }
 }
