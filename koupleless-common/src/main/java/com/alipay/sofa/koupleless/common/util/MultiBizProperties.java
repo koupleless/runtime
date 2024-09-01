@@ -18,6 +18,7 @@ package com.alipay.sofa.koupleless.common.util;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -37,6 +38,8 @@ import java.util.function.Function;
  * @version 1.0.0
  */
 public class MultiBizProperties extends Properties {
+
+    private static final AtomicBoolean    inited           = new AtomicBoolean(false);
 
     private final String                  bizClassLoaderName;
 
@@ -520,18 +523,22 @@ public class MultiBizProperties extends Properties {
      * @param bizClassLoaderName a {@link java.lang.String} object
      * @return a {@link com.alipay.sofa.koupleless.common.util.MultiBizProperties} object
      */
-    public static MultiBizProperties initSystem(String bizClassLoaderName) {
-        Properties properties = System.getProperties();
-        if (properties instanceof MultiBizProperties) {
-            MultiBizProperties multiBizProperties = (MultiBizProperties) properties;
-            if (Objects.equals(multiBizProperties.bizClassLoaderName, bizClassLoaderName)) {
-                return multiBizProperties;
+    private static MultiBizProperties initSystem(String bizClassLoaderName) {
+        if (inited.compareAndSet(false, true)) {
+            Properties properties = System.getProperties();
+            if (properties instanceof MultiBizProperties) {
+                MultiBizProperties multiBizProperties = (MultiBizProperties) properties;
+                if (Objects.equals(multiBizProperties.bizClassLoaderName, bizClassLoaderName)) {
+                    return multiBizProperties;
+                }
             }
+            MultiBizProperties multiBizProperties = new MultiBizProperties(bizClassLoaderName,
+                properties);
+            System.setProperties(multiBizProperties);
+            return multiBizProperties;
+        } else {
+            throw new RuntimeException("MultiBizProperties must only init once");
         }
-        MultiBizProperties multiBizProperties = new MultiBizProperties(bizClassLoaderName,
-            properties);
-        System.setProperties(multiBizProperties);
-        return multiBizProperties;
     }
 
     /**
