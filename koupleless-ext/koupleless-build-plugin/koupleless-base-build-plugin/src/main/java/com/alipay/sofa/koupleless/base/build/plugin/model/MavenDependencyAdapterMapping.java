@@ -35,7 +35,7 @@ import org.apache.maven.model.Dependency;
 @Builder
 public class MavenDependencyAdapterMapping {
     /**
-     * 匹配用户的以来。
+     * 匹配用户的依赖。
      */
     private MavenDependencyMatcher matcher;
 

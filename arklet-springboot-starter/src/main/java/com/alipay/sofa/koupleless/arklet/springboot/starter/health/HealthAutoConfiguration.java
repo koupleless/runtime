@@ -18,11 +18,15 @@ package com.alipay.sofa.koupleless.arklet.springboot.starter.health;
 
 import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.common.util.EnvironmentUtils;
+import com.alipay.sofa.koupleless.arklet.springboot.starter.properties.ArkletProperties;
 import com.alipay.sofa.koupleless.common.environment.ConditionalOnMasterBiz;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
-import static com.alipay.sofa.koupleless.arklet.springboot.starter.health.BaseStartUpHealthIndicator.WITH_ALL_BIZ_READINESS;
+import static com.alipay.sofa.koupleless.arklet.springboot.starter.model.Constants.WITH_ALL_BIZ_READINESS;
 
 /**
  * <p>HealthAutoConfiguration class.</p>
@@ -32,6 +36,7 @@ import static com.alipay.sofa.koupleless.arklet.springboot.starter.health.BaseSt
  */
 @Configuration
 @ConditionalOnMasterBiz
+@EnableConfigurationProperties(ArkletProperties.class)
 public class HealthAutoConfiguration {
 
     /**
@@ -40,6 +45,7 @@ public class HealthAutoConfiguration {
      * @return a {@link com.alipay.sofa.koupleless.arklet.springboot.starter.health.BizInfoContributor} object
      */
     @Bean
+    @ConditionalOnClass(name = { "org.springframework.boot.actuate.info.InfoContributor" })
     public BizInfoContributor bizInfoContributor() {
         return new BizInfoContributor();
     }
@@ -50,9 +56,12 @@ public class HealthAutoConfiguration {
      * @return a {@link com.alipay.sofa.koupleless.arklet.springboot.starter.health.BaseStartUpHealthIndicator} object
      */
     @Bean("baseStartUpHealthIndicator")
-    public BaseStartUpHealthIndicator baseStartUpHealthIndicator() {
+    @ConditionalOnClass(name = { "org.springframework.boot.actuate.health.AbstractHealthIndicator" })
+    public BaseStartUpHealthIndicator baseStartUpHealthIndicator(Environment masterBizEnvironment,
+                                                                 ArkletProperties arkletProperties) {
         BaseStartUpHealthIndicator indicator = new BaseStartUpHealthIndicator(
-            Boolean.parseBoolean(EnvironmentUtils.getProperty(WITH_ALL_BIZ_READINESS, "false")));
+            Boolean.parseBoolean(masterBizEnvironment.getProperty(WITH_ALL_BIZ_READINESS, "false")),
+            arkletProperties.getOperation().getSilenceSecondsBeforeUninstall());
         ArkClient.getEventAdminService().register(indicator);
         return indicator;
     }
@@ -63,7 +72,14 @@ public class HealthAutoConfiguration {
      * @return a {@link com.alipay.sofa.koupleless.arklet.springboot.starter.health.CompositeAllBizHealthIndicator} object
      */
     @Bean("compositeAllBizHealthIndicator")
+    @ConditionalOnClass(name = { "org.springframework.boot.actuate.health.AbstractHealthIndicator" })
     public CompositeAllBizHealthIndicator compositeAllBizHealthIndicator() {
         return new CompositeAllBizHealthIndicator();
+    }
+
+    @Bean("metricsHealthIndicator")
+    @ConditionalOnClass(name = { "org.springframework.boot.actuate.health.AbstractHealthIndicator" })
+    public MetricsHealthIndicator metricsHealthIndicator(ArkletProperties arkletProperties) {
+        return new MetricsHealthIndicator(arkletProperties.getMonitor());
     }
 }

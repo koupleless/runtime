@@ -21,6 +21,7 @@ import com.alipay.sofa.koupleless.arklet.core.util.ConvertUtils;
 
 import java.lang.management.ClassLoadingMXBean;
 import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryPoolMXBean;
 import java.lang.management.MemoryUsage;
 import java.lang.management.RuntimeMXBean;
 import java.util.Date;
@@ -85,6 +86,14 @@ public class JvmIndicator extends Indicator {
         jvmHealthDetails.put(JvmMetrics.JAVA_TOTAL_CLASS_COUNT.getId(),
             jvmIndicatorHandler.getTotalClassCount());
         jvmHealthDetails.put(JvmMetrics.JAVA_RUN_TIMES.getId(), jvmIndicatorHandler.getDuration());
+
+        MemoryUsage memoryUsage = jvmIndicatorHandler.getMetaspaceMemoryUsage() == null
+            ? new MemoryUsage(-1, -1, -1, -1)
+            : jvmIndicatorHandler.getMetaspaceMemoryUsage();
+        jvmHealthDetails.put(JvmMetrics.JAVA_USED_METASPACE.getId(), memoryUsage.getUsed());
+        jvmHealthDetails.put(JvmMetrics.JAVA_COMMITTED_METASPACE.getId(),
+            memoryUsage.getCommitted());
+        jvmHealthDetails.put(JvmMetrics.JAVA_MAX_METASPACE.getId(), memoryUsage.getMax());
         return jvmHealthDetails;
     }
 
@@ -100,6 +109,8 @@ public class JvmIndicator extends Indicator {
 
         private MemoryUsage        nonHeapMemoryUsed;
 
+        private MemoryUsage        metaspaceMemoryMetric;
+
         private ClassLoadingMXBean classLoadingMxBean;
 
         public JvmIndicatorHandler() {
@@ -113,6 +124,20 @@ public class JvmIndicator extends Indicator {
             this.heapMemoryUsed = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
             this.nonHeapMemoryUsed = ManagementFactory.getMemoryMXBean().getNonHeapMemoryUsage();
             this.classLoadingMxBean = ManagementFactory.getClassLoadingMXBean();
+            this.metaspaceMemoryMetric = getMetaspaceMemoryUsage();
+        }
+
+        private MemoryUsage getMetaspaceMemoryUsage() {
+            for (MemoryPoolMXBean memoryMXBean : ManagementFactory.getMemoryPoolMXBeans()) {
+                if ("Metaspace".equals(memoryMXBean.getName())) {
+                    return memoryMXBean.getUsage();
+                }
+            }
+            return null;
+        }
+
+        public MemoryUsage getMetaspaceMemoryMetric() {
+            return metaspaceMemoryMetric;
         }
 
         public String getJvmVersion() {
@@ -187,7 +212,7 @@ public class JvmIndicator extends Indicator {
 
     public enum JvmMetrics {
 
-                            JAVA_VERSION("java version"), JAVA_HOME("java home"), JAVA_TOTAL_MEMORY("total memory(M)"), JAVA_MAX_MEMORY("max memory(M)"), JAVA_FREE_MEMORY("free memory(M)"), JAVA_RUN_TIMES("run time(s)"), JAVA_INIT_HEAP("init heap memory(M)"), JAVA_USED_HEAP("used heap memory(M)"), JAVA_COMMITTED_HEAP("committed heap memory(M)"), JAVA_MAX_HEAP("max heap memory(M)"), JAVA_INIT_NON_HEAP("init non heap memory(M)"), JAVA_USED_NON_HEAP("used non heap memory(M)"), JAVA_COMMITTED_NON_HEAP("committed non heap memory(M)"), JAVA_MAX_NON_HEAP("max non heap memory(M)"), JAVA_LOADED_CLASS_COUNT("loaded class count"), JAVA_UNLOAD_CLASS_COUNT("unload class count"), JAVA_TOTAL_CLASS_COUNT("total class count");
+                            JAVA_VERSION("java version"), JAVA_HOME("java home"), JAVA_TOTAL_MEMORY("total memory(M)"), JAVA_MAX_MEMORY("max memory(M)"), JAVA_FREE_MEMORY("free memory(M)"), JAVA_RUN_TIMES("run time(s)"), JAVA_INIT_HEAP("init heap memory(M)"), JAVA_USED_HEAP("used heap memory(M)"), JAVA_COMMITTED_HEAP("committed heap memory(M)"), JAVA_MAX_HEAP("max heap memory(M)"), JAVA_INIT_NON_HEAP("init non heap memory(M)"), JAVA_USED_NON_HEAP("used non heap memory(M)"), JAVA_COMMITTED_NON_HEAP("committed non heap memory(M)"), JAVA_MAX_NON_HEAP("max non heap memory(M)"), JAVA_LOADED_CLASS_COUNT("loaded class count"), JAVA_UNLOAD_CLASS_COUNT("unload class count"), JAVA_TOTAL_CLASS_COUNT("total class count"), JAVA_USED_METASPACE("java used metaspace"), JAVA_COMMITTED_METASPACE("java committed metaspace"), JAVA_MAX_METASPACE("java max metaspace");
 
         private final String id;
 

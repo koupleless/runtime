@@ -19,30 +19,41 @@ package com.alipay.sofa.koupleless.common.util;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.*;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Properties;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static java.lang.Thread.sleep;
+
 public class MultiBizPropertiesTest {
-    private final String key1   = "test-key-1";
-    private final String key2   = "test-key-2";
+    private static final String key1   = "test-key-1";
+    private static final String key2   = "test-key-2";
 
-    private final String key3   = "test-key-3";
+    private static final String key3   = "test-key-3";
 
-    private final String key4   = "test-key-4";
-    private final String value1 = "test-value-1";
-    private final String value2 = "test-value-2";
+    private static final String key4   = "test-key-4";
 
-    private final String value3 = "test-value-3";
+    private static final String key5   = "test-key-5";
 
-    private ClassLoader  baseClassLoader;
+    private static final String value1 = "test-value-1";
+    private static final String value2 = "test-value-2";
 
-    @Before
-    public void before() {
+    private static final String value3 = "test-value-3";
+
+    private static final String value5 = "test-value-5";
+
+    private static ClassLoader  baseClassLoader;
+
+    @BeforeClass
+    public static void before() throws Exception {
         Thread thread = Thread.currentThread();
         baseClassLoader = thread.getContextClassLoader();
 
@@ -50,7 +61,9 @@ public class MultiBizPropertiesTest {
         System.clearProperty(key2);
         System.clearProperty(key3);
         System.clearProperty(key4);
-        MultiBizProperties.initSystem(TestClassLoader.class.getName());
+        Method method = MultiBizProperties.class.getDeclaredMethod("initSystem", String.class);
+        method.setAccessible(true);
+        method.invoke(null, TestClassLoader.class.getName());
     }
 
     @After
@@ -219,6 +232,37 @@ public class MultiBizPropertiesTest {
         Assert.assertEquals(properties.replace(key1, value2), value3);
         properties.replaceAll((k, v) -> v + value1);
         Assert.assertEquals(properties.get(key1), value2 + value1);
+    }
+
+    @Test
+    public void testGetWriteProperties() {
+        //        base: set key3=value3, base get key3=value3,
+        Thread thread = Thread.currentThread();
+        thread.setContextClassLoader(baseClassLoader);
+        System.setProperty(key3, value3);
+
+        Thread.currentThread().setContextClassLoader(new TestClassLoader());
+        //        biz: set key5=value5, biz get key5=value5
+        System.setProperty(key5, value5);
+        String value5 = System.getProperty(key5);
+        //        biz: get key3=value3
+        String value3 = System.getProperty(key3);
+        //when com.alipay.sofa.koupleless.common.util.MultiBizProperties.getWriteProperties return baseProperties
+        //        biz: get key5= null
+        //        Assert.assertNull(value5);
+        //bug fix later,when com.alipay.sofa.koupleless.common.util.MultiBizProperties.getWriteProperties return props
+        //        biz: get key5=value5
+        Assert.assertNotNull(value5);
+        //        biz: get key3=value3
+        Assert.assertNotNull(value3);
+
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void initOnlyOnce() {
+        int count = 10;
+        for (int i = 0; i < count; i++)
+            MultiBizProperties.initSystem();
     }
 
     private class TestClassLoader extends URLClassLoader {

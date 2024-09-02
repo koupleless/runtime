@@ -17,6 +17,12 @@
 package com.alipay.sofa.koupleless.common.util;
 
 import com.alipay.sofa.ark.api.ArkClient;
+import com.alipay.sofa.ark.spi.model.Biz;
+import com.alipay.sofa.koupleless.common.exception.BizRuntimeException;
+
+import java.util.List;
+
+import static com.alipay.sofa.koupleless.common.exception.ErrorCodes.SpringContextManager.E100003;
 
 /**
  * <p>ArkUtils class.</p>
@@ -49,5 +55,12 @@ public class ArkUtils {
         }
         return ArkClient.getMasterBiz().getBizClassLoader() == Thread.currentThread()
             .getContextClassLoader();
+    }
+
+    public static void checkBizExists(String bizName) {
+        List<Biz> bizList = ArkClient.getBizManagerService().getBiz(bizName);
+        if (bizList.isEmpty()) {
+            throw new BizRuntimeException(E100003, String.format("biz %s does not exist", bizName));
+        }
     }
 }

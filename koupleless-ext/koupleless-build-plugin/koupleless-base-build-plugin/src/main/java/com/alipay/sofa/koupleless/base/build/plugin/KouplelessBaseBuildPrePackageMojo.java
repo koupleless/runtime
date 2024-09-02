@@ -40,7 +40,6 @@ import com.alipay.sofa.koupleless.base.build.plugin.model.MavenDependencyMatcher
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.base.Preconditions;
-import lombok.SneakyThrows;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -59,9 +58,15 @@ import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResult;
 
-import java.io.*;
-import java.nio.file.Paths;
-import java.util.*;
+import java.io.File;
+import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -111,14 +116,15 @@ public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
         defaultVersion = properties.getProperty("project.version");
     }
 
-    String getDependencyId(Dependency dependency) {
-        return dependency.getGroupId() + ":" + dependency.getArtifactId() + ":"
-               + dependency.getVersion() + ":" + dependency.getType()
-               + (dependency.getClassifier() != null ? ":" + dependency.getClassifier() : "");
+    String getArtifactFullId(org.apache.maven.artifact.Artifact artifact) {
+        return artifact.getGroupId() + ":" + artifact.getArtifactId() + ":"
+               + artifact.getBaseVersion() + ":" + artifact.getType()
+               + (StringUtils.isNotEmpty(artifact.getClassifier()) ? ":" + artifact.getClassifier()
+                   : "");
     }
 
     // visible for testing
-    List<Dependency> getDependenciesToAdd() {
+    List<Dependency> getDependenciesToAdd() throws Exception {
         List<Dependency> adapterDependencies = new ArrayList<>();
         if (kouplelessAdapterConfig == null) {
             getLog().info("kouplelessAdapterConfig is null, skip adding dependencies.");
@@ -132,14 +138,24 @@ public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
         Collection<MavenDependencyAdapterMapping> adapterMappings = CollectionUtils
             .emptyIfNull(kouplelessAdapterConfig.getAdapterMappings());
 
-        for (Dependency dependency : project.getDependencies()) {
+        // get resolvedArtifacts from project by reflection
+        Field field = MavenProject.class.getDeclaredField("resolvedArtifacts");
+        field.setAccessible(true);
+        Set<org.apache.maven.artifact.Artifact> resolvedArtifacts = (Set<org.apache.maven.artifact.Artifact>) field
+            .get(project);
+        if (resolvedArtifacts == null) {
+            return adapterDependencies;
+        }
+        for (org.apache.maven.artifact.Artifact artifact : resolvedArtifacts) {
             for (MavenDependencyAdapterMapping adapterMapping : adapterMappings) {
                 MavenDependencyMatcher matcher = adapterMapping.getMatcher();
                 if (matcher != null && matcher.getRegexp() != null) {
                     String regexp = matcher.getRegexp();
-                    String dependencyId = getDependencyId(dependency);
+                    String dependencyId = getArtifactFullId(artifact);
                     if (Pattern.compile(regexp).matcher(dependencyId).matches()) {
                         adapterDependencies.add(adapterMapping.getAdapter());
+                        getLog().info(String.format("koupleless adapter matched %s with %s", regexp,
+                            artifact));
                         break;
                     }
                 }
@@ -149,7 +165,7 @@ public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
         return adapterDependencies;
     }
 
-    void addDependenciesDynamically() {
+    void addDependenciesDynamically() throws Exception {
         if (kouplelessAdapterConfig == null) {
             getLog().info("kouplelessAdapterConfig is null, skip adding dependencies.");
             return;
@@ -171,6 +187,7 @@ public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
                 getLog().info("success add dependency: " + dependency.toString());
             } catch (Throwable t) {
                 getLog().error("error add dependency: " + dependency.toString(), t);
+                throw new RuntimeException(t);
             }
         }
     }

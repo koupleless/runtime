@@ -9,8 +9,8 @@
     <packaging>pom</packaging>
 
     <properties>
-        <revision>1.2.3-SNAPSHOT</revision>
-        <sofa.ark.version>2.2.11</sofa.ark.version>
+        <revision>1.3.1-SNAPSHOT</revision>
+        <sofa.ark.version>2.2.14-SNAPSHOT</sofa.ark.version>
         <spring.boot.version>2.7.15</spring.boot.version>
         <project.encoding>UTF-8</project.encoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -81,6 +81,7 @@
         <module>koupleless-base-plugin</module>
         <module>koupleless-app-starter</module>
         <module>arklet-core</module>
+        <module>arklet-tunnel-mqtt</module>
         <module>arklet-springboot-starter</module>
         <module>koupleless-ext</module>
     </modules>
@@ -396,6 +397,7 @@
                         <exclude>**/org/apache/logging/slf4j/**/*</exclude>
                         <exclude>**/com/ctrip/framework/apollo/spring/boot/**/*</exclude>
                         <exclude>**/common/service/ServiceState.java</exclude>
+                        <exclude>**/com/alipay/sofa/koupleless/arklet/core/monitor/model/ClientMetrics.java</exclude>
                     </excludes>
                 </configuration>
                 <executions>
