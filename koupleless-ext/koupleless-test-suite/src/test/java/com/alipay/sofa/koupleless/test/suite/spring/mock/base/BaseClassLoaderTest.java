@@ -34,5 +34,21 @@ public class BaseClassLoaderTest {
         URL url = getClass().getClassLoader().getResource("surefirebooter.jar");
         List<URL> urlsFromSurefireManifest = BaseClassLoader.getUrlsFromSurefireManifest(url);
         Assert.assertEquals(200, urlsFromSurefireManifest.size());
+        Assert.assertTrue(urlsFromSurefireManifest.stream()
+            .anyMatch(it -> it.getPath().endsWith("test-classes/")));
+        Assert.assertTrue(urlsFromSurefireManifest.stream()
+            .anyMatch(it -> it.getPath().endsWith("target/classes/")));
+
+    }
+
+    @Test
+    public void getUrlsFromSurefireManifestWithoutFilePrefix() {
+        URL url = getClass().getClassLoader().getResource("surefirebooter_without_file_prefix.jar");
+        List<URL> urlsFromSurefireManifest = BaseClassLoader.getUrlsFromSurefireManifest(url);
+        Assert.assertEquals(184, urlsFromSurefireManifest.size());
+        Assert.assertTrue(urlsFromSurefireManifest.stream()
+            .anyMatch(it -> it.getPath().endsWith("biz2-web-single-host/target/classes/")));
+        Assert.assertTrue(urlsFromSurefireManifest.stream()
+            .anyMatch(it -> it.getPath().endsWith("biz1-web-single-host/target/classes/")));
     }
 }
