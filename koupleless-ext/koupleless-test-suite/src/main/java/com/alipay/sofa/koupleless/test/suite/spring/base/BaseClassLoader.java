@@ -16,9 +16,8 @@
  */
 package com.alipay.sofa.koupleless.test.suite.spring.base;
 
-import com.alipay.sofa.ark.loader.jar.JarUtils;
-import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
 import com.alipay.sofa.ark.common.util.ClassLoaderUtils;
+import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
 import com.alipay.sofa.koupleless.common.util.OSUtils;
 import com.alipay.sofa.koupleless.test.suite.common.IntegrationLogger;
 import com.google.common.collect.Lists;
@@ -30,10 +29,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarFile;
@@ -55,20 +52,29 @@ public class BaseClassLoader extends URLClassLoader {
     public static List<URL> getUrlsFromSurefireManifest(URL url) {
         List<URL> urls = Lists.newArrayList();
         String parentPath = new File(url.getPath()).getParent();
-        String fileUrlPrefix = "file:";
         try (JarFile jarFile = new JarFile(url.getFile())) {
             String classPathValue = jarFile.getManifest().getMainAttributes()
                 .getValue("Class-Path");
             String[] classPaths = classPathValue.split(" ");
             for (String classFilePath : classPaths) {
-                String filePath = StringUtils.startsWith(classFilePath, fileUrlPrefix)
-                    ? classFilePath
-                    : OSUtils.getLocalFileProtocolPrefix()
-                      + new File(parentPath, classFilePath).getPath();
+                String filePath = parseFilePath(classFilePath, parentPath);
                 urls.add(new URL(filePath));
             }
         }
         return urls;
+    }
+
+    private static String parseFilePath(String classFilePath, String parentPath) {
+        String fileUrlPrefix = "file:";
+        // 需要添加 file: 前缀
+        String filePath = StringUtils.startsWith(classFilePath, fileUrlPrefix) ? classFilePath
+            : OSUtils.getLocalFileProtocolPrefix() + new File(parentPath, classFilePath).getPath();
+
+        // 如果是文件夹(即：以/结尾)，则需要添加/
+        filePath = (classFilePath.endsWith("/") && !filePath.endsWith("/")) ? filePath + "/"
+            : filePath;
+
+        return filePath;
     }
 
     @SneakyThrows
