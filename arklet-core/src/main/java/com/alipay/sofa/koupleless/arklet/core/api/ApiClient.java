@@ -59,7 +59,7 @@ public class ApiClient implements ArkletComponent {
     @Inject
     private CommandService            commandService;
 
-    private static MetadataHook       metadataHook;
+    private static MetadataHook       metadataHook        = null;
 
     static {
         Injector injector = Guice.createInjector(new TunnelGuiceModule());
@@ -70,12 +70,12 @@ public class ApiClient implements ArkletComponent {
         ServiceLoader<MetadataHook> serviceLoader = ServiceLoader.load(MetadataHook.class);
 
         for (MetadataHook hook : serviceLoader) {
-            // 检测到用户提供的实现，直接返回
-            if (!hook.getClass().equals(MetadataHookImpl.class)) {
-                metadataHook = hook;
-            }
+            metadataHook = hook;
         }
-        metadataHook = new MetadataHookImpl();
+
+        if (metadataHook == null) {
+            metadataHook = new MetadataHookImpl();
+        }
     }
 
     /** {@inheritDoc} */
