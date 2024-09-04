@@ -14,27 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.arklet.core.tunnel.custom;
+package com.alipay.sofa.koupleless.arklet.core.metadata;
 
-import com.alipay.sofa.koupleless.arklet.core.api.tunnel.Tunnel;
-import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
+import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
 import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
 
 /**
- * @author dongnan
- * @since 2024/7/16
+ * @author 冬喃
+ * @version : MockBaseMetadataHook, v 0.1 2024-09-04 下午3:28 dongnan Exp $
  */
-public class MockTunnel implements Tunnel {
-
+public class MockBaseMetadataHook implements BaseMetadataHook {
     @Override
-    public void init(CommandService commandService, BaseMetadataHook baseMetadataHook) {
+    public BaseMetadata getBaseMetadata() {
+        return null;
     }
 
     @Override
-    public void run() {
-    }
-
-    @Override
-    public void shutdown() {
+    public String getRuntimeEnv() {
+        return "";
     }
 }

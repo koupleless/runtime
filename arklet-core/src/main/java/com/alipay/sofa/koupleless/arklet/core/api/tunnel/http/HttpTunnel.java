@@ -28,6 +28,7 @@ import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletInitExcepti
 import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletRuntimeException;
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger;
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
+import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
 import com.google.inject.Singleton;
 
 /**
@@ -52,12 +53,14 @@ public class HttpTunnel implements Tunnel {
     private final AtomicBoolean       init                     = new AtomicBoolean(false);
     private final AtomicBoolean       run                      = new AtomicBoolean(false);
     private CommandService            commandService;
+    private BaseMetadataHook          baseMetadataHook;
 
     /** {@inheritDoc} */
     @Override
-    public void init(CommandService commandService) {
+    public void init(CommandService commandService, BaseMetadataHook baseMetadataHook) {
         if (init.compareAndSet(false, true)) {
             this.commandService = commandService;
+            this.baseMetadataHook = baseMetadataHook;
             String httpPort = EnvironmentUtils.getProperty(HTTP_PORT_ATTRIBUTE);
             try {
                 if (!StringUtils.isEmpty(httpPort)) {
