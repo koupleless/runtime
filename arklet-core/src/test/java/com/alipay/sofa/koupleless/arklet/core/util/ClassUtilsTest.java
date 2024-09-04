@@ -47,13 +47,13 @@ public class ClassUtilsTest {
 
     @Test(expected = ArkletInitException.class)
     public void testGetCustomBaseMetadataHook_NotImplementTunnel() {
-        ClassUtils.getCustomTunnelClass(
+        ClassUtils.getBaseMetadataHookImpl(
             "com.alipay.sofa.koupleless.arklet.core.metadata.MockBaseMetadataHookNotImpl");
     }
 
     @Test(expected = ArkletInitException.class)
     public void testGetCustomBaseMetadataHook_NotExist() {
-        ClassUtils.getCustomTunnelClass(
+        ClassUtils.getBaseMetadataHookImpl(
             "com.alipay.sofa.koupleless.arklet.core.metadata.MockBaseMetadataHookNotExist");
     }
 }
