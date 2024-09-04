@@ -18,6 +18,7 @@ package com.alipay.sofa.koupleless.arklet.core.api;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ServiceLoader;
 import java.util.logging.Logger;
 
 import com.alipay.sofa.ark.common.util.EnvironmentUtils;
@@ -28,6 +29,8 @@ import com.alipay.sofa.koupleless.arklet.core.ArkletComponent;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletInitException;
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger;
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
+import com.alipay.sofa.koupleless.arklet.core.spi.metadata.MetadataHook;
+import com.alipay.sofa.koupleless.arklet.core.spi.metadata.MetadataHookImpl;
 import com.alipay.sofa.koupleless.arklet.core.util.ClassUtils;
 import com.google.inject.AbstractModule;
 import com.google.inject.Binding;
@@ -56,19 +59,30 @@ public class ApiClient implements ArkletComponent {
     @Inject
     private CommandService            commandService;
 
+    private static MetadataHook       metadataHook;
+
     static {
         Injector injector = Guice.createInjector(new TunnelGuiceModule());
         for (Binding<Tunnel> binding : injector.findBindingsByType(new TypeLiteral<Tunnel>() {
         })) {
             tunnelList.add(binding.getProvider().get());
         }
+        ServiceLoader<MetadataHook> serviceLoader = ServiceLoader.load(MetadataHook.class);
+
+        for (MetadataHook hook : serviceLoader) {
+            // 检测到用户提供的实现，直接返回
+            if (!hook.getClass().equals(MetadataHookImpl.class)) {
+                metadataHook = hook;
+            }
+        }
+        metadataHook = new MetadataHookImpl();
     }
 
     /** {@inheritDoc} */
     @Override
     public void init() {
         for (Tunnel tunnel : tunnelList) {
-            tunnel.init(commandService);
+            tunnel.init(commandService, metadataHook);
             tunnel.run();
         }
     }
@@ -88,6 +102,10 @@ public class ApiClient implements ArkletComponent {
      */
     public List<Tunnel> getTunnels() {
         return tunnelList;
+    }
+
+    public MetadataHook getMetadataHook() {
+        return metadataHook;
     }
 
     private static class TunnelGuiceModule extends AbstractModule {

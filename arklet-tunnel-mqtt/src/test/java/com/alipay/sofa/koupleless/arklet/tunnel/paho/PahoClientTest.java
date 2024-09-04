@@ -22,60 +22,52 @@ import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.junit.Test;
 import java.util.UUID;
+import io.moquette.broker.Server;
+import io.moquette.broker.config.MemoryConfig;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.mockito.Mockito;
+
+import java.util.Properties;
 
 /**
  * @author dongnan
  * @since 2024/7/5
  */
+
 public class PahoClientTest extends BaseTest {
 
-    static class HealthMessageListener implements IMqttMessageListener {
-
-        private UUID deviceID;
-
-        HealthMessageListener(UUID deviceID) {
-            this.deviceID = deviceID;
-        }
-
-        @Override
-        public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
-            assert topic.equals(String.format("koupleless_dev/%s/base/health", deviceID));
-        }
+    @Test
+    public void openAndClose() throws MqttException {
+        UUID uuid = UUID.randomUUID();
+        PahoMqttClient client = new PahoMqttClient("localhost", 1883, uuid, "test", "test", "",
+            commandService, metadataHook);
+        client.open();
+        client.close();
     }
 
     @Test
-    public void command() throws Exception {
-        PahoMqttClient pahoMqttClient = null;
-        try {
-            UUID deviceID = UUID.randomUUID();
-            pahoMqttClient = new PahoMqttClient("broker.emqx.io", 1883, deviceID, "koupleless",
-                "test-env-key", "emqx", "public", commandService);
-            pahoMqttClient.open();
+    public void handleMessage() throws MqttException {
+        UUID uuid = UUID.randomUUID();
+        PahoMqttClient client = new PahoMqttClient("localhost", 1883, uuid, "test", "test", "",
+            commandService, metadataHook);
+        client.open();
+        // health
+        mockClient.publish(
+            String.format("koupleless_%s/%s/base/health", metadataHook.getEnv(), uuid),
+            new MqttMessage("".getBytes()));
 
-            String broker = "tcp://broker.emqx.io:1883";
-            String username = "emqx";
-            String password = "public";
-            String clientid = "publish_client";
-            MqttClient client = new MqttClient(broker, clientid, new MemoryPersistence());
-            MqttConnectOptions options = new MqttConnectOptions();
-            options.setUserName(username);
-            options.setPassword(password.toCharArray());
-            client.connect(options);
-            client.publish(String.format("koupleless_dev/%s/health", deviceID),
-                new MqttMessage("{}".getBytes()));
-            client.subscribe(String.format("koupleless_dev/%s/base/health", deviceID),
-                new HealthMessageListener(deviceID));
-        } finally {
-            if (pahoMqttClient != null) {
-                pahoMqttClient.close();
-            }
-        }
+        // queryAllBiz
+        mockClient.publish(String.format("koupleless_%s/%s/base/biz", metadataHook.getEnv(), uuid),
+            new MqttMessage("".getBytes()));
+
+        // install
+        mockClient.publish(
+            String.format("koupleless_%s/%s/base/installBiz", metadataHook.getEnv(), uuid),
+            new MqttMessage("".getBytes()));
     }
 
-    @Test
-    public void open() throws MqttException {
-        PahoMqttClient pahoMqttClient = new PahoMqttClient("broker.emqx.io", 1883,
-            UUID.randomUUID(), "koupleless", "test-env-key", "emqx", "public", commandService);
-        pahoMqttClient.open();
-    }
 }

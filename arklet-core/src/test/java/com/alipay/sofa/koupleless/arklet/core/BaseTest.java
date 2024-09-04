@@ -16,9 +16,11 @@
  */
 package com.alipay.sofa.koupleless.arklet.core;
 
+import com.alipay.sofa.koupleless.arklet.core.api.ApiClient;
 import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
 import com.alipay.sofa.koupleless.arklet.core.health.HealthService;
 import com.alipay.sofa.koupleless.arklet.core.ops.UnifiedOperationService;
+import com.alipay.sofa.koupleless.arklet.core.spi.metadata.MetadataHook;
 import org.junit.Before;
 import org.mockito.Mock;
 
@@ -42,11 +44,15 @@ public class BaseTest {
     @Mock
     public static HealthService           healthService;
 
+    @Mock
+    public static MetadataHook            metadataHook;
+
     @Before
     public void setup() {
         commandService = ArkletComponentRegistry.getCommandServiceInstance();
         operationService = ArkletComponentRegistry.getOperationServiceInstance();
         healthService = ArkletComponentRegistry.getHealthServiceInstance();
+        metadataHook = ArkletComponentRegistry.getApiClientInstance().getMetadataHook();
     }
 
 }
