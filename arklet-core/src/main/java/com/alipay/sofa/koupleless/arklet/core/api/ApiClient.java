@@ -59,7 +59,7 @@ public class ApiClient implements ArkletComponent {
     @Inject
     private CommandService            commandService;
 
-    private static MetadataHook       metadataHook        = null;
+    private static MetadataHook       metadataHook;
 
     static {
         Injector injector = Guice.createInjector(new TunnelGuiceModule());
@@ -71,10 +71,6 @@ public class ApiClient implements ArkletComponent {
 
         for (MetadataHook hook : serviceLoader) {
             metadataHook = hook;
-        }
-
-        if (metadataHook == null) {
-            metadataHook = new MetadataHookImpl();
         }
     }
 
