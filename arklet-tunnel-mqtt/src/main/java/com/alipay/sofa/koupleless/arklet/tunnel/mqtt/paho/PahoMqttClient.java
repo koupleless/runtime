@@ -18,8 +18,8 @@ package com.alipay.sofa.koupleless.arklet.tunnel.mqtt.paho;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alipay.sofa.ark.spi.model.BizState;
-import com.alipay.sofa.koupleless.arklet.core.common.model.Metadata;
-import com.alipay.sofa.koupleless.arklet.core.spi.metadata.MetadataHook;
+import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
+import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
 import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.executor.ExecutorServiceManager;
 import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.model.MqttResponse;
 import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
@@ -64,7 +64,7 @@ public class PahoMqttClient {
 
     private final CommandService      commandService;
     private static final ArkletLogger LOGGER  = ArkletLoggerFactory.getDefaultLogger();
-    private final MetadataHook        metadataHook;
+    private final BaseMetadataHook    baseMetadataHook;
 
     /**
      * <p>Constructor for PahoMqttClient.</p>
@@ -77,7 +77,7 @@ public class PahoMqttClient {
      */
     public PahoMqttClient(String broker, int port, UUID deviceID, String clientPrefix,
                           String username, String password, CommandService commandService,
-                          MetadataHook metadataHook) throws MqttException {
+                          BaseMetadataHook baseMetadataHook) throws MqttException {
         this.deviceID = deviceID;
         this.mqttClient = new MqttClient(String.format("tcp://%s:%d", broker, port),
             String.format("%s@@@%s", clientPrefix, deviceID), new MemoryPersistence());
@@ -86,8 +86,8 @@ public class PahoMqttClient {
         this.options.setUserName(username);
         this.options.setPassword(password.toCharArray());
 
-        this.metadataHook = metadataHook;
-        this.env = this.metadataHook.getEnv();
+        this.baseMetadataHook = baseMetadataHook;
+        this.env = this.baseMetadataHook.getRuntimeEnv();
 
         this.commandService = commandService;
     }
@@ -106,7 +106,7 @@ public class PahoMqttClient {
                           String username, String password, String caFilePath,
                           String clientCrtFilePath, String clientKeyFilePath,
                           CommandService commandService,
-                          MetadataHook metadataHook) throws MqttException {
+                          BaseMetadataHook baseMetadataHook) throws MqttException {
         this.deviceID = deviceID;
         this.mqttClient = new MqttClient(String.format("ssl://%s:%d", broker, port),
             String.format("%s@@@%s", clientPrefix, deviceID), new MemoryPersistence());
@@ -115,8 +115,8 @@ public class PahoMqttClient {
         this.options.setMaxInflight(1000);
         this.options.setUserName(username);
         this.options.setPassword(password.toCharArray());
-        this.metadataHook = metadataHook;
-        this.env = this.metadataHook.getEnv();
+        this.baseMetadataHook = baseMetadataHook;
+        this.env = this.baseMetadataHook.getRuntimeEnv();
         try {
             this.options.setSocketFactory(
                 SSLUtils.getSocketFactory(caFilePath, clientCrtFilePath, clientKeyFilePath, ""));
@@ -134,7 +134,7 @@ public class PahoMqttClient {
      */
     public void open() throws MqttException {
         this.mqttClient.setCallback(new PahoMqttCallback(this.mqttClient, this.commandService,
-            this.metadataHook, this.deviceID, this.env));
+            this.baseMetadataHook, this.deviceID, this.env));
         this.mqttClient.connect(this.options);
     }
 
@@ -153,9 +153,9 @@ public class PahoMqttClient {
         private final MqttMessageHandler messageHandler;
 
         public PahoMqttCallback(MqttClient mqttClient, CommandService commandService,
-                                MetadataHook metadataHook, UUID deviceID, String env) {
-            this.messageHandler = new MqttMessageHandler(commandService, metadataHook, mqttClient,
-                deviceID, env);
+                                BaseMetadataHook baseMetadataHook, UUID deviceID, String env) {
+            this.messageHandler = new MqttMessageHandler(commandService, baseMetadataHook,
+                mqttClient, deviceID, env);
         }
 
         @Override
@@ -191,17 +191,17 @@ public class PahoMqttClient {
 
     public static class MqttMessageHandler {
 
-        private final CommandService commandService;
-        private final MetadataHook   metadataHook;
-        private final MqttClient     mqttClient;
-        private final UUID           deviceID;
-        private String               baseEnv;
-        private final AtomicBoolean  run = new AtomicBoolean(false);
+        private final CommandService   commandService;
+        private final BaseMetadataHook baseMetadataHook;
+        private final MqttClient       mqttClient;
+        private final UUID             deviceID;
+        private String                 baseEnv;
+        private final AtomicBoolean    run = new AtomicBoolean(false);
 
-        public MqttMessageHandler(CommandService commandService, MetadataHook metadataHook,
+        public MqttMessageHandler(CommandService commandService, BaseMetadataHook baseMetadataHook,
                                   MqttClient mqttClient, UUID deviceID, String baseEnv) {
             this.commandService = commandService;
-            this.metadataHook = metadataHook;
+            this.baseMetadataHook = baseMetadataHook;
             this.mqttClient = mqttClient;
             this.deviceID = deviceID;
             this.baseEnv = baseEnv;
@@ -259,18 +259,18 @@ public class PahoMqttClient {
 
         static class HeartBeatScheduledMission implements Runnable {
 
-            private final String         topic;
-            private final MqttClient     mqttClient;
-            private final CommandService commandService;
-            private final MetadataHook   metadataHook;
+            private final String           topic;
+            private final MqttClient       mqttClient;
+            private final CommandService   commandService;
+            private final BaseMetadataHook baseMetadataHook;
 
             public HeartBeatScheduledMission(String topic, MqttClient mqttClient,
                                              CommandService commandService,
-                                             MetadataHook metadataHook) {
+                                             BaseMetadataHook baseMetadataHook) {
                 this.topic = topic;
                 this.mqttClient = mqttClient;
                 this.commandService = commandService;
-                this.metadataHook = metadataHook;
+                this.baseMetadataHook = baseMetadataHook;
             }
 
             @Override
@@ -278,7 +278,7 @@ public class PahoMqttClient {
                 // send heart beat message
                 Map<String, Object> heartBeatData = new HashMap<>();
 
-                Metadata metadata = metadataHook.getMetadata();
+                BaseMetadata metadata = baseMetadataHook.getBaseMetadata();
                 heartBeatData.put(
                     com.alipay.sofa.koupleless.arklet.core.health.model.Constants.MASTER_BIZ_INFO,
                     metadata);
@@ -318,7 +318,8 @@ public class PahoMqttClient {
                 ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
                 executor.scheduleAtFixedRate(new HeartBeatScheduledMission(getHeartBeatTopic(),
-                    mqttClient, commandService, metadataHook), 0, 120000L, TimeUnit.MILLISECONDS);
+                    mqttClient, commandService, baseMetadataHook), 0, 120000L,
+                    TimeUnit.MILLISECONDS);
             }
         }
 

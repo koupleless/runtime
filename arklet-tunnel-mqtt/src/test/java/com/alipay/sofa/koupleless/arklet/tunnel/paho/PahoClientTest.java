@@ -19,19 +19,10 @@ package com.alipay.sofa.koupleless.arklet.tunnel.paho;
 import com.alipay.sofa.koupleless.arklet.tunnel.BaseTest;
 import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.paho.PahoMqttClient;
 import org.eclipse.paho.client.mqttv3.*;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.junit.Test;
 import java.util.UUID;
-import io.moquette.broker.Server;
-import io.moquette.broker.config.MemoryConfig;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttException;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.mockito.Mockito;
 
-import java.util.Properties;
+import org.eclipse.paho.client.mqttv3.MqttException;
 
 /**
  * @author dongnan
@@ -44,7 +35,7 @@ public class PahoClientTest extends BaseTest {
     public void openAndClose() throws MqttException {
         UUID uuid = UUID.randomUUID();
         PahoMqttClient client = new PahoMqttClient("localhost", 1883, uuid, "test", "test", "",
-            commandService, metadataHook);
+            commandService, baseMetadataHook);
         client.open();
         client.close();
     }
@@ -53,21 +44,21 @@ public class PahoClientTest extends BaseTest {
     public void handleMessage() throws MqttException {
         UUID uuid = UUID.randomUUID();
         PahoMqttClient client = new PahoMqttClient("localhost", 1883, uuid, "test", "test", "",
-            commandService, metadataHook);
+            commandService, baseMetadataHook);
         client.open();
         // health
         mockClient.publish(
-            String.format("koupleless_%s/%s/base/health", metadataHook.getEnv(), uuid),
+            String.format("koupleless_%s/%s/base/health", baseMetadataHook.getRuntimeEnv(), uuid),
             new MqttMessage("".getBytes()));
 
         // queryAllBiz
-        mockClient.publish(String.format("koupleless_%s/%s/base/biz", metadataHook.getEnv(), uuid),
+        mockClient.publish(
+            String.format("koupleless_%s/%s/base/biz", baseMetadataHook.getRuntimeEnv(), uuid),
             new MqttMessage("".getBytes()));
 
         // install
-        mockClient.publish(
-            String.format("koupleless_%s/%s/base/installBiz", metadataHook.getEnv(), uuid),
-            new MqttMessage("".getBytes()));
+        mockClient.publish(String.format("koupleless_%s/%s/base/installBiz",
+            baseMetadataHook.getRuntimeEnv(), uuid), new MqttMessage("".getBytes()));
     }
 
 }

@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.arklet.core.spi.metadata;
+package com.alipay.sofa.koupleless.arklet.core.metadata;
 
 import com.alipay.sofa.koupleless.arklet.core.BaseTest;
-import com.alipay.sofa.koupleless.arklet.core.common.model.Metadata;
+import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -25,20 +25,20 @@ import org.junit.Test;
  * @author dongnan
  * @since 2024/09/04
  */
-public class MetadataHookTest extends BaseTest {
+public class BaseMetadataHookTest extends BaseTest {
     @Test
-    public void getMetadata() {
+    public void getBaseMetadata() {
         System.setProperty("koupleless.arklet.metadata.name", "test_metadata_hook");
         System.setProperty("koupleless.arklet.metadata.version", "test_metadata_hook_version");
-        Metadata metadata = metadataHook.getMetadata();
+        BaseMetadata metadata = baseMetadataHook.getBaseMetadata();
         Assert.assertEquals("test_metadata_hook", metadata.getName());
         Assert.assertEquals("test_metadata_hook_version", metadata.getVersion());
     }
 
     @Test
-    public void getEnv() {
+    public void getRuntimeEnv() {
         System.setProperty("koupleless.arklet.metadata.env", "test_env");
-        String env = metadataHook.getEnv();
+        String env = baseMetadataHook.getRuntimeEnv();
         Assert.assertEquals("test_env", env);
     }
 }

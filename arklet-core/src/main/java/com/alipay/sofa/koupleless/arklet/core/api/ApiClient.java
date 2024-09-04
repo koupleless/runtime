@@ -19,18 +19,14 @@ package com.alipay.sofa.koupleless.arklet.core.api;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
-import java.util.logging.Logger;
 
 import com.alipay.sofa.ark.common.util.EnvironmentUtils;
 import com.alipay.sofa.koupleless.arklet.core.api.tunnel.Tunnel;
 import com.alipay.sofa.koupleless.arklet.core.api.tunnel.http.HttpTunnel;
 import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
 import com.alipay.sofa.koupleless.arklet.core.ArkletComponent;
-import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletInitException;
-import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger;
-import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
-import com.alipay.sofa.koupleless.arklet.core.spi.metadata.MetadataHook;
-import com.alipay.sofa.koupleless.arklet.core.spi.metadata.MetadataHookImpl;
+import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
+import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHookImpl;
 import com.alipay.sofa.koupleless.arklet.core.util.ClassUtils;
 import com.google.inject.AbstractModule;
 import com.google.inject.Binding;
@@ -52,14 +48,16 @@ import com.google.inject.multibindings.Multibinder;
 @Singleton
 public class ApiClient implements ArkletComponent {
 
-    private static final List<Tunnel> tunnelList          = new ArrayList<>(8);
+    private static final List<Tunnel> tunnelList                      = new ArrayList<>(8);
 
-    private final static String       CUSTOM_TUNNEL_CLASS = "koupleless.arklet.custom.tunnel.classname";
+    private final static String       CUSTOM_TUNNEL_CLASS             = "koupleless.arklet.custom.tunnel.classname";
+
+    private final static String       CUSTOM_BASE_METADATA_HOOK_CLASS = "koupleless.arklet.custom.base.metadata.classname";
 
     @Inject
     private CommandService            commandService;
 
-    private static MetadataHook       metadataHook;
+    private static BaseMetadataHook   baseMetadataHook;
 
     static {
         Injector injector = Guice.createInjector(new TunnelGuiceModule());
@@ -67,10 +65,14 @@ public class ApiClient implements ArkletComponent {
         })) {
             tunnelList.add(binding.getProvider().get());
         }
-        ServiceLoader<MetadataHook> serviceLoader = ServiceLoader.load(MetadataHook.class);
 
-        for (MetadataHook hook : serviceLoader) {
-            metadataHook = hook;
+        baseMetadataHook = new BaseMetadataHookImpl();
+
+        String customBaseMetadataHookClassName = EnvironmentUtils
+            .getProperty(CUSTOM_BASE_METADATA_HOOK_CLASS);
+
+        if (customBaseMetadataHookClassName != null && !customBaseMetadataHookClassName.isEmpty()) {
+            baseMetadataHook = ClassUtils.getBaseMetadataHookImpl(customBaseMetadataHookClassName);
         }
     }
 
@@ -78,7 +80,7 @@ public class ApiClient implements ArkletComponent {
     @Override
     public void init() {
         for (Tunnel tunnel : tunnelList) {
-            tunnel.init(commandService, metadataHook);
+            tunnel.init(commandService, baseMetadataHook);
             tunnel.run();
         }
     }
@@ -100,8 +102,8 @@ public class ApiClient implements ArkletComponent {
         return tunnelList;
     }
 
-    public MetadataHook getMetadataHook() {
-        return metadataHook;
+    public BaseMetadataHook getMetadataHook() {
+        return baseMetadataHook;
     }
 
     private static class TunnelGuiceModule extends AbstractModule {

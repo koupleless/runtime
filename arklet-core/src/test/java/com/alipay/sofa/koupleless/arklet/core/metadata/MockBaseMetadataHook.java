@@ -14,20 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.arklet.core.spi.metadata;
+package com.alipay.sofa.koupleless.arklet.core.metadata;
 
-import com.alipay.sofa.koupleless.arklet.core.common.model.Metadata;
+import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
+import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
 
 /**
- * <p>MetadataHook interface.</p>
- *
- * @author dongnan
- * @since 2024/09/03
- * @version 1.0.0
+ * @author 冬喃
+ * @version : MockBaseMetadataHook, v 0.1 2024-09-04 下午3:28 dongnan Exp $
  */
-public interface MetadataHook {
+public class MockBaseMetadataHook implements BaseMetadataHook {
+    @Override
+    public BaseMetadata getBaseMetadata() {
+        return null;
+    }
 
-    Metadata getMetadata();
-
-    String getEnv();
+    @Override
+    public String getRuntimeEnv() {
+        return "";
+    }
 }

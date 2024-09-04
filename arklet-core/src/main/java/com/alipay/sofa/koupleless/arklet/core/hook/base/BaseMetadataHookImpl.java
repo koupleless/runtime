@@ -14,14 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.arklet.core.spi.metadata;
+package com.alipay.sofa.koupleless.arklet.core.hook.base;
 
 import com.alipay.sofa.ark.common.util.EnvironmentUtils;
-import com.alipay.sofa.koupleless.arklet.core.common.model.Constants;
-import com.alipay.sofa.koupleless.arklet.core.common.model.InstallRequest;
-import com.alipay.sofa.koupleless.arklet.core.common.model.Metadata;
-
-import static com.alipay.sofa.koupleless.arklet.core.common.model.Constants.STRATEGY_UNINSTALL_THEN_INSTALL;
+import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
 
 /**
  * <p>MetadataHook interface.</p>
@@ -30,7 +26,7 @@ import static com.alipay.sofa.koupleless.arklet.core.common.model.Constants.STRA
  * @since 2024/09/03
  * @version 1.0.0
  */
-public class MetadataHookImpl implements MetadataHook {
+public class BaseMetadataHookImpl implements BaseMetadataHook {
 
     final String defaultNameEnvKey    = "koupleless.arklet.metadata.name";
     final String defaultVersionEnvKey = "koupleless.arklet.metadata.version";
@@ -45,12 +41,12 @@ public class MetadataHookImpl implements MetadataHook {
     }
 
     @Override
-    public Metadata getMetadata() {
-        return Metadata.builder().name(getName()).version(getVersion()).build();
+    public BaseMetadata getBaseMetadata() {
+        return BaseMetadata.builder().name(getName()).version(getVersion()).build();
     }
 
     @Override
-    public String getEnv() {
+    public String getRuntimeEnv() {
         return EnvironmentUtils.getProperty(defaultEnvKey);
     }
 }

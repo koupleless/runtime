@@ -20,16 +20,14 @@ import com.alipay.sofa.koupleless.arklet.core.ArkletComponentRegistry;
 import com.alipay.sofa.koupleless.arklet.core.ops.UnifiedOperationService;
 import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
 import com.alipay.sofa.koupleless.arklet.core.health.HealthService;
-import com.alipay.sofa.koupleless.arklet.core.spi.metadata.MetadataHook;
+import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
 import io.moquette.broker.Server;
 import io.moquette.broker.config.MemoryConfig;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 
 import java.util.Properties;
 
@@ -58,7 +56,7 @@ public class BaseTest {
     public static HealthService           healthService;
 
     @Mock
-    public static MetadataHook            metadataHook;
+    public static BaseMetadataHook        baseMetadataHook;
 
     @BeforeClass
     public static void setup() throws Exception {
@@ -68,7 +66,7 @@ public class BaseTest {
         commandService = ArkletComponentRegistry.getCommandServiceInstance();
         operationService = ArkletComponentRegistry.getOperationServiceInstance();
         healthService = ArkletComponentRegistry.getHealthServiceInstance();
-        metadataHook = ArkletComponentRegistry.getApiClientInstance().getMetadataHook();
+        baseMetadataHook = ArkletComponentRegistry.getApiClientInstance().getMetadataHook();
         // 启动嵌入式 MQTT Broker
         mqttBroker = startEmbeddedBroker();
 

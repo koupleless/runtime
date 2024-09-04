@@ -38,4 +38,22 @@ public class ClassUtilsTest {
         ClassUtils.getCustomTunnelClass(
             "com.alipay.sofa.koupleless.arklet.core.tunnel.custom.MockTunnelNotExist");
     }
+
+    @Test
+    public void testGetCustomBaseMetadataHookClass_Success() {
+        ClassUtils.getBaseMetadataHookImpl(
+            "com.alipay.sofa.koupleless.arklet.core.metadata.MockBaseMetadataHook");
+    }
+
+    @Test(expected = ArkletInitException.class)
+    public void testGetCustomBaseMetadataHook_NotImplementTunnel() {
+        ClassUtils.getCustomTunnelClass(
+            "com.alipay.sofa.koupleless.arklet.core.metadata.MockBaseMetadataHookNotImpl");
+    }
+
+    @Test(expected = ArkletInitException.class)
+    public void testGetCustomBaseMetadataHook_NotExist() {
+        ClassUtils.getCustomTunnelClass(
+            "com.alipay.sofa.koupleless.arklet.core.metadata.MockBaseMetadataHookNotExist");
+    }
 }

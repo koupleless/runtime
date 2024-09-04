@@ -14,22 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.arklet.core.common.model;
+package com.alipay.sofa.koupleless.arklet.core.hook.base;
 
-import lombok.*;
+import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
 
 /**
+ * <p>MetadataHook interface.</p>
+ *
  * @author dongnan
- * @version $Id: Metadata.java, v 0.1 2024年07月01日 20:02 dongnan Exp $
+ * @since 2024/09/03
+ * @version 1.0.0
  */
+public interface BaseMetadataHook {
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
-@Builder
-public class Metadata {
+    BaseMetadata getBaseMetadata();
 
-    private String name;
-    private String version;
+    String getRuntimeEnv();
 
 }

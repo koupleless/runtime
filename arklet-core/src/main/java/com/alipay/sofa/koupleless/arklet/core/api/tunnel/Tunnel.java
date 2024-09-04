@@ -17,7 +17,7 @@
 package com.alipay.sofa.koupleless.arklet.core.api.tunnel;
 
 import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
-import com.alipay.sofa.koupleless.arklet.core.spi.metadata.MetadataHook;
+import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
 
 /**
  * <p>Tunnel interface.</p>
@@ -33,7 +33,7 @@ public interface Tunnel {
      *
      * @param commandService a {@link com.alipay.sofa.koupleless.arklet.core.command.CommandService} object
      */
-    void init(CommandService commandService, MetadataHook metadataHook);
+    void init(CommandService commandService, BaseMetadataHook baseMetadataHook);
 
     /**
      * <p>run.</p>
