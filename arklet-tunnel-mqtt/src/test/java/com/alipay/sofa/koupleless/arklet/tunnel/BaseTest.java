@@ -20,14 +20,31 @@ import com.alipay.sofa.koupleless.arklet.core.ArkletComponentRegistry;
 import com.alipay.sofa.koupleless.arklet.core.ops.UnifiedOperationService;
 import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
 import com.alipay.sofa.koupleless.arklet.core.health.HealthService;
-import org.junit.Before;
+import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
+import io.moquette.broker.Server;
+import io.moquette.broker.config.MemoryConfig;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.mockito.Mock;
+
+import java.util.Properties;
 
 /**
  * @author mingmen
  * @since 2023/9/5
  */
 public class BaseTest {
+
+    @Mock
+    public static Server                  mqttBroker;
+
+    @Mock
+    public static final String            BROKER_URL = "tcp://localhost:1883";
+
+    @Mock
+    public static MqttClient              mockClient;
 
     @Mock
     public static CommandService          commandService;
@@ -38,11 +55,43 @@ public class BaseTest {
     @Mock
     public static HealthService           healthService;
 
-    @Before
-    public void setup() {
+    @Mock
+    public static BaseMetadataHook        baseMetadataHook;
+
+    @BeforeClass
+    public static void setup() throws Exception {
+        System.setProperty("koupleless.arklet.metadata.name", "test_metadata_hook");
+        System.setProperty("koupleless.arklet.metadata.version", "test_metadata_hook_version");
+        System.setProperty("koupleless.arklet.metadata.env", "test_env");
         commandService = ArkletComponentRegistry.getCommandServiceInstance();
         operationService = ArkletComponentRegistry.getOperationServiceInstance();
         healthService = ArkletComponentRegistry.getHealthServiceInstance();
+        baseMetadataHook = ArkletComponentRegistry.getApiClientInstance().getMetadataHook();
+        // 启动嵌入式 MQTT Broker
+        mqttBroker = startEmbeddedBroker();
+
+        // 使用实际客户端连接到嵌入式 Broker，用于发布消息
+        mockClient = new MqttClient(BROKER_URL, "testClient", new MemoryPersistence());
+        mockClient.connect();
     }
 
+    @AfterClass
+    public static void teardown() {
+        // 停止嵌入式 MQTT Broker
+        stopEmbeddedBroker(mqttBroker);
+    }
+
+    private static Server startEmbeddedBroker() throws Exception {
+        Server mqttBroker = new Server();
+        Properties configProps = new Properties();
+        configProps.setProperty("port", "1883");
+        mqttBroker.startServer(new MemoryConfig(configProps));
+        return mqttBroker;
+    }
+
+    private static void stopEmbeddedBroker(Server mqttBroker) {
+        if (mqttBroker != null) {
+            mqttBroker.stopServer();
+        }
+    }
 }
