@@ -184,8 +184,7 @@ public class KouplelessBasePackageDependencyMojo extends AbstractMojo {
             // 过滤出不属于项目的依赖
             .filter(d -> baseModuleArtifacts.stream().noneMatch(
                 baseModule -> Objects.equals(baseModule.getGroupId(), d.getGroupId())
-                              && Objects.equals(baseModule.getArtifactId(), d.getArtifactId()))
-            )
+                              && Objects.equals(baseModule.getArtifactId(), d.getArtifactId())))
             // 过滤出 scope 不是 test, system 的依赖
             .filter(d -> !"test".equals(d.getScope()) && !"system".equals(d.getScope()))
             // 转换为 dependency

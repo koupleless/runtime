@@ -189,8 +189,7 @@ public class KouplelessBasePackageFacadeMojo extends AbstractMojo {
                 baseModule -> Objects.equals(baseModule.getGroupId(), d.getGroupId())
                               && Objects.equals(baseModule.getArtifactId(), d.getArtifactId())))
             // 过滤出 scope 不是 test, system 的依赖
-            .filter(d -> !"test".equals(d.getScope()) && !"system".equals(d.getScope()))
-            .map(d -> {
+            .filter(d -> !"test".equals(d.getScope()) && !"system".equals(d.getScope())).map(d -> {
                 Dependency res = MavenUtils.createDependency(d);
                 res.setScope("provided");
                 Exclusion exclusion = new Exclusion();
