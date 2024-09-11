@@ -159,6 +159,7 @@ public class TestBootstrap {
             bizModel.setBizState(BizState.RESOLVED);
             ArkClient.setMasterBiz(bizModel);
             ArkClient.getBizManagerService().registerBiz(bizModel);
+            Thread.currentThread().setContextClassLoader(baseClassLoader);
         }
     }
 }
