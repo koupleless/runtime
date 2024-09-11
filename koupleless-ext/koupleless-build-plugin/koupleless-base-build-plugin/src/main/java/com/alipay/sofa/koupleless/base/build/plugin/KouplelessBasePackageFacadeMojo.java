@@ -46,7 +46,13 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Properties;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -182,7 +188,8 @@ public class KouplelessBasePackageFacadeMojo extends AbstractMojo {
             .filter(d -> baseModuleArtifacts.stream().noneMatch(
                 baseModule -> Objects.equals(baseModule.getGroupId(), d.getGroupId())
                               && Objects.equals(baseModule.getArtifactId(), d.getArtifactId())))
-            .map(d -> {
+            // 过滤出 scope 不是 test, system 的依赖
+            .filter(d -> !"test".equals(d.getScope()) && !"system".equals(d.getScope())).map(d -> {
                 Dependency res = MavenUtils.createDependency(d);
                 res.setScope("provided");
                 Exclusion exclusion = new Exclusion();
