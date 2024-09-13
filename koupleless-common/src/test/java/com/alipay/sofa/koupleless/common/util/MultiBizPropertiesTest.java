@@ -18,7 +18,6 @@ package com.alipay.sofa.koupleless.common.util;
 
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -27,8 +26,6 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Properties;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.Thread.sleep;
@@ -258,7 +255,7 @@ public class MultiBizPropertiesTest {
 
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test
     public void initOnlyOnce() {
         int count = 10;
         for (int i = 0; i < count; i++)
