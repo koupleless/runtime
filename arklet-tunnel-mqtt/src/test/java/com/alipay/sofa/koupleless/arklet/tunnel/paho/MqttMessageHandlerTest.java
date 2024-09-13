@@ -16,6 +16,7 @@
  */
 package com.alipay.sofa.koupleless.arklet.tunnel.paho;
 
+import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.koupleless.arklet.core.command.builtin.BuiltinCommand;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletInitException;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletRuntimeException;
@@ -26,9 +27,13 @@ import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.paho.PahoMqttClient;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.MockedStatic;
 
 import java.util.UUID;
+
+import static org.mockito.Mockito.mockStatic;
 
 /**
  * @author dongnan
@@ -45,40 +50,44 @@ public class MqttMessageHandlerTest extends BaseTest {
         mqttMessageHandler.run();
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void handleHealthCommand() {
         UUID uuid = UUID.randomUUID();
         MqttMessageHandler mqttMessageHandler = new MqttMessageHandler(commandService,
             baseMetadataHook, null, uuid, "test");
         mqttMessageHandler.handleCommand(BuiltinCommand.HEALTH.getId(),
-            new MqttMessage("".getBytes()));
+            new MqttMessage("{}".getBytes()));
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void handleQueryAllBizCommand() {
         UUID uuid = UUID.randomUUID();
         MqttMessageHandler mqttMessageHandler = new MqttMessageHandler(commandService,
             baseMetadataHook, null, uuid, "test");
         mqttMessageHandler.handleCommand(BuiltinCommand.QUERY_ALL_BIZ.getId(),
-            new MqttMessage("".getBytes()));
+            new MqttMessage("{}".getBytes()));
     }
 
-    @Test
+    @Test(expected = ArkletRuntimeException.class)
     public void handleInstallBizCommand() {
         UUID uuid = UUID.randomUUID();
         MqttMessageHandler mqttMessageHandler = new MqttMessageHandler(commandService,
             baseMetadataHook, null, uuid, "test");
         mqttMessageHandler.handleCommand(BuiltinCommand.INSTALL_BIZ.getId(),
-            new MqttMessage("{}".getBytes()));
+            new MqttMessage(
+                "{\"bizName\":\"testBiz\", \"bizVersion\":\"0.1.0\", \"bizUrl\":\"testBizUrl\"}"
+                    .getBytes()));
     }
 
-    @Test
+    @Test(expected = NullPointerException.class)
     public void handleUnInstallBizCommand() {
         UUID uuid = UUID.randomUUID();
         MqttMessageHandler mqttMessageHandler = new MqttMessageHandler(commandService,
             baseMetadataHook, null, uuid, "test");
         mqttMessageHandler.handleCommand(BuiltinCommand.UNINSTALL_BIZ.getId(),
-            new MqttMessage("{}".getBytes()));
+            new MqttMessage(
+                "{\"bizName\":\"testBiz\", \"bizVersion\":\"0.1.0\", \"bizUrl\":\"testBizUrl\"}"
+                    .getBytes()));
     }
 
 }

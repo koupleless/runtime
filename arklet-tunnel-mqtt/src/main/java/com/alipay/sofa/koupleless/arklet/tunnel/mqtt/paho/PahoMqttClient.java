@@ -76,7 +76,6 @@ public class PahoMqttClient {
      * @param commandService a {@link com.alipay.sofa.koupleless.arklet.core.command.CommandService} object
      * @param deviceID a {@link java.util.UUID} object
      * @param clientPrefix a {@link java.lang.String} object
-     * @param envKey a {@link java.lang.String} object
      * @throws org.eclipse.paho.client.mqttv3.MqttException if any.
      */
     public PahoMqttClient(String broker, int port, UUID deviceID, String clientPrefix,
@@ -107,7 +106,6 @@ public class PahoMqttClient {
      * @param commandService a {@link com.alipay.sofa.koupleless.arklet.core.command.CommandService} object
      * @param deviceID a {@link java.util.UUID} object
      * @param clientPrefix a {@link java.lang.String} object
-     * @param envKey a {@link java.lang.String} object
      * @param username a {@link java.lang.String} object
      * @param password a {@link java.lang.String} object
      * @throws org.eclipse.paho.client.mqttv3.MqttException if any.
@@ -187,9 +185,13 @@ public class PahoMqttClient {
 
         @Override
         public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
-            // message callback, don't pub sync message here, may cause deadlock
-            String[] topicSplits = topic.split("/");
-            messageHandler.handleCommand(topicSplits[topicSplits.length - 1], mqttMessage);
+            // process mqtt message, use thread pool to handle command
+            ThreadPoolExecutor executor = ExecutorServiceManager.getArkTunnelMqttExecutor();
+            executor.submit(() -> {
+                // message callback, don't pub sync message here, may cause deadlock
+                String[] topicSplits = topic.split("/");
+                messageHandler.handleCommand(topicSplits[topicSplits.length - 1], mqttMessage);
+            });
         }
 
         @Override
