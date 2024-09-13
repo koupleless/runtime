@@ -25,13 +25,11 @@ import com.alipay.sofa.koupleless.arklet.core.ops.UnifiedOperationService;
 import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
 import com.alipay.sofa.koupleless.arklet.core.health.HealthService;
 import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
-import com.alipay.sofa.koupleless.arklet.tunnel.paho.CustomPluginManagerService;
 import com.alipay.sofa.koupleless.arklet.tunnel.paho.MockBizManagerService;
 import org.junit.After;
 import org.junit.Before;
 import org.mockito.MockedStatic;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mockStatic;
@@ -76,8 +74,6 @@ public class BaseTest {
             ArkClient.uninstallBiz(anyString(), anyString());
         }).thenReturn(success);
         arkClient.when(ArkClient::getBizManagerService).thenReturn(new MockBizManagerService());
-        arkClient.when(ArkClient::getPluginManagerService)
-            .thenReturn(new CustomPluginManagerService());
         arkClient.when(ArkClient::getMasterBiz)
             .thenReturn(new MockBizManagerService().getMasterBiz());
     }
