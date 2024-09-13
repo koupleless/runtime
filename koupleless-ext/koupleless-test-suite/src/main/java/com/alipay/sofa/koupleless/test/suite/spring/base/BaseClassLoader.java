@@ -55,6 +55,9 @@ public class BaseClassLoader extends URLClassLoader {
         try (JarFile jarFile = new JarFile(url.getFile())) {
             String classPathValue = jarFile.getManifest().getMainAttributes()
                 .getValue("Class-Path");
+            if (StringUtils.isEmpty(classPathValue)) {
+                return urls;
+            }
             String[] classPaths = classPathValue.split(" ");
             for (String classFilePath : classPaths) {
                 String filePath = parseFilePath(classFilePath, parentPath);
