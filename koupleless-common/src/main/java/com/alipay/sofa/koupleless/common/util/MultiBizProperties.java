@@ -16,6 +16,8 @@
  */
 package com.alipay.sofa.koupleless.common.util;
 
+import com.alipay.sofa.ark.common.log.ArkLoggerFactory;
+
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -537,7 +539,8 @@ public class MultiBizProperties extends Properties {
             System.setProperties(multiBizProperties);
             return multiBizProperties;
         } else {
-            throw new RuntimeException("MultiBizProperties must only init once");
+            ArkLoggerFactory.getDefaultLogger().info("MultiBizProperties had already initialized.");
+            return (MultiBizProperties) System.getProperties();
         }
     }
 
