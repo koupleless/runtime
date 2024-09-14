@@ -17,6 +17,19 @@ env:
   WORK_DIR: .
 
 jobs:
+  javadoc-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Java JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: adopt
+          java-version: 8
+          cache: maven
+
+      - name: javadoc test
+        run: mvn clean javadoc:javadoc
   unit-test-for-jdk8-in-linux:
     runs-on: ubuntu-latest
     steps:
