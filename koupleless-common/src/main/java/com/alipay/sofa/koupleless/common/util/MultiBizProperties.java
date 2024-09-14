@@ -16,15 +16,18 @@
  */
 package com.alipay.sofa.koupleless.common.util;
 
+import com.alipay.sofa.ark.common.log.ArkLoggerFactory;
+
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
  * Support multi-business Properties
- * Isolating configuration separation between different business modules
+ * Isolating configuration separation between different business bizs
  * The default value of the configuration of the base application is used
  * <p>
  * If you want to use, you need to write the code in you base application
@@ -37,6 +40,8 @@ import java.util.function.Function;
  * @version 1.0.0
  */
 public class MultiBizProperties extends Properties {
+
+    private static final AtomicBoolean    inited           = new AtomicBoolean(false);
 
     private final String                  bizClassLoaderName;
 
@@ -520,18 +525,23 @@ public class MultiBizProperties extends Properties {
      * @param bizClassLoaderName a {@link java.lang.String} object
      * @return a {@link com.alipay.sofa.koupleless.common.util.MultiBizProperties} object
      */
-    public static MultiBizProperties initSystem(String bizClassLoaderName) {
-        Properties properties = System.getProperties();
-        if (properties instanceof MultiBizProperties) {
-            MultiBizProperties multiBizProperties = (MultiBizProperties) properties;
-            if (Objects.equals(multiBizProperties.bizClassLoaderName, bizClassLoaderName)) {
-                return multiBizProperties;
+    private static MultiBizProperties initSystem(String bizClassLoaderName) {
+        if (inited.compareAndSet(false, true)) {
+            Properties properties = System.getProperties();
+            if (properties instanceof MultiBizProperties) {
+                MultiBizProperties multiBizProperties = (MultiBizProperties) properties;
+                if (Objects.equals(multiBizProperties.bizClassLoaderName, bizClassLoaderName)) {
+                    return multiBizProperties;
+                }
             }
+            MultiBizProperties multiBizProperties = new MultiBizProperties(bizClassLoaderName,
+                properties);
+            System.setProperties(multiBizProperties);
+            return multiBizProperties;
+        } else {
+            ArkLoggerFactory.getDefaultLogger().info("MultiBizProperties had already initialized.");
+            return (MultiBizProperties) System.getProperties();
         }
-        MultiBizProperties multiBizProperties = new MultiBizProperties(bizClassLoaderName,
-            properties);
-        System.setProperties(multiBizProperties);
-        return multiBizProperties;
     }
 
     /**

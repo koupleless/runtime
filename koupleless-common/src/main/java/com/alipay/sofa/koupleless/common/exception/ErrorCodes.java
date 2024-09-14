@@ -49,6 +49,16 @@ public class ErrorCodes {
          * 跨模块调用，目标biz找不到该类
          */
         public static final String E100005 = "100005";
+
+        /**
+         * 模块 MainApplicationContext 未初始化
+         */
+        public static final String E100006 = "100006";
+
+        /**
+         * 模块 MainApplicationContext 没有该实例
+         */
+        public static final String E100007 = "100007";
     }
 
     public static class ServiceManager {

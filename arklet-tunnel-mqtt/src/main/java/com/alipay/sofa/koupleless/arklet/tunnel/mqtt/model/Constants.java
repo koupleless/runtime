@@ -33,6 +33,15 @@ public class Constants {
     /** Constant <code>LOCAL_HOST_NAME="localHostName"</code> */
     public static final String LOCAL_HOST_NAME  = "localHostName";
 
-    /** Constant <code>LOCAL_HOST_NAME="localHostName"</code> */
+    /** Constant <code>COMMAND="command"</code> */
+    public static final String COMMAND          = "command";
+
+    /** Constant <code>COMMAND_RESPONSE="response"</code> */
+    public static final String COMMAND_RESPONSE = "response";
+
+    /** Constant <code>DEFAULT_BASE_ENV="dev"</code> */
     public static final String DEFAULT_BASE_ENV = "dev";
+
+    /** Constant <code>State="state"</code> */
+    public static final String State            = "state";
 }

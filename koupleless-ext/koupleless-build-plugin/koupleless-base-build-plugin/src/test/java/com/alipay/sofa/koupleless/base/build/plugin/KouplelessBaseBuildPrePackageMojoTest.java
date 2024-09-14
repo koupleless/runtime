@@ -121,7 +121,7 @@ public class KouplelessBaseBuildPrePackageMojoTest {
             org.apache.maven.artifact.Artifact artifact = mock(
                 org.apache.maven.artifact.Artifact.class);
             doReturn("A").when(artifact).getGroupId();
-            doReturn("B").when(artifact).getArtifactId();
+            //            doReturn("B").when(artifact).getArtifactId();
             doReturn("C").when(artifact).getBaseVersion();
             artifacts.add(artifact);
             project.setArtifacts(artifacts);

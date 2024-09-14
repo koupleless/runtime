@@ -18,36 +18,39 @@ package com.alipay.sofa.koupleless.common.util;
 
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.*;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import static java.lang.Thread.sleep;
+
 public class MultiBizPropertiesTest {
-    private final String key1   = "test-key-1";
-    private final String key2   = "test-key-2";
+    private static final String key1   = "test-key-1";
+    private static final String key2   = "test-key-2";
 
-    private final String key3   = "test-key-3";
+    private static final String key3   = "test-key-3";
 
-    private final String key4   = "test-key-4";
+    private static final String key4   = "test-key-4";
 
-    private final String key5   = "test-key-5";
+    private static final String key5   = "test-key-5";
 
-    private final String value1 = "test-value-1";
-    private final String value2 = "test-value-2";
+    private static final String value1 = "test-value-1";
+    private static final String value2 = "test-value-2";
 
-    private final String value3 = "test-value-3";
+    private static final String value3 = "test-value-3";
 
-    private final String value5 = "test-value-5";
+    private static final String value5 = "test-value-5";
 
-    private ClassLoader  baseClassLoader;
+    private static ClassLoader  baseClassLoader;
 
-    @Before
-    public void before() {
+    @BeforeClass
+    public static void before() throws Exception {
         Thread thread = Thread.currentThread();
         baseClassLoader = thread.getContextClassLoader();
 
@@ -55,7 +58,9 @@ public class MultiBizPropertiesTest {
         System.clearProperty(key2);
         System.clearProperty(key3);
         System.clearProperty(key4);
-        MultiBizProperties.initSystem(TestClassLoader.class.getName());
+        Method method = MultiBizProperties.class.getDeclaredMethod("initSystem", String.class);
+        method.setAccessible(true);
+        method.invoke(null, TestClassLoader.class.getName());
     }
 
     @After
@@ -248,6 +253,13 @@ public class MultiBizPropertiesTest {
         //        biz: get key3=value3
         Assert.assertNotNull(value3);
 
+    }
+
+    @Test
+    public void initOnlyOnce() {
+        int count = 10;
+        for (int i = 0; i < count; i++)
+            MultiBizProperties.initSystem();
     }
 
     private class TestClassLoader extends URLClassLoader {

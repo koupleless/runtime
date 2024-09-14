@@ -14,27 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.arklet.core.tunnel.custom;
+package com.alipay.sofa.koupleless.common.util;
 
-import com.alipay.sofa.koupleless.arklet.core.api.tunnel.Tunnel;
-import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
-import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * @author dongnan
- * @since 2024/7/16
+ * @author lianglipeng.llp@alibaba-inc.com
+ * @version $Id: ClassUtils.java, v 0.1 2024年08月05日 11:56 立蓬 Exp $
  */
-public class MockTunnel implements Tunnel {
-
-    @Override
-    public void init(CommandService commandService, BaseMetadataHook baseMetadataHook) {
-    }
-
-    @Override
-    public void run() {
-    }
-
-    @Override
-    public void shutdown() {
+public class ClassUtils {
+    public static List<Class<?>> getSuperClasses(Class<?> calzz) {
+        List<Class<?>> listSuperClass = new ArrayList<Class<?>>();
+        Class<?> superclass = calzz.getSuperclass();
+        while (superclass != null) {
+            if (superclass.getName().equals("java.lang.Object")) {
+                break;
+            }
+            listSuperClass.add(superclass);
+            superclass = superclass.getSuperclass();
+        }
+        return listSuperClass;
     }
 }

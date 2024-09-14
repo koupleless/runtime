@@ -18,6 +18,7 @@ package com.alipay.sofa.koupleless.plugin.spring;
 
 import com.alipay.sofa.koupleless.common.BizRuntimeContext;
 import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
+import com.alipay.sofa.koupleless.common.model.SpringApplicationContextHolder;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -29,6 +30,8 @@ public class BizApplicationContextInitializer implements
         ClassLoader classLoader = applicationContext.getClassLoader();
         BizRuntimeContext bizRuntimeContext = BizRuntimeContextRegistry
             .getBizRuntimeContextByClassLoader(classLoader);
+        bizRuntimeContext
+            .setApplicationContext(new SpringApplicationContextHolder(applicationContext));
         bizRuntimeContext.setRootApplicationContext(applicationContext);
     }
 }

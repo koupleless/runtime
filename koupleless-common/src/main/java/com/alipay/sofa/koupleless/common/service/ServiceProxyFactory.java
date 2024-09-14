@@ -25,9 +25,6 @@ import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
 import com.alipay.sofa.koupleless.common.exception.BizRuntimeException;
 import com.alipay.sofa.koupleless.common.util.ReflectionUtils;
 import org.springframework.aop.framework.ProxyFactory;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.AbstractApplicationContext;
 
 import java.util.HashMap;
 import java.util.List;
@@ -92,6 +89,25 @@ public class ServiceProxyFactory {
         return proxyMap;
     }
 
+    public static <T> T filterServiceProxy(String bizName, String bizVersion, String name,
+                                           Class<T> serviceType, ClassLoader clientClassLoader) {
+        Biz biz = ArkClient.getBizManagerService().getBiz(bizName, bizVersion);
+        Class<?> serviceClass = tryToGetTargetClass(bizName, bizVersion, biz, serviceType);
+
+        if (null == serviceClass) {
+            return null;
+        }
+
+        Map<String, ?> serviceMap = listService(biz, serviceClass);
+
+        if (serviceMap.containsKey(name)) {
+            return doCreateServiceProxy(biz.getBizName(), biz.getBizVersion(), serviceMap.get(name),
+                null, serviceType, clientClassLoader);
+        }
+
+        return null;
+    }
+
     /**
      * <p>getService.</p>
      *
@@ -115,13 +131,14 @@ public class ServiceProxyFactory {
         }
 
         BizRuntimeContext bizRuntimeContext = BizRuntimeContextRegistry.getBizRuntimeContext(biz);
-        if (bizRuntimeContext.getRootApplicationContext() == null) {
+        if (bizRuntimeContext.getApplicationContext() == null
+            || bizRuntimeContext.getApplicationContext().get() == null) {
             throw new BizRuntimeException(E100002,
-                String.format("biz %s:%s spring context is null", bizName, bizVersion));
+                String.format("biz %s:%s application context is null", bizName, bizVersion));
         }
 
         if (!StringUtils.isEmpty(name)) {
-            return bizRuntimeContext.getRootApplicationContext().getBean(name);
+            return bizRuntimeContext.getApplicationContext().getObject(name);
         }
 
         if (clientType != null) {
@@ -133,7 +150,7 @@ public class ServiceProxyFactory {
                     String.format("Cannot find class %s from the biz %s", clientType.getName(),
                         biz.getIdentity()));
             }
-            return bizRuntimeContext.getRootApplicationContext().getBean(serviceType);
+            return bizRuntimeContext.getApplicationContext().getObject(serviceType);
         }
 
         throw new BizRuntimeException(E100002, "invalid config");
@@ -142,13 +159,8 @@ public class ServiceProxyFactory {
     private static <T> Map<String, T> listService(Biz biz, Class<T> serviceType) {
         BizRuntimeContext bizRuntimeContext = checkBizStateAndGetBizRuntimeContext(biz.getBizName(),
             biz.getBizVersion(), biz);
-        ApplicationContext rootApplicationContext = bizRuntimeContext.getRootApplicationContext();
-        if (rootApplicationContext instanceof AbstractApplicationContext) {
-            ConfigurableListableBeanFactory beanFactory = ((AbstractApplicationContext) rootApplicationContext)
-                .getBeanFactory();
-            return beanFactory.getBeansOfType(serviceType);
-        }
-        return new HashMap<>();
+
+        return bizRuntimeContext.getApplicationContext().getObjectsOfType(serviceType);
     }
 
     /**
@@ -210,21 +222,21 @@ public class ServiceProxyFactory {
     /**
      * <p>determineMostSuitableBiz.</p>
      *
-     * @param moduleName a {@link java.lang.String} object
-     * @param moduleVersion a {@link java.lang.String} object
+     * @param bizName a {@link java.lang.String} object
+     * @param bizVersion a {@link java.lang.String} object
      * @return a {@link com.alipay.sofa.ark.spi.model.Biz} object
      */
-    public static Biz determineMostSuitableBiz(String moduleName, String moduleVersion) {
+    public static Biz determineMostSuitableBiz(String bizName, String bizVersion) {
         Biz biz;
-        if (StringUtils.isEmpty(moduleVersion)) {
-            List<Biz> bizList = ArkClient.getBizManagerService().getBiz(moduleName);
+        if (StringUtils.isEmpty(bizVersion)) {
+            List<Biz> bizList = ArkClient.getBizManagerService().getBiz(bizName);
             if (bizList.size() == 0) {
                 return null;
             }
             biz = bizList.stream().filter(it -> BizState.ACTIVATED == it.getBizState()).findFirst()
                 .orElse(null);
         } else {
-            biz = ArkClient.getBizManagerService().getBiz(moduleName, moduleVersion);
+            biz = ArkClient.getBizManagerService().getBiz(bizName, bizVersion);
         }
         return biz;
     }
@@ -240,6 +252,16 @@ public class ServiceProxyFactory {
         }
     }
 
+    private static Class<?> tryToGetTargetClass(String bizName, String bizVersion, Biz biz,
+                                                Class<?> sourceClass) {
+        checkBizState(bizName, bizVersion, biz);
+        try {
+            return biz.getBizClassLoader().loadClass(sourceClass.getName());
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
+    }
+
     private static BizRuntimeContext checkBizStateAndGetBizRuntimeContext(String bizName,
                                                                           String bizVersion,
                                                                           Biz biz) {
@@ -248,8 +270,9 @@ public class ServiceProxyFactory {
         if (bizRuntimeContext == null) {
             throw new BizRuntimeException(E100002, "biz runtime context is null");
         }
-        if (bizRuntimeContext.getRootApplicationContext() == null) {
-            throw new BizRuntimeException(E100002, "biz spring context is null");
+        if (bizRuntimeContext.getApplicationContext() == null
+            || bizRuntimeContext.getApplicationContext().get() == null) {
+            throw new BizRuntimeException(E100002, "biz application context is null");
         }
         return bizRuntimeContext;
     }

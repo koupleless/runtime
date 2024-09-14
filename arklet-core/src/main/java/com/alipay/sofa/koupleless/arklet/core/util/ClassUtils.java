@@ -20,6 +20,9 @@ import com.alipay.sofa.koupleless.arklet.core.api.tunnel.Tunnel;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletInitException;
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger;
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
+import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
+
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * <p>ClassUtils class.</p>
@@ -50,4 +53,36 @@ public class ClassUtils {
         }
         return (Class<? extends Tunnel>) tunnelClass;
     }
+
+    /**
+     * Validate current object must be null
+     *
+     * @param baseMetadataHookClassName String custom base metadata hook class name
+     */
+    public static BaseMetadataHook getBaseMetadataHookImpl(String baseMetadataHookClassName) throws ArkletInitException {
+        Class<?> hookClass;
+        try {
+            hookClass = Class.forName(baseMetadataHookClassName);
+        } catch (ClassNotFoundException e) {
+            LOGGER.error("custom base metadata hook class not found");
+            throw new ArkletInitException("custom base metadata hook class not found", e);
+        }
+        if (!BaseMetadataHook.class.isAssignableFrom(hookClass)) {
+            LOGGER.error("custom base metadata hook class didn't implement Metadata interface");
+            throw new ArkletInitException(
+                "custom base metadata hook class didn't implement tunnel interface");
+        }
+        BaseMetadataHook hookInstance;
+        try {
+            hookInstance = (BaseMetadataHook) hookClass.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException
+                | InvocationTargetException e) {
+            LOGGER.error("Failed to instantiate the custom base metadata hook class", e);
+            throw new ArkletInitException(
+                "Failed to instantiate the custom base metadata hook class", e);
+        }
+
+        return hookInstance;
+    }
+
 }

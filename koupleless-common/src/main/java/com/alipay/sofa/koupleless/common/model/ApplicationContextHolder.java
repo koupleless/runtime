@@ -14,27 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.arklet.core.tunnel.custom;
+package com.alipay.sofa.koupleless.common.model;
 
-import com.alipay.sofa.koupleless.arklet.core.api.tunnel.Tunnel;
-import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
-import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
+import java.util.Map;
 
 /**
- * @author dongnan
- * @since 2024/7/16
+ * @author lianglipeng.llp@alibaba-inc.com
+ * @version $Id: BizApplicationContext.java, v 0.1 2024年08月09日 15:44 立蓬 Exp $
  */
-public class MockTunnel implements Tunnel {
+public abstract class ApplicationContextHolder<T> {
+    protected T applicationContext;
 
-    @Override
-    public void init(CommandService commandService, BaseMetadataHook baseMetadataHook) {
+    ApplicationContextHolder(T applicationContext) {
+        this.applicationContext = applicationContext;
     }
 
-    @Override
-    public void run() {
+    final public T get() {
+        return this.applicationContext;
     }
 
-    @Override
-    public void shutdown() {
-    }
+    public abstract <A> Map<String, A> getObjectsOfType(Class<A> type);
+
+    public abstract Object getObject(String key);
+
+    public abstract <A> A getObject(Class<A> requiredType);
+
+    public abstract void close();
 }
