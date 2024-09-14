@@ -16,20 +16,23 @@
  */
 package com.alipay.sofa.koupleless.arklet.tunnel;
 
+import com.alipay.sofa.ark.api.ArkClient;
+import com.alipay.sofa.ark.api.ResponseCode;
+import com.alipay.sofa.ark.spi.model.BizOperation;
 import com.alipay.sofa.koupleless.arklet.core.ArkletComponentRegistry;
+import com.alipay.sofa.koupleless.arklet.core.command.builtin.handler.InstallBizHandler;
 import com.alipay.sofa.koupleless.arklet.core.ops.UnifiedOperationService;
 import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
 import com.alipay.sofa.koupleless.arklet.core.health.HealthService;
 import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
-import io.moquette.broker.Server;
-import io.moquette.broker.config.MemoryConfig;
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import com.alipay.sofa.koupleless.arklet.tunnel.paho.MockBizManagerService;
+import org.junit.After;
+import org.junit.Before;
+import org.mockito.MockedStatic;
 import org.mockito.Mock;
 
-import java.util.Properties;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mockStatic;
 
 /**
  * @author mingmen
@@ -38,28 +41,23 @@ import java.util.Properties;
 public class BaseTest {
 
     @Mock
-    public static Server                  mqttBroker;
+    public static CommandService                            commandService;
 
     @Mock
-    public static final String            BROKER_URL = "tcp://localhost:1883";
+    public static UnifiedOperationService                   operationService;
 
     @Mock
-    public static MqttClient              mockClient;
+    public static HealthService                             healthService;
 
     @Mock
-    public static CommandService          commandService;
+    public static BaseMetadataHook                          baseMetadataHook;
 
-    @Mock
-    public static UnifiedOperationService operationService;
+    public final InstallBizHandler.InstallBizClientResponse success = new InstallBizHandler.InstallBizClientResponse();
+    public final InstallBizHandler.InstallBizClientResponse failed  = new InstallBizHandler.InstallBizClientResponse();
+    public MockedStatic<ArkClient>                          arkClient;
 
-    @Mock
-    public static HealthService           healthService;
-
-    @Mock
-    public static BaseMetadataHook        baseMetadataHook;
-
-    @BeforeClass
-    public static void setup() throws Exception {
+    @Before
+    public void setup() {
         System.setProperty("koupleless.arklet.metadata.name", "test_metadata_hook");
         System.setProperty("koupleless.arklet.metadata.version", "test_metadata_hook_version");
         System.setProperty("koupleless.arklet.metadata.env", "test_env");
@@ -67,31 +65,22 @@ public class BaseTest {
         operationService = ArkletComponentRegistry.getOperationServiceInstance();
         healthService = ArkletComponentRegistry.getHealthServiceInstance();
         baseMetadataHook = ArkletComponentRegistry.getApiClientInstance().getMetadataHook();
-        // 启动嵌入式 MQTT Broker
-        mqttBroker = startEmbeddedBroker();
+        success.setCode(ResponseCode.SUCCESS);
+        failed.setCode(ResponseCode.FAILED);
 
-        // 使用实际客户端连接到嵌入式 Broker，用于发布消息
-        mockClient = new MqttClient(BROKER_URL, "testClient", new MemoryPersistence());
-        mockClient.connect();
+        arkClient = mockStatic(ArkClient.class);
+        arkClient.when(() -> {
+            ArkClient.installOperation(new BizOperation());
+            ArkClient.uninstallBiz(anyString(), anyString());
+        }).thenReturn(success);
+        arkClient.when(ArkClient::getBizManagerService).thenReturn(new MockBizManagerService());
+        arkClient.when(ArkClient::getMasterBiz)
+            .thenReturn(new MockBizManagerService().getMasterBiz());
     }
 
-    @AfterClass
-    public static void teardown() {
-        // 停止嵌入式 MQTT Broker
-        stopEmbeddedBroker(mqttBroker);
+    @After
+    public void tearDown() {
+        arkClient.close();
     }
 
-    private static Server startEmbeddedBroker() throws Exception {
-        Server mqttBroker = new Server();
-        Properties configProps = new Properties();
-        configProps.setProperty("port", "1883");
-        mqttBroker.startServer(new MemoryConfig(configProps));
-        return mqttBroker;
-    }
-
-    private static void stopEmbeddedBroker(Server mqttBroker) {
-        if (mqttBroker != null) {
-            mqttBroker.stopServer();
-        }
-    }
 }

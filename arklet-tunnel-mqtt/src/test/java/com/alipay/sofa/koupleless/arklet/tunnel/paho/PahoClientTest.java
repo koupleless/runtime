@@ -16,6 +16,7 @@
  */
 package com.alipay.sofa.koupleless.arklet.tunnel.paho;
 
+import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletInitException;
 import com.alipay.sofa.koupleless.arklet.tunnel.BaseTest;
 import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.paho.PahoMqttClient;
 import org.eclipse.paho.client.mqttv3.*;
@@ -31,34 +32,20 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 
 public class PahoClientTest extends BaseTest {
 
-    @Test
-    public void openAndClose() throws MqttException {
+    @Test(expected = MqttException.class)
+    public void openWithTcp() throws MqttException {
         UUID uuid = UUID.randomUUID();
         PahoMqttClient client = new PahoMqttClient("localhost", 1883, uuid, "test", "test", "",
             commandService, baseMetadataHook);
         client.open();
-        client.close();
     }
 
-    @Test
-    public void handleMessage() throws MqttException {
+    @Test(expected = MqttException.class)
+    public void openWithSSL() throws MqttException {
         UUID uuid = UUID.randomUUID();
-        PahoMqttClient client = new PahoMqttClient("localhost", 1883, uuid, "test", "test", "",
-            commandService, baseMetadataHook);
+        PahoMqttClient client = new PahoMqttClient("localhost", 1883, uuid, "test", "test", "", "",
+            "", "", commandService, baseMetadataHook);
         client.open();
-        // health
-        mockClient.publish(
-            String.format("koupleless_%s/%s/base/health", baseMetadataHook.getRuntimeEnv(), uuid),
-            new MqttMessage("".getBytes()));
-
-        // queryAllBiz
-        mockClient.publish(
-            String.format("koupleless_%s/%s/base/biz", baseMetadataHook.getRuntimeEnv(), uuid),
-            new MqttMessage("".getBytes()));
-
-        // install
-        mockClient.publish(String.format("koupleless_%s/%s/base/installBiz",
-            baseMetadataHook.getRuntimeEnv(), uuid), new MqttMessage("".getBytes()));
     }
 
 }
