@@ -25,10 +25,16 @@ import java.util.Map;
 import static com.alipay.sofa.koupleless.common.exception.ErrorCodes.SpringContextManager.E100006;
 
 /**
+ * <p>MainApplication class.</p>
+ *
  * @author lianglipeng.llp@alibaba-inc.com
  * @version $Id: MainApplication.java, v 0.1 2024年08月26日 00:34 立蓬 Exp $
+ * @since 1.3.1
  */
 public class MainApplication {
+    /**
+     * <p>init.</p>
+     */
     public static void init() {
         BizRuntimeContext bizRuntimeContext = BizRuntimeContextRegistry
             .getBizRuntimeContextByClassLoader(Thread.currentThread().getContextClassLoader());
@@ -50,21 +56,45 @@ public class MainApplication {
         return null;
     }
 
+    /**
+     * <p>getObject.</p>
+     *
+     * @param key a {@link java.lang.String} object
+     * @return a {@link java.lang.Object} object
+     */
     public static Object getObject(String key) {
         checkMainApplicationContext();
         return get().getObject(key);
     }
 
+    /**
+     * <p>getObjectMap.</p>
+     *
+     * @param type a {@link java.lang.Class} object
+     * @param <T> a T class
+     * @return a {@link java.util.Map} object
+     */
     public static <T> Map<String, T> getObjectMap(Class<T> type) {
         checkMainApplicationContext();
         return get().getObjectMap(type);
     }
 
+    /**
+     * <p>register.</p>
+     *
+     * @param obj a {@link java.lang.Object} object
+     */
     public static void register(Object obj) {
         checkMainApplicationContext();
         get().register(obj);
     }
 
+    /**
+     * <p>register.</p>
+     *
+     * @param alias a {@link java.lang.String} object
+     * @param obj a {@link java.lang.Object} object
+     */
     public static void register(String alias, Object obj) {
         checkMainApplicationContext();
         get().register(alias, obj);

@@ -26,14 +26,14 @@ public interface ComponentRegistry {
     /**
      * Register a component
      *
-     * @param bean
+     * @param bean the component to register
      */
     <T extends AbstractServiceComponent> void registerService(T bean);
 
     /**
      * unregister component
-     * @param bean
-     * @param <T>
+     * @param bean the component to unregister
+     * @param <T> the type of the component
      */
     <T extends AbstractServiceComponent> void unregisterService(T bean);
 

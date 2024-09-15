@@ -95,9 +95,12 @@ public class SpringServiceFinder {
 
     /**
      * 查找所有模块 name 对应的可用服务
+     *
      * @param name a {@link java.lang.String} object
      * @param serviceType a {@link java.lang.Class} object
-     * @return a Map<Biz, T> object
+     * @return a Map{@literal <}Biz, T{@literal >} object
+     * @param <T> a T class
+     * @since 1.3.1
      */
     public static <T> Map<Biz, T> getModuleServices(String name, Class<T> serviceType) {
         // 默认不分发，直接查找所有生效的模块中 name 对应的服务
@@ -106,9 +109,12 @@ public class SpringServiceFinder {
 
     /**
      * 查找所有生效的模块中 name 对应的服务
+     *
      * @param name a {@link java.lang.String} object
      * @param serviceType a {@link java.lang.Class} object
-     * @return a Map<Biz, T> object
+     * @return a Map{@literal <}Biz, T{@literal >} object
+     * @param <T> a T class
+     * @since 1.3.1
      */
     protected static <T> Map<Biz, T> getActivatedModuleServices(String name, Class<T> serviceType) {
         Biz masterBiz = ArkClient.getMasterBiz();
@@ -131,10 +137,12 @@ public class SpringServiceFinder {
 
     /**
      * 找指定模块的 name 对应的可用服务
+     *
      * @param bizName a {@link java.lang.String} object
      * @param serviceName a {@link java.lang.String} object
      * @param serviceType a {@link java.lang.Class} object
      * @return T
+     * @param <T> a T class
      */
     public static <T> T getModuleServiceWithoutVersion(String bizName, String serviceName,
                                                        Class<T> serviceType) {
@@ -144,10 +152,12 @@ public class SpringServiceFinder {
 
     /**
      * 找指定模块的 name 对应的服务，如果模块不存在或未激活，则抛出异常；如果模块没有该服务，则抛出异常；
+     *
      * @param bizName a {@link java.lang.String} object
      * @param serviceName a {@link java.lang.String} object
      * @param serviceType a {@link java.lang.Class} object
      * @return T
+     * @param <T> a T class
      */
     protected static <T> T getActivatedModuleServiceWithoutVersion(String bizName,
                                                                    String serviceName,
