@@ -24,14 +24,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * <p>SpringApplicationContextHolder class.</p>
+ *
  * @author lianglipeng.llp@alibaba-inc.com
  * @version $Id: SpringApplicationContextAdaptor.java, v 0.1 2024年08月09日 16:17 立蓬 Exp $
+ * @since 1.3.1
  */
 public class SpringApplicationContextHolder extends ApplicationContextHolder<ApplicationContext> {
+    /**
+     * <p>Constructor for SpringApplicationContextHolder.</p>
+     *
+     * @param applicationContext a {@link org.springframework.context.ApplicationContext} object
+     */
     public SpringApplicationContextHolder(ApplicationContext applicationContext) {
         super(applicationContext);
     }
 
+    /** {@inheritDoc} */
     @Override
     public <A> Map<String, A> getObjectsOfType(Class<A> type) {
         if (applicationContext instanceof AbstractApplicationContext) {
@@ -42,16 +51,19 @@ public class SpringApplicationContextHolder extends ApplicationContextHolder<App
         return new HashMap<>();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Object getObject(String key) {
         return applicationContext.getBean(key);
     }
 
+    /** {@inheritDoc} */
     @Override
     public <A> A getObject(Class<A> requiredType) {
         return applicationContext.getBean(requiredType);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void close() {
         AbstractApplicationContext ctx = (AbstractApplicationContext) applicationContext;

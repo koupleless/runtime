@@ -20,10 +20,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * <p>ClassUtils class.</p>
+ *
  * @author lianglipeng.llp@alibaba-inc.com
  * @version $Id: ClassUtils.java, v 0.1 2024年08月05日 11:56 立蓬 Exp $
+ * @since 1.3.1
  */
 public class ClassUtils {
+    /**
+     * <p>getSuperClasses.</p>
+     *
+     * @param calzz a {@link java.lang.Class} object
+     * @return a {@link java.util.List} object
+     */
     public static List<Class<?>> getSuperClasses(Class<?> calzz) {
         List<Class<?>> listSuperClass = new ArrayList<Class<?>>();
         Class<?> superclass = calzz.getSuperclass();
