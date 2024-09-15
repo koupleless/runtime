@@ -57,6 +57,12 @@ public class ArkUtils {
             .getContextClassLoader();
     }
 
+    /**
+     * <p>checkBizExists.</p>
+     *
+     * @param bizName a {@link java.lang.String} object
+     * @since 1.3.1
+     */
     public static void checkBizExists(String bizName) {
         List<Biz> bizList = ArkClient.getBizManagerService().getBiz(bizName);
         if (bizList.isEmpty()) {

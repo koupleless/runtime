@@ -25,19 +25,29 @@ import java.util.Set;
 import static com.alipay.sofa.koupleless.common.exception.ErrorCodes.SpringContextManager.E100007;
 
 /**
+ * <p>MainApplicationContextHolder class.</p>
+ *
  * @author lianglipeng.llp@alibaba-inc.com
  * @version $Id: MainBizApplicationContext.java, v 0.1 2024年08月25日 23:35 立蓬 Exp $
+ * @since 1.3.1
  */
 public class MainApplicationContextHolder extends ApplicationContextHolder<MainApplicationContext> {
+    /**
+     * <p>Constructor for MainApplicationContextHolder.</p>
+     *
+     * @param applicationContext a {@link com.alipay.sofa.koupleless.common.model.MainApplicationContext} object
+     */
     public MainApplicationContextHolder(MainApplicationContext applicationContext) {
         super(applicationContext);
     }
 
+    /** {@inheritDoc} */
     @Override
     public <A> Map<String, A> getObjectsOfType(Class<A> type) {
         return applicationContext.getObjectMap(type);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Object getObject(String key) {
         if (applicationContext.getObject(key) == null) {
@@ -46,6 +56,7 @@ public class MainApplicationContextHolder extends ApplicationContextHolder<MainA
         return applicationContext.getObject(key);
     }
 
+    /** {@inheritDoc} */
     @Override
     public <A> A getObject(Class<A> requiredType) {
         Map<String, A> objMap = applicationContext.getObjectMap(requiredType);
@@ -59,6 +70,7 @@ public class MainApplicationContextHolder extends ApplicationContextHolder<MainA
         return objMap.values().stream().findFirst().get();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void close() {
         applicationContext.close();

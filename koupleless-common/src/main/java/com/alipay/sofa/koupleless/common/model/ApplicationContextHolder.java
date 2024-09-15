@@ -19,8 +19,11 @@ package com.alipay.sofa.koupleless.common.model;
 import java.util.Map;
 
 /**
+ * <p>Abstract ApplicationContextHolder class.</p>
+ *
  * @author lianglipeng.llp@alibaba-inc.com
  * @version $Id: BizApplicationContext.java, v 0.1 2024年08月09日 15:44 立蓬 Exp $
+ * @since 1.3.1
  */
 public abstract class ApplicationContextHolder<T> {
     protected T applicationContext;
@@ -29,15 +32,43 @@ public abstract class ApplicationContextHolder<T> {
         this.applicationContext = applicationContext;
     }
 
+    /**
+     * <p>get.</p>
+     *
+     * @return a T object
+     */
     final public T get() {
         return this.applicationContext;
     }
 
+    /**
+     * <p>getObjectsOfType.</p>
+     *
+     * @param type a {@link java.lang.Class} object
+     * @param <A> a A class
+     * @return a {@link java.util.Map} object
+     */
     public abstract <A> Map<String, A> getObjectsOfType(Class<A> type);
 
+    /**
+     * <p>getObject.</p>
+     *
+     * @param key a {@link java.lang.String} object
+     * @return a {@link java.lang.Object} object
+     */
     public abstract Object getObject(String key);
 
+    /**
+     * <p>getObject.</p>
+     *
+     * @param requiredType a {@link java.lang.Class} object
+     * @param <A> a A class
+     * @return a A object
+     */
     public abstract <A> A getObject(Class<A> requiredType);
 
+    /**
+     * <p>close.</p>
+     */
     public abstract void close();
 }

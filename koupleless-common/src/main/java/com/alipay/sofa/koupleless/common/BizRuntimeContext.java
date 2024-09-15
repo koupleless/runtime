@@ -47,7 +47,9 @@ public class BizRuntimeContext implements ComponentRegistry {
 
     private Map<ClassLoader, Map<String, ServiceProxyCache>>                     serviceProxyCaches = new ConcurrentHashMap<>();
 
-    // Beanregistry key为 "identifier"
+    /**
+     * Beanregistry key为 "identifier"
+     */
     private Map<String/*protocol_name*/, BeanRegistry<AbstractServiceComponent>> serviceMap         = new ConcurrentHashMap<>();
 
     /**
@@ -107,7 +109,8 @@ public class BizRuntimeContext implements ComponentRegistry {
     /**
      * <p>Getter for the field <code>applicationContext</code>.</p>
      *
-     * @return a {@link ApplicationContextHolder} object
+     * @return a {@link com.alipay.sofa.koupleless.common.model.ApplicationContextHolder} object
+     * @since 1.3.1
      */
     public ApplicationContextHolder getApplicationContext() {
         return applicationContext;
@@ -116,7 +119,8 @@ public class BizRuntimeContext implements ComponentRegistry {
     /**
      * <p>Setter for the field <code>applicationContext</code>.</p>
      *
-     * @param applicationContext a {@link ApplicationContextHolder} object
+     * @param applicationContext a {@link com.alipay.sofa.koupleless.common.model.ApplicationContextHolder} object
+     * @since 1.3.1
      */
     public void setApplicationContext(ApplicationContextHolder applicationContext) {
         this.applicationContext = applicationContext;
