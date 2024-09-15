@@ -22,10 +22,18 @@ import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
 import org.springframework.context.ApplicationContext;
 
 /**
+ * <p>BizRuntimeContextUtils class.</p>
+ *
  * @author lianglipeng.llp@alibaba-inc.com
  * @version $Id: BizRuntimeUtils.java, v 0.1 2024年07月04日 14:28 立蓬 Exp $
  */
 public class BizRuntimeContextUtils {
+    /**
+     * <p>getApplicationContext.</p>
+     *
+     * @param biz a {@link com.alipay.sofa.ark.spi.model.Biz} object
+     * @return a {@link org.springframework.context.ApplicationContext} object
+     */
     public static ApplicationContext getApplicationContext(Biz biz) {
         BizRuntimeContext bizRuntimeContext = BizRuntimeContextRegistry.getRuntimeMap()
             .get(biz.getBizClassLoader());
