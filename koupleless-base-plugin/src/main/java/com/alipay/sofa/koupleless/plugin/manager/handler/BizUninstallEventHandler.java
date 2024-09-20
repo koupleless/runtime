@@ -40,10 +40,11 @@ public class BizUninstallEventHandler implements EventHandler<BeforeBizStopEvent
     }
 
     private void doUninstallBiz(Biz biz) {
-        ServiceProxyCacheCleaner.clean(biz.getBizClassLoader());
+        ClassLoader bizClassLoader = biz.getBizClassLoader();
+        ServiceProxyCacheCleaner.clean(bizClassLoader);
         BizRuntimeContext bizRuntimeContext = BizRuntimeContextRegistry.getBizRuntimeContext(biz);
-        BizRuntimeContextRegistry.unRegisterBizRuntimeManager(bizRuntimeContext);
         bizRuntimeContext.shutdownContext();
+        BizRuntimeContextRegistry.unRegisterBizRuntimeManager(bizClassLoader);
     }
 
     /** {@inheritDoc} */

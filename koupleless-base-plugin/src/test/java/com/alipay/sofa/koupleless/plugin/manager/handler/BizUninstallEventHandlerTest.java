@@ -78,5 +78,4 @@ public class BizUninstallEventHandlerTest {
         bizUninstallEventHandler.handleEvent(new BeforeBizStopEvent(biz));
         Assert.assertFalse(ctx.isActive());
     }
-
 }
