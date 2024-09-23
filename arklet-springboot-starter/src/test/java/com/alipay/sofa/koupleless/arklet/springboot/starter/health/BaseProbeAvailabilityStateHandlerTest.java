@@ -17,7 +17,7 @@
 package com.alipay.sofa.koupleless.arklet.springboot.starter.health;
 
 import com.alipay.sofa.ark.api.ArkClient;
-import com.alipay.sofa.ark.spi.event.biz.AfterBizFailedEvent;
+import com.alipay.sofa.ark.spi.event.biz.AfterBizStartupFailedEvent;
 import com.alipay.sofa.ark.spi.event.biz.AfterBizStopEvent;
 import com.alipay.sofa.ark.spi.event.biz.BeforeBizStartupEvent;
 import com.alipay.sofa.ark.spi.event.biz.BeforeBizStopEvent;
@@ -93,7 +93,7 @@ public class BaseProbeAvailabilityStateHandlerTest {
 
             handler.handleEvent(new BeforeBizStartupEvent(biz1));
 
-            handler.handleEvent(new AfterBizFailedEvent(biz1, new Throwable()));
+            handler.handleEvent(new AfterBizStartupFailedEvent(biz1, new Throwable()));
 
             handler.handleEvent(new AfterBizStopEvent(biz1));
 
