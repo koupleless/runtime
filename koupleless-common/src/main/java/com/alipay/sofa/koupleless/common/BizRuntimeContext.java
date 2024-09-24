@@ -183,7 +183,9 @@ public class BizRuntimeContext implements ComponentRegistry {
      */
     public void shutdownContext() {
         try {
-            applicationContext.close();
+            if (null != applicationContext) {
+                applicationContext.close();
+            }
             appClassLoader = null;
         } catch (Throwable throwable) {
             throw new BizRuntimeException(ErrorCodes.SpringContextManager.E100001, throwable);

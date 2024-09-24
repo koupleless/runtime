@@ -66,6 +66,10 @@ public class SpringApplicationContextHolder extends ApplicationContextHolder<App
     /** {@inheritDoc} */
     @Override
     public void close() {
+        if (applicationContext == null) {
+            return;
+        }
+
         AbstractApplicationContext ctx = (AbstractApplicationContext) applicationContext;
         // only need shutdown when root context is active
         if (ctx.isActive()) {

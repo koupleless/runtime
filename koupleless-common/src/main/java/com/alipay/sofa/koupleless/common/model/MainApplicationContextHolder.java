@@ -73,6 +73,9 @@ public class MainApplicationContextHolder extends ApplicationContextHolder<MainA
     /** {@inheritDoc} */
     @Override
     public void close() {
+        if (applicationContext == null) {
+            return;
+        }
         applicationContext.close();
     }
 }
