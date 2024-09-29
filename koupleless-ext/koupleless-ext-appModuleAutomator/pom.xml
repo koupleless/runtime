@@ -3,32 +3,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.2</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <groupId>com.alipay.sofa.koupleless</groupId>
+        <artifactId>koupleless-ext</artifactId>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath><!-- lookup parent from repository -->
     </parent>
     <groupId>com.alipay.sofa.koupleless</groupId>
     <artifactId>appModuleAutomator</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>koupleless-ext- appModuleAutomator</name>
-    <description>koupleless-ext- appModuleAutomator</description>
-    <url/>
-    <licenses>
-        <license/>
-    </licenses>
-    <developers>
-        <developer/>
-    </developers>
-    <scm>
-        <connection/>
-        <developerConnection/>
-        <tag/>
-        <url/>
-    </scm>
-    <properties>
-        <java.version>17</java.version>
-    </properties>
+    <name>koupleless-ext-appModuleAutomator</name>
+    <description>koupleless-ext-appModuleAutomator</description>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -49,30 +33,14 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.32</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>1.7.30</version> <!-- 确保使用最新版本 -->
-        </dependency>
     </dependencies>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>3.3.2</version>
                 <configuration>
-                    <mainClass>com.Autolauncher.Launcher</mainClass>
+                    <mainClass>com.autolauncher.Launcher</mainClass>
                 </configuration>
             </plugin>
         </plugins>

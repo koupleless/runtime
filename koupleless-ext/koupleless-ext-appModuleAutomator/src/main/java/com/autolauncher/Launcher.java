@@ -1,9 +1,9 @@
-package com.Autolauncher;
+package com.autolauncher;
 
-import com.auto_module_upgrade.ApplicationPropertiesModifier.ApplicationPropertiesModifier;
-import com.auto_module_upgrade.Filterconfiguration.SlimmingConfiguration;
+import com.auto_module_upgrade.applicationPropertiesModifier.ApplicationPropertiesModifier;
+import com.auto_module_upgrade.filterconfiguration.SlimmingConfiguration;
 import org.jdom2.JDOMException;
-import com.auto_module_upgrade.PomXmlModifier.PomModifier;
+import com.auto_module_upgrade.pomXmlModifier.PomModifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,13 +23,9 @@ public class Launcher {
 
             String projectPath = getValidInput("请输入工程的绝对路径：", Launcher::validateProjectPath);
             String applicationName = getValidInput("请输入要设置的应用名称：", Launcher::validateApplicationName);
-
-            executeOperation("修改 application.properties",
-                    () -> modifyApplicationProperties(projectPath, applicationName));
-            executeOperation("创建 bootstrap.properties",
-                    () -> createBootstrapProperties(projectPath));
-            executeOperation("修改 pom.xml",
-                    () -> modifyPomXml(projectPath));
+            executeOperation("修改 application.properties", () -> modifyApplicationProperties(projectPath, applicationName));
+            executeOperation("创建 bootstrap.properties", () -> createBootstrapProperties(projectPath));
+            executeOperation("修改 pom.xml", () -> modifyPomXml(projectPath));
 
             logger.info("所有操作已完成");
 

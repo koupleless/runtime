@@ -1,5 +1,7 @@
-package com.auto_module_upgrade.PomXmlModifier;
+package com.auto_module_upgrade.pomXmlModifier;
+
 import java.io.File;
+
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -7,11 +9,14 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.jdom2.Namespace;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.Properties;
 import java.util.List;
 
@@ -33,6 +38,9 @@ public class PomModifier {
             System.out.println("请输入项目的绝对路径：");
             String projectPath = scanner.nextLine();
             processProjectPath(projectPath);
+        } catch (IOException | JDOMException ex) {
+            logger.error("发生错误：", ex);
+            System.out.println("处理项目时发生错误，请检查日志以获取详细信息。");
         }
     }
 
@@ -50,15 +58,7 @@ public class PomModifier {
     }
 
     private static void createAndInitializePomFile(File pomFile) throws IOException {
-        String initialContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                + "<project xmlns=\"http://maven.apache.org/POM/4.0.0\"\n"
-                + "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
-                + "         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\n"
-                + "    <modelVersion>4.0.0</modelVersion>\n"
-                + "    <groupId>com.example</groupId>\n"
-                + "    <artifactId>demo-project</artifactId>\n"
-                + "    <version>1.0-SNAPSHOT</version>\n"
-                + "</project>";
+        String initialContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<project xmlns=\"http://maven.apache.org/POM/4.0.0\"\n" + "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" + "         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\n" + "    <modelVersion>4.0.0</modelVersion>\n" + "    <groupId>com.example</groupId>\n" + "    <artifactId>demo-project</artifactId>\n" + "    <version>1.0-SNAPSHOT</version>\n" + "</project>";
         try (FileWriter writer = new FileWriter(pomFile)) {
             writer.write(initialContent);
             logger.info("pom.xml 文件已创建并初始化在: {}", pomFile.getAbsolutePath());
@@ -77,7 +77,9 @@ public class PomModifier {
 
         XMLOutputter xmlOutput = new XMLOutputter();
         xmlOutput.setFormat(Format.getPrettyFormat());
-        xmlOutput.output(document, new FileWriter(file));
+        try (FileWriter writer = new FileWriter(file)) {
+            xmlOutput.output(document, writer);
+        }
         logger.info("POM 文件已更新: {}", file.getAbsolutePath());
     }
 
@@ -98,8 +100,9 @@ public class PomModifier {
         boolean exists = false;
         List<Element> existingDependencies = dependencies.getChildren("dependency", ns);
         for (Element dep : existingDependencies) {
-            if (dep.getChildText("groupId", ns).equals(config.getProperty("koupleless.groupId")) &&
-                    dep.getChildText("artifactId", ns).equals(config.getProperty("koupleless.artifactId"))) {
+            String depGroupId = dep.getChildText("groupId", ns);
+            String depArtifactId = dep.getChildText("artifactId", ns);
+            if (config.getProperty("koupleless.groupId").equals(depGroupId) && config.getProperty("koupleless.artifactId").equals(depArtifactId)) {
                 exists = true;
                 break;
             }
@@ -146,15 +149,16 @@ public class PomModifier {
         } else {
             Element newPlugin = createPluginElement(groupId, artifactId, "${sofa.ark.version}");
             addPluginConfiguration(newPlugin);
-            plugins.addContent(0,newPlugin);
+            plugins.addContent(0, newPlugin);
         }
     }
 
     private static Element findExistingPlugin(Element plugins, String groupId, String artifactId) {
         List<Element> existingPlugins = plugins.getChildren("plugin", ns);
         for (Element plugin : existingPlugins) {
-            if (plugin.getChildText("groupId", ns).equals(groupId) &&
-                    plugin.getChildText("artifactId", ns).equals(artifactId)) {
+            String pluginGroupId = plugin.getChildText("groupId", ns);
+            String pluginArtifactId = plugin.getChildText("artifactId", ns);
+            if (groupId.equals(pluginGroupId) && artifactId.equals(pluginArtifactId)) {
                 return plugin;
             }
         }

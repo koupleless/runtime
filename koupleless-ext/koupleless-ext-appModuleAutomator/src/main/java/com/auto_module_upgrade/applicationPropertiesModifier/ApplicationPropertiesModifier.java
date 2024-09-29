@@ -1,10 +1,11 @@
-package com.auto_module_upgrade.ApplicationPropertiesModifier;
+package com.auto_module_upgrade.applicationPropertiesModifier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,14 +33,17 @@ public class ApplicationPropertiesModifier {
 
     private static void modifySpringApplicationName(Path path, String applicationName) throws IOException {
         List<String> lines = Files.readAllLines(path);
-        boolean exists = lines.stream().anyMatch(line -> line.trim().startsWith("spring.application.name"));
+        final boolean[] exists = {false};
+        lines = lines.stream().map(line -> {
+            if (line.trim().startsWith("spring.application.name")) {
+                exists[0] = true;
+                return "spring.application.name=" + applicationName;
+            }
+            return line;
+        }).collect(Collectors.toList());
 
-        if (!exists) {
+        if (!exists[0]) {
             lines.add("spring.application.name=" + applicationName);
-        } else {
-            lines = lines.stream()
-                    .map(line -> line.startsWith("spring.application.name") ? "spring.application.name=" + applicationName : line)
-                    .collect(Collectors.toList());
         }
 
         Files.write(path, lines);
@@ -50,7 +54,9 @@ public class ApplicationPropertiesModifier {
         Path newPropsFile = directory.resolve("application.properties");
         if (!Files.exists(newPropsFile)) {
             Files.createFile(newPropsFile);
-            Files.write(newPropsFile, List.of("spring.application.name=" + applicationName));
+            List<String> content = new ArrayList<>();
+            content.add("spring.application.name=" + applicationName);
+            Files.write(newPropsFile, content);
             logger.info("已创建并初始化 application.properties: {}", newPropsFile);
         }
     }
