@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.auto_module_upgrade.pomXmlModifier;
+package com.alipay.sofa.koupleless.auto_module_upgrade.pomXmlModifier;
 
 import java.io.File;
 
@@ -36,6 +36,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Properties;
 import java.util.List;
 
+import com.alipay.sofa.koupleless.auto_module_upgrade.filterconfiguration.SlimmingConfiguration;
+
 public class PomModifier {
     private static final Logger logger = LoggerFactory.getLogger(PomModifier.class);
     private static Properties config = new Properties();
@@ -49,18 +51,20 @@ public class PomModifier {
         }
     }
 
-    public static void main(String[] args) throws IOException, JDOMException {
+    public static void main(String[] args) {
         try (Scanner scanner = new Scanner(System.in)) {
             System.out.println("请输入项目的绝对路径：");
             String projectPath = scanner.nextLine();
-            processProjectPath(projectPath);
+            System.out.println("请输入应用名称：");
+            String applicationName = scanner.nextLine();
+            processProjectPath(projectPath, applicationName);
         } catch (IOException | JDOMException ex) {
             logger.error("发生错误：", ex);
             System.out.println("处理项目时发生错误，请检查日志以获取详细信息。");
         }
     }
 
-    public static void processProjectPath(String projectPath) throws IOException, JDOMException {
+    public static void processProjectPath(String projectPath, String applicationName) throws IOException, JDOMException {
         File projectDirectory = new File(projectPath);
         if (!projectDirectory.exists() || !projectDirectory.isDirectory()) {
             logger.error("提供的项目路径不存在或不是目录");
@@ -70,7 +74,7 @@ public class PomModifier {
         if (!pomFile.exists() || pomFile.length() == 0) {
             createAndInitializePomFile(pomFile);
         }
-        updatePomFile(pomFile);
+        updatePomFile(pomFile, applicationName);
     }
 
     private static void createAndInitializePomFile(File pomFile) throws IOException {
@@ -81,7 +85,7 @@ public class PomModifier {
         }
     }
 
-    private static void updatePomFile(File file) throws JDOMException, IOException {
+    private static void updatePomFile(File file, String applicationName) throws JDOMException, IOException {
         SAXBuilder builder = new SAXBuilder();
         Document document = builder.build(file);
         Element root = document.getRootElement();
@@ -89,7 +93,7 @@ public class PomModifier {
 
         updateProperties(root);
         updateDependencies(root);
-        updateBuild(root);
+        updateBuild(root, applicationName);
 
         XMLOutputter xmlOutput = new XMLOutputter();
         xmlOutput.setFormat(Format.getPrettyFormat());
@@ -100,16 +104,23 @@ public class PomModifier {
     }
 
     private static void updateProperties(Element root) {
-        Element properties = getOrCreateElement(root, "properties");
-        updateOrAddElement(properties, "sofa.ark.version", config.getProperty("sofa.ark.version"));
-        updateOrAddElement(properties, "koupleless.runtime.version", config.getProperty("koupleless.runtime.version"));
+        Element properties = root.getChild("properties", ns);
+        if (properties == null) {
+            properties = new Element("properties", ns);
+            root.addContent(properties);
+        }
+        String sofaArkVersion = SlimmingConfiguration.getSofaArkVersion();
+        String kouplelessRuntimeVersion = SlimmingConfiguration.getKouplelessRuntimeVersion();
+
+        updateOrAddElement(properties, "sofa.ark.version", sofaArkVersion != null ? sofaArkVersion : "${sofa.ark.version}");
+        updateOrAddElement(properties, "koupleless.runtime.version", kouplelessRuntimeVersion != null ? kouplelessRuntimeVersion : "${revision}");
     }
 
     private static void updateDependencies(Element root) {
         Element dependencies = getOrCreateElement(root, "dependencies");
         Element newDependency = new Element("dependency", ns);
-        updateOrAddElement(newDependency, "groupId", config.getProperty("koupleless.groupId"));
-        updateOrAddElement(newDependency, "artifactId", config.getProperty("koupleless.artifactId"));
+        updateOrAddElement(newDependency, "groupId", "com.alipay.sofa.koupleless");
+        updateOrAddElement(newDependency, "artifactId", "koupleless-app-starter");
         updateOrAddElement(newDependency, "version", "${koupleless.runtime.version}");
 
         // 检查是否已存在相同的依赖
@@ -118,7 +129,7 @@ public class PomModifier {
         for (Element dep : existingDependencies) {
             String depGroupId = dep.getChildText("groupId", ns);
             String depArtifactId = dep.getChildText("artifactId", ns);
-            if (config.getProperty("koupleless.groupId").equals(depGroupId) && config.getProperty("koupleless.artifactId").equals(depArtifactId)) {
+            if ("com.alipay.sofa.koupleless".equals(depGroupId) && "koupleless-app-starter".equals(depArtifactId)) {
                 exists = true;
                 break;
             }
@@ -128,10 +139,10 @@ public class PomModifier {
         }
     }
 
-    private static void updateBuild(Element root) {
+    private static void updateBuild(Element root, String applicationName) {
         Element build = getOrCreateElement(root, "build");
         Element plugins = getOrCreateElement(build, "plugins");
-        addSofaArkPlugin(plugins);
+        addSofaArkPlugin(plugins, applicationName);
         addSpringBootPlugin(plugins);
     }
 
@@ -154,17 +165,17 @@ public class PomModifier {
         return plugin;
     }
 
-    private static void addSofaArkPlugin(Element plugins) {
-        String groupId = config.getProperty("sofa.ark.plugin.groupId");
-        String artifactId = config.getProperty("sofa.ark.plugin.artifactId");
+    private static void addSofaArkPlugin(Element plugins, String applicationName) {
+        String groupId = "com.alipay.sofa";
+        String artifactId = "sofa-ark-maven-plugin";
 
         // 检查是否已存在相同的插件
         Element existingPlugin = findExistingPlugin(plugins, groupId, artifactId);
         if (existingPlugin != null) {
-            updateExistingPlugin(existingPlugin);
+            updateExistingPlugin(existingPlugin, applicationName);
         } else {
             Element newPlugin = createPluginElement(groupId, artifactId, "${sofa.ark.version}");
-            addPluginConfiguration(newPlugin);
+            addPluginConfiguration(newPlugin, applicationName);
             plugins.addContent(0, newPlugin);
         }
     }
@@ -181,17 +192,17 @@ public class PomModifier {
         return null;
     }
 
-    private static void updateExistingPlugin(Element plugin) {
+    private static void updateExistingPlugin(Element plugin, String applicationName) {
         // 更新现有插件的配置
         Element configuration = getOrCreateElement(plugin, "configuration");
         updateOrAddElement(configuration, "skipArkExecutable", "true");
         updateOrAddElement(configuration, "outputDirectory", "./target");
-        updateOrAddElement(configuration, "bizName", config.getProperty("biz.name"));
-        updateOrAddElement(configuration, "webContextPath", config.getProperty("web.context"));
+        updateOrAddElement(configuration, "bizName", applicationName);
+        updateOrAddElement(configuration, "webContextPath", applicationName);
         updateOrAddElement(configuration, "declaredMode", "true");
     }
 
-    private static void addPluginConfiguration(Element plugin) {
+    private static void addPluginConfiguration(Element plugin, String applicationName) {
         Element executions = getOrCreateElement(plugin, "executions");
         Element execution = getOrCreateElement(executions, "execution");
         updateOrAddElement(execution, "id", "default-cli");
@@ -202,14 +213,14 @@ public class PomModifier {
         Element configuration = getOrCreateElement(plugin, "configuration");
         updateOrAddElement(configuration, "skipArkExecutable", "true");
         updateOrAddElement(configuration, "outputDirectory", "./target");
-        updateOrAddElement(configuration, "bizName", config.getProperty("biz.name"));
-        updateOrAddElement(configuration, "webContextPath", config.getProperty("web.context"));
+        updateOrAddElement(configuration, "bizName", applicationName);
+        updateOrAddElement(configuration, "webContextPath", applicationName);
         updateOrAddElement(configuration, "declaredMode", "true");
     }
 
     private static void addSpringBootPlugin(Element plugins) {
-        String groupId = config.getProperty("spring.boot.plugin.groupId");
-        String artifactId = config.getProperty("spring.boot.plugin.artifactId");
+        String groupId = "org.springframework.boot";
+        String artifactId = "spring-boot-maven-plugin";
 
         // 检查是否已存在相同的插件
         if (findExistingPlugin(plugins, groupId, artifactId) == null) {
@@ -227,4 +238,3 @@ public class PomModifier {
         child.setText(childValue);
     }
 }
-

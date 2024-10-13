@@ -14,24 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.auto_module_upgrade.filterconfiguration;
+package com.alipay.sofa.koupleless.auto_module_upgrade.filterconfiguration;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+
 public class SlimmingConfiguration {
     private static final Logger logger = LoggerFactory.getLogger(SlimmingConfiguration.class);
+    private static final String CONFIG_FILE = "config.properties";
 
     public static void createBootstrapProperties(String targetDirectoryPath, String fileName) {
-        Map<String, String> completeConfigs = new LinkedHashMap<>();
-        completeConfigs.put("excludeGroupIds", "org.springframework,aopalliance*,asm*,cglib*,com.alibaba.common.lang*,com.alibaba.common.resourcebundle*,com.alibaba.tbase*," + "com.alipay*,com.antcloud.antvip*,com.caucho.hessian*,com.caucho*,com.ctc.wstx*,com.fasterxml*,com.google.code*," + "com.google.common*,com.google.gson*,com.google.guava*,com.google.http-client*,com.google.inject*," + "com.google.protobuf*,com.ibatis*,com.iwallet.biz*,com.lmax*,com.taobao.config*,com.taobao.hsf*," + "com.taobao.notify*,com.taobao.remoting*,com.taobao.tair*,groovy*,io.fury*,io.grpc*,io.mosn.layotto*," + "io.netty*,io.openmessaging*,io.prometheus*,javax*,javax.el*,javax.script*,javax.servlet*," + "javax.validation*,loccs-bcprov*,log4j*,mysql*,net.sf.acegisecurity*,net.sf.cglib*,netty*," + "ognl*,org.aopalliance*,org.apache*,org.aspectj*,org.codehaus*,org.codehaus.groovy*," + "org.codehaus.xfire*,org.dom4j*,org.hibernate.validator*,org.junit*,org.mvel2*,org.mybatis*," + "org.mybatis.spring*,org.mybatis.spring.boot.autoconfigure*,org.projectlombok*,org.quartz*,org.reflections*," + "org.slf4j*,org.springframework*,org.yaml*,xerces*,xml-apis*,xpp3*,jakarta*,org.latencyutils*," + "org.hdrhistogram*,io.micrometer*,ch.qos.logback*,com.squareup.okhttp3*,com.squareup.okhttp*," + "net.sf.ehcache*,redis.clients*");
-        completeConfigs.put("excludeArtifactIds", "sofa-ark-spi,commons-lang,commons-collections,commons-httpclient,commons-io");
+        Map<String, String> completeConfigs = loadSlimmingConfigurations();
 
         Path directory = Paths.get(targetDirectoryPath);
         Path propertiesFile = directory.resolve(fileName);
@@ -50,6 +55,25 @@ public class SlimmingConfiguration {
         } catch (IOException e) {
             logger.error("创建或更新配置文件时发生错误", e);
         }
+    }
+
+    private static Map<String, String> loadSlimmingConfigurations() {
+        Properties props = new Properties();
+        try (InputStream input = SlimmingConfiguration.class.getClassLoader().getResourceAsStream(CONFIG_FILE)) {
+            if (input == null) {
+                logger.error("无法找到 {} 文件", CONFIG_FILE);
+                return Collections.emptyMap();
+            }
+            props.load(input);
+        } catch (IOException e) {
+            logger.error("读取配置文件时发生错误", e);
+            return Collections.emptyMap();
+        }
+
+        Map<String, String> configs = new LinkedHashMap<>();
+        configs.put("excludeGroupIds", props.getProperty("slimming.excludeGroupIds", ""));
+        configs.put("excludeArtifactIds", props.getProperty("slimming.excludeArtifactIds", ""));
+        return configs;
     }
 
     private static Map<String, String> parseExistingConfigs(List<String> lines) {
@@ -88,5 +112,59 @@ public class SlimmingConfiguration {
             updatedLines.add(key + "=" + updatedValue);
         }
         return updatedLines;
+    }
+
+    public static String getSofaArkVersion() {
+        String version = getVersionFromRootPom("sofa.ark.version");
+        return version != null ? version : "${sofa.ark.version}";
+    }
+
+    public static String getKouplelessRuntimeVersion() {
+        String version = getVersionFromRootPom("revision");
+        return version != null ? version : "${revision}";
+    }
+
+    private static String getVersionFromRootPom(String propertyName) {
+        try {
+            MavenXpp3Reader reader = new MavenXpp3Reader();
+            File pomFile = findRootPomFile();
+            if (pomFile == null) {
+                logger.error("无法找到根 pom.xml 文件");
+                return null;
+            }
+            Model model = reader.read(new FileReader(pomFile));
+            String version = model.getProperties().getProperty(propertyName);
+            if (version == null && "revision".equals(propertyName)) {
+                version = model.getVersion();
+            }
+            if (version == null && model.getParent() != null) {
+                version = model.getParent().getVersion();
+            }
+            return version;
+        } catch (Exception e) {
+            logger.error("无法读取 " + propertyName, e);
+            return null;
+        }
+    }
+
+    private static File findRootPomFile() {
+        File currentDir = new File(System.getProperty("user.dir"));
+        while (currentDir != null) {
+            File pomFile = new File(currentDir, "pom.xml");
+            if (pomFile.exists()) {
+                try {
+                    MavenXpp3Reader reader = new MavenXpp3Reader();
+                    Model model = reader.read(new FileReader(pomFile));
+                    if ("koupleless-runtime".equals(model.getArtifactId()) ||
+                            (model.getParent() != null && "koupleless-runtime".equals(model.getParent().getArtifactId()))) {
+                        return pomFile;
+                    }
+                } catch (Exception e) {
+                    logger.error("读取 pom.xml 文件时发生错误", e);
+                }
+            }
+            currentDir = currentDir.getParentFile();
+        }
+        return null;
     }
 }

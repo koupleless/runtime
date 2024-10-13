@@ -14,19 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.auto_module_upgrade.applicationPropertiesModifier;
+package com.alipay.sofa.koupleless.auto_module_upgrade.applicationPropertiesModifier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Properties;
+
 
 public class ApplicationPropertiesModifier {
     private static final Logger logger = LoggerFactory.getLogger(ApplicationPropertiesModifier.class);
+    private static final String APPLICATION_PROPERTIES = "application.properties";
+    private static final String SPRING_APPLICATION_NAME = "spring.application.name";
 
     public static void modifyApplicationProperties(String directoryPath, String applicationName) throws IOException {
         Path directory = Paths.get(directoryPath);
@@ -38,42 +39,46 @@ public class ApplicationPropertiesModifier {
             for (Path path : stream) {
                 if (Files.isDirectory(path)) {
                     scanDirectory(path, applicationName);
-                } else if (path.getFileName().toString().equalsIgnoreCase("application.properties")) {
+                } else if (isApplicationPropertiesFile(path)) {
                     modifySpringApplicationName(path, applicationName);
-                } else if (Files.isDirectory(path) && path.getFileName().toString().equalsIgnoreCase("resources")) {
-                    createApplicationProperties(path, applicationName);
+                } else if (isResourcesDirectory(path)) {
+                    createApplicationPropertiesIfNotExists(path, applicationName);
                 }
             }
         }
     }
 
-    private static void modifySpringApplicationName(Path path, String applicationName) throws IOException {
-        List<String> lines = Files.readAllLines(path);
-        final boolean[] exists = {false};
-        lines = lines.stream().map(line -> {
-            if (line.trim().startsWith("spring.application.name")) {
-                exists[0] = true;
-                return "spring.application.name=" + applicationName;
-            }
-            return line;
-        }).collect(Collectors.toList());
-
-        if (!exists[0]) {
-            lines.add("spring.application.name=" + applicationName);
-        }
-
-        Files.write(path, lines);
-        logger.info("已修改 application.properties: {}", path);
+    private static boolean isApplicationPropertiesFile(Path path) {
+        return path.getFileName().toString().equalsIgnoreCase(APPLICATION_PROPERTIES);
     }
 
-    private static void createApplicationProperties(Path directory, String applicationName) throws IOException {
-        Path newPropsFile = directory.resolve("application.properties");
-        if (!Files.exists(newPropsFile)) {
-            Files.createFile(newPropsFile);
-            List<String> content = new ArrayList<>();
-            content.add("spring.application.name=" + applicationName);
-            Files.write(newPropsFile, content);
-            logger.info("已创建并初始化 application.properties: {}", newPropsFile);
+    private static boolean isResourcesDirectory(Path path) {
+        return Files.isDirectory(path) && path.getFileName().toString().equalsIgnoreCase("resources");
+    }
+
+    private static void modifySpringApplicationName(Path path, String applicationName) throws IOException {
+        Properties props = new Properties();
+        boolean fileExists = Files.exists(path);
+
+        if (fileExists) {
+            try (InputStream input = Files.newInputStream(path)) {
+                props.load(input);
+            }
+        }
+
+        props.setProperty(SPRING_APPLICATION_NAME, applicationName);
+
+        try (OutputStream output = Files.newOutputStream(path)) {
+            props.store(output, null);
+        }
+
+        logger.info("{} application.properties 文件: {}", fileExists ? "已修改" : "已创建", path);
+    }
+
+    private static void createApplicationPropertiesIfNotExists(Path directory, String applicationName) throws IOException {
+        Path propertiesPath = directory.resolve(APPLICATION_PROPERTIES);
+        if (!Files.exists(propertiesPath)) {
+            modifySpringApplicationName(propertiesPath, applicationName);
         }
     }
 }

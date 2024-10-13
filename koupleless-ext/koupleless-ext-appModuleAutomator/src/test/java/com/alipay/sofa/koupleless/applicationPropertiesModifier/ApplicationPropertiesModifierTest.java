@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.applicationPropertiesModifier;
+package com.alipay.sofa.koupleless.applicationPropertiesModifier;
 
-import com.auto_module_upgrade.applicationPropertiesModifier.ApplicationPropertiesModifier;
+import com.alipay.sofa.koupleless.auto_module_upgrade.applicationPropertiesModifier.ApplicationPropertiesModifier;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 

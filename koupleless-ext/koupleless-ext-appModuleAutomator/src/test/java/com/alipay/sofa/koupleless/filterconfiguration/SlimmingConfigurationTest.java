@@ -14,9 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.filterconfiguration;
+package com.alipay.sofa.koupleless.filterconfiguration;
 
-import com.auto_module_upgrade.filterconfiguration.SlimmingConfiguration;
+import com.alipay.sofa.koupleless.auto_module_upgrade.filterconfiguration.SlimmingConfiguration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 

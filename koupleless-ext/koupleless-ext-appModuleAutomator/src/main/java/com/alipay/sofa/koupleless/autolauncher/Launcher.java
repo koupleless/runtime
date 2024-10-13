@@ -14,17 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.autolauncher;
+package com.alipay.sofa.koupleless.autolauncher;
 
-import com.auto_module_upgrade.applicationPropertiesModifier.ApplicationPropertiesModifier;
-import com.auto_module_upgrade.filterconfiguration.SlimmingConfiguration;
+import com.alipay.sofa.koupleless.auto_module_upgrade.applicationPropertiesModifier.ApplicationPropertiesModifier;
+import com.alipay.sofa.koupleless.auto_module_upgrade.filterconfiguration.SlimmingConfiguration;
 import org.jdom2.JDOMException;
-import com.auto_module_upgrade.pomXmlModifier.PomModifier;
+import com.alipay.sofa.koupleless.auto_module_upgrade.pomXmlModifier.PomModifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Scanner;
 import java.util.function.Consumer;
 
@@ -41,7 +43,7 @@ public class Launcher {
             String applicationName = getValidInput("请输入要设置的应用名称：", Launcher::validateApplicationName);
             executeOperation("修改 application.properties", () -> modifyApplicationProperties(projectPath, applicationName));
             executeOperation("创建 bootstrap.properties", () -> createBootstrapProperties(projectPath));
-            executeOperation("修改 pom.xml", () -> modifyPomXml(projectPath));
+            executeOperation("修改 pom.xml", () -> modifyPomXml(projectPath, applicationName));
 
             logger.info("所有操作已完成");
 
@@ -95,11 +97,12 @@ public class Launcher {
     }
 
     private static void createBootstrapProperties(String projectPath) {
-        SlimmingConfiguration.createBootstrapProperties(projectPath + "/conf/ark", "bootstrap.properties");
+        Path arkPath = Paths.get(projectPath, "conf", "ark");
+        SlimmingConfiguration.createBootstrapProperties(arkPath.toString(), "bootstrap.properties");
     }
 
-    private static void modifyPomXml(String projectPath) throws IOException, JDOMException {
-        PomModifier.processProjectPath(projectPath);
+    private static void modifyPomXml(String projectPath, String applicationName) throws IOException, JDOMException {
+        PomModifier.processProjectPath(projectPath, applicationName);
     }
 
     @FunctionalInterface
