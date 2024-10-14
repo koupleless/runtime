@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.auto_module_upgrade.filterconfiguration;
+package com.alipay.sofa.koupleless.automoduleconvertor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +32,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 
 public class SlimmingConfiguration {
-    private static final Logger logger = LoggerFactory.getLogger(SlimmingConfiguration.class);
+    private static final Logger logger      = LoggerFactory.getLogger(SlimmingConfiguration.class);
     private static final String CONFIG_FILE = "config.properties";
 
     public static void createBootstrapProperties(String targetDirectoryPath, String fileName) {
@@ -45,7 +45,9 @@ public class SlimmingConfiguration {
             Files.createDirectories(directory);
             logger.info("目录已创建: {}", targetDirectoryPath);
 
-            List<String> existingLines = Files.exists(propertiesFile) ? Files.readAllLines(propertiesFile) : new ArrayList<>();
+            List<String> existingLines = Files.exists(propertiesFile)
+                ? Files.readAllLines(propertiesFile)
+                : new ArrayList<>();
             Map<String, String> existingConfigs = parseExistingConfigs(existingLines);
 
             List<String> updatedLines = updateConfigs(existingConfigs, completeConfigs);
@@ -59,7 +61,8 @@ public class SlimmingConfiguration {
 
     private static Map<String, String> loadSlimmingConfigurations() {
         Properties props = new Properties();
-        try (InputStream input = SlimmingConfiguration.class.getClassLoader().getResourceAsStream(CONFIG_FILE)) {
+        try (InputStream input = SlimmingConfiguration.class.getClassLoader()
+            .getResourceAsStream(CONFIG_FILE)) {
             if (input == null) {
                 logger.error("无法找到 {} 文件", CONFIG_FILE);
                 return Collections.emptyMap();
@@ -98,7 +101,8 @@ public class SlimmingConfiguration {
         return String.join(",", items);
     }
 
-    private static List<String> updateConfigs(Map<String, String> existingConfigs, Map<String, String> completeConfigs) {
+    private static List<String> updateConfigs(Map<String, String> existingConfigs,
+                                              Map<String, String> completeConfigs) {
         List<String> updatedLines = new ArrayList<>();
         for (Map.Entry<String, String> entry : completeConfigs.entrySet()) {
             String key = entry.getKey();
@@ -155,8 +159,9 @@ public class SlimmingConfiguration {
                 try {
                     MavenXpp3Reader reader = new MavenXpp3Reader();
                     Model model = reader.read(new FileReader(pomFile));
-                    if ("koupleless-runtime".equals(model.getArtifactId()) ||
-                            (model.getParent() != null && "koupleless-runtime".equals(model.getParent().getArtifactId()))) {
+                    if ("koupleless-runtime".equals(model.getArtifactId())
+                        || (model.getParent() != null
+                            && "koupleless-runtime".equals(model.getParent().getArtifactId()))) {
                         return pomFile;
                     }
                 } catch (Exception e) {

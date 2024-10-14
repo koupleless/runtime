@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.auto_module_upgrade.pomXmlModifier;
+package com.alipay.sofa.koupleless.automoduleconvertor;
 
 import java.io.File;
 
@@ -36,15 +36,14 @@ import org.slf4j.LoggerFactory;
 import java.util.Properties;
 import java.util.List;
 
-import com.alipay.sofa.koupleless.auto_module_upgrade.filterconfiguration.SlimmingConfiguration;
-
 public class PomModifier {
     private static final Logger logger = LoggerFactory.getLogger(PomModifier.class);
-    private static Properties config = new Properties();
-    private static Namespace ns;
+    private static Properties   config = new Properties();
+    private static Namespace    ns;
 
     static {
-        try (java.io.InputStream input = PomModifier.class.getClassLoader().getResourceAsStream("config.properties")) {
+        try (java.io.InputStream input = PomModifier.class.getClassLoader()
+            .getResourceAsStream("config.properties")) {
             config.load(input);
         } catch (IOException ex) {
             logger.error("无法加载配置文件", ex);
@@ -64,7 +63,9 @@ public class PomModifier {
         }
     }
 
-    public static void processProjectPath(String projectPath, String applicationName) throws IOException, JDOMException {
+    public static void processProjectPath(String projectPath,
+                                          String applicationName) throws IOException,
+                                                                  JDOMException {
         File projectDirectory = new File(projectPath);
         if (!projectDirectory.exists() || !projectDirectory.isDirectory()) {
             logger.error("提供的项目路径不存在或不是目录");
@@ -78,14 +79,22 @@ public class PomModifier {
     }
 
     private static void createAndInitializePomFile(File pomFile) throws IOException {
-        String initialContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<project xmlns=\"http://maven.apache.org/POM/4.0.0\"\n" + "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" + "         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\n" + "    <modelVersion>4.0.0</modelVersion>\n" + "    <groupId>com.example</groupId>\n" + "    <artifactId>demo-project</artifactId>\n" + "    <version>1.0-SNAPSHOT</version>\n" + "</project>";
+        String initialContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                                + "<project xmlns=\"http://maven.apache.org/POM/4.0.0\"\n"
+                                + "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
+                                + "         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\n"
+                                + "    <modelVersion>4.0.0</modelVersion>\n"
+                                + "    <groupId>com.example</groupId>\n"
+                                + "    <artifactId>demo-project</artifactId>\n"
+                                + "    <version>1.0-SNAPSHOT</version>\n" + "</project>";
         try (FileWriter writer = new FileWriter(pomFile)) {
             writer.write(initialContent);
             logger.info("pom.xml 文件已创建并初始化在: {}", pomFile.getAbsolutePath());
         }
     }
 
-    private static void updatePomFile(File file, String applicationName) throws JDOMException, IOException {
+    private static void updatePomFile(File file, String applicationName) throws JDOMException,
+                                                                         IOException {
         SAXBuilder builder = new SAXBuilder();
         Document document = builder.build(file);
         Element root = document.getRootElement();
@@ -112,8 +121,10 @@ public class PomModifier {
         String sofaArkVersion = SlimmingConfiguration.getSofaArkVersion();
         String kouplelessRuntimeVersion = SlimmingConfiguration.getKouplelessRuntimeVersion();
 
-        updateOrAddElement(properties, "sofa.ark.version", sofaArkVersion != null ? sofaArkVersion : "${sofa.ark.version}");
-        updateOrAddElement(properties, "koupleless.runtime.version", kouplelessRuntimeVersion != null ? kouplelessRuntimeVersion : "${revision}");
+        updateOrAddElement(properties, "sofa.ark.version",
+            sofaArkVersion != null ? sofaArkVersion : "${sofa.ark.version}");
+        updateOrAddElement(properties, "koupleless.runtime.version",
+            kouplelessRuntimeVersion != null ? kouplelessRuntimeVersion : "${revision}");
     }
 
     private static void updateDependencies(Element root) {
@@ -129,7 +140,8 @@ public class PomModifier {
         for (Element dep : existingDependencies) {
             String depGroupId = dep.getChildText("groupId", ns);
             String depArtifactId = dep.getChildText("artifactId", ns);
-            if ("com.alipay.sofa.koupleless".equals(depGroupId) && "koupleless-app-starter".equals(depArtifactId)) {
+            if ("com.alipay.sofa.koupleless".equals(depGroupId)
+                && "koupleless-app-starter".equals(depArtifactId)) {
                 exists = true;
                 break;
             }

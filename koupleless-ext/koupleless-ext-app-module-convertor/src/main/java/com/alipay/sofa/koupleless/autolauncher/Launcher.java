@@ -16,10 +16,10 @@
  */
 package com.alipay.sofa.koupleless.autolauncher;
 
-import com.alipay.sofa.koupleless.auto_module_upgrade.applicationPropertiesModifier.ApplicationPropertiesModifier;
-import com.alipay.sofa.koupleless.auto_module_upgrade.filterconfiguration.SlimmingConfiguration;
+import com.alipay.sofa.koupleless.automoduleconvertor.ApplicationPropertiesModifier;
+import com.alipay.sofa.koupleless.automoduleconvertor.SlimmingConfiguration;
+import com.alipay.sofa.koupleless.automoduleconvertor.PomModifier;
 import org.jdom2.JDOMException;
-import com.alipay.sofa.koupleless.auto_module_upgrade.pomXmlModifier.PomModifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +32,7 @@ import java.util.function.Consumer;
 
 public class Launcher {
     private static final Logger logger = LoggerFactory.getLogger(Launcher.class);
-    private static Scanner scanner;
+    private static Scanner      scanner;
 
     public static void main(String[] args) {
         scanner = new Scanner(System.in);
@@ -40,9 +40,12 @@ public class Launcher {
             logger.info("开始执行主程序");
 
             String projectPath = getValidInput("请输入工程的绝对路径：", Launcher::validateProjectPath);
-            String applicationName = getValidInput("请输入要设置的应用名称：", Launcher::validateApplicationName);
-            executeOperation("修改 application.properties", () -> modifyApplicationProperties(projectPath, applicationName));
-            executeOperation("创建 bootstrap.properties", () -> createBootstrapProperties(projectPath));
+            String applicationName = getValidInput("请输入要设置的应用名称：",
+                Launcher::validateApplicationName);
+            executeOperation("修改 application.properties",
+                () -> modifyApplicationProperties(projectPath, applicationName));
+            executeOperation("创建 bootstrap.properties",
+                () -> createBootstrapProperties(projectPath));
             executeOperation("修改 pom.xml", () -> modifyPomXml(projectPath, applicationName));
 
             logger.info("所有操作已完成");
@@ -92,7 +95,8 @@ public class Launcher {
         }
     }
 
-    private static void modifyApplicationProperties(String projectPath, String applicationName) throws IOException {
+    private static void modifyApplicationProperties(String projectPath,
+                                                    String applicationName) throws IOException {
         ApplicationPropertiesModifier.modifyApplicationProperties(projectPath, applicationName);
     }
 
@@ -101,7 +105,8 @@ public class Launcher {
         SlimmingConfiguration.createBootstrapProperties(arkPath.toString(), "bootstrap.properties");
     }
 
-    private static void modifyPomXml(String projectPath, String applicationName) throws IOException, JDOMException {
+    private static void modifyPomXml(String projectPath, String applicationName) throws IOException,
+                                                                                 JDOMException {
         PomModifier.processProjectPath(projectPath, applicationName);
     }
 

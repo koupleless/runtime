@@ -14,34 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.applicationPropertiesModifier;
+package com.alipay.sofa.koupleless.automoduleconvertor;
 
-import com.alipay.sofa.koupleless.auto_module_upgrade.applicationPropertiesModifier.ApplicationPropertiesModifier;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ApplicationPropertiesModifierTest {
+class SlimmingConfigurationTest {
 
     @TempDir
     Path tempDir;
 
     @Test
-    void testModifyApplicationProperties() throws Exception {
-        String applicationName = "TestApp";
-        Path propertiesFile = tempDir.resolve("application.properties");
-        Files.write(propertiesFile, "some.property=value".getBytes(StandardCharsets.UTF_8));
+    void testCreateBootstrapProperties() throws Exception {
+        Path targetDir = tempDir.resolve("conf").resolve("ark");
+        Files.createDirectories(targetDir);
+        String fileName = "bootstrap.properties";
 
-        ApplicationPropertiesModifier.modifyApplicationProperties(tempDir.toString(), applicationName);
+        SlimmingConfiguration.createBootstrapProperties(targetDir.toString(), fileName);
 
-        List<String> lines = Files.readAllLines(propertiesFile, StandardCharsets.UTF_8);
-        assertTrue(lines.contains("spring.application.name=" + applicationName), "应该添加 spring.application.name 属性");
-        assertTrue(lines.contains("some.property=value"), "不应修改现有属性");
+        Path propertiesFile = targetDir.resolve(fileName);
+        assertTrue(Files.exists(propertiesFile), "bootstrap.properties 文件应该被创建");
+
+        List<String> lines = Files.readAllLines(propertiesFile);
+        assertTrue(lines.stream().anyMatch(line -> line.startsWith("excludeGroupIds=")),
+            "应该包含 excludeGroupIds 配置");
+        assertTrue(lines.stream().anyMatch(line -> line.startsWith("excludeArtifactIds=")),
+            "应该包含 excludeArtifactIds 配置");
     }
 }
