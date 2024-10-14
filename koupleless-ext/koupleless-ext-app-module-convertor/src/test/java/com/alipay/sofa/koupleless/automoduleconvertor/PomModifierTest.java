@@ -14,9 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.pomXmlModifier;
+package com.alipay.sofa.koupleless.automoduleconvertor;
 
-import com.alipay.sofa.koupleless.auto_module_upgrade.pomXmlModifier.PomModifier;
 import org.assertj.core.api.SoftAssertions;
 import org.junit.Rule;
 import org.junit.Test;
@@ -43,15 +42,14 @@ public class PomModifierTest {
     public void testProcessProjectPath() throws Exception {
         File projectDir = tempFolder.newFolder("testProject");
         File pomFile = new File(projectDir, "pom.xml");
-        String initialPomContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<project xmlns=\"http://maven.apache.org/POM/4.0.0\"\n" +
-                "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
-                "         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\n" +
-                "    <modelVersion>4.0.0</modelVersion>\n" +
-                "    <groupId>com.example</groupId>\n" +
-                "    <artifactId>demo-project</artifactId>\n" +
-                "    <version>1.0-SNAPSHOT</version>\n" +
-                "</project>";
+        String initialPomContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                                   + "<project xmlns=\"http://maven.apache.org/POM/4.0.0\"\n"
+                                   + "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
+                                   + "         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\n"
+                                   + "    <modelVersion>4.0.0</modelVersion>\n"
+                                   + "    <groupId>com.example</groupId>\n"
+                                   + "    <artifactId>demo-project</artifactId>\n"
+                                   + "    <version>1.0-SNAPSHOT</version>\n" + "</project>";
 
         try (FileWriter writer = new FileWriter(pomFile)) {
             writer.write(initialPomContent);
@@ -82,13 +80,15 @@ public class PomModifierTest {
 
         if (properties != null) {
             assertNotNull("sofa.ark.version 属性应该存在", properties.getChild("sofa.ark.version", ns));
-            assertNotNull("koupleless.runtime.version 属性应该存在", properties.getChild("koupleless.runtime.version", ns));
+            assertNotNull("koupleless.runtime.version 属性应该存在",
+                properties.getChild("koupleless.runtime.version", ns));
         }
 
         if (dependencies != null) {
-            assertTrue("应该添加 koupleless-app-starter 依赖", dependencies.getChildren("dependency", ns).stream()
-                    .anyMatch(dep -> "com.alipay.sofa.koupleless".equals(dep.getChildText("groupId", ns)) &&
-                            "koupleless-app-starter".equals(dep.getChildText("artifactId", ns))));
+            assertTrue("应该添加 koupleless-app-starter 依赖",
+                dependencies.getChildren("dependency", ns).stream().anyMatch(
+                    dep -> "com.alipay.sofa.koupleless".equals(dep.getChildText("groupId", ns))
+                           && "koupleless-app-starter".equals(dep.getChildText("artifactId", ns))));
         }
 
         if (build != null) {
@@ -96,11 +96,15 @@ public class PomModifierTest {
             assertNotNull("plugins 元素应该存在", plugins);
             if (plugins != null) {
                 assertTrue("应该添加 sofa-ark-maven-plugin", plugins.getChildren("plugin", ns).stream()
-                        .anyMatch(plugin -> "com.alipay.sofa".equals(plugin.getChildText("groupId", ns)) &&
-                                "sofa-ark-maven-plugin".equals(plugin.getChildText("artifactId", ns))));
-                assertTrue("应该添加 spring-boot-maven-plugin", plugins.getChildren("plugin", ns).stream()
-                        .anyMatch(plugin -> "org.springframework.boot".equals(plugin.getChildText("groupId", ns)) &&
-                                "spring-boot-maven-plugin".equals(plugin.getChildText("artifactId", ns))));
+                    .anyMatch(plugin -> "com.alipay.sofa".equals(plugin.getChildText("groupId", ns))
+                                        && "sofa-ark-maven-plugin"
+                                            .equals(plugin.getChildText("artifactId", ns))));
+                assertTrue("应该添加 spring-boot-maven-plugin",
+                    plugins.getChildren("plugin", ns).stream()
+                        .anyMatch(plugin -> "org.springframework.boot"
+                            .equals(plugin.getChildText("groupId", ns))
+                                            && "spring-boot-maven-plugin"
+                                                .equals(plugin.getChildText("artifactId", ns))));
             }
         }
     }
@@ -117,22 +121,22 @@ public class PomModifierTest {
 
         assertTrue("pom.xml 文件应该被创建", pomFile.exists());
         String content = new String(Files.readAllBytes(pomFile.toPath()));
-        assertTrue("pom.xml 应该包含基本结构", content.contains("<project") && content.contains("</project>"));
+        assertTrue("pom.xml 应该包含基本结构",
+            content.contains("<project") && content.contains("</project>"));
     }
 
     @Test
     public void testHandleEdgeCases() throws Exception {
         File projectDir = tempFolder.newFolder("edgeCaseProject");
         File pomFile = new File(projectDir, "pom.xml");
-        String edgeCasePomContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "<project xmlns=\"http://maven.apache.org/POM/4.0.0\"\n" +
-                "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n" +
-                "         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\n" +
-                "    <modelVersion>4.0.0</modelVersion>\n" +
-                "    <groupId>com.example</groupId>\n" +
-                "    <artifactId>edge-case-project</artifactId>\n" +
-                "    <version>1.0-SNAPSHOT</version>\n" +
-                "</project>";
+        String edgeCasePomContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                                    + "<project xmlns=\"http://maven.apache.org/POM/4.0.0\"\n"
+                                    + "         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
+                                    + "         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\n"
+                                    + "    <modelVersion>4.0.0</modelVersion>\n"
+                                    + "    <groupId>com.example</groupId>\n"
+                                    + "    <artifactId>edge-case-project</artifactId>\n"
+                                    + "    <version>1.0-SNAPSHOT</version>\n" + "</project>";
 
         try (FileWriter writer = new FileWriter(pomFile)) {
             writer.write(edgeCasePomContent);
@@ -166,9 +170,9 @@ public class PomModifierTest {
             List<Element> dependencyList = dependencies.getChildren("dependency", ns);
             softly.assertThat(dependencyList).as("依赖列表").isNotEmpty();
 
-            boolean hasKouplelessDependency = dependencyList.stream()
-                    .anyMatch(dep -> "com.alipay.sofa.koupleless".equals(dep.getChildText("groupId", ns)) &&
-                            "koupleless-app-starter".equals(dep.getChildText("artifactId", ns)));
+            boolean hasKouplelessDependency = dependencyList.stream().anyMatch(
+                dep -> "com.alipay.sofa.koupleless".equals(dep.getChildText("groupId", ns))
+                       && "koupleless-app-starter".equals(dep.getChildText("artifactId", ns)));
             softly.assertThat(hasKouplelessDependency).as("koupleless-app-starter 依赖").isTrue();
         }
 
@@ -181,13 +185,15 @@ public class PomModifierTest {
                 softly.assertThat(pluginList).as("插件列表").isNotEmpty();
 
                 boolean hasSofaArkPlugin = pluginList.stream()
-                        .anyMatch(plugin -> "com.alipay.sofa".equals(plugin.getChildText("groupId", ns)) &&
-                                "sofa-ark-maven-plugin".equals(plugin.getChildText("artifactId", ns)));
+                    .anyMatch(plugin -> "com.alipay.sofa".equals(plugin.getChildText("groupId", ns))
+                                        && "sofa-ark-maven-plugin"
+                                            .equals(plugin.getChildText("artifactId", ns)));
                 softly.assertThat(hasSofaArkPlugin).as("sofa-ark-maven-plugin").isTrue();
 
-                boolean hasSpringBootPlugin = pluginList.stream()
-                        .anyMatch(plugin -> "org.springframework.boot".equals(plugin.getChildText("groupId", ns)) &&
-                                "spring-boot-maven-plugin".equals(plugin.getChildText("artifactId", ns)));
+                boolean hasSpringBootPlugin = pluginList.stream().anyMatch(
+                    plugin -> "org.springframework.boot".equals(plugin.getChildText("groupId", ns))
+                              && "spring-boot-maven-plugin"
+                                  .equals(plugin.getChildText("artifactId", ns)));
                 softly.assertThat(hasSpringBootPlugin).as("spring-boot-maven-plugin").isTrue();
             }
         }
