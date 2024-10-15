@@ -15,7 +15,7 @@
     <modules>
         <module>koupleless-ext-web-gateway</module>
         <module>koupleless-build-plugin</module>
-        <module>koupleless-ext-app-module-convertor</module>
+        <module>koupleless-ext-auto-module-convertor</module>
         <module>archetype/koupleless-common-module-archetype</module>
     </modules>
 </project>
