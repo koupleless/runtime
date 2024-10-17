@@ -43,5 +43,11 @@ public class Constants {
     public static final String DEFAULT_BASE_ENV = "dev";
 
     /** Constant <code>State="state"</code> */
-    public static final String State            = "state";
+    public static final String STATE            = "state";
+
+    /** Constant <code>State="bizName"</code> */
+    public static final String BIZ_NAME         = "bizName";
+
+    /** Constant <code>State="bizVersion"</code> */
+    public static final String BIZ_VERSION      = "bizVersion";
 }
