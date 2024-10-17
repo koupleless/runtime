@@ -224,12 +224,15 @@ public class MqttMessageHandler {
             String innerCmd = cmd;
             Boolean skipCommandProcess = false;
             if (cmd.equals(BuiltinCommand.INSTALL_BIZ.getId())) {
-                QueryAllBizHandler handler = (QueryAllBizHandler) commandService.getHandler(BuiltinCommand.QUERY_ALL_BIZ);
+                QueryAllBizHandler handler = (QueryAllBizHandler) commandService
+                    .getHandler(BuiltinCommand.QUERY_ALL_BIZ);
                 Output<List<BizInfo>> queryAllBizOutput = handler.handle(new InputMeta());
                 for (BizInfo info : queryAllBizOutput.getData()) {
-                    if (info.getBizName().equals(cmdContent.get(Constants.BIZ_NAME)) && info.getBizVersion().equals(cmdContent.get(Constants.BIZ_VERSION))) {
+                    if (info.getBizName().equals(cmdContent.get(Constants.BIZ_NAME))
+                        && info.getBizVersion().equals(cmdContent.get(Constants.BIZ_VERSION))) {
                         // exist biz info, check if deactivated, use switch command
-                        if (info.getBizState().getBizState().equals(BizState.DEACTIVATED.getBizState())) {
+                        if (info.getBizState().getBizState()
+                            .equals(BizState.DEACTIVATED.getBizState())) {
                             innerCmd = BuiltinCommand.SWITCH_BIZ.getId();
                         }
                         break;
