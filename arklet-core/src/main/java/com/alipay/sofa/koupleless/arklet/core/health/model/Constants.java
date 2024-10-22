@@ -54,6 +54,30 @@ public class Constants {
     /** Constant <code>BIZ_INFO="bizInfo"</code> */
     public static final String BIZ_INFO              = "bizInfo";
 
+    /** Constant <code>BIZ_INFO="baseID"</code> */
+    public static final String BASE_ID               = "baseID";
+
+    /** Constant <code>State="state"</code> */
+    public static final String STATE                 = "state";
+
+    /** Constant <code>State="bizName"</code> */
+    public static final String BIZ_NAME              = "bizName";
+
+    /** Constant <code>State="bizVersion"</code> */
+    public static final String BIZ_VERSION           = "bizVersion";
+
+    /** Constant <code>NETWORK_INFO="system"</code> */
+    public static final String NETWORK_INFO          = "networkInfo";
+
+    /** Constant <code>LOCAL_IP="localIP"</code> */
+    public static final String LOCAL_IP              = "localIP";
+
+    /** Constant <code>LOCAL_HOST_NAME="localHostName"</code> */
+    public static final String LOCAL_HOST_NAME       = "localHostName";
+
+    /** Constant <code>ARKLET_PORT="arkletPort"</code> */
+    public static final String ARKLET_PORT           = "arkletPort";
+
     /** Constant <code>BIZ_LIST_INFO="bizListInfo"</code> */
     public static final String BIZ_LIST_INFO         = "bizListInfo";
 

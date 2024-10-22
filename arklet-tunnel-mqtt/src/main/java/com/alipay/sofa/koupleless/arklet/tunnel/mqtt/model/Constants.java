@@ -24,15 +24,6 @@ package com.alipay.sofa.koupleless.arklet.tunnel.mqtt.model;
  */
 public class Constants {
 
-    /** Constant <code>NETWORK_INFO="system"</code> */
-    public static final String NETWORK_INFO     = "networkInfo";
-
-    /** Constant <code>LOCAL_IP="localIP"</code> */
-    public static final String LOCAL_IP         = "localIP";
-
-    /** Constant <code>LOCAL_HOST_NAME="localHostName"</code> */
-    public static final String LOCAL_HOST_NAME  = "localHostName";
-
     /** Constant <code>COMMAND="command"</code> */
     public static final String COMMAND          = "command";
 
@@ -42,12 +33,4 @@ public class Constants {
     /** Constant <code>DEFAULT_BASE_ENV="dev"</code> */
     public static final String DEFAULT_BASE_ENV = "dev";
 
-    /** Constant <code>State="state"</code> */
-    public static final String STATE            = "state";
-
-    /** Constant <code>State="bizName"</code> */
-    public static final String BIZ_NAME         = "bizName";
-
-    /** Constant <code>State="bizVersion"</code> */
-    public static final String BIZ_VERSION      = "bizVersion";
 }

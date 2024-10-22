@@ -19,6 +19,7 @@ package com.alipay.sofa.koupleless.arklet.core.api;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
+import java.util.UUID;
 
 import com.alipay.sofa.ark.common.util.EnvironmentUtils;
 import com.alipay.sofa.koupleless.arklet.core.api.tunnel.Tunnel;
@@ -47,6 +48,8 @@ import com.google.inject.multibindings.Multibinder;
 
 @Singleton
 public class ApiClient implements ArkletComponent {
+
+    private static final UUID         baseID                          = UUID.randomUUID();
 
     private static final List<Tunnel> tunnelList                      = new ArrayList<>(8);
 
@@ -80,7 +83,7 @@ public class ApiClient implements ArkletComponent {
     @Override
     public void init() {
         for (Tunnel tunnel : tunnelList) {
-            tunnel.init(commandService, baseMetadataHook);
+            tunnel.init(commandService, baseMetadataHook, baseID);
             tunnel.run();
         }
     }
