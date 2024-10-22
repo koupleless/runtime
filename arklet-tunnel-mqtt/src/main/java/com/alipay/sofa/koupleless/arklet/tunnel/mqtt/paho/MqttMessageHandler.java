@@ -44,6 +44,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static com.alipay.sofa.koupleless.arklet.core.health.model.Constants.*;
+
 /**
  * @author 冬喃
  * @version : MqttMessageHandler, v 0.1 2024-09-12 下午3:01 your_name Exp $
@@ -165,14 +167,14 @@ public class MqttMessageHandler {
 
             try {
                 InetAddress localHost = InetAddress.getLocalHost();
-                networkInfo.put(Constants.LOCAL_IP, localHost.getHostAddress());
-                networkInfo.put(Constants.LOCAL_HOST_NAME, localHost.getHostName());
+                networkInfo.put(LOCAL_IP, localHost.getHostAddress());
+                networkInfo.put(LOCAL_HOST_NAME, localHost.getHostName());
             } catch (UnknownHostException e) {
                 throw new ArkletRuntimeException("get local host failed", e);
             }
 
-            heartBeatData.put(Constants.NETWORK_INFO, networkInfo);
-            heartBeatData.put(Constants.STATE, BizState.ACTIVATED);
+            heartBeatData.put(NETWORK_INFO, networkInfo);
+            heartBeatData.put(STATE, BizState.ACTIVATED);
 
             try {
                 mqttClient.publish(topic,
@@ -228,8 +230,8 @@ public class MqttMessageHandler {
                     .getHandler(BuiltinCommand.QUERY_ALL_BIZ);
                 Output<List<BizInfo>> queryAllBizOutput = handler.handle(new InputMeta());
                 for (BizInfo info : queryAllBizOutput.getData()) {
-                    if (info.getBizName().equals(cmdContent.get(Constants.BIZ_NAME))
-                        && info.getBizVersion().equals(cmdContent.get(Constants.BIZ_VERSION))) {
+                    if (info.getBizName().equals(cmdContent.get(BIZ_NAME))
+                        && info.getBizVersion().equals(cmdContent.get(BIZ_VERSION))) {
                         // exist biz info, check if deactivated, use switch command
                         if (info.getBizState().getBizState()
                             .equals(BizState.DEACTIVATED.getBizState())) {
@@ -261,9 +263,8 @@ public class MqttMessageHandler {
                 // install or uninstall command, send result to biz operation response topic
                 Map<String, Object> bizOperationResponse = new HashMap<>();
                 bizOperationResponse.put(Constants.COMMAND, cmd);
-                bizOperationResponse.put(Constants.BIZ_NAME, cmdContent.get(Constants.BIZ_NAME));
-                bizOperationResponse.put(Constants.BIZ_VERSION,
-                    cmdContent.get(Constants.BIZ_VERSION));
+                bizOperationResponse.put(BIZ_NAME, cmdContent.get(BIZ_NAME));
+                bizOperationResponse.put(BIZ_VERSION, cmdContent.get(BIZ_VERSION));
                 bizOperationResponse.put(Constants.COMMAND_RESPONSE, output);
                 mqttClient.publish(getBizOperationResponseTopic(),
                     JSONObject.toJSONString(MqttResponse.withData(bizOperationResponse)).getBytes(),

@@ -46,8 +46,7 @@ public class MqttTunnel implements Tunnel {
 
     private static final ArkletLogger                                     LOGGER                              = ArkletLoggerFactory
         .getDefaultLogger();
-    private static final UUID                                             deviceID                            = UUID
-        .randomUUID();
+    private UUID                                                          baseID;
     private final static String                                           MQTT_ENABLE_ATTRIBUTE               = "koupleless.arklet.mqtt.enable";
     private final static String                                           MQTT_BROKER_ATTRIBUTE               = "koupleless.arklet.mqtt.broker";
     private final static String                                           MQTT_PORT_ATTRIBUTE                 = "koupleless.arklet.mqtt.port";
@@ -79,13 +78,15 @@ public class MqttTunnel implements Tunnel {
 
     /** {@inheritDoc} */
     @Override
-    public void init(CommandService commandService, BaseMetadataHook baseMetadataHook) {
+    public void init(CommandService commandService, BaseMetadataHook baseMetadataHook,
+                     UUID baseID) {
         if (init.compareAndSet(false, true)) {
             String enable = EnvironmentUtils.getProperty(MQTT_ENABLE_ATTRIBUTE);
             if (enable == null || !enable.equals("true")) {
                 // mqtt not enable, return
                 return;
             }
+            this.baseID = baseID;
             this.enable = true;
             this.commandService = commandService;
             this.baseMetadataHook = baseMetadataHook;
@@ -155,12 +156,12 @@ public class MqttTunnel implements Tunnel {
                 LOGGER.info("mqtt tunnel starting");
                 if (!StringUtils.isEmpty(this.caFilePath)) {
                     // init mqtt client with ca and client crt
-                    pahoMqttClient = new PahoMqttClient(brokerUrl, port, deviceID, clientPrefix,
+                    pahoMqttClient = new PahoMqttClient(brokerUrl, port, baseID, clientPrefix,
                         username, password, caFilePath, clientCrtFilePath, clientKeyFilePath,
                         commandService, baseMetadataHook);
                 } else {
                     // init mqtt client with username and password
-                    pahoMqttClient = new PahoMqttClient(brokerUrl, port, deviceID, clientPrefix,
+                    pahoMqttClient = new PahoMqttClient(brokerUrl, port, baseID, clientPrefix,
                         username, password, commandService, baseMetadataHook);
                 }
                 pahoMqttClient.open();
