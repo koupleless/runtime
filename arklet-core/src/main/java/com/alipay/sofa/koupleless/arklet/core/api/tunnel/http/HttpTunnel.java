@@ -76,6 +76,7 @@ public class HttpTunnel implements Tunnel {
     private CommandService            commandService;
     private BaseMetadataHook          baseMetadataHook;
     private UUID                      baseID;
+    private ScheduledExecutorService  heartBeatExecutor;
 
     /** {@inheritDoc} */
     @Override
@@ -100,9 +101,9 @@ public class HttpTunnel implements Tunnel {
             // read endpoint by EnvironmentUtils, if not empty, start a thread to post metadata every 2 minutes
             String heartBeatEndpoint = EnvironmentUtils.getProperty(HEART_BEAT_ENDPOINT);
             if (!StringUtils.isEmpty(heartBeatEndpoint)) {
-                ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+                heartBeatExecutor = Executors.newScheduledThreadPool(1);
 
-                executor.scheduleAtFixedRate(new HeartBeatScheduledMission(baseID, port,
+                heartBeatExecutor.scheduleAtFixedRate(new HeartBeatScheduledMission(baseID, port,
                     heartBeatEndpoint, commandService, baseMetadataHook), 0, 120000L,
                     TimeUnit.MILLISECONDS);
             }
@@ -134,6 +135,10 @@ public class HttpTunnel implements Tunnel {
                     nettyHttpServer.close();
                     nettyHttpServer = null;
                 }
+                if (heartBeatExecutor != null) {
+                    heartBeatExecutor.shutdown();
+                    heartBeatExecutor = null;
+                }
             } catch (Throwable t) {
                 LOGGER.error("An error occurs when shutdown arklet http server.", t);
                 throw new ArkletRuntimeException(t);
@@ -163,13 +168,12 @@ public class HttpTunnel implements Tunnel {
             String body = JSONObject.toJSONString(heartBeatData);
             OutputStream in = null;
             try {
-                LOGGER.info("sendHeartBeatMessage {}", body);
+                LOGGER.debug("Heartbeat message sent successfully. {}", body);
                 HttpURLConnection conn = getHttpURLConnection();
                 //获取输出流
                 in = conn.getOutputStream();
                 in.write(body.getBytes());
                 in.flush();
-                in.close();
                 //取得输入流，并使用Reader读取
                 if (200 != conn.getResponseCode()) {
                     LOGGER.error("ResponseCode is an error code:{}", conn.getResponseCode());
@@ -204,29 +208,34 @@ public class HttpTunnel implements Tunnel {
 
         @Override
         public void run() {
-            // send heart beat message
-            Map<String, Object> heartBeatData = new HashMap<>();
-
-            heartBeatData.put(BASE_ID, baseID);
-
-            BaseMetadata metadata = baseMetadataHook.getBaseMetadata();
-            heartBeatData.put(MASTER_BIZ_INFO, metadata);
-
-            Map<String, Object> networkInfo = new HashMap<>();
-
             try {
-                InetAddress localHost = InetAddress.getLocalHost();
-                networkInfo.put(LOCAL_IP, localHost.getHostAddress());
-                networkInfo.put(LOCAL_HOST_NAME, localHost.getHostName());
-                networkInfo.put(ARKLET_PORT, port);
-            } catch (UnknownHostException e) {
-                throw new ArkletRuntimeException("get local host failed", e);
+                // send heart beat message
+                Map<String, Object> heartBeatData = new HashMap<>();
+
+                heartBeatData.put(BASE_ID, baseID);
+
+                BaseMetadata metadata = baseMetadataHook.getBaseMetadata();
+                heartBeatData.put(MASTER_BIZ_INFO, metadata);
+
+                Map<String, Object> networkInfo = new HashMap<>();
+
+                try {
+                    InetAddress localHost = InetAddress.getLocalHost();
+                    networkInfo.put(LOCAL_IP, localHost.getHostAddress());
+                    networkInfo.put(LOCAL_HOST_NAME, localHost.getHostName());
+                    networkInfo.put(ARKLET_PORT, port);
+                } catch (UnknownHostException e) {
+                    LOGGER.error("Failed to get local host information", e);
+                }
+
+                heartBeatData.put(NETWORK_INFO, networkInfo);
+                heartBeatData.put(STATE, BizState.ACTIVATED);
+
+                sendHeartBeatMessage(heartBeatData);
+            } catch (Exception e) {
+                LOGGER.error("Exception occurred during heartbeat execution", e);
             }
 
-            heartBeatData.put(NETWORK_INFO, networkInfo);
-            heartBeatData.put(STATE, BizState.ACTIVATED);
-
-            sendHeartBeatMessage(heartBeatData);
         }
     }
 

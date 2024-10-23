@@ -54,19 +54,19 @@ public class Constants {
     /** Constant <code>BIZ_INFO="bizInfo"</code> */
     public static final String BIZ_INFO              = "bizInfo";
 
-    /** Constant <code>BIZ_INFO="baseID"</code> */
+    /** Constant <code>BASE_ID="baseID"</code> */
     public static final String BASE_ID               = "baseID";
 
-    /** Constant <code>State="state"</code> */
+    /** Constant <code>STATE="state"</code> */
     public static final String STATE                 = "state";
 
-    /** Constant <code>State="bizName"</code> */
+    /** Constant <code>BIZ_NAME="bizName"</code> */
     public static final String BIZ_NAME              = "bizName";
 
-    /** Constant <code>State="bizVersion"</code> */
+    /** Constant <code>BIZ_VERSION="bizVersion"</code> */
     public static final String BIZ_VERSION           = "bizVersion";
 
-    /** Constant <code>NETWORK_INFO="system"</code> */
+    /** Constant <code>NETWORK_INFO="networkInfo"</code> */
     public static final String NETWORK_INFO          = "networkInfo";
 
     /** Constant <code>LOCAL_IP="localIP"</code> */
