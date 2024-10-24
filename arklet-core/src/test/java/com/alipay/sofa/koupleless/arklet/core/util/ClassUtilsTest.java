@@ -66,7 +66,7 @@ public class ClassUtilsTest {
     @Test(expected = ArkletInitException.class)
     public void testGetCustomBaseNetworkInfoHookClass_NotImplementTunnel() {
         ClassUtils.getNetworkInfoHook(
-            "com.alipay.sofa.koupleless.arklet.core.hooks.network.MockBaseNetworkInfHookNotImpl");
+            "com.alipay.sofa.koupleless.arklet.core.hooks.network.MockBaseNetworkInfoHookNotImpl");
     }
 
     @Test(expected = ArkletInitException.class)
