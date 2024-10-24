@@ -18,6 +18,7 @@ package com.alipay.sofa.koupleless.arklet.core;
 
 import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
 import com.alipay.sofa.koupleless.arklet.core.health.HealthService;
+import com.alipay.sofa.koupleless.arklet.core.hook.network.BaseNetworkInfoHook;
 import com.alipay.sofa.koupleless.arklet.core.ops.UnifiedOperationService;
 import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
 import org.junit.Before;
@@ -46,12 +47,16 @@ public class BaseTest {
     @Mock
     public static BaseMetadataHook        baseMetadataHook;
 
+    @Mock
+    public static BaseNetworkInfoHook     networkInfoHook;
+
     @Before
     public void setup() {
         commandService = ArkletComponentRegistry.getCommandServiceInstance();
         operationService = ArkletComponentRegistry.getOperationServiceInstance();
         healthService = ArkletComponentRegistry.getHealthServiceInstance();
         baseMetadataHook = ArkletComponentRegistry.getApiClientInstance().getMetadataHook();
+        networkInfoHook = ArkletComponentRegistry.getApiClientInstance().getNetworkInfoHook();
     }
 
 }

@@ -16,10 +16,8 @@
  */
 package com.alipay.sofa.koupleless.arklet.tunnel.paho;
 
-import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletInitException;
 import com.alipay.sofa.koupleless.arklet.tunnel.BaseTest;
 import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.paho.PahoMqttClient;
-import org.eclipse.paho.client.mqttv3.*;
 import org.junit.Test;
 import java.util.UUID;
 
@@ -36,7 +34,7 @@ public class PahoClientTest extends BaseTest {
     public void openWithTcp() throws MqttException {
         UUID uuid = UUID.randomUUID();
         PahoMqttClient client = new PahoMqttClient("localhost", 1883, uuid, "test", "test", "",
-            commandService, baseMetadataHook);
+            commandService, baseMetadataHook, baseNetworkInfoHook);
         client.open();
     }
 
@@ -44,7 +42,7 @@ public class PahoClientTest extends BaseTest {
     public void openWithSSL() throws MqttException {
         UUID uuid = UUID.randomUUID();
         PahoMqttClient client = new PahoMqttClient("localhost", 1883, uuid, "test", "test", "", "",
-            "", "", commandService, baseMetadataHook);
+            "", "", commandService, baseMetadataHook, baseNetworkInfoHook);
         client.open();
     }
 

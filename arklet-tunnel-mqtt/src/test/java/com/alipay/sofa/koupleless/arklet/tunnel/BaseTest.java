@@ -21,6 +21,7 @@ import com.alipay.sofa.ark.api.ResponseCode;
 import com.alipay.sofa.ark.spi.model.BizOperation;
 import com.alipay.sofa.koupleless.arklet.core.ArkletComponentRegistry;
 import com.alipay.sofa.koupleless.arklet.core.command.builtin.handler.InstallBizHandler;
+import com.alipay.sofa.koupleless.arklet.core.hook.network.BaseNetworkInfoHook;
 import com.alipay.sofa.koupleless.arklet.core.ops.UnifiedOperationService;
 import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
 import com.alipay.sofa.koupleless.arklet.core.health.HealthService;
@@ -52,6 +53,9 @@ public class BaseTest {
     @Mock
     public static BaseMetadataHook                          baseMetadataHook;
 
+    @Mock
+    public static BaseNetworkInfoHook                       baseNetworkInfoHook;
+
     public final InstallBizHandler.InstallBizClientResponse success = new InstallBizHandler.InstallBizClientResponse();
     public final InstallBizHandler.InstallBizClientResponse failed  = new InstallBizHandler.InstallBizClientResponse();
     public MockedStatic<ArkClient>                          arkClient;
@@ -65,6 +69,7 @@ public class BaseTest {
         operationService = ArkletComponentRegistry.getOperationServiceInstance();
         healthService = ArkletComponentRegistry.getHealthServiceInstance();
         baseMetadataHook = ArkletComponentRegistry.getApiClientInstance().getMetadataHook();
+        baseNetworkInfoHook = ArkletComponentRegistry.getApiClientInstance().getNetworkInfoHook();
         success.setCode(ResponseCode.SUCCESS);
         failed.setCode(ResponseCode.FAILED);
 

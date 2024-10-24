@@ -21,6 +21,7 @@ import com.alipay.sofa.ark.common.util.EnvironmentUtils;
 import com.alipay.sofa.ark.common.util.StringUtils;
 import com.alipay.sofa.koupleless.arklet.core.api.tunnel.Tunnel;
 import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
+import com.alipay.sofa.koupleless.arklet.core.hook.network.BaseNetworkInfoHook;
 import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.paho.PahoMqttClient;
 import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletInitException;
@@ -66,6 +67,7 @@ public class MqttTunnel implements Tunnel {
 
     private com.alipay.sofa.koupleless.arklet.core.command.CommandService commandService;
     private BaseMetadataHook                                              baseMetadataHook;
+    private BaseNetworkInfoHook                                           baseNetworkInfoHook;
     private boolean                                                       enable                              = false;
     private int                                                           port;
     private String                                                        brokerUrl;
@@ -79,7 +81,7 @@ public class MqttTunnel implements Tunnel {
     /** {@inheritDoc} */
     @Override
     public void init(CommandService commandService, BaseMetadataHook baseMetadataHook,
-                     UUID baseID) {
+                     BaseNetworkInfoHook baseNetworkInfoHook, UUID baseID) {
         if (init.compareAndSet(false, true)) {
             String enable = EnvironmentUtils.getProperty(MQTT_ENABLE_ATTRIBUTE);
             if (enable == null || !enable.equals("true")) {
@@ -90,6 +92,7 @@ public class MqttTunnel implements Tunnel {
             this.enable = true;
             this.commandService = commandService;
             this.baseMetadataHook = baseMetadataHook;
+            this.baseNetworkInfoHook = baseNetworkInfoHook;
 
             String brokerPort = EnvironmentUtils.getProperty(MQTT_PORT_ATTRIBUTE);
             this.brokerUrl = EnvironmentUtils.getProperty(MQTT_BROKER_ATTRIBUTE);
@@ -158,11 +161,11 @@ public class MqttTunnel implements Tunnel {
                     // init mqtt client with ca and client crt
                     pahoMqttClient = new PahoMqttClient(brokerUrl, port, baseID, clientPrefix,
                         username, password, caFilePath, clientCrtFilePath, clientKeyFilePath,
-                        commandService, baseMetadataHook);
+                        commandService, baseMetadataHook, baseNetworkInfoHook);
                 } else {
                     // init mqtt client with username and password
                     pahoMqttClient = new PahoMqttClient(brokerUrl, port, baseID, clientPrefix,
-                        username, password, commandService, baseMetadataHook);
+                        username, password, commandService, baseMetadataHook, baseNetworkInfoHook);
                 }
                 pahoMqttClient.open();
             } catch (MqttException e) {

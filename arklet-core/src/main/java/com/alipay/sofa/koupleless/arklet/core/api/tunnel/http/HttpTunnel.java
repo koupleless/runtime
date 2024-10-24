@@ -17,12 +17,9 @@
 package com.alipay.sofa.koupleless.arklet.core.api.tunnel.http;
 
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.net.InetAddress;
 import java.net.URL;
 import java.net.HttpURLConnection;
 import java.io.OutputStream;
-import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -45,7 +42,9 @@ import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletRuntimeExce
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger;
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
+import com.alipay.sofa.koupleless.arklet.core.common.model.BaseNetworkInfo;
 import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
+import com.alipay.sofa.koupleless.arklet.core.hook.network.BaseNetworkInfoHook;
 import com.google.inject.Singleton;
 
 import static com.alipay.sofa.koupleless.arklet.core.health.model.Constants.*;
@@ -75,16 +74,18 @@ public class HttpTunnel implements Tunnel {
     private final AtomicBoolean       run                      = new AtomicBoolean(false);
     private CommandService            commandService;
     private BaseMetadataHook          baseMetadataHook;
+    private BaseNetworkInfoHook       baseNetworkInfoHook;
     private UUID                      baseID;
     private ScheduledExecutorService  heartBeatExecutor;
 
     /** {@inheritDoc} */
     @Override
     public void init(CommandService commandService, BaseMetadataHook baseMetadataHook,
-                     UUID baseID) {
+                     BaseNetworkInfoHook baseNetworkInfoHook, UUID baseID) {
         if (init.compareAndSet(false, true)) {
             this.commandService = commandService;
             this.baseMetadataHook = baseMetadataHook;
+            this.baseNetworkInfoHook = baseNetworkInfoHook;
             this.baseID = baseID;
             String httpPort = EnvironmentUtils.getProperty(HTTP_PORT_ATTRIBUTE);
             try {
@@ -103,9 +104,11 @@ public class HttpTunnel implements Tunnel {
             if (!StringUtils.isEmpty(heartBeatEndpoint)) {
                 heartBeatExecutor = Executors.newScheduledThreadPool(1);
 
-                heartBeatExecutor.scheduleAtFixedRate(new HeartBeatScheduledMission(baseID, port,
-                    heartBeatEndpoint, commandService, baseMetadataHook), 0, 120000L,
-                    TimeUnit.MILLISECONDS);
+                heartBeatExecutor
+                    .scheduleAtFixedRate(
+                        new HeartBeatScheduledMission(baseID, port, heartBeatEndpoint,
+                            baseMetadataHook, baseNetworkInfoHook),
+                        0, 120000L, TimeUnit.MILLISECONDS);
             }
         }
     }
@@ -148,33 +151,32 @@ public class HttpTunnel implements Tunnel {
 
     static class HeartBeatScheduledMission implements Runnable {
 
-        private final String           heartBeatEndpoint;
-        private UUID                   baseID;
-        private int                    port;
-        private final CommandService   commandService;
-        private final BaseMetadataHook baseMetadataHook;
+        private final String              heartBeatEndpoint;
+        private UUID                      baseID;
+        private int                       port;
+        private final BaseMetadataHook    baseMetadataHook;
+        private final BaseNetworkInfoHook baseNetworkInfoHook;
 
         public HeartBeatScheduledMission(UUID baseID, int port, String heartBeatEndpoint,
-                                         CommandService commandService,
-                                         BaseMetadataHook baseMetadataHook) {
+                                         BaseMetadataHook baseMetadataHook,
+                                         BaseNetworkInfoHook baseNetworkInfoHook) {
             this.baseID = baseID;
             this.port = port;
             this.heartBeatEndpoint = heartBeatEndpoint;
-            this.commandService = commandService;
             this.baseMetadataHook = baseMetadataHook;
+            this.baseNetworkInfoHook = baseNetworkInfoHook;
         }
 
         private void sendHeartBeatMessage(Map<String, Object> heartBeatData) throws ArkletRuntimeException {
             String body = JSONObject.toJSONString(heartBeatData);
-            OutputStream in = null;
+            HttpURLConnection conn = null;
             try {
                 LOGGER.debug("Heartbeat message sent successfully. {}", body);
-                HttpURLConnection conn = getHttpURLConnection();
-                //获取输出流
-                in = conn.getOutputStream();
-                in.write(body.getBytes());
-                in.flush();
-                //取得输入流，并使用Reader读取
+                conn = getHttpURLConnection();
+                try (OutputStream out = conn.getOutputStream()) {
+                    out.write(body.getBytes());
+                    out.flush();
+                }
                 if (200 != conn.getResponseCode()) {
                     LOGGER.error("ResponseCode is an error code:{}", conn.getResponseCode());
                 }
@@ -182,12 +184,8 @@ public class HttpTunnel implements Tunnel {
                 LOGGER.error("sendHeartBeatMessage failed", e);
                 throw new ArkletRuntimeException(e);
             } finally {
-                try {
-                    if (in != null) {
-                        in.close();
-                    }
-                } catch (IOException ioe) {
-                    LOGGER.error("Close InputStream failed", ioe);
+                if (conn != null) {
+                    conn.disconnect();
                 }
             }
         }
@@ -219,14 +217,11 @@ public class HttpTunnel implements Tunnel {
 
                 Map<String, Object> networkInfo = new HashMap<>();
 
-                try {
-                    InetAddress localHost = InetAddress.getLocalHost();
-                    networkInfo.put(LOCAL_IP, localHost.getHostAddress());
-                    networkInfo.put(LOCAL_HOST_NAME, localHost.getHostName());
-                    networkInfo.put(ARKLET_PORT, port);
-                } catch (UnknownHostException e) {
-                    LOGGER.error("Failed to get local host information", e);
-                }
+                BaseNetworkInfo baseNetworkInfo = baseNetworkInfoHook.getNetworkInfo();
+
+                networkInfo.put(LOCAL_IP, baseNetworkInfo.getLocalIP());
+                networkInfo.put(LOCAL_HOST_NAME, baseNetworkInfo.getLocalHostName());
+                networkInfo.put(ARKLET_PORT, port);
 
                 heartBeatData.put(NETWORK_INFO, networkInfo);
                 heartBeatData.put(STATE, BizState.ACTIVATED);

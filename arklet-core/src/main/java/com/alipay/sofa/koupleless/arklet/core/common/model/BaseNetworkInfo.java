@@ -14,38 +14,46 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.arklet.core.api.tunnel;
+package com.alipay.sofa.koupleless.arklet.core.common.model;
 
-import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
-import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
-import com.alipay.sofa.koupleless.arklet.core.hook.network.BaseNetworkInfoHook;
-
-import java.util.UUID;
+import lombok.*;
 
 /**
- * <p>Tunnel interface.</p>
- *
- * @author mingmen
- * @since 2023/6/8
- * @version 1.0.0
+ * @author dongnan
+ * @version $Id: NetworkInfo.java, v 0.1 2024年10月24日 20:02 dongnan Exp $
  */
-public interface Tunnel {
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+@Builder
+public class BaseNetworkInfo {
 
     /**
-     * <p>init.</p>
+     * runtime localIP
+     */
+    private String localIP;
+
+    /**
+     * runtime local host name
+     */
+    private String localHostName;
+
+    /**
+     * Getter method for property <tt>localIP</tt>.
      *
-     * @param commandService a {@link com.alipay.sofa.koupleless.arklet.core.command.CommandService} object
+     * @return property value of localIP
      */
-    void init(CommandService commandService, BaseMetadataHook baseMetadataHook,
-              BaseNetworkInfoHook baseNetworkInfoHook, UUID baseID);
+    public String getLocalIP() {
+        return localIP;
+    }
 
     /**
-     * <p>run.</p>
+     * Getter method for property <tt>localHostName</tt>.
+     *
+     * @return property value of localHostName
      */
-    void run();
-
-    /**
-     * <p>shutdown.</p>
-     */
-    void shutdown();
+    public String getLocalHostName() {
+        return localHostName;
+    }
 }
