@@ -28,7 +28,9 @@ import com.alipay.sofa.koupleless.arklet.core.command.meta.Output;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletInitException;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletRuntimeException;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
+import com.alipay.sofa.koupleless.arklet.core.common.model.BaseNetworkInfo;
 import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
+import com.alipay.sofa.koupleless.arklet.core.hook.network.BaseNetworkInfoHook;
 import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.model.Constants;
 import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.model.MqttResponse;
 import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.model.SimpleBizInfo;
@@ -36,8 +38,6 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -52,18 +52,21 @@ import static com.alipay.sofa.koupleless.arklet.core.health.model.Constants.*;
  */
 public class MqttMessageHandler {
 
-    public static boolean          baselineQueryComplete = false;
-    private final CommandService   commandService;
-    private final BaseMetadataHook baseMetadataHook;
-    private final MqttClient       mqttClient;
-    private final UUID             deviceID;
-    private String                 baseEnv;
-    private final AtomicBoolean    run                   = new AtomicBoolean(false);
+    public static boolean             baselineQueryComplete = false;
+    private final CommandService      commandService;
+    private final BaseMetadataHook    baseMetadataHook;
+    private final BaseNetworkInfoHook baseNetworkInfoHook;
+    private final MqttClient          mqttClient;
+    private final UUID                deviceID;
+    private String                    baseEnv;
+    private final AtomicBoolean       run                   = new AtomicBoolean(false);
 
     public MqttMessageHandler(CommandService commandService, BaseMetadataHook baseMetadataHook,
-                              MqttClient mqttClient, UUID deviceID, String baseEnv) {
+                              BaseNetworkInfoHook baseNetworkInfoHook, MqttClient mqttClient,
+                              UUID deviceID, String baseEnv) {
         this.commandService = commandService;
         this.baseMetadataHook = baseMetadataHook;
+        this.baseNetworkInfoHook = baseNetworkInfoHook;
         this.mqttClient = mqttClient;
         this.deviceID = deviceID;
         this.baseEnv = baseEnv;
@@ -139,18 +142,18 @@ public class MqttMessageHandler {
 
     static class HeartBeatScheduledMission implements Runnable {
 
-        private final String           topic;
-        private final MqttClient       mqttClient;
-        private final CommandService   commandService;
-        private final BaseMetadataHook baseMetadataHook;
+        private final String              topic;
+        private final MqttClient          mqttClient;
+        private final BaseMetadataHook    baseMetadataHook;
+        private final BaseNetworkInfoHook baseNetworkInfoHook;
 
         public HeartBeatScheduledMission(String topic, MqttClient mqttClient,
-                                         CommandService commandService,
-                                         BaseMetadataHook baseMetadataHook) {
+                                         BaseMetadataHook baseMetadataHook,
+                                         BaseNetworkInfoHook baseNetworkInfoHook) {
             this.topic = topic;
             this.mqttClient = mqttClient;
-            this.commandService = commandService;
             this.baseMetadataHook = baseMetadataHook;
+            this.baseNetworkInfoHook = baseNetworkInfoHook;
         }
 
         @Override
@@ -165,13 +168,10 @@ public class MqttMessageHandler {
 
             Map<String, String> networkInfo = new HashMap<>();
 
-            try {
-                InetAddress localHost = InetAddress.getLocalHost();
-                networkInfo.put(LOCAL_IP, localHost.getHostAddress());
-                networkInfo.put(LOCAL_HOST_NAME, localHost.getHostName());
-            } catch (UnknownHostException e) {
-                throw new ArkletRuntimeException("get local host failed", e);
-            }
+            BaseNetworkInfo baseNetworkInfo = baseNetworkInfoHook.getNetworkInfo();
+
+            networkInfo.put(LOCAL_IP, baseNetworkInfo.getLocalIP());
+            networkInfo.put(LOCAL_HOST_NAME, baseNetworkInfo.getLocalHostName());
 
             heartBeatData.put(NETWORK_INFO, networkInfo);
             heartBeatData.put(STATE, BizState.ACTIVATED);
@@ -206,7 +206,8 @@ public class MqttMessageHandler {
             ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
             executor.scheduleAtFixedRate(new HeartBeatScheduledMission(getHeartBeatTopic(),
-                mqttClient, commandService, baseMetadataHook), 0, 120000L, TimeUnit.MILLISECONDS);
+                mqttClient, baseMetadataHook, baseNetworkInfoHook), 0, 120000L,
+                TimeUnit.MILLISECONDS);
         }
     }
 

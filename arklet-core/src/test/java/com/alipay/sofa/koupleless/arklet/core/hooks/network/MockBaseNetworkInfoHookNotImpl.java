@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.arklet.core.metadata;
+package com.alipay.sofa.koupleless.arklet.core.hooks.network;
 
 /**
  * @author 冬喃
- * @version : MockBaseMetadataHook, v 0.1 2024-09-04 下午3:28 dongnan Exp $
+ * @version : MockBaseNetworkInfoHookNotImpl, v 0.1 2024-10-24 下午3:28 dongnan Exp $
  */
-public class MockBaseMetadataHookNotImpl {
+public class MockBaseNetworkInfoHookNotImpl {
 }

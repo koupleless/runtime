@@ -20,7 +20,7 @@ import com.alipay.sofa.ark.common.util.EnvironmentUtils;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
 
 /**
- * <p>MetadataHook interface.</p>
+ * <p>BaseMetadataHookImpl.</p>
  *
  * @author dongnan
  * @since 2024/09/03
