@@ -22,6 +22,9 @@ import com.alipay.sofa.koupleless.arklet.core.common.model.BaseNetworkInfo;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 /**
  * @author dongnan
  * @since 2024/10/24
@@ -30,6 +33,12 @@ public class BaseNetworkInfoHookTest extends BaseTest {
     @Test
     public void getNetworkInfo() {
         BaseNetworkInfo networkInfo = networkInfoHook.getNetworkInfo();
-        Assert.assertEquals(networkInfo.getLocalIP(), "127.0.0.1");
+        try {
+            InetAddress localHost = InetAddress.getLocalHost();
+            Assert.assertEquals(networkInfo.getLocalIP(), localHost.getHostAddress());
+            Assert.assertEquals(networkInfo.getLocalHostName(), localHost.getHostName());
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
