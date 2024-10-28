@@ -67,7 +67,7 @@ public class MqttMessageHandlerTest extends BaseTest {
                     .getBytes()));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = ArkletRuntimeException.class)
     public void handleUnInstallBizCommand() {
         MqttMessageHandler mqttMessageHandler = new MqttMessageHandler(commandService,
             baseMetadataHook, baseNetworkInfoHook, null, "test");

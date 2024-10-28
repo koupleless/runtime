@@ -39,8 +39,8 @@ public class PahoClientTest extends BaseTest {
 
     @Test(expected = MqttException.class)
     public void openWithSSL() throws MqttException {
-        PahoMqttClient client = new PahoMqttClient("localhost", 1883, "test", "test", "", "",
-            "", "", commandService, baseMetadataHook, baseNetworkInfoHook);
+        PahoMqttClient client = new PahoMqttClient("localhost", 1883, "test", "test", "", "", "",
+            "", commandService, baseMetadataHook, baseNetworkInfoHook);
         client.open();
     }
 
