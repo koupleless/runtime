@@ -18,7 +18,7 @@ package com.alipay.sofa.koupleless.arklet.springboot.starter.health;
 
 import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.spi.event.AbstractArkEvent;
-import com.alipay.sofa.ark.spi.event.biz.AfterBizFailedEvent;
+import com.alipay.sofa.ark.spi.event.biz.AfterBizStartupFailedEvent;
 import com.alipay.sofa.ark.spi.event.biz.AfterBizStartupEvent;
 import com.alipay.sofa.ark.spi.event.biz.AfterBizStopEvent;
 import com.alipay.sofa.ark.spi.event.biz.BeforeBizStartupEvent;
@@ -92,7 +92,7 @@ public class BaseProbeAvailabilityStateHandler implements EventHandler<AbstractA
         }
 
         // 模块启动失败，保持流量关闭
-        if (event instanceof AfterBizFailedEvent) {
+        if (event instanceof AfterBizStartupFailedEvent) {
             AvailabilityChangeEvent.publish(baseContext, ReadinessState.REFUSING_TRAFFIC);
             return;
         }
