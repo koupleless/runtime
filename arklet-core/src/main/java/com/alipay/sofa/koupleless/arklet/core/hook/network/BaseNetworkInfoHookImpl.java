@@ -19,8 +19,8 @@ package com.alipay.sofa.koupleless.arklet.core.hook.network;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletInitException;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BaseNetworkInfo;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.net.*;
+import java.util.Enumeration;
 
 /**
  * <p>NetworkInfoHookImpl.</p>
@@ -35,9 +35,21 @@ public class BaseNetworkInfoHookImpl implements BaseNetworkInfoHook {
 
     {
         try {
-            localHost = InetAddress.getLocalHost();
-        } catch (UnknownHostException e) {
-            throw new ArkletInitException(e);
+            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+            while (interfaces.hasMoreElements()) {
+                NetworkInterface networkInterface = interfaces.nextElement();
+                Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
+                while (addresses.hasMoreElements()) {
+                    InetAddress address = addresses.nextElement();
+                    if (!address.isLoopbackAddress() && address instanceof Inet4Address) {
+                        // find first non-loopback ipv4 address
+                        localHost = address;
+                        break;
+                    }
+                }
+            }
+        } catch (SocketException e) {
+            throw new ArkletInitException("getLocalNetworkInfo error", e);
         }
     }
 
