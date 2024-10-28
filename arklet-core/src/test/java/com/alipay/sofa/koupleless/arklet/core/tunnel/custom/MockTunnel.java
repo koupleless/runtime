@@ -31,7 +31,7 @@ public class MockTunnel implements Tunnel {
 
     @Override
     public void init(CommandService commandService, BaseMetadataHook baseMetadataHook,
-                     BaseNetworkInfoHook baseNetworkInfoHook, UUID baseID) {
+                     BaseNetworkInfoHook baseNetworkInfoHook) {
     }
 
     @Override

@@ -42,7 +42,8 @@ public class NettyServerTest extends BaseTest {
 
     @Test
     public void command() throws Exception {
-        NettyHttpHandler handler = new NettyHttpHandler(commandService, UUID.randomUUID());
+        NettyHttpHandler handler = new NettyHttpHandler(commandService,
+            UUID.randomUUID().toString());
         String content = "{\"bizName\":\"test\",\"bizVersion\":\"1.0.0\",\"bizUrl\":\"http://serverless-opensource"
                          + ".oss-cn-shanghai.aliyuncs.com/module-packages/stable/dynamic-provider-1.0.0-ark-biz.jar\"}";
         DefaultFullHttpRequest fullHttpRequest = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1,
@@ -54,7 +55,7 @@ public class NettyServerTest extends BaseTest {
     public void open() throws InterruptedException {
         NettyHttpServer server = new NettyHttpServer(1239, commandService);
         Channel channel = server.getChannel();
-        server.open(UUID.randomUUID());
+        server.open(UUID.randomUUID().toString());
     }
 
 }
