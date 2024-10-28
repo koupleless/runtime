@@ -17,8 +17,9 @@
 package com.alipay.sofa.koupleless.arklet.springboot.starter.health;
 
 import com.alipay.sofa.ark.api.ArkClient;
+import com.alipay.sofa.ark.api.ArkConfigs;
 import com.alipay.sofa.ark.spi.event.AbstractArkEvent;
-import com.alipay.sofa.ark.spi.event.biz.AfterBizFailedEvent;
+import com.alipay.sofa.ark.spi.event.biz.AfterBizStartupFailedEvent;
 import com.alipay.sofa.ark.spi.event.biz.AfterBizStartupEvent;
 import com.alipay.sofa.ark.spi.event.biz.AfterBizStopEvent;
 import com.alipay.sofa.ark.spi.event.biz.BeforeBizStartupEvent;
@@ -36,6 +37,8 @@ import org.springframework.context.ApplicationListener;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static com.alipay.sofa.ark.spi.constant.Constants.REMOVE_BIZ_INSTANCE_AFTER_STOP_FAILED;
 
 /**
  * 基座启动健康指标，可以通过 koupleless.healthcheck.base.readiness.withAllBizReadiness 配置该健康指标是否和模块启动健康指标关联，默认为 false，即不关联。
@@ -100,7 +103,7 @@ public class BaseStartUpHealthIndicator extends AbstractHealthIndicator
             bizStartUpStatus.put(biz.getIdentity(), Status.UNKNOWN);
         } else if (event instanceof AfterBizStartupEvent) { // 模块启动后，将模块置为启动成功
             bizStartUpStatus.put(biz.getIdentity(), Status.UP);
-        } else if (event instanceof AfterBizFailedEvent) { // 模块启动失败，保持流量关闭
+        } else if (event instanceof AfterBizStartupFailedEvent) { // 模块启动失败，保持流量关闭
             bizStartUpStatus.put(biz.getIdentity(), Status.DOWN);
         } else if (event instanceof BeforeBizStopEvent) { // 模块卸载前：关闭流量
             bizStartUpStatus.put(biz.getIdentity(), Status.DOWN);
