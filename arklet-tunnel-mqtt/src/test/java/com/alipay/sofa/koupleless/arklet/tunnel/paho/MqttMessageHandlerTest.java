@@ -22,6 +22,7 @@ import com.alipay.sofa.koupleless.arklet.tunnel.BaseTest;
 import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.paho.MqttMessageHandler;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.junit.Test;
+import org.mockito.internal.matchers.Null;
 
 import java.util.UUID;
 
@@ -57,7 +58,7 @@ public class MqttMessageHandlerTest extends BaseTest {
             new MqttMessage("{}".getBytes()));
     }
 
-    @Test(expected = ArkletRuntimeException.class)
+    @Test(expected = NullPointerException.class)
     public void handleInstallBizCommand() {
         MqttMessageHandler mqttMessageHandler = new MqttMessageHandler(commandService,
             baseMetadataHook, baseNetworkInfoHook, null, "test");
@@ -67,7 +68,7 @@ public class MqttMessageHandlerTest extends BaseTest {
                     .getBytes()));
     }
 
-    @Test(expected = ArkletRuntimeException.class)
+    @Test(expected = NullPointerException.class)
     public void handleUnInstallBizCommand() {
         MqttMessageHandler mqttMessageHandler = new MqttMessageHandler(commandService,
             baseMetadataHook, baseNetworkInfoHook, null, "test");
