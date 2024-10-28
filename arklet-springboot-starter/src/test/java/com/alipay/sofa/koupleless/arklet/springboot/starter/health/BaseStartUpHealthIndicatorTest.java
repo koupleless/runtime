@@ -18,9 +18,9 @@ package com.alipay.sofa.koupleless.arklet.springboot.starter.health;
 
 import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.spi.event.biz.AfterBizStartupEvent;
+import com.alipay.sofa.ark.spi.event.biz.AfterBizStartupFailedEvent;
 import com.alipay.sofa.ark.spi.event.biz.AfterBizStopEvent;
 import com.alipay.sofa.ark.spi.event.biz.BeforeBizStartupEvent;
-import com.alipay.sofa.ark.spi.event.biz.AfterBizStartupFailedEvent;
 import com.alipay.sofa.ark.spi.event.biz.BeforeBizStopEvent;
 import com.alipay.sofa.ark.spi.model.Biz;
 import org.junit.Test;
