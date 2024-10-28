@@ -42,7 +42,6 @@ import static org.eclipse.paho.client.mqttv3.MqttException.REASON_CODE_SOCKET_FA
 public class PahoMqttClient {
 
     private final MqttClient          mqttClient;
-    private final UUID                deviceID;
     private final String              env;
     private final MqttConnectOptions  options = new MqttConnectOptions();
 
@@ -59,17 +58,16 @@ public class PahoMqttClient {
      * @param username String
      * @param password char[]
      * @param commandService a {@link com.alipay.sofa.koupleless.arklet.core.command.CommandService} object
-     * @param deviceID a {@link java.util.UUID} object
      * @param clientPrefix a {@link java.lang.String} object
      * @throws org.eclipse.paho.client.mqttv3.MqttException if any.
      */
-    public PahoMqttClient(String broker, int port, UUID deviceID, String clientPrefix,
-                          String username, String password, CommandService commandService,
+    public PahoMqttClient(String broker, int port, String clientPrefix, String username,
+                          String password, CommandService commandService,
                           BaseMetadataHook baseMetadataHook,
                           BaseNetworkInfoHook baseNetworkInfoHook) throws MqttException {
-        this.deviceID = deviceID;
         this.mqttClient = new MqttClient(String.format("tcp://%s:%d", broker, port),
-            String.format("%s@@@%s", clientPrefix, deviceID), new MemoryPersistence());
+            String.format("%s@@@%s", clientPrefix, baseMetadataHook.getBaseID()),
+            new MemoryPersistence());
         this.options.setAutomaticReconnect(true);
         this.options.setMaxInflight(1000);
         this.options.setUserName(username);
@@ -91,20 +89,19 @@ public class PahoMqttClient {
      * @param clientCrtFilePath String
      * @param clientKeyFilePath String
      * @param commandService a {@link com.alipay.sofa.koupleless.arklet.core.command.CommandService} object
-     * @param deviceID a {@link java.util.UUID} object
      * @param clientPrefix a {@link java.lang.String} object
      * @param username a {@link java.lang.String} object
      * @param password a {@link java.lang.String} object
      * @throws org.eclipse.paho.client.mqttv3.MqttException if any.
      */
-    public PahoMqttClient(String broker, int port, UUID deviceID, String clientPrefix,
-                          String username, String password, String caFilePath,
-                          String clientCrtFilePath, String clientKeyFilePath,
-                          CommandService commandService, BaseMetadataHook baseMetadataHook,
+    public PahoMqttClient(String broker, int port, String clientPrefix, String username,
+                          String password, String caFilePath, String clientCrtFilePath,
+                          String clientKeyFilePath, CommandService commandService,
+                          BaseMetadataHook baseMetadataHook,
                           BaseNetworkInfoHook baseNetworkInfoHook) throws MqttException {
-        this.deviceID = deviceID;
         this.mqttClient = new MqttClient(String.format("ssl://%s:%d", broker, port),
-            String.format("%s@@@%s", clientPrefix, deviceID), new MemoryPersistence());
+            String.format("%s@@@%s", clientPrefix, baseMetadataHook.getBaseID()),
+            new MemoryPersistence());
         this.options.setCleanSession(true);
         this.options.setAutomaticReconnect(true);
         this.options.setMaxInflight(1000);
@@ -130,7 +127,7 @@ public class PahoMqttClient {
      */
     public void open() throws MqttException {
         this.mqttClient.setCallback(new PahoMqttCallback(this.mqttClient, this.commandService,
-            this.baseMetadataHook, this.baseNetworkInfoHook, this.deviceID, this.env));
+            this.baseMetadataHook, this.baseNetworkInfoHook, this.env));
         this.mqttClient.connect(this.options);
     }
 
@@ -150,10 +147,9 @@ public class PahoMqttClient {
 
         public PahoMqttCallback(MqttClient mqttClient, CommandService commandService,
                                 BaseMetadataHook baseMetadataHook,
-                                BaseNetworkInfoHook baseNetworkInfoHook, UUID deviceID,
-                                String env) {
+                                BaseNetworkInfoHook baseNetworkInfoHook, String env) {
             this.messageHandler = new MqttMessageHandler(commandService, baseMetadataHook,
-                baseNetworkInfoHook, mqttClient, deviceID, env);
+                baseNetworkInfoHook, mqttClient, env);
         }
 
         @Override

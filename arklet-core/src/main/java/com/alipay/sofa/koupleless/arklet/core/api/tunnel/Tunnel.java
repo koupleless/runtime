@@ -37,7 +37,7 @@ public interface Tunnel {
      * @param commandService a {@link com.alipay.sofa.koupleless.arklet.core.command.CommandService} object
      */
     void init(CommandService commandService, BaseMetadataHook baseMetadataHook,
-              BaseNetworkInfoHook baseNetworkInfoHook, UUID baseID);
+              BaseNetworkInfoHook baseNetworkInfoHook);
 
     /**
      * <p>run.</p>

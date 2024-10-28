@@ -52,7 +52,7 @@ public class Response {
     /**
      *  baseID
      */
-    private UUID         baseID;
+    private String       baseID;
 
     /**
      * <p>fromCommandOutput.</p>
@@ -60,7 +60,7 @@ public class Response {
      * @param output a {@link com.alipay.sofa.koupleless.arklet.core.command.meta.Output} object
      * @return a {@link com.alipay.sofa.koupleless.arklet.core.api.model.Response} object
      */
-    public static Response fromCommandOutput(Output output, UUID baseID) {
+    public static Response fromCommandOutput(Output output, String baseID) {
         Response response = new Response();
         response.code = output.getCode();
         response.data = output.getData();
@@ -199,7 +199,7 @@ public class Response {
      *
      * @return property value of baseID
      */
-    public UUID getBaseID() {
+    public String getBaseID() {
         return baseID;
     }
 
@@ -208,7 +208,7 @@ public class Response {
      *
      * @param baseID value to be assigned to property baseID
      */
-    public void setBaseID(UUID baseID) {
+    public void setBaseID(String baseID) {
         this.baseID = baseID;
     }
 }

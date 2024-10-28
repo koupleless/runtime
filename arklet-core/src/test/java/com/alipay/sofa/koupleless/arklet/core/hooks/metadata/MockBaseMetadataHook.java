@@ -19,6 +19,8 @@ package com.alipay.sofa.koupleless.arklet.core.hooks.metadata;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
 import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
 
+import java.util.UUID;
+
 /**
  * @author 冬喃
  * @version : MockBaseMetadataHook, v 0.1 2024-09-04 下午3:28 dongnan Exp $
@@ -32,5 +34,10 @@ public class MockBaseMetadataHook implements BaseMetadataHook {
     @Override
     public String getRuntimeEnv() {
         return "";
+    }
+
+    @Override
+    public String getBaseID() {
+        return UUID.randomUUID().toString();
     }
 }

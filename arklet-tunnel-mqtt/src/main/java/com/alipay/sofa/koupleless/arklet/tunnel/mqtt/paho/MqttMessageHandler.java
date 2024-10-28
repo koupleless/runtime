@@ -18,7 +18,10 @@ package com.alipay.sofa.koupleless.arklet.tunnel.mqtt.paho;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alipay.sofa.ark.api.ClientResponse;
+import com.alipay.sofa.ark.api.ResponseCode;
 import com.alipay.sofa.ark.spi.model.BizState;
+import com.alipay.sofa.koupleless.arklet.core.api.model.Response;
 import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
 import com.alipay.sofa.koupleless.arklet.core.command.builtin.BuiltinCommand;
 import com.alipay.sofa.koupleless.arklet.core.command.builtin.handler.QueryAllBizHandler;
@@ -31,6 +34,7 @@ import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BaseNetworkInfo;
 import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
 import com.alipay.sofa.koupleless.arklet.core.hook.network.BaseNetworkInfoHook;
+import com.alipay.sofa.koupleless.arklet.core.util.ExceptionUtils;
 import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.model.Constants;
 import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.model.MqttResponse;
 import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.model.SimpleBizInfo;
@@ -57,18 +61,16 @@ public class MqttMessageHandler {
     private final BaseMetadataHook    baseMetadataHook;
     private final BaseNetworkInfoHook baseNetworkInfoHook;
     private final MqttClient          mqttClient;
-    private final UUID                deviceID;
     private String                    baseEnv;
     private final AtomicBoolean       run                   = new AtomicBoolean(false);
 
     public MqttMessageHandler(CommandService commandService, BaseMetadataHook baseMetadataHook,
                               BaseNetworkInfoHook baseNetworkInfoHook, MqttClient mqttClient,
-                              UUID deviceID, String baseEnv) {
+                              String baseEnv) {
         this.commandService = commandService;
         this.baseMetadataHook = baseMetadataHook;
         this.baseNetworkInfoHook = baseNetworkInfoHook;
         this.mqttClient = mqttClient;
-        this.deviceID = deviceID;
         this.baseEnv = baseEnv;
         if (this.baseEnv == null || this.baseEnv.isEmpty()) {
             this.baseEnv = Constants.DEFAULT_BASE_ENV;
@@ -83,7 +85,7 @@ public class MqttMessageHandler {
      * @return String
      */
     private String getHealthTopic() {
-        return String.format("koupleless_%s/%s/base/health", baseEnv, deviceID);
+        return String.format("koupleless_%s/%s/base/health", baseEnv, baseMetadataHook.getBaseID());
     }
 
     /**
@@ -92,7 +94,7 @@ public class MqttMessageHandler {
      * @return String
      */
     private String getHeartBeatTopic() {
-        return String.format("koupleless_%s/%s/base/heart", baseEnv, deviceID);
+        return String.format("koupleless_%s/%s/base/heart", baseEnv, baseMetadataHook.getBaseID());
     }
 
     /**
@@ -101,7 +103,8 @@ public class MqttMessageHandler {
      * @return String
      */
     private String getBizTopic() {
-        return String.format("koupleless_%s/%s/base/simpleBiz", baseEnv, deviceID);
+        return String.format("koupleless_%s/%s/base/simpleBiz", baseEnv,
+            baseMetadataHook.getBaseID());
     }
 
     /**
@@ -110,7 +113,8 @@ public class MqttMessageHandler {
      * @return String
      */
     private String getBizOperationResponseTopic() {
-        return String.format("koupleless_%s/%s/base/bizOperation", baseEnv, deviceID);
+        return String.format("koupleless_%s/%s/base/bizOperation", baseEnv,
+            baseMetadataHook.getBaseID());
     }
 
     /**
@@ -119,7 +123,8 @@ public class MqttMessageHandler {
      * @return String
      */
     private String getQueryBaselineTopic() {
-        return String.format("koupleless_%s/%s/base/queryBaseline", baseEnv, deviceID);
+        return String.format("koupleless_%s/%s/base/queryBaseline", baseEnv,
+            baseMetadataHook.getBaseID());
     }
 
     /**
@@ -128,7 +133,8 @@ public class MqttMessageHandler {
      * @return String
      */
     private String getBaselineTopic() {
-        return String.format("koupleless_%s/%s/base/baseline", baseEnv, deviceID);
+        return String.format("koupleless_%s/%s/base/baseline", baseEnv,
+            baseMetadataHook.getBaseID());
     }
 
     /**
@@ -137,7 +143,7 @@ public class MqttMessageHandler {
      * @return String
      */
     private String getCommandTopic() {
-        return String.format("koupleless_%s/%s/+", baseEnv, deviceID);
+        return String.format("koupleless_%s/%s/+", baseEnv, baseMetadataHook.getBaseID());
     }
 
     static class HeartBeatScheduledMission implements Runnable {
@@ -244,8 +250,11 @@ public class MqttMessageHandler {
             }
             // process the command
             output = commandService.process(innerCmd, cmdContent);
-        } catch (InterruptedException e) {
-            throw new ArkletRuntimeException(e);
+        } catch (Throwable e) {
+            ClientResponse data = new ClientResponse();
+            data.setMessage(ExceptionUtils.getStackTraceAsString(e));
+            data.setCode(ResponseCode.FAILED);
+            output = Output.ofFailed(data, e.getMessage());
         }
 
         try {

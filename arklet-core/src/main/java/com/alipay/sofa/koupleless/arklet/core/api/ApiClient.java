@@ -50,14 +50,15 @@ import com.google.inject.multibindings.Multibinder;
 @Singleton
 public class ApiClient implements ArkletComponent {
 
-    private static final UUID          baseID                          = UUID.randomUUID();
-
     private static final List<Tunnel>  tunnelList                      = new ArrayList<>(8);
 
+    // CUSTOM_TUNNEL_CLASS is the key of class name of custom module tunnel
     private final static String        CUSTOM_TUNNEL_CLASS             = "koupleless.arklet.custom.tunnel.classname";
 
+    // CUSTOM_BASE_METADATA_HOOK_CLASS is the key of class name of custom base metadata hook, used by tunnel to get metadata of base
     private final static String        CUSTOM_BASE_METADATA_HOOK_CLASS = "koupleless.arklet.custom.base.metadata.classname";
 
+    // CUSTOM_NETWORK_INFO_HOOK_CLASS is the key of class name of custom base network info hook, used by tunnel to get local network info of base
     private final static String        CUSTOM_NETWORK_INFO_HOOK_CLASS  = "koupleless.arklet.custom.network.info.classname";
 
     @Inject
@@ -97,7 +98,7 @@ public class ApiClient implements ArkletComponent {
     @Override
     public void init() {
         for (Tunnel tunnel : tunnelList) {
-            tunnel.init(commandService, baseMetadataHook, baseNetworkInfoHook, baseID);
+            tunnel.init(commandService, baseMetadataHook, baseNetworkInfoHook);
             tunnel.run();
         }
     }

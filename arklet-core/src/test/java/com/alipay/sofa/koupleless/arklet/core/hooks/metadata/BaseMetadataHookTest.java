@@ -21,6 +21,8 @@ import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.UUID;
+
 /**
  * @author dongnan
  * @since 2024/09/04
@@ -40,5 +42,10 @@ public class BaseMetadataHookTest extends BaseTest {
         System.setProperty("koupleless.arklet.metadata.env", "test_env");
         String env = baseMetadataHook.getRuntimeEnv();
         Assert.assertEquals("test_env", env);
+    }
+
+    @Test
+    public void getBaseID() {
+        UUID.fromString(baseMetadataHook.getBaseID());
     }
 }
