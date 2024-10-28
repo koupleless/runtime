@@ -32,16 +32,14 @@ public class PahoClientTest extends BaseTest {
 
     @Test(expected = MqttException.class)
     public void openWithTcp() throws MqttException {
-        UUID uuid = UUID.randomUUID();
-        PahoMqttClient client = new PahoMqttClient("localhost", 1883, uuid, "test", "test", "",
+        PahoMqttClient client = new PahoMqttClient("localhost", 1883, "test", "test", "",
             commandService, baseMetadataHook, baseNetworkInfoHook);
         client.open();
     }
 
     @Test(expected = MqttException.class)
     public void openWithSSL() throws MqttException {
-        UUID uuid = UUID.randomUUID();
-        PahoMqttClient client = new PahoMqttClient("localhost", 1883, uuid, "test", "test", "", "",
+        PahoMqttClient client = new PahoMqttClient("localhost", 1883, "test", "test", "", "",
             "", "", commandService, baseMetadataHook, baseNetworkInfoHook);
         client.open();
     }
