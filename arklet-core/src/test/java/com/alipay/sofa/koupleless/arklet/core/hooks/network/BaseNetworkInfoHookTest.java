@@ -17,13 +17,14 @@
 package com.alipay.sofa.koupleless.arklet.core.hooks.network;
 
 import com.alipay.sofa.koupleless.arklet.core.BaseTest;
+import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletInitException;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BaseNetworkInfo;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.net.*;
+import java.util.Enumeration;
 
 /**
  * @author dongnan
@@ -34,11 +35,22 @@ public class BaseNetworkInfoHookTest extends BaseTest {
     public void getNetworkInfo() {
         BaseNetworkInfo networkInfo = networkInfoHook.getNetworkInfo();
         try {
-            InetAddress localHost = InetAddress.getLocalHost();
-            Assert.assertEquals(networkInfo.getLocalIP(), localHost.getHostAddress());
-            Assert.assertEquals(networkInfo.getLocalHostName(), localHost.getHostName());
-        } catch (UnknownHostException e) {
-            throw new RuntimeException(e);
+            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+            while (interfaces.hasMoreElements()) {
+                NetworkInterface networkInterface = interfaces.nextElement();
+                Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
+                while (addresses.hasMoreElements()) {
+                    InetAddress address = addresses.nextElement();
+                    if (!address.isLoopbackAddress() && address instanceof Inet4Address) {
+                        // find first non-loopback ipv4 address
+                        Assert.assertEquals(networkInfo.getLocalIP(), address.getHostAddress());
+                        Assert.assertEquals(networkInfo.getLocalHostName(), address.getHostName());
+                        return;
+                    }
+                }
+            }
+        } catch (SocketException e) {
+            throw new ArkletInitException("getLocalNetworkInfo error", e);
         }
     }
 }
