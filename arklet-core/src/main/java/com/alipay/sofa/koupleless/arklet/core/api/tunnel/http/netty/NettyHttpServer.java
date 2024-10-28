@@ -106,7 +106,7 @@ public class NettyHttpServer {
      *
      * @throws java.lang.InterruptedException if any.
      */
-    public void open(UUID baseID) throws InterruptedException {
+    public void open(String baseID) throws InterruptedException {
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         serverBootstrap.option(ChannelOption.SO_BACKLOG, 1024);
         serverBootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
@@ -127,9 +127,9 @@ public class NettyHttpServer {
     static class NettyHttpInitializer extends ChannelInitializer<SocketChannel> {
 
         private final CommandService commandService;
-        private final UUID           baseID;
+        private final String         baseID;
 
-        public NettyHttpInitializer(CommandService commandService, UUID baseID) {
+        public NettyHttpInitializer(CommandService commandService, String baseID) {
             this.commandService = commandService;
             this.baseID = baseID;
         }
@@ -149,9 +149,9 @@ public class NettyHttpServer {
     public static class NettyHttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
         private final CommandService commandService;
-        private final UUID           baseID;
+        private final String         baseID;
 
-        public NettyHttpHandler(CommandService commandService, UUID baseID) {
+        public NettyHttpHandler(CommandService commandService, String baseID) {
             this.commandService = commandService;
             this.baseID = baseID;
         }

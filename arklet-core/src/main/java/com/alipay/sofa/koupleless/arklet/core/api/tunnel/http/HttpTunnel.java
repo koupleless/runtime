@@ -72,21 +72,18 @@ public class HttpTunnel implements Tunnel {
     private final AtomicBoolean       shutdown                 = new AtomicBoolean(false);
     private final AtomicBoolean       init                     = new AtomicBoolean(false);
     private final AtomicBoolean       run                      = new AtomicBoolean(false);
+
     private CommandService            commandService;
     private BaseMetadataHook          baseMetadataHook;
-    private BaseNetworkInfoHook       baseNetworkInfoHook;
-    private UUID                      baseID;
     private ScheduledExecutorService  heartBeatExecutor;
 
     /** {@inheritDoc} */
     @Override
     public void init(CommandService commandService, BaseMetadataHook baseMetadataHook,
-                     BaseNetworkInfoHook baseNetworkInfoHook, UUID baseID) {
+                     BaseNetworkInfoHook baseNetworkInfoHook) {
         if (init.compareAndSet(false, true)) {
             this.commandService = commandService;
             this.baseMetadataHook = baseMetadataHook;
-            this.baseNetworkInfoHook = baseNetworkInfoHook;
-            this.baseID = baseID;
             String httpPort = EnvironmentUtils.getProperty(HTTP_PORT_ATTRIBUTE);
             try {
                 if (!StringUtils.isEmpty(httpPort)) {
@@ -104,11 +101,9 @@ public class HttpTunnel implements Tunnel {
             if (!StringUtils.isEmpty(heartBeatEndpoint)) {
                 heartBeatExecutor = Executors.newScheduledThreadPool(1);
 
-                heartBeatExecutor
-                    .scheduleAtFixedRate(
-                        new HeartBeatScheduledMission(baseID, port, heartBeatEndpoint,
-                            baseMetadataHook, baseNetworkInfoHook),
-                        0, 120000L, TimeUnit.MILLISECONDS);
+                heartBeatExecutor.scheduleAtFixedRate(new HeartBeatScheduledMission(port,
+                    heartBeatEndpoint, baseMetadataHook, baseNetworkInfoHook), 0, 120000L,
+                    TimeUnit.MILLISECONDS);
             }
         }
     }
@@ -121,7 +116,7 @@ public class HttpTunnel implements Tunnel {
             try {
                 LOGGER.info("http tunnel listening on port: " + port);
                 nettyHttpServer = new NettyHttpServer(port, commandService);
-                nettyHttpServer.open(baseID);
+                nettyHttpServer.open(baseMetadataHook.getBaseID());
             } catch (InterruptedException e) {
                 LOGGER.error("Unable to open netty schedule http server.", e);
                 throw new ArkletRuntimeException(e);
@@ -152,15 +147,13 @@ public class HttpTunnel implements Tunnel {
     static class HeartBeatScheduledMission implements Runnable {
 
         private final String              heartBeatEndpoint;
-        private UUID                      baseID;
         private int                       port;
         private final BaseMetadataHook    baseMetadataHook;
         private final BaseNetworkInfoHook baseNetworkInfoHook;
 
-        public HeartBeatScheduledMission(UUID baseID, int port, String heartBeatEndpoint,
+        public HeartBeatScheduledMission(int port, String heartBeatEndpoint,
                                          BaseMetadataHook baseMetadataHook,
                                          BaseNetworkInfoHook baseNetworkInfoHook) {
-            this.baseID = baseID;
             this.port = port;
             this.heartBeatEndpoint = heartBeatEndpoint;
             this.baseMetadataHook = baseMetadataHook;
@@ -210,7 +203,7 @@ public class HttpTunnel implements Tunnel {
                 // send heart beat message
                 Map<String, Object> heartBeatData = new HashMap<>();
 
-                heartBeatData.put(BASE_ID, baseID);
+                heartBeatData.put(BASE_ID, baseMetadataHook.getBaseID());
 
                 BaseMetadata metadata = baseMetadataHook.getBaseMetadata();
                 heartBeatData.put(MASTER_BIZ_INFO, metadata);
