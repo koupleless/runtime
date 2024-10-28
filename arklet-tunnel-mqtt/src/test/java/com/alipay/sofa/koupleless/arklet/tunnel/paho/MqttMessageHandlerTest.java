@@ -36,35 +36,31 @@ public class MqttMessageHandlerTest extends BaseTest {
 
     @Test(expected = NullPointerException.class)
     public void run() {
-        UUID uuid = UUID.randomUUID();
         MqttMessageHandler mqttMessageHandler = new MqttMessageHandler(commandService,
-            baseMetadataHook, baseNetworkInfoHook, null, uuid, "test");
+            baseMetadataHook, baseNetworkInfoHook, null, "test");
         mqttMessageHandler.run();
     }
 
     @Test(expected = NullPointerException.class)
     public void handleHealthCommand() {
-        UUID uuid = UUID.randomUUID();
         MqttMessageHandler mqttMessageHandler = new MqttMessageHandler(commandService,
-            baseMetadataHook, baseNetworkInfoHook, null, uuid, "test");
+            baseMetadataHook, baseNetworkInfoHook, null, "test");
         mqttMessageHandler.handleCommand(BuiltinCommand.HEALTH.getId(),
             new MqttMessage("{}".getBytes()));
     }
 
     @Test(expected = NullPointerException.class)
     public void handleQueryAllBizCommand() {
-        UUID uuid = UUID.randomUUID();
         MqttMessageHandler mqttMessageHandler = new MqttMessageHandler(commandService,
-            baseMetadataHook, baseNetworkInfoHook, null, uuid, "test");
+            baseMetadataHook, baseNetworkInfoHook, null, "test");
         mqttMessageHandler.handleCommand(BuiltinCommand.QUERY_ALL_BIZ.getId(),
             new MqttMessage("{}".getBytes()));
     }
 
     @Test(expected = ArkletRuntimeException.class)
     public void handleInstallBizCommand() {
-        UUID uuid = UUID.randomUUID();
         MqttMessageHandler mqttMessageHandler = new MqttMessageHandler(commandService,
-            baseMetadataHook, baseNetworkInfoHook, null, uuid, "test");
+            baseMetadataHook, baseNetworkInfoHook, null, "test");
         mqttMessageHandler.handleCommand(BuiltinCommand.INSTALL_BIZ.getId(),
             new MqttMessage(
                 "{\"bizName\":\"testBiz\", \"bizVersion\":\"0.1.0\", \"bizUrl\":\"testBizUrl\"}"
@@ -73,9 +69,8 @@ public class MqttMessageHandlerTest extends BaseTest {
 
     @Test(expected = NullPointerException.class)
     public void handleUnInstallBizCommand() {
-        UUID uuid = UUID.randomUUID();
         MqttMessageHandler mqttMessageHandler = new MqttMessageHandler(commandService,
-            baseMetadataHook, baseNetworkInfoHook, null, uuid, "test");
+            baseMetadataHook, baseNetworkInfoHook, null, "test");
         mqttMessageHandler.handleCommand(BuiltinCommand.UNINSTALL_BIZ.getId(),
             new MqttMessage(
                 "{\"bizName\":\"testBiz\", \"bizVersion\":\"0.1.0\", \"bizUrl\":\"testBizUrl\"}"
