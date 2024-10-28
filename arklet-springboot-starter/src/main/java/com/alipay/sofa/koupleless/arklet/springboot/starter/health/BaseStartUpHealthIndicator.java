@@ -17,7 +17,6 @@
 package com.alipay.sofa.koupleless.arklet.springboot.starter.health;
 
 import com.alipay.sofa.ark.api.ArkClient;
-import com.alipay.sofa.ark.api.ArkConfigs;
 import com.alipay.sofa.ark.spi.event.AbstractArkEvent;
 import com.alipay.sofa.ark.spi.event.biz.AfterBizStartupFailedEvent;
 import com.alipay.sofa.ark.spi.event.biz.AfterBizStartupEvent;
@@ -37,8 +36,6 @@ import org.springframework.context.ApplicationListener;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static com.alipay.sofa.ark.spi.constant.Constants.REMOVE_BIZ_INSTANCE_AFTER_STOP_FAILED;
 
 /**
  * 基座启动健康指标，可以通过 koupleless.healthcheck.base.readiness.withAllBizReadiness 配置该健康指标是否和模块启动健康指标关联，默认为 false，即不关联。
