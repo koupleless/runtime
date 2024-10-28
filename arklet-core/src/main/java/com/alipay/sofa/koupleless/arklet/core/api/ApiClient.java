@@ -18,7 +18,7 @@ package com.alipay.sofa.koupleless.arklet.core.api;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ServiceLoader;
+import java.util.UUID;
 
 import com.alipay.sofa.ark.common.util.EnvironmentUtils;
 import com.alipay.sofa.koupleless.arklet.core.api.tunnel.Tunnel;
@@ -27,6 +27,8 @@ import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
 import com.alipay.sofa.koupleless.arklet.core.ArkletComponent;
 import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
 import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHookImpl;
+import com.alipay.sofa.koupleless.arklet.core.hook.network.BaseNetworkInfoHook;
+import com.alipay.sofa.koupleless.arklet.core.hook.network.BaseNetworkInfoHookImpl;
 import com.alipay.sofa.koupleless.arklet.core.util.ClassUtils;
 import com.google.inject.AbstractModule;
 import com.google.inject.Binding;
@@ -48,16 +50,23 @@ import com.google.inject.multibindings.Multibinder;
 @Singleton
 public class ApiClient implements ArkletComponent {
 
-    private static final List<Tunnel> tunnelList                      = new ArrayList<>(8);
+    private static final List<Tunnel>  tunnelList                      = new ArrayList<>(8);
 
-    private final static String       CUSTOM_TUNNEL_CLASS             = "koupleless.arklet.custom.tunnel.classname";
+    // CUSTOM_TUNNEL_CLASS is the key of class name of custom module tunnel
+    private final static String        CUSTOM_TUNNEL_CLASS             = "koupleless.arklet.custom.tunnel.classname";
 
-    private final static String       CUSTOM_BASE_METADATA_HOOK_CLASS = "koupleless.arklet.custom.base.metadata.classname";
+    // CUSTOM_BASE_METADATA_HOOK_CLASS is the key of class name of custom base metadata hook, used by tunnel to get metadata of base
+    private final static String        CUSTOM_BASE_METADATA_HOOK_CLASS = "koupleless.arklet.custom.base.metadata.classname";
+
+    // CUSTOM_NETWORK_INFO_HOOK_CLASS is the key of class name of custom base network info hook, used by tunnel to get local network info of base
+    private final static String        CUSTOM_NETWORK_INFO_HOOK_CLASS  = "koupleless.arklet.custom.network.info.classname";
 
     @Inject
-    private CommandService            commandService;
+    private CommandService             commandService;
 
-    private static BaseMetadataHook   baseMetadataHook;
+    private static BaseMetadataHook    baseMetadataHook;
+
+    private static BaseNetworkInfoHook baseNetworkInfoHook;
 
     static {
         Injector injector = Guice.createInjector(new TunnelGuiceModule());
@@ -74,13 +83,22 @@ public class ApiClient implements ArkletComponent {
         if (customBaseMetadataHookClassName != null && !customBaseMetadataHookClassName.isEmpty()) {
             baseMetadataHook = ClassUtils.getBaseMetadataHookImpl(customBaseMetadataHookClassName);
         }
+
+        baseNetworkInfoHook = new BaseNetworkInfoHookImpl();
+
+        String customNetworkInfoHookClassName = EnvironmentUtils
+            .getProperty(CUSTOM_NETWORK_INFO_HOOK_CLASS);
+
+        if (customNetworkInfoHookClassName != null && !customNetworkInfoHookClassName.isEmpty()) {
+            baseNetworkInfoHook = ClassUtils.getNetworkInfoHook(customNetworkInfoHookClassName);
+        }
     }
 
     /** {@inheritDoc} */
     @Override
     public void init() {
         for (Tunnel tunnel : tunnelList) {
-            tunnel.init(commandService, baseMetadataHook);
+            tunnel.init(commandService, baseMetadataHook, baseNetworkInfoHook);
             tunnel.run();
         }
     }
@@ -104,6 +122,10 @@ public class ApiClient implements ArkletComponent {
 
     public BaseMetadataHook getMetadataHook() {
         return baseMetadataHook;
+    }
+
+    public BaseNetworkInfoHook getNetworkInfoHook() {
+        return baseNetworkInfoHook;
     }
 
     private static class TunnelGuiceModule extends AbstractModule {

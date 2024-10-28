@@ -19,8 +19,10 @@ package com.alipay.sofa.koupleless.arklet.core.hook.base;
 import com.alipay.sofa.ark.common.util.EnvironmentUtils;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
 
+import java.util.UUID;
+
 /**
- * <p>MetadataHook interface.</p>
+ * <p>BaseMetadataHookImpl.</p>
  *
  * @author dongnan
  * @since 2024/09/03
@@ -31,6 +33,8 @@ public class BaseMetadataHookImpl implements BaseMetadataHook {
     final String defaultNameEnvKey    = "koupleless.arklet.metadata.name";
     final String defaultVersionEnvKey = "koupleless.arklet.metadata.version";
     final String defaultEnvKey        = "koupleless.arklet.metadata.env";
+
+    final UUID   baseID               = UUID.randomUUID();
 
     private String getName() {
         return EnvironmentUtils.getProperty(defaultNameEnvKey);
@@ -48,5 +52,10 @@ public class BaseMetadataHookImpl implements BaseMetadataHook {
     @Override
     public String getRuntimeEnv() {
         return EnvironmentUtils.getProperty(defaultEnvKey);
+    }
+
+    @Override
+    public String getBaseID() {
+        return baseID.toString();
     }
 }

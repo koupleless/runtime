@@ -14,23 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.arklet.tunnel.mqtt.model;
+package com.alipay.sofa.koupleless.arklet.core.hooks.network;
+
+import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
+import com.alipay.sofa.koupleless.arklet.core.common.model.BaseNetworkInfo;
+import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
+import com.alipay.sofa.koupleless.arklet.core.hook.network.BaseNetworkInfoHook;
+import com.google.common.graph.Network;
 
 /**
- * <p>Constants class.</p>
- *
- * @author dongnan
- * @version 1.0.0
+ * @author 冬喃
+ * @version : MockBaseNetworkInfoHook, v 0.1 2024-10-24 下午3:28 dongnan Exp $
  */
-public class Constants {
+public class MockBaseNetworkInfoHook implements BaseNetworkInfoHook {
 
-    /** Constant <code>COMMAND="command"</code> */
-    public static final String COMMAND          = "command";
-
-    /** Constant <code>COMMAND_RESPONSE="response"</code> */
-    public static final String COMMAND_RESPONSE = "response";
-
-    /** Constant <code>DEFAULT_BASE_ENV="dev"</code> */
-    public static final String DEFAULT_BASE_ENV = "dev";
-
+    @Override
+    public BaseNetworkInfo getNetworkInfo() {
+        return BaseNetworkInfo.builder().build();
+    }
 }

@@ -14,10 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.arklet.core.metadata;
+package com.alipay.sofa.koupleless.arklet.core.hooks.metadata;
 
 import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
 import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
+
+import java.util.UUID;
 
 /**
  * @author 冬喃
@@ -32,5 +34,10 @@ public class MockBaseMetadataHook implements BaseMetadataHook {
     @Override
     public String getRuntimeEnv() {
         return "";
+    }
+
+    @Override
+    public String getBaseID() {
+        return UUID.randomUUID().toString();
     }
 }

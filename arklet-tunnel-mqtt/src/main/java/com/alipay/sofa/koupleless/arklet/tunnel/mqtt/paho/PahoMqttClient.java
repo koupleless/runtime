@@ -16,33 +16,17 @@
  */
 package com.alipay.sofa.koupleless.arklet.tunnel.mqtt.paho;
 
-import com.alibaba.fastjson.JSONObject;
-import com.alipay.sofa.ark.spi.model.BizState;
-import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
 import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
+import com.alipay.sofa.koupleless.arklet.core.hook.network.BaseNetworkInfoHook;
 import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.executor.ExecutorServiceManager;
-import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.model.MqttResponse;
 import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
-import com.alipay.sofa.koupleless.arklet.core.command.builtin.BuiltinCommand;
-import com.alipay.sofa.koupleless.arklet.core.command.meta.Output;
-import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletInitException;
-import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletRuntimeException;
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger;
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
-import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.model.Constants;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.eclipse.paho.client.mqttv3.MqttException.REASON_CODE_SOCKET_FACTORY_MISMATCH;
 
@@ -58,13 +42,13 @@ import static org.eclipse.paho.client.mqttv3.MqttException.REASON_CODE_SOCKET_FA
 public class PahoMqttClient {
 
     private final MqttClient          mqttClient;
-    private final UUID                deviceID;
     private final String              env;
     private final MqttConnectOptions  options = new MqttConnectOptions();
 
     private final CommandService      commandService;
     private static final ArkletLogger LOGGER  = ArkletLoggerFactory.getDefaultLogger();
     private final BaseMetadataHook    baseMetadataHook;
+    private final BaseNetworkInfoHook baseNetworkInfoHook;
 
     /**
      * <p>Constructor for PahoMqttClient.</p>
@@ -74,22 +58,23 @@ public class PahoMqttClient {
      * @param username String
      * @param password char[]
      * @param commandService a {@link com.alipay.sofa.koupleless.arklet.core.command.CommandService} object
-     * @param deviceID a {@link java.util.UUID} object
      * @param clientPrefix a {@link java.lang.String} object
      * @throws org.eclipse.paho.client.mqttv3.MqttException if any.
      */
-    public PahoMqttClient(String broker, int port, UUID deviceID, String clientPrefix,
-                          String username, String password, CommandService commandService,
-                          BaseMetadataHook baseMetadataHook) throws MqttException {
-        this.deviceID = deviceID;
+    public PahoMqttClient(String broker, int port, String clientPrefix, String username,
+                          String password, CommandService commandService,
+                          BaseMetadataHook baseMetadataHook,
+                          BaseNetworkInfoHook baseNetworkInfoHook) throws MqttException {
         this.mqttClient = new MqttClient(String.format("tcp://%s:%d", broker, port),
-            String.format("%s@@@%s", clientPrefix, deviceID), new MemoryPersistence());
+            String.format("%s@@@%s", clientPrefix, baseMetadataHook.getBaseID()),
+            new MemoryPersistence());
         this.options.setAutomaticReconnect(true);
         this.options.setMaxInflight(1000);
         this.options.setUserName(username);
         this.options.setPassword(password.toCharArray());
 
         this.baseMetadataHook = baseMetadataHook;
+        this.baseNetworkInfoHook = baseNetworkInfoHook;
         this.env = this.baseMetadataHook.getRuntimeEnv();
 
         this.commandService = commandService;
@@ -104,26 +89,26 @@ public class PahoMqttClient {
      * @param clientCrtFilePath String
      * @param clientKeyFilePath String
      * @param commandService a {@link com.alipay.sofa.koupleless.arklet.core.command.CommandService} object
-     * @param deviceID a {@link java.util.UUID} object
      * @param clientPrefix a {@link java.lang.String} object
      * @param username a {@link java.lang.String} object
      * @param password a {@link java.lang.String} object
      * @throws org.eclipse.paho.client.mqttv3.MqttException if any.
      */
-    public PahoMqttClient(String broker, int port, UUID deviceID, String clientPrefix,
-                          String username, String password, String caFilePath,
-                          String clientCrtFilePath, String clientKeyFilePath,
-                          CommandService commandService,
-                          BaseMetadataHook baseMetadataHook) throws MqttException {
-        this.deviceID = deviceID;
+    public PahoMqttClient(String broker, int port, String clientPrefix, String username,
+                          String password, String caFilePath, String clientCrtFilePath,
+                          String clientKeyFilePath, CommandService commandService,
+                          BaseMetadataHook baseMetadataHook,
+                          BaseNetworkInfoHook baseNetworkInfoHook) throws MqttException {
         this.mqttClient = new MqttClient(String.format("ssl://%s:%d", broker, port),
-            String.format("%s@@@%s", clientPrefix, deviceID), new MemoryPersistence());
+            String.format("%s@@@%s", clientPrefix, baseMetadataHook.getBaseID()),
+            new MemoryPersistence());
         this.options.setCleanSession(true);
         this.options.setAutomaticReconnect(true);
         this.options.setMaxInflight(1000);
         this.options.setUserName(username);
         this.options.setPassword(password.toCharArray());
         this.baseMetadataHook = baseMetadataHook;
+        this.baseNetworkInfoHook = baseNetworkInfoHook;
         this.env = this.baseMetadataHook.getRuntimeEnv();
         try {
             this.options.setSocketFactory(
@@ -142,7 +127,7 @@ public class PahoMqttClient {
      */
     public void open() throws MqttException {
         this.mqttClient.setCallback(new PahoMqttCallback(this.mqttClient, this.commandService,
-            this.baseMetadataHook, this.deviceID, this.env));
+            this.baseMetadataHook, this.baseNetworkInfoHook, this.env));
         this.mqttClient.connect(this.options);
     }
 
@@ -161,9 +146,10 @@ public class PahoMqttClient {
         private final MqttMessageHandler messageHandler;
 
         public PahoMqttCallback(MqttClient mqttClient, CommandService commandService,
-                                BaseMetadataHook baseMetadataHook, UUID deviceID, String env) {
+                                BaseMetadataHook baseMetadataHook,
+                                BaseNetworkInfoHook baseNetworkInfoHook, String env) {
             this.messageHandler = new MqttMessageHandler(commandService, baseMetadataHook,
-                mqttClient, deviceID, env);
+                baseNetworkInfoHook, mqttClient, env);
         }
 
         @Override

@@ -14,12 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.arklet.core.metadata;
+package com.alipay.sofa.koupleless.arklet.core.hooks.metadata;
 
 import com.alipay.sofa.koupleless.arklet.core.BaseTest;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.UUID;
 
 /**
  * @author dongnan
@@ -40,5 +42,10 @@ public class BaseMetadataHookTest extends BaseTest {
         System.setProperty("koupleless.arklet.metadata.env", "test_env");
         String env = baseMetadataHook.getRuntimeEnv();
         Assert.assertEquals("test_env", env);
+    }
+
+    @Test
+    public void getBaseID() {
+        UUID.fromString(baseMetadataHook.getBaseID());
     }
 }
