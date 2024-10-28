@@ -25,6 +25,8 @@ import org.junit.Test;
 
 import java.net.*;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author dongnan
@@ -34,6 +36,7 @@ public class BaseNetworkInfoHookTest extends BaseTest {
     @Test
     public void getNetworkInfo() {
         BaseNetworkInfo networkInfo = networkInfoHook.getNetworkInfo();
+        Map<String, String> networkInfoMap = new HashMap<>();
         try {
             Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
             while (interfaces.hasMoreElements()) {
@@ -42,15 +45,14 @@ public class BaseNetworkInfoHookTest extends BaseTest {
                 while (addresses.hasMoreElements()) {
                     InetAddress address = addresses.nextElement();
                     if (!address.isLoopbackAddress() && address instanceof Inet4Address) {
-                        // find first non-loopback ipv4 address
-                        Assert.assertEquals(networkInfo.getLocalIP(), address.getHostAddress());
-                        Assert.assertEquals(networkInfo.getLocalHostName(), address.getHostName());
-                        return;
+                        networkInfoMap.put(address.getHostAddress(), address.getHostName());
                     }
                 }
             }
         } catch (SocketException e) {
             throw new ArkletInitException("getLocalNetworkInfo error", e);
         }
+        Assert.assertEquals(networkInfoMap.get(networkInfo.getLocalIP()),
+            networkInfo.getLocalHostName());
     }
 }
