@@ -25,7 +25,6 @@ import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
-import java.util.UUID;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import static org.eclipse.paho.client.mqttv3.MqttException.REASON_CODE_SOCKET_FACTORY_MISMATCH;
@@ -160,7 +159,7 @@ public class PahoMqttClient {
             } else {
                 LOGGER.info("mqtt client connect successfully");
             }
-            messageHandler.run();
+            messageHandler.onConnectCompleted();
         }
 
         @Override

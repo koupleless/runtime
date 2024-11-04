@@ -17,14 +17,10 @@
 package com.alipay.sofa.koupleless.arklet.tunnel.paho;
 
 import com.alipay.sofa.koupleless.arklet.core.command.builtin.BuiltinCommand;
-import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletRuntimeException;
 import com.alipay.sofa.koupleless.arklet.tunnel.BaseTest;
 import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.paho.MqttMessageHandler;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.junit.Test;
-import org.mockito.internal.matchers.Null;
-
-import java.util.UUID;
 
 import static org.mockito.Mockito.mockStatic;
 
@@ -36,10 +32,10 @@ import static org.mockito.Mockito.mockStatic;
 public class MqttMessageHandlerTest extends BaseTest {
 
     @Test(expected = NullPointerException.class)
-    public void run() {
+    public void onConnectCompleted() {
         MqttMessageHandler mqttMessageHandler = new MqttMessageHandler(commandService,
             baseMetadataHook, baseNetworkInfoHook, null, "test");
-        mqttMessageHandler.run();
+        mqttMessageHandler.onConnectCompleted();
     }
 
     @Test(expected = NullPointerException.class)
