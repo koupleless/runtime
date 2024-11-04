@@ -21,7 +21,6 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alipay.sofa.ark.api.ClientResponse;
 import com.alipay.sofa.ark.api.ResponseCode;
 import com.alipay.sofa.ark.spi.model.BizState;
-import com.alipay.sofa.koupleless.arklet.core.api.model.Response;
 import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
 import com.alipay.sofa.koupleless.arklet.core.command.builtin.BuiltinCommand;
 import com.alipay.sofa.koupleless.arklet.core.command.builtin.handler.QueryAllBizHandler;
@@ -30,14 +29,15 @@ import com.alipay.sofa.koupleless.arklet.core.command.meta.InputMeta;
 import com.alipay.sofa.koupleless.arklet.core.command.meta.Output;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletInitException;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletRuntimeException;
+import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
-import com.alipay.sofa.koupleless.arklet.core.common.model.BaseNetworkInfo;
 import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
 import com.alipay.sofa.koupleless.arklet.core.hook.network.BaseNetworkInfoHook;
 import com.alipay.sofa.koupleless.arklet.core.util.ExceptionUtils;
 import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.model.Constants;
 import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.model.MqttResponse;
 import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.model.SimpleBizInfo;
+import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.task.HeartBeatScheduledTask;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -146,56 +146,14 @@ public class MqttMessageHandler {
         return String.format("koupleless_%s/%s/+", baseEnv, baseMetadataHook.getBaseID());
     }
 
-    static class HeartBeatScheduledMission implements Runnable {
-
-        private final String              topic;
-        private final MqttClient          mqttClient;
-        private final BaseMetadataHook    baseMetadataHook;
-        private final BaseNetworkInfoHook baseNetworkInfoHook;
-
-        public HeartBeatScheduledMission(String topic, MqttClient mqttClient,
-                                         BaseMetadataHook baseMetadataHook,
-                                         BaseNetworkInfoHook baseNetworkInfoHook) {
-            this.topic = topic;
-            this.mqttClient = mqttClient;
-            this.baseMetadataHook = baseMetadataHook;
-            this.baseNetworkInfoHook = baseNetworkInfoHook;
-        }
-
-        @Override
-        public void run() {
-            // send heart beat message
-            Map<String, Object> heartBeatData = new HashMap<>();
-
-            BaseMetadata metadata = baseMetadataHook.getBaseMetadata();
-            heartBeatData.put(
-                com.alipay.sofa.koupleless.arklet.core.health.model.Constants.MASTER_BIZ_INFO,
-                metadata);
-
-            Map<String, String> networkInfo = new HashMap<>();
-
-            BaseNetworkInfo baseNetworkInfo = baseNetworkInfoHook.getNetworkInfo();
-
-            networkInfo.put(LOCAL_IP, baseNetworkInfo.getLocalIP());
-            networkInfo.put(LOCAL_HOST_NAME, baseNetworkInfo.getLocalHostName());
-
-            heartBeatData.put(NETWORK_INFO, networkInfo);
-            heartBeatData.put(STATE, BizState.ACTIVATED);
-
-            try {
-                mqttClient.publish(topic,
-                    JSONObject.toJSONString(MqttResponse.withData(heartBeatData)).getBytes(), 1,
-                    false);
-            } catch (MqttException e) {
-                throw new ArkletRuntimeException("mqtt client publish health status failed", e);
-            }
-        }
-    }
-
-    public void run() {
+    public void onConnectCompleted() {
         try {
             mqttClient.subscribe(getCommandTopic(), 1);
             mqttClient.subscribe(getBaselineTopic(), 1);
+            ArkletLoggerFactory.getDefaultLogger().info("mqtt client subscribe command topic: {}",
+                getCommandTopic());
+            ArkletLoggerFactory.getDefaultLogger().info("mqtt client subscribe command topic: {}",
+                getBaselineTopic());
         } catch (MqttException e) {
             throw new ArkletInitException("mqtt client subscribe command topic failed", e);
         }
@@ -211,9 +169,8 @@ public class MqttMessageHandler {
 
             ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
-            executor.scheduleAtFixedRate(new HeartBeatScheduledMission(getHeartBeatTopic(),
-                mqttClient, baseMetadataHook, baseNetworkInfoHook), 0, 120000L,
-                TimeUnit.MILLISECONDS);
+            executor.scheduleAtFixedRate(new HeartBeatScheduledTask(getHeartBeatTopic(), mqttClient,
+                baseMetadataHook, baseNetworkInfoHook), 0, 10000L, TimeUnit.MILLISECONDS);
         }
     }
 
