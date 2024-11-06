@@ -18,7 +18,6 @@ package com.alipay.sofa.koupleless.arklet.core.api;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import com.alipay.sofa.ark.common.util.EnvironmentUtils;
 import com.alipay.sofa.koupleless.arklet.core.api.tunnel.Tunnel;
