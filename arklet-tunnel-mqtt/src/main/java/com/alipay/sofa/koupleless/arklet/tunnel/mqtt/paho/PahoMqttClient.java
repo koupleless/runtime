@@ -153,8 +153,6 @@ public class PahoMqttClient {
 
         @Override
         public void connectComplete(boolean reconnect, String serverURI) {
-            LOGGER
-                .info("=================== mqtt client connect complete by test =================");
             // connect success callback, start subscriptions watch here
             if (reconnect) {
                 LOGGER.info("mqtt client reconnect successfully");

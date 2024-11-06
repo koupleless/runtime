@@ -18,14 +18,12 @@ package com.alipay.sofa.koupleless.arklet.core.api;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import com.alipay.sofa.ark.common.util.EnvironmentUtils;
 import com.alipay.sofa.koupleless.arklet.core.api.tunnel.Tunnel;
 import com.alipay.sofa.koupleless.arklet.core.api.tunnel.http.HttpTunnel;
 import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
 import com.alipay.sofa.koupleless.arklet.core.ArkletComponent;
-import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
 import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
 import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHookImpl;
 import com.alipay.sofa.koupleless.arklet.core.hook.network.BaseNetworkInfoHook;
@@ -98,7 +96,6 @@ public class ApiClient implements ArkletComponent {
     /** {@inheritDoc} */
     @Override
     public void init() {
-        ArkletLoggerFactory.getDefaultLogger().info("start to init ApiClient: {}", tunnelList);
         for (Tunnel tunnel : tunnelList) {
             tunnel.init(commandService, baseMetadataHook, baseNetworkInfoHook);
             tunnel.run();

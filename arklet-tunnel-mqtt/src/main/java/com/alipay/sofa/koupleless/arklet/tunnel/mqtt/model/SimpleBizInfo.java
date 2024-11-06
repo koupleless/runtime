@@ -32,11 +32,11 @@ public class SimpleBizInfo implements Serializable {
     // 序列化版本号
     private static final long serialVersionUID = 1L;
 
-    private String state;
+    private String            state;
 
-    private String name;
+    private String            name;
 
-    private String version;
+    private String            version;
 
     /**
      * Getter method for property <tt>state</tt>.
@@ -55,6 +55,7 @@ public class SimpleBizInfo implements Serializable {
     public void setState(BizState state) {
         this.state = state.getBizState();
     }
+
     /**
      * Getter method for property <tt>name</tt>.
      *
