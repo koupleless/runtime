@@ -174,9 +174,9 @@ public class MqttMessageHandler {
         }
     }
 
-    private List<List<String>> getSimpleAllBizInfo(Output<?> output) {
+    private List<SimpleBizInfo> getSimpleAllBizInfo(Output<?> output) {
         Output<List<BizInfo>> queryAllBizOutput = (Output<List<BizInfo>>) output;
-        List<List<String>> simpleData = new ArrayList<>();
+        List<SimpleBizInfo> simpleData = new ArrayList<>();
         for (BizInfo info : queryAllBizOutput.getData()) {
             simpleData.add(SimpleBizInfo.constructFromBizInfo(info));
         }

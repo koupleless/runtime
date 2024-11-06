@@ -105,6 +105,8 @@ public class HttpTunnel implements Tunnel {
                     heartBeatEndpoint, baseMetadataHook, baseNetworkInfoHook), 0, 120000L,
                     TimeUnit.MILLISECONDS);
             }
+
+            LOGGER.info("http tunnel initialized: {}", this);
         }
     }
 
