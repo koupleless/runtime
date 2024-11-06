@@ -31,83 +31,47 @@ import java.util.List;
  * @version 1.0.0
  */
 public class SimpleBizInfo {
+
+    private String state;
+
+    private String name;
+
+    private String version;
+
+    private BizStateRecord bizStateRecord;
     /**
      * Getter method for property <tt>state</tt>.
      *
      * @return property value of state
      */
-    public String getS() {
-        return s;
+    public String getState() {
+        return state;
     }
 
     /**
      * Setter method for property <tt>state</tt>.
      *
-     * @param s value to be assigned to property state
+     * @param state value to be assigned to property state
      */
-    public void setS(BizState s) {
-        switch (s) {
-            case UNRESOLVED:
-                this.s = "1";
-                break;
-            case RESOLVED:
-                this.s = "2";
-                break;
-            case ACTIVATED:
-                this.s = "3";
-                break;
-            case DEACTIVATED:
-                this.s = "4";
-                break;
-            case BROKEN:
-                this.s = "5";
-                break;
-        }
+    public void setState(BizState state) {
+        this.state = state.getBizState();
     }
-
-    private String s;
-
     /**
      * Getter method for property <tt>name</tt>.
      *
      * @return property value of name
      */
-    public String getN() {
-        return n;
+    public String getName() {
+        return name;
     }
 
     /**
      * Setter method for property <tt>name</tt>.
      *
-     * @param n value to be assigned to property name
+     * @param name value to be assigned to property name
      */
-    public void setN(String n) {
-        this.n = n;
-    }
-
-    private String         n;
-
-    private String         v;
-
-    private BizStateRecord lrd;
-
-    public static List<String> constructFromBizInfo(BizInfo info) {
-        SimpleBizInfo simpleBizInfo = new SimpleBizInfo();
-        simpleBizInfo.setS(info.getBizState());
-        simpleBizInfo.setN(info.getBizName());
-        simpleBizInfo.setV(info.getBizVersion());
-
-        List<BizStateRecord> bizStateRecords = info.getBizStateRecords();
-
-        if (!bizStateRecords.isEmpty()) {
-            simpleBizInfo.setLrd(bizStateRecords.get(bizStateRecords.size() - 1));
-        }
-
-        ArrayList<String> ret = new ArrayList<>();
-        ret.add(simpleBizInfo.getN());
-        ret.add(simpleBizInfo.getV());
-        ret.add(simpleBizInfo.getS());
-        return ret;
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
@@ -115,17 +79,17 @@ public class SimpleBizInfo {
      *
      * @return property value of latestRecord
      */
-    public BizStateRecord getLrd() {
-        return lrd;
+    public BizStateRecord getBizStateRecord() {
+        return bizStateRecord;
     }
 
     /**
      * Setter method for property <tt>latestRecord</tt>.
      *
-     * @param lrd value to be assigned to property latestRecord
+     * @param bizStateRecord value to be assigned to property latestRecord
      */
-    public void setLrd(BizStateRecord lrd) {
-        this.lrd = lrd;
+    public void setBizStateRecord(BizStateRecord bizStateRecord) {
+        this.bizStateRecord = bizStateRecord;
     }
 
     /**
@@ -133,16 +97,35 @@ public class SimpleBizInfo {
      *
      * @return property value of v
      */
-    public String getV() {
-        return v;
+    public String getVersion() {
+        return version;
     }
 
     /**
      * Setter method for property <tt>v</tt>.
      *
-     * @param v value to be assigned to property v
+     * @param version value to be assigned to property v
      */
-    public void setV(String v) {
-        this.v = v;
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public static List<String> constructFromBizInfo(BizInfo info) {
+        SimpleBizInfo simpleBizInfo = new SimpleBizInfo();
+        simpleBizInfo.setState(info.getBizState());
+        simpleBizInfo.setName(info.getBizName());
+        simpleBizInfo.setVersion(info.getBizVersion());
+
+        List<BizStateRecord> bizStateRecords = info.getBizStateRecords();
+
+        if (!bizStateRecords.isEmpty()) {
+            simpleBizInfo.setBizStateRecord(bizStateRecords.get(bizStateRecords.size() - 1));
+        }
+
+        ArrayList<String> ret = new ArrayList<>();
+        ret.add(simpleBizInfo.getName());
+        ret.add(simpleBizInfo.getVersion());
+        ret.add(simpleBizInfo.getState());
+        return ret;
     }
 }

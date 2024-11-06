@@ -140,6 +140,8 @@ public class MqttTunnel implements Tunnel {
                 LOGGER.error("Invalid arklet mqtt broker url: empty");
                 throw new ArkletInitException("Invalid arklet mqtt broker url: empty");
             }
+
+            LOGGER.info("mqtt tunnel initialized: {}", this);
         }
     }
 

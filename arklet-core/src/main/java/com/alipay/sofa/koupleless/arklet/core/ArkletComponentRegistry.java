@@ -64,6 +64,8 @@ public class ArkletComponentRegistry {
             .collect(Collectors.joining(", "));
         ArkletLoggerFactory.getDefaultLogger().info("found components: {}", components);
         ArkletLoggerFactory.getDefaultLogger().info("start to initialize components");
+        ArkletLoggerFactory.getDefaultLogger()
+            .info("===============  start to initialize components  ===============");
         for (ArkletComponent component : componentList) {
             component.init();
         }
