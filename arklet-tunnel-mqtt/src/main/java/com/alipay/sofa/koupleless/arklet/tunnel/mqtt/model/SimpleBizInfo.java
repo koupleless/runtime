@@ -18,10 +18,8 @@ package com.alipay.sofa.koupleless.arklet.tunnel.mqtt.model;
 
 import com.alipay.sofa.ark.spi.model.BizState;
 import com.alipay.sofa.koupleless.arklet.core.command.builtin.model.BizInfo;
-import com.alipay.sofa.ark.spi.model.BizInfo.BizStateRecord;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.Serializable;
 
 /**
  * <p>SimpleBizInfo class.</p>
@@ -30,7 +28,9 @@ import java.util.List;
  * @since 2024/10/10
  * @version 1.0.0
  */
-public class SimpleBizInfo {
+public class SimpleBizInfo implements Serializable {
+    // 序列化版本号
+    private static final long serialVersionUID = 1L;
 
     private String state;
 
@@ -38,7 +38,6 @@ public class SimpleBizInfo {
 
     private String version;
 
-    private BizStateRecord bizStateRecord;
     /**
      * Getter method for property <tt>state</tt>.
      *
@@ -75,24 +74,6 @@ public class SimpleBizInfo {
     }
 
     /**
-     * Getter method for property <tt>latestRecord</tt>.
-     *
-     * @return property value of latestRecord
-     */
-    public BizStateRecord getBizStateRecord() {
-        return bizStateRecord;
-    }
-
-    /**
-     * Setter method for property <tt>latestRecord</tt>.
-     *
-     * @param bizStateRecord value to be assigned to property latestRecord
-     */
-    public void setBizStateRecord(BizStateRecord bizStateRecord) {
-        this.bizStateRecord = bizStateRecord;
-    }
-
-    /**
      * Getter method for property <tt>v</tt>.
      *
      * @return property value of v
@@ -110,22 +91,12 @@ public class SimpleBizInfo {
         this.version = version;
     }
 
-    public static List<String> constructFromBizInfo(BizInfo info) {
+    public static SimpleBizInfo constructFromBizInfo(BizInfo info) {
         SimpleBizInfo simpleBizInfo = new SimpleBizInfo();
         simpleBizInfo.setState(info.getBizState());
         simpleBizInfo.setName(info.getBizName());
         simpleBizInfo.setVersion(info.getBizVersion());
 
-        List<BizStateRecord> bizStateRecords = info.getBizStateRecords();
-
-        if (!bizStateRecords.isEmpty()) {
-            simpleBizInfo.setBizStateRecord(bizStateRecords.get(bizStateRecords.size() - 1));
-        }
-
-        ArrayList<String> ret = new ArrayList<>();
-        ret.add(simpleBizInfo.getName());
-        ret.add(simpleBizInfo.getVersion());
-        ret.add(simpleBizInfo.getState());
-        return ret;
+        return simpleBizInfo;
     }
 }
