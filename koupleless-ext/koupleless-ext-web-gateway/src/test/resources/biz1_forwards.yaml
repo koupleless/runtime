@@ -1,0 +1,5 @@
+- contextPath: test1
+  hosts:
+    - test1
+  paths:
+    - from: /test1

@@ -47,9 +47,9 @@ import java.util.Set;
 @ConditionalOnClass(ConfigChangeListener.class)
 public class ForwardsConfChangeListener implements ConfigChangeListener, InitializingBean {
     @Autowired
-    private Forwards          forwards;
+    private Forwards            forwards;
     @Autowired
-    private GatewayProperties gatewayProperties;
+    private GatewayProperties   gatewayProperties;
 
     @Value("${apollo.bootstrap.namespaces:application}")
     private String              namespaces;

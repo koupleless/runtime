@@ -47,15 +47,17 @@ import java.util.Map;
 @Controller
 @RequestMapping
 public class ForwardController {
-    private static final KouplelessLogger LOGGER = KouplelessLoggerFactory.getLogger("web-gateway");
+    private static final KouplelessLogger LOGGER            = KouplelessLoggerFactory
+        .getLogger("web-gateway");
 
     @Autowired
-    private Forwards baseForwards;
+    private Forwards                      baseForwards;
 
-    private Map<Biz,Forwards> bizForwards = CompositeBizForwardsHandler.getBizForwards();
+    private Map<Biz, Forwards>            bizForwards       = CompositeBizForwardsHandler
+        .getBizForwards();
 
-    private static final String SEPARATOR         = "/";
-    private static final String DOUBLE_SEPARATORS = SEPARATOR + SEPARATOR;
+    private static final String           SEPARATOR         = "/";
+    private static final String           DOUBLE_SEPARATORS = SEPARATOR + SEPARATOR;
 
     /**
      * <p>redirect.</p>
@@ -96,7 +98,8 @@ public class ForwardController {
             targetPath = targetPath.substring(1);
         }
 
-        LOGGER.info("uri with host {}, sourcePath {} will forward to {}", host, sourcePath, targetPath);
+        LOGGER.info("uri with host {}, sourcePath {} will forward to {}", host, sourcePath,
+            contextPath + targetPath);
 
         ServletContext currentContext = request.getServletContext();
         ServletContext nextContext = currentContext.getContext(contextPath + targetPath);
@@ -117,15 +120,16 @@ public class ForwardController {
         // 匹配规则：优先生效基座的forward配置，其次匹配biz的forward配置
         ForwardItem item = baseForwards.getForwardItem(host, sourcePath);
 
-        if(null != item){
+        if (null != item) {
             LOGGER.info("base forward configuration matches: {} {}", host, sourcePath);
         }
 
-        if(null == item){
+        if (null == item) {
             for (Map.Entry<Biz, Forwards> entry : bizForwards.entrySet()) {
                 item = entry.getValue().getForwardItem(host, sourcePath);
-                if(null != item){
-                    LOGGER.info("biz {} forward configuration matches: {} {}",entry.getKey().getIdentity(), host, sourcePath);
+                if (null != item) {
+                    LOGGER.info("biz {} forward configuration matches: {} {}",
+                        entry.getKey().getIdentity(), host, sourcePath);
                     return item;
                 }
             }

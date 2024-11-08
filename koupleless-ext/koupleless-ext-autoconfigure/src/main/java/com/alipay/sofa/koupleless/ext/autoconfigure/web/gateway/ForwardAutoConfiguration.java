@@ -17,10 +17,13 @@
 package com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway;
 
 import com.alipay.sofa.ark.api.ArkClient;
+import com.alipay.sofa.koupleless.common.util.ArkUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.PostConstruct;
 
 /**
  * <p>ForwardAutoConfiguration class.</p>
@@ -35,8 +38,11 @@ public class ForwardAutoConfiguration {
     @Autowired
     private GatewayProperties gatewayProperties;
 
-    static {
-        ArkClient.getEventAdminService().register(new CompositeBizForwardsHandler());
+    @PostConstruct
+    public void init() {
+        if (ArkUtils.isMasterBiz()) {
+            ArkClient.getEventAdminService().register(new CompositeBizForwardsHandler());
+        }
     }
 
     /**

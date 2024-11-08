@@ -45,16 +45,16 @@ public class ForwardsConfChangeListenerTests {
     @InjectMocks
     private ForwardsConfChangeListener listener;
     @Mock
-    private ApplicationContext      applicationContext;
+    private ApplicationContext         applicationContext;
     @Spy
-    private GatewayProperties       gatewayProperties;
+    private GatewayProperties          gatewayProperties;
     @Mock
-    private ConfigurableEnvironment environment;
+    private ConfigurableEnvironment    environment;
 
     private Map<String, Object>        sourceMap = new HashMap<>();
 
     @Spy
-    private Forwards forwards = new Forwards();
+    private Forwards                   forwards  = new Forwards();
 
     @Before
     public void before() {

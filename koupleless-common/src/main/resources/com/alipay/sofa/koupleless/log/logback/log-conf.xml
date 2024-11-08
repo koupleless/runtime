@@ -18,7 +18,7 @@
 
 <configuration>
     <include resource="org/springframework/boot/logging/logback/defaults.xml" />
-    <property name="LOG_PATTERN" value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(koupleless){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}" />
+    <property name="LOG_PATTERN" value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(com.alipay.sofa.koupleless){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}" />
     <appender name="ERROR-APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <append>true</append>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">

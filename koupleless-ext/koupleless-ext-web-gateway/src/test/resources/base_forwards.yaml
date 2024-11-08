@@ -1,0 +1,3 @@
+- contextPath: test3
+  hosts:
+    - test3

@@ -1,6 +1,18 @@
-/**
- * Alipay.com Inc.
- * Copyright (c) 2004-2024 All Rights Reserved.
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway;
 
@@ -20,11 +32,11 @@ import java.util.Map;
  * @version $Id: CompositeForwards.java, v 0.1 2024年11月08日 16:00 立蓬 Exp $
  */
 public class CompositeBizForwardsHandler implements EventHandler<AbstractArkEvent> {
-     private static final Map<Biz,Forwards> forwardsMap = new HashMap<>();
+    private static final Map<Biz, Forwards> forwardsMap = new HashMap<>();
 
     @Override
     public void handleEvent(AbstractArkEvent event) {
-        if(ArkUtils.isMasterBiz()){
+        if (ArkUtils.isMasterBiz()) {
             return;
         }
 
@@ -38,16 +50,16 @@ public class CompositeBizForwardsHandler implements EventHandler<AbstractArkEven
 
     private void handleBizEvent(AbstractArkEvent<Biz> event, Biz biz) {
         // After the module is successfully installed, bean forwards will be automatically registered in the map.
-        if(event instanceof AfterBizStartupEvent) {
+        if (event instanceof AfterBizStartupEvent) {
             Object forwards = SpringUtils.getBean(biz, "forwards");
 
-            if(forwards instanceof Forwards) {
+            if (forwards instanceof Forwards) {
                 forwardsMap.put(biz, (Forwards) forwards);
             }
         }
 
         // Before the module uninstall, bean forwards will be automatically removed from this map.
-        if(event instanceof BeforeBizStopEvent) {
+        if (event instanceof BeforeBizStopEvent) {
             forwardsMap.remove(biz);
         }
     }
@@ -57,7 +69,7 @@ public class CompositeBizForwardsHandler implements EventHandler<AbstractArkEven
         return 0;
     }
 
-    public static Map<Biz,Forwards> getBizForwards() {
+    public static Map<Biz, Forwards> getBizForwards() {
         return forwardsMap;
     }
 }
