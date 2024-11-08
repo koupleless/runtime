@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.ext.web.gateway;
+package com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -41,8 +41,8 @@ public class ForwardItems {
     /**
      * <p>init.</p>
      *
-     * @param bean a {@link com.alipay.sofa.koupleless.ext.web.gateway.Forwards} object
-     * @param gatewayProperties a {@link com.alipay.sofa.koupleless.ext.web.gateway.GatewayProperties} object
+     * @param bean a {@link Forwards} object
+     * @param gatewayProperties a {@link GatewayProperties} object
      */
     public static void init(Forwards bean, GatewayProperties gatewayProperties) {
         //load conf

@@ -14,18 +14,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.ext.web.gateway;
+package com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway;
 
-import lombok.Data;
+import lombok.Getter;
 
 /**
- * <p>ForwardPath class.</p>
+ * <p>ForwardItem class.</p>
  *
  * @author zzl_i
  * @version 1.0.0
  */
-@Data
-public class ForwardPath {
-    private String from;
-    private String to;
+public class ForwardItem {
+
+    @Getter
+    private final String contextPath;
+    @Getter
+    private final String host;
+    @Getter
+    private final String from;
+
+    @Getter
+    private final String to;
+
+    /**
+     * <p>Constructor for ForwardItem.</p>
+     *
+     * @param contextPath a {@link java.lang.String} object
+     * @param host a {@link java.lang.String} object
+     * @param from a {@link java.lang.String} object
+     * @param to a {@link java.lang.String} object
+     */
+    public ForwardItem(String contextPath, String host, String from, String to) {
+        this.contextPath = contextPath;
+        this.host = host;
+        this.from = from;
+        this.to = to;
+    }
 }

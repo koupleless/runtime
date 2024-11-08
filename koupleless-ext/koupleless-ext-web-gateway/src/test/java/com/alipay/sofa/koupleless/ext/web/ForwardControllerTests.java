@@ -17,6 +17,10 @@
 package com.alipay.sofa.koupleless.ext.web;
 
 import com.alibaba.fastjson.JSONArray;
+import com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway.Forward;
+import com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway.ForwardAutoConfiguration;
+import com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway.Forwards;
+import com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway.GatewayProperties;
 import com.alipay.sofa.koupleless.ext.web.gateway.*;
 import org.junit.Assert;
 import org.junit.Before;

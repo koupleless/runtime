@@ -85,6 +85,7 @@
         <module>arklet-tunnel-mqtt</module>
         <module>arklet-springboot-starter</module>
         <module>koupleless-ext</module>
+        <module>koupleless-ext/koupleless-ext-autoconfigure</module>
     </modules>
 
     <dependencyManagement>

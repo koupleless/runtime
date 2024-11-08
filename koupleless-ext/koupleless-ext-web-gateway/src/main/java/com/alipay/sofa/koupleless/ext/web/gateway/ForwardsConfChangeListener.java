@@ -16,6 +16,9 @@
  */
 package com.alipay.sofa.koupleless.ext.web.gateway;
 
+import com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway.ForwardItems;
+import com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway.Forwards;
+import com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway.GatewayProperties;
 import com.ctrip.framework.apollo.ConfigChangeListener;
 import com.ctrip.framework.apollo.ConfigService;
 import com.ctrip.framework.apollo.model.ConfigChangeEvent;
@@ -44,9 +47,9 @@ import java.util.Set;
 @ConditionalOnClass(ConfigChangeListener.class)
 public class ForwardsConfChangeListener implements ConfigChangeListener, InitializingBean {
     @Autowired
-    private Forwards            forwards;
+    private Forwards          forwards;
     @Autowired
-    private GatewayProperties   gatewayProperties;
+    private GatewayProperties gatewayProperties;
 
     @Value("${apollo.bootstrap.namespaces:application}")
     private String              namespaces;

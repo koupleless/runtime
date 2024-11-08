@@ -16,10 +16,10 @@
  */
 package com.alipay.sofa.koupleless.ext.web;
 
-import com.alipay.sofa.koupleless.ext.web.gateway.ForwardItem;
-import com.alipay.sofa.koupleless.ext.web.gateway.Forwards;
+import com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway.ForwardItem;
+import com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway.Forwards;
+import com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway.GatewayProperties;
 import com.alipay.sofa.koupleless.ext.web.gateway.ForwardsConfChangeListener;
-import com.alipay.sofa.koupleless.ext.web.gateway.GatewayProperties;
 import com.ctrip.framework.apollo.model.ConfigChangeEvent;
 import org.junit.Assert;
 import org.junit.Before;
@@ -45,16 +45,16 @@ public class ForwardsConfChangeListenerTests {
     @InjectMocks
     private ForwardsConfChangeListener listener;
     @Mock
-    private ApplicationContext         applicationContext;
+    private ApplicationContext      applicationContext;
     @Spy
-    private GatewayProperties          gatewayProperties;
+    private GatewayProperties       gatewayProperties;
     @Mock
-    private ConfigurableEnvironment    environment;
+    private ConfigurableEnvironment environment;
 
     private Map<String, Object>        sourceMap = new HashMap<>();
 
     @Spy
-    private Forwards                   forwards  = new Forwards();
+    private Forwards forwards = new Forwards();
 
     @Before
     public void before() {
