@@ -174,8 +174,13 @@ public class PahoMqttClient {
             ThreadPoolExecutor executor = ExecutorServiceManager.getArkTunnelMqttExecutor();
             executor.submit(() -> {
                 // message callback, don't pub sync message here, may cause deadlock
-                String[] topicSplits = topic.split("/");
-                messageHandler.handleCommand(topicSplits[topicSplits.length - 1], mqttMessage);
+                try {
+                    String[] topicSplits = topic.split("/");
+                    messageHandler.handleCommand(topicSplits[topicSplits.length - 1], mqttMessage);
+                } catch (Exception e) {
+                    LOGGER.error("handle mqtt message for topic {} message {} error", topic,
+                        mqttMessage, e);
+                }
             });
         }
 
