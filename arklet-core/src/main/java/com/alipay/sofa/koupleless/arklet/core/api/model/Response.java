@@ -18,6 +18,8 @@ package com.alipay.sofa.koupleless.arklet.core.api.model;
 
 import com.alipay.sofa.koupleless.arklet.core.command.meta.Output;
 
+import java.util.UUID;
+
 /**
  * <p>Response class.</p>
  *
@@ -48,16 +50,22 @@ public class Response {
     private String       errorStackTrace;
 
     /**
+     *  baseID
+     */
+    private String       baseID;
+
+    /**
      * <p>fromCommandOutput.</p>
      *
      * @param output a {@link com.alipay.sofa.koupleless.arklet.core.command.meta.Output} object
      * @return a {@link com.alipay.sofa.koupleless.arklet.core.api.model.Response} object
      */
-    public static Response fromCommandOutput(Output output) {
+    public static Response fromCommandOutput(Output output, String baseID) {
         Response response = new Response();
         response.code = output.getCode();
         response.data = output.getData();
         response.message = output.getMessage();
+        response.baseID = baseID;
         return response;
     }
 
@@ -184,5 +192,23 @@ public class Response {
      */
     public void setErrorStackTrace(String errorStackTrace) {
         this.errorStackTrace = errorStackTrace;
+    }
+
+    /**
+     * Getter method for property <tt>baseID</tt>.
+     *
+     * @return property value of baseID
+     */
+    public String getBaseID() {
+        return baseID;
+    }
+
+    /**
+     * Setter method for property <tt>baseID</tt>.
+     *
+     * @param baseID value to be assigned to property baseID
+     */
+    public void setBaseID(String baseID) {
+        this.baseID = baseID;
     }
 }

@@ -109,6 +109,8 @@ public class CommandServiceImpl implements CommandService {
     /** {@inheritDoc} */
     @Override
     public Output<?> process(String cmd, Map content) throws CommandValidationException {
+        ArkletLoggerFactory.getDefaultLogger()
+            .info("start to process command {} with parameters {}", cmd, content);
         AbstractCommandHandler handler = getHandler(cmd);
         InputMeta input = toJavaBean(handler.getInputClass(), content);
         handler.validate(input);
@@ -177,7 +179,6 @@ public class CommandServiceImpl implements CommandService {
                 } finally {
                     BizOpsCommandCoordinator.unlock(arkBizMeta.getBizName(),
                         arkBizMeta.getBizVersion());
-
                 }
             }
         }

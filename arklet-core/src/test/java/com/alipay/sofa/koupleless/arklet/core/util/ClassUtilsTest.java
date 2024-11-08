@@ -42,18 +42,36 @@ public class ClassUtilsTest {
     @Test
     public void testGetCustomBaseMetadataHookClass_Success() {
         ClassUtils.getBaseMetadataHookImpl(
-            "com.alipay.sofa.koupleless.arklet.core.metadata.MockBaseMetadataHook");
+            "com.alipay.sofa.koupleless.arklet.core.hooks.metadata.MockBaseMetadataHook");
     }
 
     @Test(expected = ArkletInitException.class)
     public void testGetCustomBaseMetadataHook_NotImplementTunnel() {
         ClassUtils.getBaseMetadataHookImpl(
-            "com.alipay.sofa.koupleless.arklet.core.metadata.MockBaseMetadataHookNotImpl");
+            "com.alipay.sofa.koupleless.arklet.core.hooks.metadata.MockBaseMetadataHookNotImpl");
     }
 
     @Test(expected = ArkletInitException.class)
     public void testGetCustomBaseMetadataHook_NotExist() {
         ClassUtils.getBaseMetadataHookImpl(
-            "com.alipay.sofa.koupleless.arklet.core.metadata.MockBaseMetadataHookNotExist");
+            "com.alipay.sofa.koupleless.arklet.core.hooks.metadata.MockBaseMetadataHookNotExist");
+    }
+
+    @Test
+    public void testGetCustomBaseNetworkInfoHookClass_Success() {
+        ClassUtils.getNetworkInfoHook(
+            "com.alipay.sofa.koupleless.arklet.core.hooks.network.MockBaseNetworkInfoHook");
+    }
+
+    @Test(expected = ArkletInitException.class)
+    public void testGetCustomBaseNetworkInfoHookClass_NotImplementTunnel() {
+        ClassUtils.getNetworkInfoHook(
+            "com.alipay.sofa.koupleless.arklet.core.hooks.network.MockBaseNetworkInfoHookNotImpl");
+    }
+
+    @Test(expected = ArkletInitException.class)
+    public void testGetCustomBaseNetworkInfoHookClass_NotExist() {
+        ClassUtils.getNetworkInfoHook(
+            "com.alipay.sofa.koupleless.arklet.core.hooks.network.MockBaseNetworkInfoHookNotExist");
     }
 }

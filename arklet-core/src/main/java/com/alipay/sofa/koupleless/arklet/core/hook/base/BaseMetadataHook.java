@@ -31,4 +31,6 @@ public interface BaseMetadataHook {
 
     String getRuntimeEnv();
 
+    String getBaseID();
+
 }

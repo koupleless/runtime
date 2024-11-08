@@ -55,6 +55,15 @@ public class BizRuntimeContextRegistry {
     }
 
     /**
+     * <p>unRegisterBizRuntimeManager.</p>
+     *
+     * @param classLoader
+     */
+    public static void unRegisterBizRuntimeManager(ClassLoader classLoader) {
+        contextMap.remove(classLoader);
+    }
+
+    /**
      * <p>getRuntimeSet.</p>
      *
      * @return a {@link java.util.Set} object

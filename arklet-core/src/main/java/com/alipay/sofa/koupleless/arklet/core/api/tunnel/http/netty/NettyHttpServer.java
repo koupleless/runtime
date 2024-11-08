@@ -19,6 +19,7 @@ package com.alipay.sofa.koupleless.arklet.core.api.tunnel.http.netty;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import com.alibaba.fastjson.JSONObject;
 
@@ -105,12 +106,12 @@ public class NettyHttpServer {
      *
      * @throws java.lang.InterruptedException if any.
      */
-    public void open() throws InterruptedException {
+    public void open(String baseID) throws InterruptedException {
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         serverBootstrap.option(ChannelOption.SO_BACKLOG, 1024);
         serverBootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
             .handler(new LoggingHandler(LogLevel.INFO))
-            .childHandler(new NettyHttpInitializer(commandService));
+            .childHandler(new NettyHttpInitializer(commandService, baseID));
         channel = serverBootstrap.bind(port).sync().channel();
     }
 
@@ -126,9 +127,11 @@ public class NettyHttpServer {
     static class NettyHttpInitializer extends ChannelInitializer<SocketChannel> {
 
         private final CommandService commandService;
+        private final String         baseID;
 
-        public NettyHttpInitializer(CommandService commandService) {
+        public NettyHttpInitializer(CommandService commandService, String baseID) {
             this.commandService = commandService;
+            this.baseID = baseID;
         }
 
         @Override
@@ -138,7 +141,7 @@ public class NettyHttpServer {
             pipeline.addLast(new HttpRequestDecoder());
             pipeline.addLast(new HttpObjectAggregator(1024 * 1024));
             pipeline.addLast(new HttpServerExpectContinueHandler());
-            pipeline.addLast(new NettyHttpHandler(commandService));
+            pipeline.addLast(new NettyHttpHandler(commandService, baseID));
         }
 
     }
@@ -146,9 +149,11 @@ public class NettyHttpServer {
     public static class NettyHttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
         private final CommandService commandService;
+        private final String         baseID;
 
-        public NettyHttpHandler(CommandService commandService) {
+        public NettyHttpHandler(CommandService commandService, String baseID) {
             this.commandService = commandService;
+            this.baseID = baseID;
         }
 
         @Override
@@ -164,7 +169,7 @@ public class NettyHttpServer {
                     }
                     Output<?> output = commandService.process(validation.getCmd(),
                         validation.getCmdContent());
-                    Response response = Response.fromCommandOutput(output);
+                    Response response = Response.fromCommandOutput(output, baseID);
                     returnResponse(ctx, response);
                 }
             } catch (Throwable e) {
