@@ -42,7 +42,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@RunWith(MockitoJUnitRunner.class)
 public class ForwardControllerTests {
     private String baseConfPath = "base_forwards.yaml";
 
