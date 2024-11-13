@@ -23,16 +23,18 @@ import org.springframework.boot.web.reactive.context.AnnotationConfigReactiveWeb
 import org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
-import org.springframework.core.env.ConfigurableEnvironment;
 
 /**
  * 目的是自定义 beanFactory 的销毁行为
+ * 1、基于Spring Boot  ApplicationContextFactory  SPI扩展 当WebApplicationType.REACTIVE创建一个上下文 和父类的区别是指定了自定义的BeanFactory
+ * 2、仅处理WebApplicationType.REACTIVE 当返回为null时  有其他SPI扩展去处理 即其他ApplicationContextFactory去处理 不同的WebApplicationType
+ * 3、指定 BizDefaultListableBeanFactory{@link com.alipay.sofa.koupleless.plugin.context.BizDefaultListableBeanFactory} 来自定义子模块的销毁行为
  *
  * @author duanzhiqiang
  * @version BizAnnotationConfigReactiveWebServerApplicationContext.java, v 0.1 2024年11月08日 16:23 duanzhiqiang
  */
 public class BizAnnotationConfigReactiveWebServerApplicationContext extends
-        AnnotationConfigReactiveWebServerApplicationContext {
+                                                                    AnnotationConfigReactiveWebServerApplicationContext {
     /**
      * 构造器
      *
@@ -50,18 +52,6 @@ public class BizAnnotationConfigReactiveWebServerApplicationContext extends
     static class Factory implements ApplicationContextFactory, Ordered {
 
         @Override
-        public Class<? extends ConfigurableEnvironment> getEnvironmentType(WebApplicationType webApplicationType) {
-            return (webApplicationType != WebApplicationType.REACTIVE) ? null
-                    : ApplicationReactiveWebEnvironment.class;
-        }
-
-        @Override
-        public ConfigurableEnvironment createEnvironment(WebApplicationType webApplicationType) {
-            return (webApplicationType != WebApplicationType.REACTIVE) ? null
-                    : new ApplicationReactiveWebEnvironment();
-        }
-
-        @Override
         public ConfigurableApplicationContext create(WebApplicationType webApplicationType) {
             return (webApplicationType != WebApplicationType.REACTIVE) ? null : createContext();
         }
@@ -73,7 +63,7 @@ public class BizAnnotationConfigReactiveWebServerApplicationContext extends
          */
         private ConfigurableApplicationContext createContext() {
             //自定义BeanFactory的销毁
-            DefaultListableBeanFactory beanFactory = new BizDefaultListableBeanFactory();
+            BizDefaultListableBeanFactory beanFactory = new BizDefaultListableBeanFactory();
             return new BizAnnotationConfigReactiveWebServerApplicationContext(beanFactory);
         }
 

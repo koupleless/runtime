@@ -24,6 +24,13 @@ import org.springframework.core.Ordered;
 
 /**
  * WebApplicationType.NONE 自定义上下文
+ * 1、基于Spring Boot  ApplicationContextFactory  SPI扩展 当WebApplicationType.NONE创建一个上下文
+ * 2、仅处理WebApplicationType.NONE 当返回为null时  有其他SPI扩展去处理 即其他ApplicationContextFactory去处理 不同的WebApplicationType
+ * 3、指定 BizDefaultListableBeanFactory{@link com.alipay.sofa.koupleless.plugin.context.BizDefaultListableBeanFactory} 来自定义子模块的销毁行为
+ * <p>
+ * Custom ApplicationContextFactory for WebApplicationType.NONE that uses BizDefaultListableBeanFactory
+ * to prevent destruction of base singleton beans when a module is destroyed.
+ * This factory has the highest precedence and only handles non-web application contexts.
  *
  * @author duanzhiqiang
  * @version DefaultApplicationContextFactory.java, v 0.1 2024年11月12日 17:55 duanzhiqiang
@@ -32,7 +39,7 @@ public class DefaultApplicationContextFactory implements ApplicationContextFacto
     @Override
     public ConfigurableApplicationContext create(WebApplicationType webApplicationType) {
         return (webApplicationType != WebApplicationType.NONE) ? null
-                : new AnnotationConfigApplicationContext(new BizDefaultListableBeanFactory());
+            : new AnnotationConfigApplicationContext(new BizDefaultListableBeanFactory());
     }
 
     @Override

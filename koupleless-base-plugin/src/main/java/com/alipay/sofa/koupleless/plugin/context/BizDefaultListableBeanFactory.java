@@ -26,7 +26,10 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 重写销毁方法 当bean是 来着基座的bean 注册到biz时 不进行销毁
+ * 1、重写销毁方法 当bean是 来着基座的bean 注册到biz时 不进行销毁
+ * 2、当模块获取基座单例时bean 记录引用
+ * 3、模块销毁单例bean 在
+ * 4、当模块销毁时如果bean时复用的基座bean此时不执行DisposableBean.destroy
  *
  * @author duanzhiqiang
  * @version BizDefaultListableBeanFactory.java, v 0.1 2024年11月08日 16:45 duanzhiqiang
@@ -37,6 +40,13 @@ public class BizDefaultListableBeanFactory extends DefaultListableBeanFactory {
      * 是否是基座beanFactory
      */
     private final boolean isBaseBeanFactory;
+
+    /**
+     * 不做任务事情销毁 用于基座bean在子模块bean生命周期 销毁时不进行销毁
+     */
+    private final static DisposableBean DO_NOTHING_DISPOSABLE_BEAN = () -> {
+        //do nothing
+    };
 
     /**
      * 在创建时 额外判断是否是基座bean
@@ -52,12 +62,14 @@ public class BizDefaultListableBeanFactory extends DefaultListableBeanFactory {
     private static final ThreadLocal<Object> CUR_DESTROY_SINGLE_BEAN_HOLDER = new ThreadLocal<>();
 
     /**
-     * 基座bean复用bean集合
+     * 基座bean复用bean集合引用
      */
-    private static final Set<Object>         BASE_RESUE_BEAN_SET            = Collections
-        .newSetFromMap(new ConcurrentHashMap<>());
+    private static final Set<Object> BASE_FACTORTY_REUSE_BEAN_SET = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
-    private static final String              BIZ_CLASSLOADER                = "com.alipay.sofa.ark.container.service.classloader.BizClassLoader";
+    /**
+     * 模块的类加载器名
+     */
+    private static final String BIZ_CLASSLOADER = "com.alipay.sofa.ark.container.service.classloader.BizClassLoader";
 
     /**
      * 在子模块获取 base 的bean 记录这个bean 引用
@@ -77,14 +89,12 @@ public class BizDefaultListableBeanFactory extends DefaultListableBeanFactory {
                               boolean typeCheckOnly) throws BeansException {
 
         T bean = super.doGetBean(name, requiredType, args, typeCheckOnly);
-        try {
-            //复用基座的bean时 记录下复用的基座bean
-            if (isSingleton(name) && isOnBiz() && isBaseBeanFactory) {
-                BASE_RESUE_BEAN_SET.add(bean);
-            }
-        } catch (Exception e) {
-            logger.error("记录复用基座bean异常", e);
+
+        // 只有是基座isBaseBeanFactory 但获取bean时是模块发起调用（即复用基座的bean时） 记录下复用的基座bean
+        if (isBaseBeanFactory && isOnBiz() && isSingleton(name)) {
+            BASE_FACTORTY_REUSE_BEAN_SET.add(bean);
         }
+
         return bean;
     }
 
@@ -98,9 +108,10 @@ public class BizDefaultListableBeanFactory extends DefaultListableBeanFactory {
      * @param bean     the bean instance to destroy
      */
     protected void destroyBean(String beanName, @Nullable DisposableBean bean) {
+        //基座被复用bean在销毁这个bean时 替换销毁行为
         if (!isBaseBeanFactory && isBaseBean()) {
-            //传为null时不进行销毁
-            super.destroyBean(beanName, null);
+            //传为null时不进行销毁 DisposableBean
+            super.destroyBean(beanName, DO_NOTHING_DISPOSABLE_BEAN);
             return;
         }
         super.destroyBean(beanName, bean);
@@ -136,7 +147,7 @@ public class BizDefaultListableBeanFactory extends DefaultListableBeanFactory {
     private boolean isBaseBean() {
         Object curDestroySingleBean = CUR_DESTROY_SINGLE_BEAN_HOLDER.get();
         if (curDestroySingleBean != null) {
-            return BASE_RESUE_BEAN_SET.contains(curDestroySingleBean);
+            return BASE_FACTORTY_REUSE_BEAN_SET.contains(curDestroySingleBean);
         }
         return false;
     }
@@ -149,7 +160,7 @@ public class BizDefaultListableBeanFactory extends DefaultListableBeanFactory {
     private boolean isOnBiz() {
         ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         return contextClassLoader == null
-               || BIZ_CLASSLOADER.equals(contextClassLoader.getClass().getName());
+                || BIZ_CLASSLOADER.equals(contextClassLoader.getClass().getName());
     }
 
     /**

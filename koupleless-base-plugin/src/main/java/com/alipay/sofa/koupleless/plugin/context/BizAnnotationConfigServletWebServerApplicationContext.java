@@ -16,18 +16,18 @@
  */
 package com.alipay.sofa.koupleless.plugin.context;
 
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.ApplicationContextFactory;
 import org.springframework.boot.WebApplicationType;
-
 import org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.Ordered;
-import org.springframework.core.env.ConfigurableEnvironment;
 
 /**
  * 目的是自定义 beanFactory 的销毁行为
+ * 1、基于Spring Boot  ApplicationContextFactory  SPI扩展 当WebApplicationType.SERVLET创建一个上下文 和父类的区别是指定了自定义的BeanFactory
+ * 2、仅处理WebApplicationType.SERVLET 当返回为null时  有其他SPI扩展去处理 即其他ApplicationContextFactory去处理 不同的WebApplicationType
+ * 3、指定 BizDefaultListableBeanFactory{@link com.alipay.sofa.koupleless.plugin.context.BizDefaultListableBeanFactory} 来自定义子模块的销毁行为
  *
  * @author duanzhiqiang
  * @version BizAnnotationConfigServletWebServerApplicationContext.java, v 0.1 2024年11月08日 16:23 duanzhiqiang
@@ -35,22 +35,12 @@ import org.springframework.core.env.ConfigurableEnvironment;
 public class BizAnnotationConfigServletWebServerApplicationContext extends
                                                                    AnnotationConfigServletWebServerApplicationContext {
     /**
-     * 构造器
+     * 构造器 并使用自定义的 beanFactory
      *
      * @param beanFactory 指定的beanFactory
      */
     public BizAnnotationConfigServletWebServerApplicationContext(DefaultListableBeanFactory beanFactory) {
         super(beanFactory);
-    }
-
-    @Override
-    public Object getBean(String name) throws BeansException {
-        return super.getBean(name);
-    }
-
-    @Override
-    public <T> T getBean(Class<T> requiredType, Object... args) throws BeansException {
-        return super.getBean(requiredType, args);
     }
 
     /**
@@ -59,18 +49,6 @@ public class BizAnnotationConfigServletWebServerApplicationContext extends
      * {@link AnnotationConfigServletWebServerApplicationContext}.
      */
     static class Factory implements ApplicationContextFactory, Ordered {
-
-        @Override
-        public Class<? extends ConfigurableEnvironment> getEnvironmentType(WebApplicationType webApplicationType) {
-            return (webApplicationType != WebApplicationType.SERVLET) ? null
-                : ApplicationServletEnvironment.class;
-        }
-
-        @Override
-        public ConfigurableEnvironment createEnvironment(WebApplicationType webApplicationType) {
-            return (webApplicationType != WebApplicationType.SERVLET) ? null
-                : new ApplicationServletEnvironment();
-        }
 
         @Override
         public ConfigurableApplicationContext create(WebApplicationType webApplicationType) {
@@ -84,7 +62,7 @@ public class BizAnnotationConfigServletWebServerApplicationContext extends
          */
         private ConfigurableApplicationContext createContext() {
             //自定义BeanFactory的销毁
-            DefaultListableBeanFactory beanFactory = new BizDefaultListableBeanFactory();
+            BizDefaultListableBeanFactory beanFactory = new BizDefaultListableBeanFactory();
             return new BizAnnotationConfigServletWebServerApplicationContext(beanFactory);
         }
 
