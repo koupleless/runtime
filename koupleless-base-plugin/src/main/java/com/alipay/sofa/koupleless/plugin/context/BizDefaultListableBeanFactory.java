@@ -127,7 +127,8 @@ public class BizDefaultListableBeanFactory extends DefaultListableBeanFactory {
     public void destroySingleton(String beanName) {
         if (!isBaseBeanFactory) {
             try {
-                Object bean = getBean(beanName);
+                //获取给定名称下注册的 （原始） singleton 对象。即需要销毁原始对象
+                Object bean = this.getSingleton(beanName);
                 CUR_DESTROY_SINGLE_BEAN_HOLDER.set(bean);
                 super.destroySingleton(beanName);
             } finally {
