@@ -50,7 +50,7 @@ public class BizDefaultListableBeanFactory extends DefaultListableBeanFactory {
     /**
      * 基座bean复用bean集合引用
      */
-    private static final Set<Object> BASE_FACTORTY_REUSE_BEAN_SET = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private static final Set<Object> BASE_FACTORY_REUSE_BEAN_SET = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     /**
      * 模块的类加载器名
@@ -78,10 +78,19 @@ public class BizDefaultListableBeanFactory extends DefaultListableBeanFactory {
 
         // 只有是基座isBaseBeanFactory 但获取bean时是模块发起调用（即复用基座的bean时） 记录下复用的基座bean
         if (isBaseBeanFactory && isOnBiz() && isSingleton(name)) {
-            BASE_FACTORTY_REUSE_BEAN_SET.add(bean);
+            BASE_FACTORY_REUSE_BEAN_SET.add(bean);
         }
 
         return bean;
+    }
+
+    @Override
+    public void destroySingletons() {
+        super.destroySingletons();
+        //复用bean在 基座销毁时清空
+        if (isBaseBeanFactory) {
+            BASE_FACTORY_REUSE_BEAN_SET.clear();
+        }
     }
 
     /**
@@ -109,7 +118,7 @@ public class BizDefaultListableBeanFactory extends DefaultListableBeanFactory {
      * @return true 是 false 不是
      */
     private boolean isBaseReuseBean(Object bean) {
-        return BASE_FACTORTY_REUSE_BEAN_SET.contains(bean);
+        return BASE_FACTORY_REUSE_BEAN_SET.contains(bean);
     }
 
     /**
