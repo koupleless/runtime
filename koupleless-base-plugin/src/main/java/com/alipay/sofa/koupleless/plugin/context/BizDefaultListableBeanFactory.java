@@ -17,19 +17,17 @@
 package com.alipay.sofa.koupleless.plugin.context;
 
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.lang.Nullable;
+import org.springframework.beans.factory.support.RootBeanDefinition;
 
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 1、重写销毁方法 当bean是 来着基座的bean 注册到biz时 不进行销毁
- * 2、当模块获取基座单例时bean 记录引用
- * 3、模块销毁单例bean 在
- * 4、当模块销毁时如果bean时复用的基座bean此时不执行DisposableBean.destroy
+ * 1、当模块获取基座单例时bean 记录引用（由于无法通过名称获取bean 因为在子模块中 beanName是可以重新定义的）
+ * 2、在模块创建这个复用的bean时 不注册销毁行为  支持复用bean 注册单例或者是其他scope
+ * 3、通过记录的复用的bean 引用来判断是基座复用bean
  *
  * @author duanzhiqiang
  * @version BizDefaultListableBeanFactory.java, v 0.1 2024年11月08日 16:45 duanzhiqiang
@@ -42,24 +40,12 @@ public class BizDefaultListableBeanFactory extends DefaultListableBeanFactory {
     private final boolean isBaseBeanFactory;
 
     /**
-     * 不做任务事情销毁 用于基座bean在子模块bean生命周期 销毁时不进行销毁
-     */
-    private final static DisposableBean DO_NOTHING_DISPOSABLE_BEAN = () -> {
-        //do nothing
-    };
-
-    /**
      * 在创建时 额外判断是否是基座bean
      */
     public BizDefaultListableBeanFactory() {
         super();
         this.isBaseBeanFactory = !isOnBiz();
     }
-
-    /**
-     * 当前正在销毁的单例bean
-     */
-    private static final ThreadLocal<Object> CUR_DESTROY_SINGLE_BEAN_HOLDER = new ThreadLocal<>();
 
     /**
      * 基座bean复用bean集合引用
@@ -99,58 +85,31 @@ public class BizDefaultListableBeanFactory extends DefaultListableBeanFactory {
     }
 
     /**
-     * 在模块卸载时 getBeanFactory().destroySingletons();
-     * 最终会调用 下面的方法
-     * Destroy the given bean. Must destroy beans that depend on the given
-     * bean before the bean itself. Should not throw any exceptions.
+     * 判断是否需要销毁
+     * 扩展如果是模块上下文且是基座复用的bean 则不需要进行销毁
      *
-     * @param beanName the name of the bean
-     * @param bean     the bean instance to destroy
-     */
-    protected void destroyBean(String beanName, @Nullable DisposableBean bean) {
-        //基座被复用bean在销毁这个bean时 替换销毁行为
-        if (!isBaseBeanFactory && isBaseBean()) {
-            //传为null时不进行销毁 DisposableBean
-            super.destroyBean(beanName, DO_NOTHING_DISPOSABLE_BEAN);
-            return;
-        }
-        super.destroyBean(beanName, bean);
-
-    }
-
-    /**
-     * 单例bean销毁是 在线程上下文记录下当前销毁的bean 只在子模块中生效
-     *
-     * @param beanName the name of the bean
+     * @param bean the bean instance to check
+     * @param mbd  the corresponding bean definition
+     * @return false 不需要销毁 true 需要销毁
      */
     @Override
-    public void destroySingleton(String beanName) {
-        if (!isBaseBeanFactory) {
-            try {
-                //获取给定名称下注册的 （原始） singleton 对象。即需要销毁原始对象
-                Object bean = this.getSingleton(beanName);
-                CUR_DESTROY_SINGLE_BEAN_HOLDER.set(bean);
-                super.destroySingleton(beanName);
-            } finally {
-                CUR_DESTROY_SINGLE_BEAN_HOLDER.remove();
-            }
-        } else {
-            super.destroySingleton(beanName);
+    protected boolean requiresDestruction(Object bean, RootBeanDefinition mbd) {
+        //如果是模块上下文且是基座复用的bean 则不需要进行销毁
+        if (!isBaseBeanFactory && isBaseReuseBean(bean)) {
+            //不注册DisposableBean
+            return false;
         }
+        return super.requiresDestruction(bean, mbd);
     }
 
     /**
-     * 判断是否是基座的bean
-     * 基于记录了那些跨模块的bean
+     * 是否是基座复用的bean
      *
-     * @return true 是基座的bean
+     * @param bean bean 实例
+     * @return true 是 false 不是
      */
-    private boolean isBaseBean() {
-        Object curDestroySingleBean = CUR_DESTROY_SINGLE_BEAN_HOLDER.get();
-        if (curDestroySingleBean != null) {
-            return BASE_FACTORTY_REUSE_BEAN_SET.contains(curDestroySingleBean);
-        }
-        return false;
+    private boolean isBaseReuseBean(Object bean) {
+        return BASE_FACTORTY_REUSE_BEAN_SET.contains(bean);
     }
 
     /**
