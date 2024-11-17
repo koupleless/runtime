@@ -67,7 +67,7 @@ public class StopLoggerCxtAfterBizStopEventHandler implements EventHandler<Befor
                 for (LoggerContext ctx : contextList) {
                     if (ctx.getName().equals(ctxName)) {
                         boolean stop = ctx.stop(stopTimeoutMillisecond, TimeUnit.MILLISECONDS);
-                        LOGGER.info("try stop {}:{}'s logger context{},result={}",
+                        LOGGER.info("try stop {}:{}'s logger context {},result={}",
                             event.getSource().getBizName(), event.getSource().getBizVersion(),
                             ctxName, stop);
                     }
