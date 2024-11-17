@@ -27,8 +27,11 @@ import org.apache.logging.log4j.core.selector.ContextSelector;
 import org.apache.logging.log4j.spi.LoggerContextFactory;
 import org.slf4j.Logger;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static java.lang.Integer.parseInt;
+import static java.lang.System.getProperty;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
@@ -36,27 +39,34 @@ import static org.slf4j.LoggerFactory.getLogger;
  */
 public class StopLoggerCxtAfterBizStopEventHandler implements EventHandler<BeforeBizStopEvent> {
 
-    private final static Logger LOGGER = getLogger(StopLoggerCxtAfterBizStopEventHandler.class);
+    private static final Logger LOGGER                                  = getLogger(
+        StopLoggerCxtAfterBizStopEventHandler.class);
+
+    public static final String LOGGER_CONTEXT_STOP_TIMEOUT_MILLISECOND = "com.alipay.koupleless.loggerContext.stop.timeout.millisecond";
+    public static final String LOG4J2_FACTORY_CLASS_NAME = "org.apache.logging.log4j.core.impl.Log4jContextFactory";
+
 
     @Override
     public void handleEvent(BeforeBizStopEvent beforeBizStopEvent) {
-        if (ClassUtil.isPresent("org.apache.logging.log4j.core.impl.Log4jContextFactory")) {
+        if (ClassUtil.isPresent(LOG4J2_FACTORY_CLASS_NAME)) {
             releaseLog4j2LogCtx(beforeBizStopEvent);
         }
     }
 
-    private static void releaseLog4j2LogCtx(BeforeBizStopEvent event) {
+    private void releaseLog4j2LogCtx(BeforeBizStopEvent event) {
         try {
             ClassLoader bizClassLoader = event.getSource().getBizClassLoader();
             LoggerContextFactory factory = LogManager.getFactory();
             if (factory instanceof Log4jContextFactory) {
                 String ctxName = Integer.toHexString(System.identityHashCode(bizClassLoader));
                 ContextSelector selector = ((Log4jContextFactory) factory).getSelector();
-                // 当不是ClassLoaderContextSelector时，使用selector.shutDown方法会有问题
-                // 只能遍历loggerCtx匹配classloader并关闭
-                for (LoggerContext ctx : selector.getLoggerContexts()) {
+                List<LoggerContext> contextList = selector.getLoggerContexts();
+                int stopTimeoutMillisecond = parseInt(
+                    getProperty(LOGGER_CONTEXT_STOP_TIMEOUT_MILLISECOND, "300"));
+                // Traverse the loggerContext of the selector and find the loggerContext that belongs to the bizClassloader module and close it
+                for (LoggerContext ctx : contextList) {
                     if (ctx.getName().equals(ctxName)) {
-                        boolean stop = ctx.stop(300, TimeUnit.MILLISECONDS);
+                        boolean stop = ctx.stop(stopTimeoutMillisecond, TimeUnit.MILLISECONDS);
                         LOGGER.info("try stop {}:{}'s logger context{},result={}",
                             event.getSource().getBizName(), event.getSource().getBizVersion(),
                             ctxName, stop);
@@ -65,14 +75,14 @@ public class StopLoggerCxtAfterBizStopEventHandler implements EventHandler<Befor
                 return;
             }
             LOGGER.info("Not Log4jContextFactory, do nothing");
-        } catch (Throwable throwable) {
+        } catch (Exception exception) {
             Biz source = event.getSource();
             LOGGER.error("release {}:{}'s log4j2LogCtx failed,event id = {}", source.getBizName(),
-                source.getBizVersion(), source.getIdentity(), throwable);
+                source.getBizVersion(), source.getIdentity(), exception);
         }
     }
 
-    // BizUninstallEventHandler清理了bizContext和classloader，需要在其之前进行loggerContext的关闭
+    // BizUninstallEventHandler will clean bizContext and classloader, The loggerContext needs to be closed before it
     @Override
     public int getPriority() {
         return DEFAULT_PRECEDENCE - 1;
