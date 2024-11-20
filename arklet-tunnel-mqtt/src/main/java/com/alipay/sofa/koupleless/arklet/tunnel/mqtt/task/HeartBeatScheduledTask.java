@@ -21,62 +21,41 @@ import com.alipay.sofa.ark.spi.model.BizState;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletRuntimeException;
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
-import com.alipay.sofa.koupleless.arklet.core.common.model.BaseNetworkInfo;
+import com.alipay.sofa.koupleless.arklet.core.common.model.BaseStatus;
 import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
-import com.alipay.sofa.koupleless.arklet.core.hook.network.BaseNetworkInfoHook;
 import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.model.MqttResponse;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.alipay.sofa.koupleless.arklet.core.health.model.Constants.LOCAL_HOST_NAME;
-import static com.alipay.sofa.koupleless.arklet.core.health.model.Constants.LOCAL_IP;
-import static com.alipay.sofa.koupleless.arklet.core.health.model.Constants.NETWORK_INFO;
-import static com.alipay.sofa.koupleless.arklet.core.health.model.Constants.STATE;
-
 public class HeartBeatScheduledTask implements Runnable {
 
-    private final String              topic;
-    private final MqttClient          mqttClient;
-    private final BaseMetadataHook    baseMetadataHook;
-    private final BaseNetworkInfoHook baseNetworkInfoHook;
+    private final String           topic;
+    private final MqttClient       mqttClient;
+    private final BaseMetadataHook baseMetadataHook;
 
     public HeartBeatScheduledTask(String topic, MqttClient mqttClient,
-                                  BaseMetadataHook baseMetadataHook,
-                                  BaseNetworkInfoHook baseNetworkInfoHook) {
+                                  BaseMetadataHook baseMetadataHook) {
         this.topic = topic;
         this.mqttClient = mqttClient;
         this.baseMetadataHook = baseMetadataHook;
-        this.baseNetworkInfoHook = baseNetworkInfoHook;
     }
 
     @Override
     public void run() {
         // send heart beat message
-        Map<String, Object> heartBeatData = new HashMap<>();
-
-        BaseMetadata metadata = baseMetadataHook.getBaseMetadata();
-        heartBeatData.put(
-            com.alipay.sofa.koupleless.arklet.core.health.model.Constants.MASTER_BIZ_INFO,
-            metadata);
-
-        Map<String, String> networkInfo = new HashMap<>();
-
-        BaseNetworkInfo baseNetworkInfo = baseNetworkInfoHook.getNetworkInfo();
-
-        networkInfo.put(LOCAL_IP, baseNetworkInfo.getLocalIP());
-        networkInfo.put(LOCAL_HOST_NAME, baseNetworkInfo.getLocalHostName());
-
-        heartBeatData.put(NETWORK_INFO, networkInfo);
-        heartBeatData.put(STATE, BizState.ACTIVATED);
+        BaseMetadata baseMetadata = BaseMetadata.builder().identity(baseMetadataHook.getIdentity())
+            .version(baseMetadataHook.getVersion()).clusterName(baseMetadataHook.getClusterName())
+            .build();
+        BaseStatus baseStatus = BaseStatus.builder().baseMetadata(baseMetadata)
+            .localIP(baseMetadataHook.getLocalIP())
+            .localHostName(baseMetadataHook.getLocalHostName())
+            .state(BizState.ACTIVATED.getBizState()).build();
 
         ArkletLoggerFactory.getDefaultLogger().info("send heart beat message to topic {}: {}",
-            topic, heartBeatData);
+            topic, baseStatus);
         try {
             mqttClient.publish(topic,
-                JSONObject.toJSONString(MqttResponse.withData(heartBeatData)).getBytes(), 1, false);
+                JSONObject.toJSONString(MqttResponse.withData(baseStatus)).getBytes(), 1, false);
         } catch (MqttException e) {
             throw new ArkletRuntimeException("mqtt client publish health status failed", e);
         }

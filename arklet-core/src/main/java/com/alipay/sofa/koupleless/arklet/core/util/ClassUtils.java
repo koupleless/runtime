@@ -21,7 +21,6 @@ import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletInitExcepti
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger;
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
 import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
-import com.alipay.sofa.koupleless.arklet.core.hook.network.BaseNetworkInfoHook;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -85,36 +84,4 @@ public class ClassUtils {
 
         return hookInstance;
     }
-
-    /**
-     * Validate current object must be null
-     *
-     * @param networkInfoHookClassName String custom network info hook class name
-     */
-    public static BaseNetworkInfoHook getNetworkInfoHook(String networkInfoHookClassName) throws ArkletInitException {
-        Class<?> hookClass;
-        try {
-            hookClass = Class.forName(networkInfoHookClassName);
-        } catch (ClassNotFoundException e) {
-            LOGGER.error("custom network info hook class not found");
-            throw new ArkletInitException("custom network info hook class found", e);
-        }
-        if (!BaseNetworkInfoHook.class.isAssignableFrom(hookClass)) {
-            LOGGER.error("custom network info hook class didn't implement Metadata interface");
-            throw new ArkletInitException(
-                "custom network info hook class didn't implement tunnel interface");
-        }
-        BaseNetworkInfoHook hookInstance;
-        try {
-            hookInstance = (BaseNetworkInfoHook) hookClass.getDeclaredConstructor().newInstance();
-        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException
-                | InvocationTargetException e) {
-            LOGGER.error("Failed to instantiate the custom network info hook class", e);
-            throw new ArkletInitException(
-                "Failed to instantiate the custom network info hook class", e);
-        }
-
-        return hookInstance;
-    }
-
 }

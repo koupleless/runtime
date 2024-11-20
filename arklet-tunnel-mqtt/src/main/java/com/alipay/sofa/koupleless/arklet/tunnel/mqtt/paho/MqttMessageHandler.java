@@ -29,7 +29,6 @@ import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletRuntimeExce
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
 import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
-import com.alipay.sofa.koupleless.arklet.core.hook.network.BaseNetworkInfoHook;
 import com.alipay.sofa.koupleless.arklet.core.util.ExceptionUtils;
 import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.model.Constants;
 import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.model.MqttResponse;
@@ -53,20 +52,17 @@ import static com.alipay.sofa.koupleless.arklet.core.health.model.Constants.*;
  */
 public class MqttMessageHandler {
 
-    public static boolean             baselineQueryComplete = false;
-    private final CommandService      commandService;
-    private final BaseMetadataHook    baseMetadataHook;
-    private final BaseNetworkInfoHook baseNetworkInfoHook;
-    private final MqttClient          mqttClient;
-    private String                    baseEnv;
-    private final AtomicBoolean       run                   = new AtomicBoolean(false);
+    public static boolean          baselineQueryComplete = false;
+    private final CommandService   commandService;
+    private final BaseMetadataHook baseMetadataHook;
+    private final MqttClient       mqttClient;
+    private String                 baseEnv;
+    private final AtomicBoolean    run                   = new AtomicBoolean(false);
 
     public MqttMessageHandler(CommandService commandService, BaseMetadataHook baseMetadataHook,
-                              BaseNetworkInfoHook baseNetworkInfoHook, MqttClient mqttClient,
-                              String baseEnv) {
+                              MqttClient mqttClient, String baseEnv) {
         this.commandService = commandService;
         this.baseMetadataHook = baseMetadataHook;
-        this.baseNetworkInfoHook = baseNetworkInfoHook;
         this.mqttClient = mqttClient;
         this.baseEnv = baseEnv;
         if (this.baseEnv == null || this.baseEnv.isEmpty()) {
@@ -82,7 +78,8 @@ public class MqttMessageHandler {
      * @return String
      */
     private String getHealthTopic() {
-        return String.format("koupleless_%s/%s/base/health", baseEnv, baseMetadataHook.getBaseID());
+        return String.format("koupleless_%s/%s/base/health", baseEnv,
+            baseMetadataHook.getIdentity());
     }
 
     /**
@@ -91,7 +88,8 @@ public class MqttMessageHandler {
      * @return String
      */
     private String getHeartBeatTopic() {
-        return String.format("koupleless_%s/%s/base/heart", baseEnv, baseMetadataHook.getBaseID());
+        return String.format("koupleless_%s/%s/base/heart", baseEnv,
+            baseMetadataHook.getIdentity());
     }
 
     /**
@@ -101,7 +99,7 @@ public class MqttMessageHandler {
      */
     private String getBizTopic() {
         return String.format("koupleless_%s/%s/base/simpleBiz", baseEnv,
-            baseMetadataHook.getBaseID());
+            baseMetadataHook.getIdentity());
     }
 
     /**
@@ -111,7 +109,7 @@ public class MqttMessageHandler {
      */
     private String getBizOperationResponseTopic() {
         return String.format("koupleless_%s/%s/base/bizOperation", baseEnv,
-            baseMetadataHook.getBaseID());
+            baseMetadataHook.getIdentity());
     }
 
     /**
@@ -121,7 +119,7 @@ public class MqttMessageHandler {
      */
     private String getQueryBaselineTopic() {
         return String.format("koupleless_%s/%s/base/queryBaseline", baseEnv,
-            baseMetadataHook.getBaseID());
+            baseMetadataHook.getIdentity());
     }
 
     /**
@@ -131,7 +129,7 @@ public class MqttMessageHandler {
      */
     private String getBaselineTopic() {
         return String.format("koupleless_%s/%s/base/baseline", baseEnv,
-            baseMetadataHook.getBaseID());
+            baseMetadataHook.getIdentity());
     }
 
     /**
@@ -140,7 +138,7 @@ public class MqttMessageHandler {
      * @return String
      */
     private String getCommandTopic() {
-        return String.format("koupleless_%s/%s/+", baseEnv, baseMetadataHook.getBaseID());
+        return String.format("koupleless_%s/%s/+", baseEnv, baseMetadataHook.getIdentity());
     }
 
     public void onConnectCompleted() {
@@ -156,7 +154,9 @@ public class MqttMessageHandler {
         }
         if (run.compareAndSet(false, true)) {
             // fetch baseline first
-            BaseMetadata metadata = baseMetadataHook.getBaseMetadata();
+            BaseMetadata metadata = BaseMetadata.builder().identity(baseMetadataHook.getIdentity())
+                .version(baseMetadataHook.getVersion())
+                .clusterName(baseMetadataHook.getClusterName()).build();
             try {
                 mqttClient.publish(getQueryBaselineTopic(),
                     JSONObject.toJSONString(MqttResponse.withData(metadata)).getBytes(), 1, false);
@@ -166,8 +166,9 @@ public class MqttMessageHandler {
 
             ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
-            executor.scheduleAtFixedRate(new HeartBeatScheduledTask(getHeartBeatTopic(), mqttClient,
-                baseMetadataHook, baseNetworkInfoHook), 0, 10000L, TimeUnit.MILLISECONDS);
+            executor.scheduleAtFixedRate(
+                new HeartBeatScheduledTask(getHeartBeatTopic(), mqttClient, baseMetadataHook), 0,
+                10000L, TimeUnit.MILLISECONDS);
         }
     }
 
