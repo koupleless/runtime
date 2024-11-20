@@ -16,8 +16,6 @@
  */
 package com.alipay.sofa.koupleless.arklet.core.hook.base;
 
-import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
-
 /**
  * <p>MetadataHook interface.</p>
  *
@@ -26,11 +24,35 @@ import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
  * @version 1.0.0
  */
 public interface BaseMetadataHook {
+    /**
+     * name for this base instance, should be unique
+     * @return
+     */
+    String getIdentity();
 
-    BaseMetadata getBaseMetadata();
+    String getVersion();
 
+    /**
+     * env for this base instance
+     * @return
+     */
     String getRuntimeEnv();
 
-    String getBaseID();
+    /**
+     * cluster name for this base instance
+     * @return
+     */
+    String getClusterName();
 
+    /**
+     * local ip
+     * @return
+     */
+    String getLocalIP();
+
+    /**
+     * local host name
+     * @return
+     */
+    String getLocalHostName();
 }
