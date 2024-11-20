@@ -78,7 +78,8 @@ public class MqttMessageHandler {
      * @return String
      */
     private String getHealthTopic() {
-        return String.format("koupleless_%s/%s/base/health", baseEnv, baseMetadataHook.getIdentity());
+        return String.format("koupleless_%s/%s/base/health", baseEnv,
+            baseMetadataHook.getIdentity());
     }
 
     /**
@@ -87,7 +88,8 @@ public class MqttMessageHandler {
      * @return String
      */
     private String getHeartBeatTopic() {
-        return String.format("koupleless_%s/%s/base/heart", baseEnv, baseMetadataHook.getIdentity());
+        return String.format("koupleless_%s/%s/base/heart", baseEnv,
+            baseMetadataHook.getIdentity());
     }
 
     /**

@@ -18,6 +18,8 @@ package com.alipay.sofa.koupleless.arklet.core.common.model;
 
 import lombok.*;
 
+import java.io.Serializable;
+
 /**
  * @author dongnan
  * @version $Id: BaseMetadata.java, v 0.1 2024年07月01日 20:02 dongnan Exp $
@@ -27,20 +29,21 @@ import lombok.*;
 @AllArgsConstructor
 @Data
 @Builder
-public class BaseMetadata {
+public class BaseMetadata implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     /**
      * runtime base name
      */
-    private String identity;
+    private String            identity;
 
     /**
      * runtime base version
      */
-    private String version;
+    private String            version;
 
     /**
      * cluster name for this base instance
      */
-    private String clusterName;
+    private String            clusterName;
 }

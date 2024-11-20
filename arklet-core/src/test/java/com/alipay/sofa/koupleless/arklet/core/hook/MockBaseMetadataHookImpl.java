@@ -20,7 +20,7 @@ import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
 
 public class MockBaseMetadataHookImpl implements BaseMetadataHook {
     @Override
-    public String getName() {
+    public String getIdentity() {
         return "";
     }
 
