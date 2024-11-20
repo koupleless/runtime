@@ -50,7 +50,7 @@ public class Response {
     /**
      *  baseIdentity
      */
-    private String baseIdentity;
+    private String       baseIdentity;
 
     /**
      * <p>fromCommandOutput.</p>
