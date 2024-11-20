@@ -14,11 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.arklet.core.hooks.network;
+package com.alipay.sofa.koupleless.common.util;
 
-/**
- * @author 冬喃
- * @version : MockBaseNetworkInfoHookNotImpl, v 0.1 2024-10-24 下午3:28 dongnan Exp $
- */
-public class MockBaseNetworkInfoHookNotImpl {
+import static org.junit.Assert.*;
+
+public class RandomUtilsTest {
+
+    @org.junit.Test
+    public void generateRandomString() {
+        String randomString = RandomUtils.generateRandomString(10);
+        assertEquals(10, randomString.length());
+    }
 }

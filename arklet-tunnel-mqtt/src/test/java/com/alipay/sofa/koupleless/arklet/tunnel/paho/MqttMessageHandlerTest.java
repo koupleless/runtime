@@ -22,8 +22,6 @@ import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.paho.MqttMessageHandler;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.junit.Test;
 
-import static org.mockito.Mockito.mockStatic;
-
 /**
  * @author dongnan
  * @since 2024/7/5
@@ -34,14 +32,14 @@ public class MqttMessageHandlerTest extends BaseTest {
     @Test(expected = NullPointerException.class)
     public void onConnectCompleted() {
         MqttMessageHandler mqttMessageHandler = new MqttMessageHandler(commandService,
-            baseMetadataHook, baseNetworkInfoHook, null, "test");
+            baseMetadataHook, null, "test");
         mqttMessageHandler.onConnectCompleted();
     }
 
     @Test(expected = NullPointerException.class)
     public void handleHealthCommand() {
         MqttMessageHandler mqttMessageHandler = new MqttMessageHandler(commandService,
-            baseMetadataHook, baseNetworkInfoHook, null, "test");
+            baseMetadataHook, null, "test");
         mqttMessageHandler.handleCommand(BuiltinCommand.HEALTH.getId(),
             new MqttMessage("{}".getBytes()));
     }
@@ -49,7 +47,7 @@ public class MqttMessageHandlerTest extends BaseTest {
     @Test(expected = NullPointerException.class)
     public void handleQueryAllBizCommand() {
         MqttMessageHandler mqttMessageHandler = new MqttMessageHandler(commandService,
-            baseMetadataHook, baseNetworkInfoHook, null, "test");
+            baseMetadataHook, null, "test");
         mqttMessageHandler.handleCommand(BuiltinCommand.QUERY_ALL_BIZ.getId(),
             new MqttMessage("{}".getBytes()));
     }
@@ -57,7 +55,7 @@ public class MqttMessageHandlerTest extends BaseTest {
     @Test(expected = NullPointerException.class)
     public void handleInstallBizCommand() {
         MqttMessageHandler mqttMessageHandler = new MqttMessageHandler(commandService,
-            baseMetadataHook, baseNetworkInfoHook, null, "test");
+            baseMetadataHook, null, "test");
         mqttMessageHandler.handleCommand(BuiltinCommand.INSTALL_BIZ.getId(),
             new MqttMessage(
                 "{\"bizName\":\"testBiz\", \"bizVersion\":\"0.1.0\", \"bizUrl\":\"testBizUrl\"}"
@@ -67,7 +65,7 @@ public class MqttMessageHandlerTest extends BaseTest {
     @Test(expected = NullPointerException.class)
     public void handleUnInstallBizCommand() {
         MqttMessageHandler mqttMessageHandler = new MqttMessageHandler(commandService,
-            baseMetadataHook, baseNetworkInfoHook, null, "test");
+            baseMetadataHook, null, "test");
         mqttMessageHandler.handleCommand(BuiltinCommand.UNINSTALL_BIZ.getId(),
             new MqttMessage(
                 "{\"bizName\":\"testBiz\", \"bizVersion\":\"0.1.0\", \"bizUrl\":\"testBizUrl\"}"

@@ -17,7 +17,6 @@
 package com.alipay.sofa.koupleless.arklet.tunnel.mqtt.paho;
 
 import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
-import com.alipay.sofa.koupleless.arklet.core.hook.network.BaseNetworkInfoHook;
 import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.executor.ExecutorServiceManager;
 import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger;
@@ -47,7 +46,6 @@ public class PahoMqttClient {
     private final CommandService      commandService;
     private static final ArkletLogger LOGGER  = ArkletLoggerFactory.getDefaultLogger();
     private final BaseMetadataHook    baseMetadataHook;
-    private final BaseNetworkInfoHook baseNetworkInfoHook;
 
     /**
      * <p>Constructor for PahoMqttClient.</p>
@@ -62,10 +60,9 @@ public class PahoMqttClient {
      */
     public PahoMqttClient(String broker, int port, String clientPrefix, String username,
                           String password, CommandService commandService,
-                          BaseMetadataHook baseMetadataHook,
-                          BaseNetworkInfoHook baseNetworkInfoHook) throws MqttException {
+                          BaseMetadataHook baseMetadataHook) throws MqttException {
         this.mqttClient = new MqttClient(String.format("tcp://%s:%d", broker, port),
-            String.format("%s@@@%s", clientPrefix, baseMetadataHook.getBaseID()),
+            String.format("%s@@@%s", clientPrefix, baseMetadataHook.getIdentity()),
             new MemoryPersistence());
         this.options.setAutomaticReconnect(true);
         this.options.setMaxInflight(1000);
@@ -73,7 +70,6 @@ public class PahoMqttClient {
         this.options.setPassword(password.toCharArray());
 
         this.baseMetadataHook = baseMetadataHook;
-        this.baseNetworkInfoHook = baseNetworkInfoHook;
         this.env = this.baseMetadataHook.getRuntimeEnv();
 
         this.commandService = commandService;
@@ -96,10 +92,9 @@ public class PahoMqttClient {
     public PahoMqttClient(String broker, int port, String clientPrefix, String username,
                           String password, String caFilePath, String clientCrtFilePath,
                           String clientKeyFilePath, CommandService commandService,
-                          BaseMetadataHook baseMetadataHook,
-                          BaseNetworkInfoHook baseNetworkInfoHook) throws MqttException {
+                          BaseMetadataHook baseMetadataHook) throws MqttException {
         this.mqttClient = new MqttClient(String.format("ssl://%s:%d", broker, port),
-            String.format("%s@@@%s", clientPrefix, baseMetadataHook.getBaseID()),
+            String.format("%s@@@%s", clientPrefix, baseMetadataHook.getIdentity()),
             new MemoryPersistence());
         this.options.setCleanSession(true);
         this.options.setAutomaticReconnect(true);
@@ -107,7 +102,6 @@ public class PahoMqttClient {
         this.options.setUserName(username);
         this.options.setPassword(password.toCharArray());
         this.baseMetadataHook = baseMetadataHook;
-        this.baseNetworkInfoHook = baseNetworkInfoHook;
         this.env = this.baseMetadataHook.getRuntimeEnv();
         try {
             this.options.setSocketFactory(
@@ -126,7 +120,7 @@ public class PahoMqttClient {
      */
     public void open() throws MqttException {
         this.mqttClient.setCallback(new PahoMqttCallback(this.mqttClient, this.commandService,
-            this.baseMetadataHook, this.baseNetworkInfoHook, this.env));
+            this.baseMetadataHook, this.env));
         this.mqttClient.connect(this.options);
     }
 
@@ -145,10 +139,9 @@ public class PahoMqttClient {
         private final MqttMessageHandler messageHandler;
 
         public PahoMqttCallback(MqttClient mqttClient, CommandService commandService,
-                                BaseMetadataHook baseMetadataHook,
-                                BaseNetworkInfoHook baseNetworkInfoHook, String env) {
+                                BaseMetadataHook baseMetadataHook, String env) {
             this.messageHandler = new MqttMessageHandler(commandService, baseMetadataHook,
-                baseNetworkInfoHook, mqttClient, env);
+                mqttClient, env);
         }
 
         @Override

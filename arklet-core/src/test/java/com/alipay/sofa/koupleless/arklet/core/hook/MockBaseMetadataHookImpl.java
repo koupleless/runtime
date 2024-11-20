@@ -14,22 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.arklet.core.hooks.network;
+package com.alipay.sofa.koupleless.arklet.core.hook;
 
-import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
-import com.alipay.sofa.koupleless.arklet.core.common.model.BaseNetworkInfo;
 import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
-import com.alipay.sofa.koupleless.arklet.core.hook.network.BaseNetworkInfoHook;
-import com.google.common.graph.Network;
 
-/**
- * @author 冬喃
- * @version : MockBaseNetworkInfoHook, v 0.1 2024-10-24 下午3:28 dongnan Exp $
- */
-public class MockBaseNetworkInfoHook implements BaseNetworkInfoHook {
+public class MockBaseMetadataHookImpl implements BaseMetadataHook {
+    @Override
+    public String getName() {
+        return "";
+    }
 
     @Override
-    public BaseNetworkInfo getNetworkInfo() {
-        return BaseNetworkInfo.builder().build();
+    public String getVersion() {
+        return "";
+    }
+
+    @Override
+    public String getRuntimeEnv() {
+        return "";
+    }
+
+    @Override
+    public String getClusterName() {
+        return "";
+    }
+
+    @Override
+    public String getLocalIP() {
+        return "";
+    }
+
+    @Override
+    public String getLocalHostName() {
+        return "";
     }
 }

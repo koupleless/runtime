@@ -19,7 +19,6 @@ package com.alipay.sofa.koupleless.arklet.core.tunnel.custom;
 import com.alipay.sofa.koupleless.arklet.core.api.tunnel.Tunnel;
 import com.alipay.sofa.koupleless.arklet.core.command.CommandService;
 import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
-import com.alipay.sofa.koupleless.arklet.core.hook.network.BaseNetworkInfoHook;
 
 import java.util.UUID;
 
@@ -30,8 +29,7 @@ import java.util.UUID;
 public class MockTunnel implements Tunnel {
 
     @Override
-    public void init(CommandService commandService, BaseMetadataHook baseMetadataHook,
-                     BaseNetworkInfoHook baseNetworkInfoHook) {
+    public void init(CommandService commandService, BaseMetadataHook baseMetadataHook) {
     }
 
     @Override

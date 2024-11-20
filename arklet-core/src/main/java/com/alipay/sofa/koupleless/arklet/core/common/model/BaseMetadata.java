@@ -32,11 +32,15 @@ public class BaseMetadata {
     /**
      * runtime base name
      */
-    private String name;
+    private String identity;
 
     /**
      * runtime base version
      */
     private String version;
 
+    /**
+     * cluster name for this base instance
+     */
+    private String clusterName;
 }
