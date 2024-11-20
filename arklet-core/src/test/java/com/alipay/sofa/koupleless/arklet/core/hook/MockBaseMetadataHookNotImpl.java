@@ -14,19 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.arklet.core.hook.network;
+package com.alipay.sofa.koupleless.arklet.core.hook;
 
-import com.alipay.sofa.koupleless.arklet.core.common.model.BaseNetworkInfo;
-
-/**
- * <p>NetworkHook interface.</p>
- *
- * @author dongnan
- * @since 2024/10/24
- * @version 1.0.0
- */
-public interface BaseNetworkInfoHook {
-
-    BaseNetworkInfo getNetworkInfo();
-
+public class MockBaseMetadataHookNotImpl {
 }

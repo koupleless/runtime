@@ -16,10 +16,14 @@
  */
 package com.alipay.sofa.koupleless.arklet.core.hook.base;
 
-import com.alipay.sofa.ark.common.util.EnvironmentUtils;
-import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
+import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletInitException;
+import com.alipay.sofa.koupleless.common.util.RandomUtils;
 
-import java.util.UUID;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
 
 /**
  * <p>BaseMetadataHookImpl.</p>
@@ -30,32 +34,60 @@ import java.util.UUID;
  */
 public class BaseMetadataHookImpl implements BaseMetadataHook {
 
-    final String defaultNameEnvKey    = "koupleless.arklet.metadata.name";
-    final String defaultVersionEnvKey = "koupleless.arklet.metadata.version";
-    final String defaultEnvKey        = "koupleless.arklet.metadata.env";
+    private final String UNNKOWN   = "unknown";
+    private InetAddress  localHost = null;
 
-    final UUID   baseID               = UUID.randomUUID();
-
-    private String getName() {
-        return EnvironmentUtils.getProperty(defaultNameEnvKey);
-    }
-
-    private String getVersion() {
-        return EnvironmentUtils.getProperty(defaultVersionEnvKey);
+    {
+        try {
+            Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
+            while (interfaces.hasMoreElements()) {
+                NetworkInterface networkInterface = interfaces.nextElement();
+                Enumeration<InetAddress> addresses = networkInterface.getInetAddresses();
+                while (addresses.hasMoreElements()) {
+                    InetAddress address = addresses.nextElement();
+                    if (!address.isLoopbackAddress() && address instanceof Inet4Address) {
+                        // find first non-loopback ipv4 address
+                        localHost = address;
+                        break;
+                    }
+                }
+            }
+        } catch (SocketException e) {
+            throw new ArkletInitException("getLocalNetworkInfo error", e);
+        }
     }
 
     @Override
-    public BaseMetadata getBaseMetadata() {
-        return BaseMetadata.builder().name(getName()).version(getVersion()).build();
+    public String getIdentity() {
+        String ip = getLocalIP();
+        if (!UNNKOWN.equals(ip)) {
+            return ip;
+        }
+        return UNNKOWN + "-" + RandomUtils.generateRandomString(5);
+    }
+
+    public String getVersion() {
+        return "1.0.0";
     }
 
     @Override
     public String getRuntimeEnv() {
-        return EnvironmentUtils.getProperty(defaultEnvKey);
+        return "default";
     }
 
     @Override
-    public String getBaseID() {
-        return baseID.toString();
+    public String getClusterName() {
+        // TODO: add app name
+        return "default";
+    }
+
+    @Override
+    public String getLocalIP() {
+        return localHost != null ? localHost.getHostAddress() : "unknown";
+    }
+
+    @Override
+    public String getLocalHostName() {
+        return localHost != null ? localHost.getHostName() : "unknown";
     }
 }
