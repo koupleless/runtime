@@ -28,26 +28,27 @@ import java.io.Serializable;
 @Data
 @Builder
 public class BaseStatus implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     /**
      * base metadata
      */
-    private BaseMetadata baseMetadata;
+    private BaseMetadata      baseMetadata;
 
     /**
      * runtime localIP
      */
-    private String       localIP;
+    private String            localIP;
 
     /**
      * runtime local host name
      */
-    private String       localHostName;
+    private String            localHostName;
 
     /**
      * for communicate with devops to send the heart beat message
      */
-    private int          port;
+    private int               port;
 
-    private String       state;
+    private String            state;
 }
