@@ -57,6 +57,8 @@ import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResult;
+import org.eclipse.aether.util.version.GenericVersionScheme;
+import org.eclipse.aether.version.InvalidVersionSpecificationException;
 
 import java.io.File;
 import java.io.InputStream;
@@ -78,28 +80,30 @@ import java.util.regex.Pattern;
 @Mojo(name = "add-patch", defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
 
-    String                  MAPPING_FILE       = "adapter-mapping.yaml";
+    String                       MAPPING_FILE       = "adapter-mapping.yaml";
 
     @Parameter(defaultValue = "${project.build.directory}", readonly = true)
-    File                    outputDirectory;
+    File                         outputDirectory;
 
     @Parameter(defaultValue = "${project}", required = true, readonly = true)
-    MavenProject            project;
+    MavenProject                 project;
 
     @Parameter(defaultValue = "${session}", required = true, readonly = true)
-    MavenSession            session;
+    MavenSession                 session;
 
     @Component
-    RepositorySystem        repositorySystem;
+    RepositorySystem             repositorySystem;
 
-    private ObjectMapper    yamlMapper         = new ObjectMapper(new YAMLFactory());
+    private ObjectMapper         yamlMapper         = new ObjectMapper(new YAMLFactory());
 
-    KouplelessAdapterConfig kouplelessAdapterConfig;
+    KouplelessAdapterConfig      kouplelessAdapterConfig;
 
-    AdapterCopyService      adapterCopyService = new AdapterCopyService();
+    AdapterCopyService           adapterCopyService = new AdapterCopyService();
 
-    String                  defaultGroupId     = "";
-    String                  defaultVersion     = "";
+    String                       defaultGroupId     = "";
+    String                       defaultVersion     = "";
+
+    private GenericVersionScheme versionScheme      = new GenericVersionScheme();
 
     void initKouplelessAdapterConfig() throws Exception {
         if (kouplelessAdapterConfig == null) {
@@ -149,20 +153,53 @@ public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
         for (org.apache.maven.artifact.Artifact artifact : resolvedArtifacts) {
             for (MavenDependencyAdapterMapping adapterMapping : adapterMappings) {
                 MavenDependencyMatcher matcher = adapterMapping.getMatcher();
-                if (matcher != null && matcher.getRegexp() != null) {
-                    String regexp = matcher.getRegexp();
-                    String dependencyId = getArtifactFullId(artifact);
-                    if (Pattern.compile(regexp).matcher(dependencyId).matches()) {
-                        adapterDependencies.add(adapterMapping.getAdapter());
-                        getLog().info(String.format("koupleless adapter matched %s with %s", regexp,
-                            artifact));
-                        break;
-                    }
+                if (matches(matcher, artifact)) {
+                    adapterDependencies.add(adapterMapping.getAdapter());
+                    getLog().info(
+                        String.format("koupleless adapter matched %s with %s", matcher, artifact));
                 }
             }
         }
 
         return adapterDependencies;
+    }
+
+    boolean matches(MavenDependencyMatcher matcher,
+                    org.apache.maven.artifact.Artifact artifact) throws InvalidVersionSpecificationException {
+        if (null == matcher) {
+            return false;
+        }
+
+        // match with regexp
+        if (regexpMatches(matcher, artifact)) {
+            return true;
+        }
+
+        // match with versionRange
+        return versionRangeMatches(matcher, artifact);
+    }
+
+    private boolean regexpMatches(MavenDependencyMatcher matcher,
+                                  org.apache.maven.artifact.Artifact artifact) {
+        if (null == matcher || null == matcher.getRegexp()) {
+            return false;
+        }
+
+        String regexp = matcher.getRegexp();
+        String dependencyId = getArtifactFullId(artifact);
+        return Pattern.compile(regexp).matcher(dependencyId).matches();
+    }
+
+    private boolean versionRangeMatches(MavenDependencyMatcher matcher,
+                                        org.apache.maven.artifact.Artifact artifact) throws InvalidVersionSpecificationException {
+        if (null == matcher || null == matcher.getGenericVersionRange()) {
+            return false;
+        }
+
+        return StringUtils.equals(matcher.getGroupId(), artifact.getGroupId())
+               && StringUtils.equals(matcher.getArtifactId(), artifact.getArtifactId())
+               && matcher.getGenericVersionRange()
+                   .containsVersion(versionScheme.parseVersion(artifact.getVersion()));
     }
 
     void addDependenciesDynamically() throws Exception {

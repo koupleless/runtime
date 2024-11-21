@@ -1,0 +1,72 @@
+version: 1.2.2
+adapterMappings:
+  - matcher:
+      regexp: ".*com\\.ctrip\\.framework\\.apollo:apollo-client.*"
+    adapter:
+      artifactId: koupleless-adapter-apollo-1.6
+  - matcher:
+      regexp: ".*(com\\.alibaba:dubbo-dependencies-bom:2\\.6|com\\.alibaba:dubbo:2\\.6).*"
+    adapter:
+      artifactId: koupleless-adapter-dubbo-2.6
+  - matcher:
+      regexp: ".*(dubbo-spring-boot-starter:2\\.7|com\\.alibaba:dubbo:2\\.7).*"
+    adapter:
+      artifactId: koupleless-adapter-dubbo-2.7
+  - matcher:
+      regexp: ".*(org\\.apache\\.dubbo:dubbo.*:3\\.2).*"
+    adapter:
+      artifactId: koupleless-adapter-dubbo-3.2
+  - matcher:
+      regexp: ".*(org\\.apache\\.dubbo:dubbo.*:3\\.1).*"
+    adapter:
+      artifactId: koupleless-adapter-dubbo-3.1
+  - matcher:
+      regexp: ".*spring-boot-starter-log4j2:3\\.(0|1).*"
+    adapter:
+      artifactId: koupleless-adapter-log4j2-spring-starter-3.0
+  - matcher:
+      regexp: ".*spring-boot-starter-log4j2:3.*"
+    adapter:
+      artifactId: koupleless-adapter-log4j2-spring-starter-3.2
+  - matcher:
+      regexp: ".*spring-boot-starter-log4j2:2\\.(1|2|3).*"
+    adapter:
+      artifactId: koupleless-adapter-log4j2-spring-starter-2.1
+  - matcher:
+      regexp: ".*spring-boot-starter-log4j2:2\\.(4|5|6).*"
+    adapter:
+      artifactId: koupleless-adapter-log4j2-spring-starter-2.4
+  - matcher:
+      regexp: ".*spring-boot-starter-log4j2.*"
+    adapter:
+      artifactId: koupleless-adapter-log4j2-spring-starter-2.7
+  - matcher:
+      regexp: ".*spring-boot-starter-logging:3\\.(0|1).*"
+    adapter:
+      artifactId: koupleless-adapter-logback-spring-starter-3.0
+  - matcher:
+      regexp: ".*spring-boot-starter-logging:3.*"
+    adapter:
+      artifactId: koupleless-adapter-logback-spring-starter-3.2
+  - matcher:
+      regexp: ".*spring-boot-starter-logging:.*"
+    adapter:
+      artifactId: koupleless-adapter-logback
+  - matcher:
+      regexp: ".*(org\\.apache\\.rocketmq:rocketmq-client:4\\.4\\.0).*"
+    adapter:
+      artifactId: koupleless-adapter-rocketmq-4.4
+  - matcher:
+      regexp: ".*(org\\.springframework:spring-aop:5\\.3\\.27).*"
+    adapter:
+      artifactId: koupleless-adapter-spring-aop-5.3.27
+  - matcher:
+      regexp: ".*(org\\.springframework:spring-aop:6\\.0\\.(8|9)).*"
+    adapter:
+      artifactId: koupleless-adapter-spring-aop-6.0.8
+  - matcher:
+      groupId: org.springframework.boot
+      artifactId: spring-boot
+      versionRange: "[2.5.1,2.7.14]"
+    adapter:
+      artifactId: koupleless-adapter-spring-boot-logback-2.7.14
