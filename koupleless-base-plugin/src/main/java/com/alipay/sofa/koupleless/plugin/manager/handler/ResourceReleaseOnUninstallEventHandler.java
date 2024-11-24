@@ -15,7 +15,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  * @author: poorpaper
  * @time: 2024/11/23 11:37
  *
- * 模块卸载后释放Log4j资源
+ * 模块卸载后释放相关资源
  */
 public class ResourceReleaseOnUninstallEventHandler implements EventHandler<BeforeBizRecycleEvent> {
 
