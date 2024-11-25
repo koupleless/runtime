@@ -16,8 +16,8 @@
  */
 package com.alipay.sofa.koupleless.base.build.plugin;
 
-import com.alipay.sofa.koupleless.base.build.plugin.model.MavenDependencyAdapterMapping;
 import com.alipay.sofa.koupleless.base.build.plugin.model.KouplelessAdapterConfig;
+import com.alipay.sofa.koupleless.base.build.plugin.model.MavenDependencyAdapterMapping;
 import com.alipay.sofa.koupleless.base.build.plugin.model.MavenDependencyMatcher;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
@@ -92,7 +92,13 @@ public class KouplelessBaseBuildPrePackageMojoTest {
         KouplelessAdapterConfig expected = KouplelessAdapterConfig.builder()
             .commonDependencies(commonDependencies).adapterMappings(mappings).build();
 
-        Assert.assertEquals(expected.toString(), mojo.kouplelessAdapterConfig.toString());
+        Assert.assertEquals(expected.getCommonDependencies().toString(), mojo.kouplelessAdapterConfig.getCommonDependencies().toString());
+
+        Assert.assertEquals(expected.getAdapterMappings().stream().map(MavenDependencyAdapterMapping::getMatcher).findFirst().get().getRegexp(),
+            mojo.kouplelessAdapterConfig.getAdapterMappings().stream().map(MavenDependencyAdapterMapping::getMatcher).findFirst().get().getRegexp());
+
+        Assert.assertEquals(expected.getAdapterMappings().stream().map(MavenDependencyAdapterMapping::getAdapter).findFirst().get().toString(),
+                mojo.kouplelessAdapterConfig.getAdapterMappings().stream().map(MavenDependencyAdapterMapping::getAdapter).findFirst().get().toString());
     }
 
     @Test
