@@ -32,7 +32,7 @@ import java.util.Map;
  * @version $Id: CompositeForwards.java, v 0.1 2024年11月08日 16:00 立蓬 Exp $
  */
 public class CompositeBizForwardsHandler implements EventHandler<AbstractArkEvent> {
-    private static final Map<Biz, Forwards> forwardsMap = new HashMap<>();
+    private static final Map<ClassLoader, Forwards> forwardsMap = new HashMap<>();
 
     @Override
     public void handleEvent(AbstractArkEvent event) {
@@ -54,13 +54,13 @@ public class CompositeBizForwardsHandler implements EventHandler<AbstractArkEven
             Object forwards = SpringUtils.getBean(biz, "forwards");
 
             if (forwards instanceof Forwards) {
-                forwardsMap.put(biz, (Forwards) forwards);
+                forwardsMap.put(biz.getBizClassLoader(), (Forwards) forwards);
             }
         }
 
         // Before the module uninstall, bean forwards will be automatically removed from this map.
         if (event instanceof BeforeBizStopEvent) {
-            forwardsMap.remove(biz);
+            forwardsMap.remove(biz.getBizClassLoader());
         }
     }
 
@@ -69,7 +69,7 @@ public class CompositeBizForwardsHandler implements EventHandler<AbstractArkEven
         return 0;
     }
 
-    public static Map<Biz, Forwards> getBizForwards() {
+    public static Map<ClassLoader, Forwards> getBizForwards() {
         return forwardsMap;
     }
 }

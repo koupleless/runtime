@@ -16,6 +16,7 @@
  */
 package com.alipay.sofa.koupleless.ext.web.gateway;
 
+import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.koupleless.common.log.KouplelessLogger;
 import com.alipay.sofa.koupleless.common.log.KouplelessLoggerFactory;
@@ -53,7 +54,7 @@ public class ForwardController {
     @Autowired
     private Forwards                      baseForwards;
 
-    private Map<Biz, Forwards>            bizForwards       = CompositeBizForwardsHandler
+    private Map<ClassLoader, Forwards>    bizForwards       = CompositeBizForwardsHandler
         .getBizForwards();
 
     private static final String           SEPARATOR         = "/";
@@ -111,29 +112,32 @@ public class ForwardController {
     }
 
     /**
-     * Matching Rule: Preferentially apply the forward configuration of the base, and if not available, match the forward configuration of biz.
+     * Matching Rule: Preferentially apply the forward configuration of the biz, and if not available, match the forward configuration of base.
      * @param host the host of uri
      * @param sourcePath the path of uri
      * @return com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway.ForwardItem
      */
     private ForwardItem getForwardItem(String host, String sourcePath) {
-        // 匹配规则：优先生效基座的forward配置，其次匹配biz的forward配置
-        ForwardItem item = baseForwards.getForwardItem(host, sourcePath);
+        ForwardItem item;
+
+        // match biz forward first
+        for (Map.Entry<ClassLoader, Forwards> entry : bizForwards.entrySet()) {
+            item = entry.getValue().getForwardItem(host, sourcePath);
+            if (null != item) {
+                Biz biz = ArkClient.getBizManagerService().getBizByClassLoader(entry.getKey());
+                LOGGER.info("biz {} forward configuration matches: {} {}", biz.getIdentity(), host,
+                    sourcePath);
+                return item;
+            }
+        }
+
+        // match base forward
+        item = baseForwards.getForwardItem(host, sourcePath);
 
         if (null != item) {
             LOGGER.info("base forward configuration matches: {} {}", host, sourcePath);
         }
 
-        if (null == item) {
-            for (Map.Entry<Biz, Forwards> entry : bizForwards.entrySet()) {
-                item = entry.getValue().getForwardItem(host, sourcePath);
-                if (null != item) {
-                    LOGGER.info("biz {} forward configuration matches: {} {}",
-                        entry.getKey().getIdentity(), host, sourcePath);
-                    return item;
-                }
-            }
-        }
         return item;
     }
 }

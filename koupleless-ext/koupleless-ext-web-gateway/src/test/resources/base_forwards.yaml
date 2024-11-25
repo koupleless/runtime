@@ -1,3 +1,6 @@
 - contextPath: test3
   hosts:
     - test3
+- contextPath: test3
+  hosts:
+    - test5

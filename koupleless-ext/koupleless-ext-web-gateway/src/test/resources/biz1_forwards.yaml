@@ -3,3 +3,6 @@
     - test1
   paths:
     - from: /test1
+- contextPath: test1
+  hosts:
+    - test5
