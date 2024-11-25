@@ -24,15 +24,17 @@ import com.alipay.sofa.ark.spi.service.event.EventHandler;
 import com.alipay.sofa.koupleless.common.util.ArkUtils;
 import com.alipay.sofa.koupleless.common.util.SpringUtils;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author lianglipeng.llp@alibaba-inc.com
  * @version $Id: CompositeForwards.java, v 0.1 2024年11月08日 16:00 立蓬 Exp $
  */
 public class CompositeBizForwardsHandler implements EventHandler<AbstractArkEvent> {
-    private static final Map<ClassLoader, Forwards> forwardsMap = new HashMap<>();
+    private static final Map<ClassLoader, Forwards> forwardsMap = new ConcurrentHashMap<>();
 
     @Override
     public void handleEvent(AbstractArkEvent event) {
@@ -70,6 +72,6 @@ public class CompositeBizForwardsHandler implements EventHandler<AbstractArkEven
     }
 
     public static Map<ClassLoader, Forwards> getBizForwards() {
-        return forwardsMap;
+        return Collections.unmodifiableMap(forwardsMap);
     }
 }

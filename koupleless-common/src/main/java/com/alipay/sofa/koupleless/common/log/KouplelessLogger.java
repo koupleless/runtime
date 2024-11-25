@@ -25,7 +25,7 @@ import org.slf4j.Marker;
  */
 public class KouplelessLogger implements Logger {
 
-    private Logger logger;
+    private final Logger logger;
 
     public KouplelessLogger(Logger logger) {
         this.logger = logger;
