@@ -17,9 +17,11 @@
 package com.alipay.sofa.koupleless.arklet.tunnel.mqtt.model;
 
 import com.alipay.sofa.ark.spi.model.BizState;
+import com.alipay.sofa.ark.spi.model.BizInfo.BizStateRecord;
 import com.alipay.sofa.koupleless.arklet.core.command.builtin.model.BizInfo;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * <p>SimpleBizInfo class.</p>
@@ -37,6 +39,11 @@ public class SimpleBizInfo implements Serializable {
     private String            name;
 
     private String            version;
+
+    /**
+     * laster state record
+     */
+    private BizStateRecord    latestStateRecord;
 
     /**
      * Getter method for property <tt>state</tt>.
@@ -98,6 +105,20 @@ public class SimpleBizInfo implements Serializable {
         simpleBizInfo.setName(info.getBizName());
         simpleBizInfo.setVersion(info.getBizVersion());
 
+        List<BizStateRecord> bizStateRecords = info.getBizStateRecords();
+
+        if (!bizStateRecords.isEmpty()) {
+            simpleBizInfo.setLatestStateRecord(bizStateRecords.get(bizStateRecords.size() - 1));
+        }
+
         return simpleBizInfo;
+    }
+
+    public BizStateRecord getLatestStateRecord() {
+        return latestStateRecord;
+    }
+
+    public void setLatestStateRecord(BizStateRecord latestStateRecord) {
+        this.latestStateRecord = latestStateRecord;
     }
 }
