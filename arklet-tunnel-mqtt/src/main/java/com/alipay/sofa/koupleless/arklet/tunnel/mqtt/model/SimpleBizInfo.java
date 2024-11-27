@@ -17,9 +17,15 @@
 package com.alipay.sofa.koupleless.arklet.tunnel.mqtt.model;
 
 import com.alipay.sofa.ark.spi.model.BizState;
+import com.alipay.sofa.ark.spi.model.BizInfo.BizStateRecord;
 import com.alipay.sofa.koupleless.arklet.core.command.builtin.model.BizInfo;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * <p>SimpleBizInfo class.</p>
@@ -28,6 +34,7 @@ import java.io.Serializable;
  * @since 2024/10/10
  * @version 1.0.0
  */
+@Data
 public class SimpleBizInfo implements Serializable {
     // 序列化版本号
     private static final long serialVersionUID = 1L;
@@ -39,64 +46,21 @@ public class SimpleBizInfo implements Serializable {
     private String            version;
 
     /**
-     * Getter method for property <tt>state</tt>.
-     *
-     * @return property value of state
+     * laster state record
      */
-    public String getState() {
-        return state;
-    }
-
-    /**
-     * Setter method for property <tt>state</tt>.
-     *
-     * @param state value to be assigned to property state
-     */
-    public void setState(BizState state) {
-        this.state = state.getBizState();
-    }
-
-    /**
-     * Getter method for property <tt>name</tt>.
-     *
-     * @return property value of name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Setter method for property <tt>name</tt>.
-     *
-     * @param name value to be assigned to property name
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * Getter method for property <tt>v</tt>.
-     *
-     * @return property value of v
-     */
-    public String getVersion() {
-        return version;
-    }
-
-    /**
-     * Setter method for property <tt>v</tt>.
-     *
-     * @param version value to be assigned to property v
-     */
-    public void setVersion(String version) {
-        this.version = version;
-    }
+    private BizStateRecord    latestStateRecord;
 
     public static SimpleBizInfo constructFromBizInfo(BizInfo info) {
         SimpleBizInfo simpleBizInfo = new SimpleBizInfo();
-        simpleBizInfo.setState(info.getBizState());
+        simpleBizInfo.setState(info.getBizState().getBizState());
         simpleBizInfo.setName(info.getBizName());
         simpleBizInfo.setVersion(info.getBizVersion());
+
+        List<BizStateRecord> bizStateRecords = info.getBizStateRecords();
+
+        if (bizStateRecords != null && !bizStateRecords.isEmpty()) {
+            simpleBizInfo.setLatestStateRecord(bizStateRecords.get(bizStateRecords.size() - 1));
+        }
 
         return simpleBizInfo;
     }
