@@ -185,28 +185,22 @@ public class MqttMessageHandler {
         ArkletLoggerFactory.getDefaultLogger().info("mqtt handle command {} with content {}", cmd,
             msg);
         Output<?> output;
+        Map<String, Object> bizOperationResponse = new HashMap<>();
         try {
             if (cmd.equals(BuiltinCommand.INSTALL_BIZ.getId())
                 || cmd.equals(BuiltinCommand.UNINSTALL_BIZ.getId())) {
                 Map<String, Object> cmdContent = JSONObject.parseObject(msg.toString(),
                     HashMap.class);
-                output = commandService.process(cmd, cmdContent);
-                // install or uninstall command, send result to biz operation response topic
-                Map<String, Object> bizOperationResponse = new HashMap<>();
                 bizOperationResponse.put(Constants.COMMAND, cmd);
                 bizOperationResponse.put(BIZ_NAME, cmdContent.get(BIZ_NAME));
                 bizOperationResponse.put(BIZ_VERSION, cmdContent.get(BIZ_VERSION));
+
+                output = commandService.process(cmd, cmdContent);
+                // install or uninstall command, send result to biz operation response topic
                 bizOperationResponse.put(Constants.COMMAND_RESPONSE, output);
                 mqttClient.publish(getBizOperationResponseTopic(),
                     JSONObject.toJSONString(MqttResponse.withData(bizOperationResponse)).getBytes(),
                     1, false);
-                // sync biz status after operation, queryAllBiz and send result to biz topic
-                Output<?> allBizOutput = commandService
-                    .process(BuiltinCommand.QUERY_ALL_BIZ.getId(), null);
-                mqttClient.publish(getBizTopic(), JSONObject
-                    .toJSONString(MqttResponse.withData(getSimpleAllBizInfo(allBizOutput)),
-                        SerializerFeature.SkipTransientField, SerializerFeature.WriteMapNullValue)
-                    .getBytes(), 1, false);
             } else if (cmd.equals("baseline")) {
                 List<Map<String, Object>> cmdContents = JSONObject.parseObject(msg.toString(),
                     List.class);
@@ -239,7 +233,7 @@ public class MqttMessageHandler {
                     1, false);
             } else {
                 throw new ArkletRuntimeException(
-                    String.format("unsupported command %s or content %s", cmd, msg));
+                    String.format("unsupported command %s with content: %s", cmd, msg));
             }
         } catch (Throwable e) {
             ClientResponse data = new ClientResponse();
@@ -248,7 +242,6 @@ public class MqttMessageHandler {
             output = Output.ofFailed(data, e.getMessage());
 
             // install or uninstall command, send result to biz operation response topic
-            Map<String, Object> bizOperationResponse = new HashMap<>();
             bizOperationResponse.put(Constants.COMMAND, cmd);
             bizOperationResponse.put(Constants.COMMAND_RESPONSE, output);
             try {
