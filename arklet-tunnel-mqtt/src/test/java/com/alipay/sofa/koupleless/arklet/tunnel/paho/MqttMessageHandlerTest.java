@@ -17,6 +17,7 @@
 package com.alipay.sofa.koupleless.arklet.tunnel.paho;
 
 import com.alipay.sofa.koupleless.arklet.core.command.builtin.BuiltinCommand;
+import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletRuntimeException;
 import com.alipay.sofa.koupleless.arklet.tunnel.BaseTest;
 import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.paho.MqttMessageHandler;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -36,7 +37,7 @@ public class MqttMessageHandlerTest extends BaseTest {
         mqttMessageHandler.onConnectCompleted();
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = ArkletRuntimeException.class)
     public void handleHealthCommand() {
         MqttMessageHandler mqttMessageHandler = new MqttMessageHandler(commandService,
             baseMetadataHook, null, "test");
@@ -44,7 +45,7 @@ public class MqttMessageHandlerTest extends BaseTest {
             new MqttMessage("{}".getBytes()));
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = ArkletRuntimeException.class)
     public void handleQueryAllBizCommand() {
         MqttMessageHandler mqttMessageHandler = new MqttMessageHandler(commandService,
             baseMetadataHook, null, "test");
