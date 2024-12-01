@@ -19,9 +19,10 @@ package com.alipay.sofa.koupleless.base.build.plugin;
 import com.alipay.sofa.koupleless.base.build.plugin.model.KouplelessAdapterConfig;
 import com.alipay.sofa.koupleless.base.build.plugin.model.MavenDependencyAdapterMapping;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+//import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.Assert;
 import org.junit.Test;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.InputStream;
 
@@ -31,7 +32,7 @@ import java.io.InputStream;
  **/
 public class TestAdapterFile {
 
-    private ObjectMapper yamlMapper = new ObjectMapper(new YAMLFactory());
+    //private ObjectMapper yamlMapper = new ObjectMapper(new YAMLFactory());
 
     String getMappingArtifact(KouplelessAdapterConfig config, String targetArtifactId) {
         for (MavenDependencyAdapterMapping mapping : config.getAdapterMappings()) {
@@ -46,7 +47,10 @@ public class TestAdapterFile {
     public void testAdapterFile() throws Exception {
         InputStream is = this.getClass().getClassLoader()
             .getResourceAsStream("adapter-mapping.yaml");
-        KouplelessAdapterConfig config = yamlMapper.readValue(is, KouplelessAdapterConfig.class);
+        //KouplelessAdapterConfig config = yamlMapper.readValue(is, KouplelessAdapterConfig.class);
+
+        Yaml yaml = new Yaml();
+        KouplelessAdapterConfig config = yaml.loadAs(is, KouplelessAdapterConfig.class);
 
         Assert.assertEquals("koupleless-adapter-apollo-1.6",
             getMappingArtifact(config, "com.ctrip.framework.apollo:apollo-client:1.6.0:jar"));

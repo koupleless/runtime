@@ -21,9 +21,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.aether.util.version.GenericVersionScheme;
 import org.eclipse.aether.version.InvalidVersionSpecificationException;
 import org.eclipse.aether.version.VersionRange;
+
+import static com.alipay.sofa.koupleless.base.build.plugin.utils.ParseUtils.parseVersionRange;
 
 /**
  * <p>MavenDependencyMatcher class.</p>
@@ -39,21 +40,22 @@ public class MavenDependencyMatcher {
      */
     @Getter
     @Setter
-    private String                     regexp;
+    @Deprecated
+    private String       regexp;
 
     /**
      * 依赖的groupId，如：org.springframework.boot
      */
     @Getter
     @Setter
-    private String                     groupId;
+    private String       groupId;
 
     /**
      * 依赖的artifactId，如：spring-boot
      */
     @Getter
     @Setter
-    private String                     artifactId;
+    private String       artifactId;
 
     /**
      * 适配的版本范围，比如：
@@ -63,12 +65,10 @@ public class MavenDependencyMatcher {
      * [2.0,) 表示大于或等于 2.0 的版本。
      */
     @Getter
-    private String                     versionRange;
+    private String       versionRange;
 
     @Getter
-    private VersionRange               genericVersionRange;
-
-    private final GenericVersionScheme versionScheme = new GenericVersionScheme();
+    private VersionRange genericVersionRange;
 
     @Builder
     public MavenDependencyMatcher(String regexp, String groupId, String artifactId,
@@ -90,6 +90,13 @@ public class MavenDependencyMatcher {
             return null;
         }
 
-        return versionScheme.parseVersionRange(versionRange);
+        return parseVersionRange(versionRange);
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "MavenDependencyMatcher{regexp=%s,groupId=%s,artifactId=%s,versionRange=%s}", regexp,
+            groupId, artifactId, versionRange);
     }
 }
