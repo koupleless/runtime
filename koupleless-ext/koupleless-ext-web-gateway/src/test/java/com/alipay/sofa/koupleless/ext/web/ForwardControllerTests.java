@@ -87,11 +87,6 @@ public class ForwardControllerTests {
         ReflectionUtils.setField("baseForwards", controller, loadForwards(baseConfPath));
         ReflectionUtils.setField("bizForwards", controller, initBizForwards());
 
-        KouplelessLogger logger = Mockito.mock(KouplelessLogger.class);
-        Mockito.doNothing().when(logger).info(Mockito.anyString(), Mockito.anyString(),
-            Mockito.anyString(), Mockito.any());
-        ReflectionUtils.setField("LOGGER", controller, logger);
-
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         HttpServletResponse response = Mockito.mock(HttpServletResponse.class);
         ServletContext baseContext = Mockito.mock(ServletContext.class);

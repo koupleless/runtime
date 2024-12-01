@@ -27,6 +27,7 @@ import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
 
 /**
  * @author lianglipeng.llp@alibaba-inc.com
@@ -46,6 +47,8 @@ public class CompositeBizForwardsHandlerTest {
             // case2: biz
             arkUtils.when(ArkUtils::isMasterBiz).thenReturn(false);
             Biz biz = Mockito.mock(Biz.class);
+            ClassLoader bizClassLoader = Mockito.mock(ClassLoader.class);
+            doReturn(bizClassLoader).when(biz).getBizClassLoader();
 
             try (MockedStatic<SpringUtils> springUtils = Mockito.mockStatic(SpringUtils.class)) {
                 // case2.1: get bean null
