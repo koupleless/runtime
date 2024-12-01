@@ -69,8 +69,6 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static com.alipay.sofa.koupleless.base.build.plugin.utils.ParseUtils.parseVersion;
-
 /**
  * Goal which touches a timestamp file.
  *
@@ -155,8 +153,12 @@ public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
             getLog().info("koupleless adapter matched artifact: " + entry.getValue()
                           + " with matcher: " + matcher);
         }
-        return matchedArtifact.keySet().stream().map(MavenDependencyAdapterMapping::getAdapter)
-            .collect(Collectors.toList());
+
+        List<Dependency> result = new ArrayList<>();
+        for (MavenDependencyAdapterMapping mapping : matchedArtifact.keySet()) {
+            result.add(mapping.getAdapter());
+        }
+        return result;
     }
 
     void addDependenciesDynamically() throws Exception {

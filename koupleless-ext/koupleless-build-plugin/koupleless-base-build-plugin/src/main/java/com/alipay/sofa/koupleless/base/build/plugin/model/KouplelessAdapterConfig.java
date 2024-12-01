@@ -120,7 +120,7 @@ public class KouplelessAdapterConfig implements AdapterConfig {
                    .getGenericVersionRange().containsVersion(parseVersion(artifact.getVersion()));
     }
 
-    String getArtifactFullId(org.apache.maven.artifact.Artifact artifact) {
+    private String getArtifactFullId(org.apache.maven.artifact.Artifact artifact) {
         return artifact.getGroupId() + ":" + artifact.getArtifactId() + ":"
                + artifact.getBaseVersion() + ":" + artifact.getType()
                + (StringUtils.isNotEmpty(artifact.getClassifier()) ? ":" + artifact.getClassifier()

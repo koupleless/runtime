@@ -16,9 +16,11 @@
  */
 package com.alipay.sofa.koupleless.base.build.plugin;
 
+import com.alipay.sofa.koupleless.base.build.plugin.model.CompositeKouplelessAdapterConfig;
 import com.alipay.sofa.koupleless.base.build.plugin.model.KouplelessAdapterConfig;
 import com.alipay.sofa.koupleless.base.build.plugin.model.MavenDependencyAdapterMapping;
 import com.alipay.sofa.koupleless.base.build.plugin.model.MavenDependencyMatcher;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.project.MavenProject;
@@ -40,10 +42,14 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -52,121 +58,91 @@ import static org.mockito.Mockito.mock;
  * @author CodeNoobKing
  * @since 2024/2/19
  */
-//@RunWith(MockitoJUnitRunner.class)
 public class KouplelessBaseBuildPrePackageMojoTest {
-    //@InjectMocks
-    //private KouplelessBaseBuildPrePackageMojo mojo;
-    //
-    //// create a tmp directory using os tmp
-    //private File                              outputDirectory = null;
-    //
-    //@Mock
-    //MavenProject                              project;
-    //
-    //@Mock
-    //MavenSession                              session;
-    //
-    //@Mock
-    //RepositorySystem                          repositorySystem;
-    //
-    //@Before
-    //public void setUp() {
-    //    mojo.DEFAULT_MAPPING_FILE = "adapter-mapping-ext.yml";
-    //}
-    //
-    //@Test
-    //public void testLazyInitKouplelessAdapterConfig() throws Exception {
-    //    Dependency mockDependency = new Dependency();
-    //    mockDependency.setGroupId("XXX");
-    //    mockDependency.setArtifactId("YYY");
-    //    mockDependency.setVersion("ZZZ");
-    //
-    //    List<Dependency> commonDependencies = new ArrayList<>();
-    //    commonDependencies.add(mockDependency);
-    //
-    //    List<MavenDependencyAdapterMapping> mappings = new ArrayList<>();
-    //    mappings.add(MavenDependencyAdapterMapping.builder().adapter(mockDependency)
-    //        .matcher(MavenDependencyMatcher.builder().regexp(".*").build()).build());
-    //
-    //    mojo.initKouplelessAdapterConfig();
-    //    KouplelessAdapterConfig expected = KouplelessAdapterConfig.builder()
-    //        .commonDependencies(commonDependencies).adapterMappings(mappings).build();
-    //
-    //    Assert.assertEquals(expected.getCommonDependencies().toString(),
-    //        mojo.kouplelessAdapterConfig.getCommonDependencies().toString());
-    //
-    //    //Assert.assertEquals(
-    //    //    expected.getAdapterMappings().stream().map(MavenDependencyAdapterMapping::getMatcher)
-    //    //        .findFirst().get().getRegexp(),
-    //    //    mojo.kouplelessAdapterConfig.getAdapterMappings().stream()
-    //    //        .map(MavenDependencyAdapterMapping::getMatcher).findFirst().get().getRegexp());
-    //    //
-    //    //Assert.assertEquals(
-    //    //    expected.getAdapterMappings().stream().map(MavenDependencyAdapterMapping::getAdapter)
-    //    //        .findFirst().get().toString(),
-    //    //    mojo.kouplelessAdapterConfig.getAdapterMappings().stream()
-    //    //        .map(MavenDependencyAdapterMapping::getAdapter).findFirst().get().toString());
-    //}
-    //
-    //@Test
-    //public void testAddDependencyDynamically() throws Exception {
-    //    {
-    //        // init the adapter config
-    //        Dependency mockDependency = new Dependency();
-    //        mockDependency.setGroupId("XXX");
-    //        mockDependency.setArtifactId("YYY");
-    //        mockDependency.setVersion("ZZZ");
-    //
-    //        List<Dependency> commonDependencies = new ArrayList<>();
-    //        commonDependencies.add(mockDependency);
-    //
-    //        List<MavenDependencyAdapterMapping> mappings = new ArrayList<>();
-    //        mappings.add(MavenDependencyAdapterMapping.builder().adapter(mockDependency)
-    //            .matcher(MavenDependencyMatcher.builder().regexp(".*A:B:C.*").build()).build());
-    //
-    //        //mojo.kouplelessAdapterConfig = KouplelessAdapterConfig.builder()
-    //        //    .commonDependencies(commonDependencies).adapterMappings(mappings).build();
-    //    }
-    //
-    //    {
-    //        // init maven project
-    //        Set<org.apache.maven.artifact.Artifact> artifacts = new HashSet<>();
-    //        org.apache.maven.artifact.Artifact artifact = mock(
-    //            org.apache.maven.artifact.Artifact.class);
-    //        doReturn("A").when(artifact).getGroupId();
-    //        //            doReturn("B").when(artifact).getArtifactId();
-    //        doReturn("C").when(artifact).getBaseVersion();
-    //        artifacts.add(artifact);
-    //        project.setArtifacts(artifacts);
-    //        // set resolvedArtifacts in project
-    //        Field field = MavenProject.class.getDeclaredField("resolvedArtifacts");
-    //        field.setAccessible(true);
-    //        field.set(project, artifacts);
-    //    }
-    //
-    //    {
-    //        // mock the repository system
-    //        ArtifactResult mockArtifactResult = new ArtifactResult(new ArtifactRequest());
-    //        Artifact mockArtifact = mock(Artifact.class);
-    //        mockArtifactResult.setArtifact(mockArtifact);
-    //
-    //        URL demoJarUrl = getClass().getClassLoader().getResource("demo.jar");
-    //        doReturn(new File(demoJarUrl.toURI())).when(mockArtifact).getFile();
-    //        doReturn(mockArtifactResult).when(repositorySystem).resolveArtifact(any(), any());
-    //    }
-    //
-    //    {
-    //        // init output directory
-    //        mojo.outputDirectory = Files.createTempDirectory("mojotest").toFile();
-    //    }
-    //
-    //    mojo.execute();
-    //
-    //    {
-    //        Assert.assertTrue(Paths
-    //            .get(mojo.outputDirectory.getAbsolutePath(), "classes", "com", "example", "demo")
-    //            .toFile().exists());
-    //    }
-    //}
+    // create a tmp directory using os tmp
+    private File outputDirectory = null;
+
+    @Test
+    public void testLazyInitKouplelessAdapterConfig() throws Exception {
+        KouplelessBaseBuildPrePackageMojo mojo = new KouplelessBaseBuildPrePackageMojo();
+        mojo.kouplelessAdapterConfig = mock(CompositeKouplelessAdapterConfig.class);
+
+        mojo.initKouplelessAdapterConfig();
+        assertEquals("com.alipay.sofa.koupleless", mojo.defaultGroupId);
+        assertTrue(StringUtils.isNoneEmpty(mojo.defaultVersion));
+    }
+
+    @Test
+    public void testAddDependencyDynamically() throws Exception {
+        KouplelessBaseBuildPrePackageMojo mojo = new KouplelessBaseBuildPrePackageMojo();
+        mojo.project = mock(MavenProject.class);
+        // init maven project
+        Set<org.apache.maven.artifact.Artifact> artifacts = new HashSet<>();
+        org.apache.maven.artifact.Artifact artifact = mock(
+            org.apache.maven.artifact.Artifact.class);
+        doReturn("A").when(artifact).getGroupId();
+        //            doReturn("B").when(artifact).getArtifactId();
+        doReturn("C").when(artifact).getBaseVersion();
+        artifacts.add(artifact);
+        doReturn(artifacts).when(mojo.project).getArtifacts();
+        // set resolvedArtifacts in project
+        Field field = MavenProject.class.getDeclaredField("resolvedArtifacts");
+        field.setAccessible(true);
+        field.set(mojo.project, artifacts);
+
+        {
+            // init the adapter config
+            Dependency mockDependency = new Dependency();
+            mockDependency.setGroupId("XXX");
+            mockDependency.setArtifactId("YYY");
+            mockDependency.setVersion("ZZZ");
+
+            List<Dependency> commonDependencies = new ArrayList<>();
+            commonDependencies.add(mockDependency);
+
+            Map<MavenDependencyAdapterMapping, org.apache.maven.artifact.Artifact> matchedResult = new HashMap<>();
+            mojo.kouplelessAdapterConfig = mock(CompositeKouplelessAdapterConfig.class);
+            doReturn(commonDependencies).when(mojo.kouplelessAdapterConfig).getCommonDependencies();
+
+            List<MavenDependencyAdapterMapping> mappings = new ArrayList<>();
+            mappings.add(MavenDependencyAdapterMapping.builder().adapter(mockDependency)
+                .matcher(MavenDependencyMatcher.builder().regexp(".*A:B:C.*").build()).build());
+            matchedResult.put(mappings.get(0), artifact);
+            doReturn(matchedResult).when(mojo.kouplelessAdapterConfig).matches(any());
+        }
+
+        {
+            // mock the repository system
+            ArtifactResult mockArtifactResult = new ArtifactResult(new ArtifactRequest());
+            Artifact mockArtifact = mock(Artifact.class);
+            mockArtifactResult.setArtifact(mockArtifact);
+
+            URL demoJarUrl = getClass().getClassLoader().getResource("demo.jar");
+            doReturn(new File(demoJarUrl.toURI())).when(mockArtifact).getFile();
+
+            RepositorySystem repositorySystem = mock(RepositorySystem.class);
+            mojo.repositorySystem = repositorySystem;
+            doReturn(mockArtifactResult).when(repositorySystem).resolveArtifact(any(), any());
+        }
+
+        {
+            // mock the session
+            MavenSession session = mock(MavenSession.class);
+            mojo.session = session;
+        }
+
+        {
+            // init output directory
+            mojo.outputDirectory = Files.createTempDirectory("mojotest").toFile();
+        }
+
+        mojo.execute();
+
+        {
+            Assert.assertTrue(Paths
+                .get(mojo.outputDirectory.getAbsolutePath(), "classes", "com", "example", "demo")
+                .toFile().exists());
+        }
+    }
 
 }

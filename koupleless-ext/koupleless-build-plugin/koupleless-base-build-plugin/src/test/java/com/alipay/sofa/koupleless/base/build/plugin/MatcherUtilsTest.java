@@ -18,22 +18,13 @@ package com.alipay.sofa.koupleless.base.build.plugin;
 
 import com.alipay.sofa.koupleless.base.build.plugin.model.KouplelessAdapterConfig;
 import com.alipay.sofa.koupleless.base.build.plugin.model.MavenDependencyAdapterMapping;
-import com.alipay.sofa.koupleless.base.build.plugin.model.MavenDependencyMatcher;
-import com.fasterxml.jackson.databind.ObjectMapper;
 //import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.model.Dependency;
-import org.eclipse.aether.version.InvalidVersionSpecificationException;
-import org.junit.Test;
-import org.mockito.Mockito;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -43,7 +34,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class MatcherUtilsTest {
 
-    String                                    MAPPING_FILE            = "adapter-mapping-test.yaml";
+    String                                    MAPPING_FILE            = "mockBaseDir/conf/ark/adapter-mapping-test.yaml";
 
     private KouplelessBaseBuildPrePackageMojo mojo                    = new KouplelessBaseBuildPrePackageMojo();
 
@@ -72,35 +63,5 @@ public class MatcherUtilsTest {
      *     adapter:
      *       artifactId: koupleless-adapter-apollo-1.6
      */
-    //@Test
-    //public void testMatcher6() throws InvalidVersionSpecificationException {
-    //    List<Dependency> res = getMatcherAdaptor(
-    //        mockArtifact("com.ctrip.framework.apollo", "apollo-client", "1.0.0"));
-    //    assertEquals(1, res.size());
-    //    assertEquals(res.get(0).getArtifactId(), "koupleless-adapter-apollo-1.6");
-    //
-    //    res = getMatcherAdaptor(
-    //        mockArtifact("com.ctrip.framework.apollo", "apollo-client", "2.3.0"));
-    //    assertEquals(1, res.size());
-    //    assertEquals(res.get(0).getArtifactId(), "koupleless-adapter-apollo-1.6");
-    //}
 
-    //private List<Dependency> getMatcherAdaptor(Artifact artifact) throws InvalidVersionSpecificationException {
-    //    List<Dependency> adapterDependencies = new ArrayList<>();
-    //    for (MavenDependencyAdapterMapping adapterMapping : adapterMappings) {
-    //        MavenDependencyMatcher matcher = adapterMapping.getMatcher();
-    //        if (mojo.kouplelessAdapterConfig.matches(matcher, artifact)) {
-    //            adapterDependencies.add(adapterMapping.getAdapter());
-    //        }
-    //    }
-    //    return adapterDependencies;
-    //}
-    //
-    //private Artifact mockArtifact(String groupId, String artifactId, String version) {
-    //    Artifact artifact = Mockito.mock(Artifact.class);
-    //    Mockito.when(artifact.getGroupId()).thenReturn(groupId);
-    //    Mockito.when(artifact.getArtifactId()).thenReturn(artifactId);
-    //    Mockito.when(artifact.getVersion()).thenReturn(version);
-    //    return artifact;
-    //}
 }

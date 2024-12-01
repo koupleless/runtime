@@ -45,6 +45,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.ARK_CONF_BASE_DIR;
+import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.STRING_COLON;
 import static com.alipay.sofa.koupleless.base.build.plugin.utils.MavenUtils.getDependencyIdentity;
 import static com.google.common.collect.Maps.newHashMap;
 
@@ -74,6 +75,9 @@ public class CompositeKouplelessAdapterConfig implements AdapterConfig {
      * 插件默认配置：如果远程配置不存在，则使用插件默认配置
      */
     private KouplelessAdapterConfig       defaultConfig;
+
+    public CompositeKouplelessAdapterConfig() {
+    }
 
     public CompositeKouplelessAdapterConfig(KouplelessBaseBuildPrePackageMojo mojo) {
         initCustomConfig(mojo);
@@ -119,7 +123,7 @@ public class CompositeKouplelessAdapterConfig implements AdapterConfig {
 
         Map<String, Dependency> res = newHashMap();
         dependencies.forEach(d -> {
-            String key = getDependencyIdentity(d);
+            String key = d.getGroupId() + STRING_COLON + d.getArtifactId();
             res.put(key, d);
         });
         return res;
@@ -155,7 +159,7 @@ public class CompositeKouplelessAdapterConfig implements AdapterConfig {
     }
 
     @SneakyThrows
-    private void initCustomConfig(KouplelessBaseBuildPrePackageMojo mojo) {
+    protected void initCustomConfig(KouplelessBaseBuildPrePackageMojo mojo) {
         File configFile = FileUtils.getFile(mojo.baseDir, ARK_CONF_BASE_DIR, CUSTOM_MAPPING_FILE);
         if (!configFile.exists()) {
             mojo.getLog().info(String.format(
@@ -169,7 +173,7 @@ public class CompositeKouplelessAdapterConfig implements AdapterConfig {
         customConfig = yaml.loadAs(mappingConfigIS, KouplelessAdapterConfig.class);
     }
 
-    private void initDefaultConfig() {
+    protected void initDefaultConfig() {
         // 如果远程配置存在，则无需初始化插件默认配置
         if (CollectionUtils.isNotEmpty(remoteConfigs)) {
             return;
@@ -182,7 +186,7 @@ public class CompositeKouplelessAdapterConfig implements AdapterConfig {
         defaultConfig = yaml.loadAs(mappingConfigIS, KouplelessAdapterConfig.class);
     }
 
-    private void initRemoteConfig(KouplelessBaseBuildPrePackageMojo mojo) {
+    protected void initRemoteConfig(KouplelessBaseBuildPrePackageMojo mojo) {
         String kouplelessAdapterConfigVersion = parseRemoteConfigVersion(mojo);
         Artifact artifact = downloadAdapterConfigsJar(mojo, kouplelessAdapterConfigVersion);
         remoteConfigs = parseConfigs(artifact);
