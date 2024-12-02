@@ -169,6 +169,9 @@ jobs:
             mvn --batch-mode deploy -Prelease -pl ${modules_in_release_version} -am -amd -B -U
             echo "release completed for module ${modules_in_release_version}"
           fi
+          
+          # 请在发布 koupleless-adapter-configs 之前，发布 jdk8 和 jdk17 所有的 koupleless-adapters
+          mvn --batch-mode deploy -Prelease -pl koupleless-adapter-configs -am -amd -B -U
         working-directory: adapter/
         env:
           MAVEN_USERNAME: ${{ secrets.MAVEN_USERNAME }}
