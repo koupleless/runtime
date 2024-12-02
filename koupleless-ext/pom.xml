@@ -17,6 +17,7 @@
         <module>koupleless-test-suite</module>
         <module>koupleless-base-loader</module>
         <module>koupleless-build-plugin</module>
+        <module>koupleless-ext-autoconfigure</module>
         <module>koupleless-ext-module-auto-convertor</module>
         <module>archetype/koupleless-common-module-archetype</module>
     </modules>

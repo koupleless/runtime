@@ -16,10 +16,10 @@
  */
 package com.alipay.sofa.koupleless.ext.web;
 
-import com.alipay.sofa.koupleless.ext.web.gateway.ForwardItem;
-import com.alipay.sofa.koupleless.ext.web.gateway.Forwards;
+import com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway.ForwardItem;
+import com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway.Forwards;
+import com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway.GatewayProperties;
 import com.alipay.sofa.koupleless.ext.web.gateway.ForwardsConfChangeListener;
-import com.alipay.sofa.koupleless.ext.web.gateway.GatewayProperties;
 import com.ctrip.framework.apollo.model.ConfigChangeEvent;
 import org.junit.Assert;
 import org.junit.Before;
