@@ -16,6 +16,13 @@
  */
 package com.alipay.sofa.koupleless.ext.web.gateway;
 
+import com.alipay.sofa.ark.api.ArkClient;
+import com.alipay.sofa.ark.spi.model.Biz;
+import com.alipay.sofa.koupleless.common.log.KouplelessLogger;
+import com.alipay.sofa.koupleless.common.log.KouplelessLoggerFactory;
+import com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway.CompositeBizForwardsHandler;
+import com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway.ForwardItem;
+import com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway.Forwards;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -30,6 +37,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Map;
 
 /**
  * <p>ForwardController class.</p>
@@ -40,11 +48,17 @@ import java.net.URI;
 @Controller
 @RequestMapping
 public class ForwardController {
-    @Autowired
-    private Forwards            forwards;
+    private static final KouplelessLogger LOGGER            = KouplelessLoggerFactory
+        .getLogger("web-gateway");
 
-    private static final String SEPARATOR         = "/";
-    private static final String DOUBLE_SEPARATORS = SEPARATOR + SEPARATOR;
+    @Autowired
+    private Forwards                      baseForwards;
+
+    private Map<ClassLoader, Forwards>    bizForwards       = CompositeBizForwardsHandler
+        .getBizForwards();
+
+    private static final String           SEPARATOR         = "/";
+    private static final String           DOUBLE_SEPARATORS = SEPARATOR + SEPARATOR;
 
     /**
      * <p>redirect.</p>
@@ -73,7 +87,7 @@ public class ForwardController {
         if (!StringUtils.hasLength(sourcePath)) {
             sourcePath = Forwards.ROOT_PATH;
         }
-        ForwardItem forwardItem = forwards.getForwardItem(host, sourcePath);
+        ForwardItem forwardItem = getForwardItem(host, sourcePath);
         if (forwardItem == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
@@ -84,6 +98,10 @@ public class ForwardController {
         if (targetPath.startsWith(DOUBLE_SEPARATORS)) {
             targetPath = targetPath.substring(1);
         }
+
+        LOGGER.info("uri with host {}, sourcePath {} will forward to {}", host, sourcePath,
+            contextPath + targetPath);
+
         ServletContext currentContext = request.getServletContext();
         ServletContext nextContext = currentContext.getContext(contextPath + targetPath);
         if (currentContext == nextContext) {
@@ -91,5 +109,35 @@ public class ForwardController {
         }
         RequestDispatcher dispatcher = nextContext.getRequestDispatcher(targetPath);
         dispatcher.forward(request, response);
+    }
+
+    /**
+     * Matching Rule: Preferentially apply the forward configuration of the biz, and if not available, match the forward configuration of base.
+     * @param host the host of uri
+     * @param sourcePath the path of uri
+     * @return com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway.ForwardItem
+     */
+    private ForwardItem getForwardItem(String host, String sourcePath) {
+        ForwardItem item;
+
+        // match biz forward first
+        for (Map.Entry<ClassLoader, Forwards> entry : bizForwards.entrySet()) {
+            item = entry.getValue().getForwardItem(host, sourcePath);
+            if (null != item) {
+                Biz biz = ArkClient.getBizManagerService().getBizByClassLoader(entry.getKey());
+                LOGGER.info("biz {} forward configuration matches: {} {}", biz.getIdentity(), host,
+                    sourcePath);
+                return item;
+            }
+        }
+
+        // match base forward
+        item = baseForwards.getForwardItem(host, sourcePath);
+
+        if (null != item) {
+            LOGGER.info("base forward configuration matches: {} {}", host, sourcePath);
+        }
+
+        return item;
     }
 }

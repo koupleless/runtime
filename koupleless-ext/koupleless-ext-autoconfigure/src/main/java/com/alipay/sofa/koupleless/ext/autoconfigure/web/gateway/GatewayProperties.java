@@ -14,9 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.ext.web.gateway;
+package com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway;
 
-import com.ctrip.framework.apollo.spring.annotation.ApolloConfigChangeListener;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

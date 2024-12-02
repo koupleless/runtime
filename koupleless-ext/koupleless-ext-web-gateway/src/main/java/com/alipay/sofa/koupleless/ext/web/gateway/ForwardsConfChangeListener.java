@@ -16,6 +16,9 @@
  */
 package com.alipay.sofa.koupleless.ext.web.gateway;
 
+import com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway.ForwardItems;
+import com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway.Forwards;
+import com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway.GatewayProperties;
 import com.ctrip.framework.apollo.ConfigChangeListener;
 import com.ctrip.framework.apollo.ConfigService;
 import com.ctrip.framework.apollo.model.ConfigChangeEvent;

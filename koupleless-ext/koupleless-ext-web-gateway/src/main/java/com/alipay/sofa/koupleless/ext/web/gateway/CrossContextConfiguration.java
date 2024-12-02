@@ -16,12 +16,15 @@
  */
 package com.alipay.sofa.koupleless.ext.web.gateway;
 
+import com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway.ForwardAutoConfiguration;
 import org.apache.catalina.Context;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.web.embedded.tomcat.TomcatContextCustomizer;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -31,6 +34,8 @@ import org.springframework.context.annotation.Configuration;
  * @version 1.0.0
  */
 @Configuration
+@AutoConfigureAfter(ForwardAutoConfiguration.class)
+@ComponentScan(basePackages = "com.alipay.sofa.koupleless.ext.web")
 public class CrossContextConfiguration {
     /**
      * <p>tomcatCrossContextCustomizer.</p>
