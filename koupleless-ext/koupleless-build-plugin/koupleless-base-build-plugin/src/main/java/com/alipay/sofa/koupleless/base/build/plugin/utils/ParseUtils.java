@@ -17,6 +17,9 @@
 package com.alipay.sofa.koupleless.base.build.plugin.utils;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.aether.util.version.GenericVersionScheme;
+import org.eclipse.aether.version.Version;
+import org.eclipse.aether.version.VersionRange;
 
 import java.util.List;
 import java.util.Map;
@@ -31,6 +34,8 @@ import static com.google.common.collect.Sets.newHashSet;
  * @version $Id: CommonUtils.java, v 0.1 2024年06月26日 13:16 立蓬 Exp $
  */
 public class ParseUtils {
+    private static final GenericVersionScheme versionScheme = new GenericVersionScheme();
+
     public static Set<String> getSetValues(Properties prop, String confKey) {
         if (null == prop) {
             return newHashSet();
@@ -44,5 +49,22 @@ public class ParseUtils {
             return newHashSet((List<String>) yaml.get(confKey));
         }
         return newHashSet();
+    }
+
+    public static VersionRange parseVersionRange(String versionRange) {
+        try {
+            return versionScheme.parseVersionRange(versionRange);
+        } catch (Exception e) {
+            throw new RuntimeException("parse version range failed, version range: " + versionRange,
+                e);
+        }
+    }
+
+    public static Version parseVersion(String version) {
+        try {
+            return versionScheme.parseVersion(version);
+        } catch (Exception e) {
+            throw new RuntimeException("parse version failed, version: " + version, e);
+        }
     }
 }

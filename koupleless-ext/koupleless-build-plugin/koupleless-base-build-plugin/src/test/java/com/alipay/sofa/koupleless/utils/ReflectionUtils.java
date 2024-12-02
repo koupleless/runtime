@@ -44,4 +44,18 @@ public class ReflectionUtils {
             }
         }
     }
+
+    public static <T> T getField(String fieldName, Object o) {
+        Class<?> klass = o.getClass();
+        while (klass != null) {
+            try {
+                Field f = klass.getDeclaredField(fieldName);
+                f.setAccessible(true);
+                return (T) f.get(o);
+            } catch (Exception e) {
+                klass = klass.getSuperclass();
+            }
+        }
+        return null;
+    }
 }
