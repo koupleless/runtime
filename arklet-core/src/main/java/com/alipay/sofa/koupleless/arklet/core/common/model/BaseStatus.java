@@ -14,19 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.arklet.core.hook.network;
+package com.alipay.sofa.koupleless.arklet.core.common.model;
 
-import com.alipay.sofa.koupleless.arklet.core.common.model.BaseNetworkInfo;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-/**
- * <p>NetworkHook interface.</p>
- *
- * @author dongnan
- * @since 2024/10/24
- * @version 1.0.0
- */
-public interface BaseNetworkInfoHook {
+import java.io.Serializable;
 
-    BaseNetworkInfo getNetworkInfo();
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+@Builder
+public class BaseStatus implements Serializable {
+    private static final long serialVersionUID = 1L;
 
+    /**
+     * base metadata
+     */
+    private BaseMetadata      baseMetadata;
+
+    /**
+     * runtime localIP
+     */
+    private String            localIP;
+
+    /**
+     * runtime local host name
+     */
+    private String            localHostName;
+
+    /**
+     * for communicate with devops to send the heart beat message
+     */
+    private int               port;
+
+    private String            state;
 }

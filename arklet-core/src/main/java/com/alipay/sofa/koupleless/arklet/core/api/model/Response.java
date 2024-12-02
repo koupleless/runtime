@@ -18,8 +18,6 @@ package com.alipay.sofa.koupleless.arklet.core.api.model;
 
 import com.alipay.sofa.koupleless.arklet.core.command.meta.Output;
 
-import java.util.UUID;
-
 /**
  * <p>Response class.</p>
  *
@@ -50,9 +48,9 @@ public class Response {
     private String       errorStackTrace;
 
     /**
-     *  baseID
+     *  baseIdentity
      */
-    private String       baseID;
+    private String       baseIdentity;
 
     /**
      * <p>fromCommandOutput.</p>
@@ -60,12 +58,12 @@ public class Response {
      * @param output a {@link com.alipay.sofa.koupleless.arklet.core.command.meta.Output} object
      * @return a {@link com.alipay.sofa.koupleless.arklet.core.api.model.Response} object
      */
-    public static Response fromCommandOutput(Output output, String baseID) {
+    public static Response fromCommandOutput(Output output, String baseIdentity) {
         Response response = new Response();
         response.code = output.getCode();
         response.data = output.getData();
         response.message = output.getMessage();
-        response.baseID = baseID;
+        response.baseIdentity = baseIdentity;
         return response;
     }
 
@@ -195,20 +193,20 @@ public class Response {
     }
 
     /**
-     * Getter method for property <tt>baseID</tt>.
+     * Getter method for property <tt>baseIdentity</tt>.
      *
-     * @return property value of baseID
+     * @return property value of baseIdentity
      */
-    public String getBaseID() {
-        return baseID;
+    public String getBaseIdentity() {
+        return baseIdentity;
     }
 
     /**
-     * Setter method for property <tt>baseID</tt>.
+     * Setter method for property <tt>baseIdentity</tt>.
      *
-     * @param baseID value to be assigned to property baseID
+     * @param baseIdentity value to be assigned to property baseIdentity
      */
-    public void setBaseID(String baseID) {
-        this.baseID = baseID;
+    public void setBaseIdentity(String baseIdentity) {
+        this.baseIdentity = baseIdentity;
     }
 }

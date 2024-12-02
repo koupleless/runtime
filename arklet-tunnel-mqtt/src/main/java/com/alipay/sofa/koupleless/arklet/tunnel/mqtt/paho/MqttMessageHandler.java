@@ -29,7 +29,6 @@ import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletRuntimeExce
 import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
 import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
-import com.alipay.sofa.koupleless.arklet.core.hook.network.BaseNetworkInfoHook;
 import com.alipay.sofa.koupleless.arklet.core.util.ExceptionUtils;
 import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.model.Constants;
 import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.model.MqttResponse;
@@ -53,20 +52,17 @@ import static com.alipay.sofa.koupleless.arklet.core.health.model.Constants.*;
  */
 public class MqttMessageHandler {
 
-    public static boolean             baselineQueryComplete = false;
-    private final CommandService      commandService;
-    private final BaseMetadataHook    baseMetadataHook;
-    private final BaseNetworkInfoHook baseNetworkInfoHook;
-    private final MqttClient          mqttClient;
-    private String                    baseEnv;
-    private final AtomicBoolean       run                   = new AtomicBoolean(false);
+    public static boolean          baselineQueryComplete = false;
+    private final CommandService   commandService;
+    private final BaseMetadataHook baseMetadataHook;
+    private final MqttClient       mqttClient;
+    private String                 baseEnv;
+    private final AtomicBoolean    run                   = new AtomicBoolean(false);
 
     public MqttMessageHandler(CommandService commandService, BaseMetadataHook baseMetadataHook,
-                              BaseNetworkInfoHook baseNetworkInfoHook, MqttClient mqttClient,
-                              String baseEnv) {
+                              MqttClient mqttClient, String baseEnv) {
         this.commandService = commandService;
         this.baseMetadataHook = baseMetadataHook;
-        this.baseNetworkInfoHook = baseNetworkInfoHook;
         this.mqttClient = mqttClient;
         this.baseEnv = baseEnv;
         if (this.baseEnv == null || this.baseEnv.isEmpty()) {
@@ -82,7 +78,8 @@ public class MqttMessageHandler {
      * @return String
      */
     private String getHealthTopic() {
-        return String.format("koupleless_%s/%s/base/health", baseEnv, baseMetadataHook.getBaseID());
+        return String.format("koupleless_%s/%s/base/health", baseEnv,
+            baseMetadataHook.getIdentity());
     }
 
     /**
@@ -91,7 +88,8 @@ public class MqttMessageHandler {
      * @return String
      */
     private String getHeartBeatTopic() {
-        return String.format("koupleless_%s/%s/base/heart", baseEnv, baseMetadataHook.getBaseID());
+        return String.format("koupleless_%s/%s/base/heart", baseEnv,
+            baseMetadataHook.getIdentity());
     }
 
     /**
@@ -101,7 +99,7 @@ public class MqttMessageHandler {
      */
     private String getBizTopic() {
         return String.format("koupleless_%s/%s/base/simpleBiz", baseEnv,
-            baseMetadataHook.getBaseID());
+            baseMetadataHook.getIdentity());
     }
 
     /**
@@ -111,7 +109,7 @@ public class MqttMessageHandler {
      */
     private String getBizOperationResponseTopic() {
         return String.format("koupleless_%s/%s/base/bizOperation", baseEnv,
-            baseMetadataHook.getBaseID());
+            baseMetadataHook.getIdentity());
     }
 
     /**
@@ -121,7 +119,7 @@ public class MqttMessageHandler {
      */
     private String getQueryBaselineTopic() {
         return String.format("koupleless_%s/%s/base/queryBaseline", baseEnv,
-            baseMetadataHook.getBaseID());
+            baseMetadataHook.getIdentity());
     }
 
     /**
@@ -131,7 +129,7 @@ public class MqttMessageHandler {
      */
     private String getBaselineTopic() {
         return String.format("koupleless_%s/%s/base/baseline", baseEnv,
-            baseMetadataHook.getBaseID());
+            baseMetadataHook.getIdentity());
     }
 
     /**
@@ -140,7 +138,7 @@ public class MqttMessageHandler {
      * @return String
      */
     private String getCommandTopic() {
-        return String.format("koupleless_%s/%s/+", baseEnv, baseMetadataHook.getBaseID());
+        return String.format("koupleless_%s/%s/+", baseEnv, baseMetadataHook.getIdentity());
     }
 
     public void onConnectCompleted() {
@@ -156,7 +154,9 @@ public class MqttMessageHandler {
         }
         if (run.compareAndSet(false, true)) {
             // fetch baseline first
-            BaseMetadata metadata = baseMetadataHook.getBaseMetadata();
+            BaseMetadata metadata = BaseMetadata.builder().identity(baseMetadataHook.getIdentity())
+                .version(baseMetadataHook.getVersion())
+                .clusterName(baseMetadataHook.getClusterName()).build();
             try {
                 mqttClient.publish(getQueryBaselineTopic(),
                     JSONObject.toJSONString(MqttResponse.withData(metadata)).getBytes(), 1, false);
@@ -166,8 +166,9 @@ public class MqttMessageHandler {
 
             ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 
-            executor.scheduleAtFixedRate(new HeartBeatScheduledTask(getHeartBeatTopic(), mqttClient,
-                baseMetadataHook, baseNetworkInfoHook), 0, 10000L, TimeUnit.MILLISECONDS);
+            executor.scheduleAtFixedRate(
+                new HeartBeatScheduledTask(getHeartBeatTopic(), mqttClient, baseMetadataHook), 0,
+                10000L, TimeUnit.MILLISECONDS);
         }
     }
 
@@ -183,71 +184,41 @@ public class MqttMessageHandler {
     public void handleCommand(String cmd, MqttMessage msg) throws ArkletRuntimeException {
         ArkletLoggerFactory.getDefaultLogger().info("mqtt handle command {} with content {}", cmd,
             msg);
-        Output<?> output;
-        try {
-            if (cmd.equals(BuiltinCommand.INSTALL_BIZ.getId())
-                || cmd.equals(BuiltinCommand.UNINSTALL_BIZ.getId())) {
-                Map<String, Object> cmdContent = JSONObject.parseObject(msg.toString(),
-                    HashMap.class);
-                output = commandService.process(cmd, cmdContent);
-                // install or uninstall command, send result to biz operation response topic
-                Map<String, Object> bizOperationResponse = new HashMap<>();
-                bizOperationResponse.put(Constants.COMMAND, cmd);
-                bizOperationResponse.put(BIZ_NAME, cmdContent.get(BIZ_NAME));
-                bizOperationResponse.put(BIZ_VERSION, cmdContent.get(BIZ_VERSION));
-                bizOperationResponse.put(Constants.COMMAND_RESPONSE, output);
-                mqttClient.publish(getBizOperationResponseTopic(),
-                    JSONObject.toJSONString(MqttResponse.withData(bizOperationResponse)).getBytes(),
-                    1, false);
-                // sync biz status after operation, queryAllBiz and send result to biz topic
-                Output<?> allBizOutput = commandService
-                    .process(BuiltinCommand.QUERY_ALL_BIZ.getId(), null);
-                mqttClient.publish(getBizTopic(), JSONObject
-                    .toJSONString(MqttResponse.withData(getSimpleAllBizInfo(allBizOutput)),
-                        SerializerFeature.SkipTransientField, SerializerFeature.WriteMapNullValue)
-                    .getBytes(), 1, false);
-            } else if (cmd.equals("baseline")) {
-                List<Map<String, Object>> cmdContents = JSONObject.parseObject(msg.toString(),
-                    List.class);
-                // TODO: parallel process
-                for (Map<String, Object> cmdContent : cmdContents) {
-                    commandService.process(BuiltinCommand.INSTALL_BIZ.getId(), cmdContent);
-                }
-                Output<?> allBizOutput = commandService
-                    .process(BuiltinCommand.QUERY_ALL_BIZ.getId(), null);
-                mqttClient.publish(getBizTopic(), JSONObject
-                    .toJSONString(MqttResponse.withData(getSimpleAllBizInfo(allBizOutput)),
-                        SerializerFeature.SkipTransientField, SerializerFeature.WriteMapNullValue)
-                    .getBytes(), 1, false);
-            } else if (cmd.equals(BuiltinCommand.HEALTH.getId())) {
-                // health command, send result to health topic
-                Map<String, Object> cmdContent = JSONObject.parseObject(msg.toString(),
-                    HashMap.class);
-                output = commandService.process(cmd, cmdContent);
-                mqttClient.publish(getHealthTopic(),
-                    JSONObject.toJSONString(MqttResponse.withData(output)).getBytes(), 1, false);
-            } else if (cmd.equals(BuiltinCommand.QUERY_ALL_BIZ.getId())) {
-                // queryAllBiz command, send result to biz topic
-                Map<String, Object> cmdContent = JSONObject.parseObject(msg.toString(),
-                    HashMap.class);
-                output = commandService.process(cmd, cmdContent);
-                mqttClient.publish(getBizTopic(),
-                    JSONObject.toJSONString(MqttResponse.withData(getSimpleAllBizInfo(output)),
-                        SerializerFeature.SkipTransientField, SerializerFeature.WriteMapNullValue)
-                        .getBytes(),
-                    1, false);
-            } else {
-                throw new ArkletRuntimeException(
-                    String.format("unsupported command %s or content %s", cmd, msg));
-            }
-        } catch (Throwable e) {
-            ClientResponse data = new ClientResponse();
-            data.setMessage(ExceptionUtils.getStackTraceAsString(e));
-            data.setCode(ResponseCode.FAILED);
-            output = Output.ofFailed(data, e.getMessage());
+        if (cmd.equals(BuiltinCommand.INSTALL_BIZ.getId())
+            || cmd.equals(BuiltinCommand.UNINSTALL_BIZ.getId())) {
+            handleBizOperation(cmd, msg);
+        } else if (cmd.equals("baseline")) {
+            handlePlaybackBaseline(cmd, msg);
+        } else if (cmd.equals(BuiltinCommand.HEALTH.getId())) {
+            handleHealthCommand(cmd, msg);
+        } else if (cmd.equals(BuiltinCommand.QUERY_ALL_BIZ.getId())) {
+            handleQueryAllBizCommand(cmd, msg);
+        } else {
+            throw new ArkletRuntimeException(
+                String.format("unsupported command %s with content: %s", cmd, msg));
+        }
+    }
 
+    private void handleBizOperation(String cmd, MqttMessage msg) throws ArkletRuntimeException {
+        Map<String, Object> cmdContent = JSONObject.parseObject(msg.toString(), HashMap.class);
+        Map<String, Object> bizOperationResponse = new HashMap<>();
+        bizOperationResponse.put(Constants.COMMAND, cmd);
+        bizOperationResponse.put(BIZ_NAME, cmdContent.get(BIZ_NAME));
+        bizOperationResponse.put(BIZ_VERSION, cmdContent.get(BIZ_VERSION));
+
+        try {
+            Output<?> output = commandService.process(cmd, cmdContent);
             // install or uninstall command, send result to biz operation response topic
-            Map<String, Object> bizOperationResponse = new HashMap<>();
+            bizOperationResponse.put(Constants.COMMAND_RESPONSE, output);
+            mqttClient.publish(getBizOperationResponseTopic(),
+                JSONObject.toJSONString(MqttResponse.withData(bizOperationResponse)).getBytes(), 1,
+                false);
+        } catch (Throwable t) {
+            ClientResponse data = new ClientResponse();
+            data.setMessage(ExceptionUtils.getStackTraceAsString(t));
+            data.setCode(ResponseCode.FAILED);
+            Output<?> output = Output.ofFailed(data, t.getMessage());
+            // install or uninstall command, send result to biz operation response topic
             bizOperationResponse.put(Constants.COMMAND, cmd);
             bizOperationResponse.put(Constants.COMMAND_RESPONSE, output);
             try {
@@ -257,8 +228,61 @@ public class MqttMessageHandler {
             } catch (MqttException ex) {
                 throw new ArkletRuntimeException(ex);
             }
-            throw new ArkletRuntimeException(e);
+            throw new ArkletRuntimeException(t);
         }
     }
 
+    private void handlePlaybackBaseline(String cmd, MqttMessage msg) throws ArkletRuntimeException {
+        List<Map<String, Object>> cmdContents = JSONObject.parseObject(msg.toString(), List.class);
+
+        ArkletLoggerFactory.getDefaultLogger()
+            .info("start to playback baseline with content: " + cmdContents);
+        // TODO: parallel process
+        List<Map<String, Object>> failedContents = new ArrayList<>();
+        for (Map<String, Object> cmdContent : cmdContents) {
+            try {
+                commandService.process(BuiltinCommand.INSTALL_BIZ.getId(), cmdContent);
+            } catch (Throwable e) {
+                failedContents.add(cmdContent);
+            }
+        }
+        if (!failedContents.isEmpty()) {
+            ArkletLoggerFactory.getDefaultLogger().error(
+                String.format("fail to handle command %s with content: %s", cmd, failedContents));
+        } else {
+            ArkletLoggerFactory.getDefaultLogger()
+                .info("install biz success when playback baseline");
+        }
+    }
+
+    private void handleHealthCommand(String cmd, MqttMessage msg) throws ArkletRuntimeException {
+        Map<String, Object> cmdContent = JSONObject.parseObject(msg.toString(), HashMap.class);
+        try {
+            Output<?> output = commandService.process(cmd, cmdContent);
+            mqttClient.publish(getHealthTopic(),
+                JSONObject.toJSONString(MqttResponse.withData(output)).getBytes(), 1, false);
+        } catch (Throwable t) {
+            ArkletLoggerFactory.getDefaultLogger().error(
+                String.format("fail to handle command %s with content: %s", cmd, cmdContent), t);
+            throw new ArkletRuntimeException(t);
+        }
+    }
+
+    private void handleQueryAllBizCommand(String cmd,
+                                          MqttMessage msg) throws ArkletRuntimeException {
+        Map<String, Object> cmdContent = JSONObject.parseObject(msg.toString(), HashMap.class);
+        try {
+            Output<?> output = commandService.process(cmd, cmdContent);
+            mqttClient.publish(getBizTopic(),
+                JSONObject
+                    .toJSONString(MqttResponse.withData(getSimpleAllBizInfo(output)),
+                        SerializerFeature.SkipTransientField, SerializerFeature.WriteMapNullValue)
+                    .getBytes(),
+                1, false);
+        } catch (Throwable t) {
+            ArkletLoggerFactory.getDefaultLogger().error(
+                String.format("fail to handle command %s with content: %s", cmd, cmdContent), t);
+            throw new ArkletRuntimeException(t);
+        }
+    }
 }

@@ -14,28 +14,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.arklet.core.hooks.network;
+package com.alipay.sofa.koupleless.arklet.core.hook;
 
 import com.alipay.sofa.koupleless.arklet.core.BaseTest;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletInitException;
-import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
-import com.alipay.sofa.koupleless.arklet.core.common.model.BaseNetworkInfo;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.net.*;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @author dongnan
- * @since 2024/10/24
+ * @since 2024/09/04
  */
-public class BaseNetworkInfoHookTest extends BaseTest {
+public class BaseMetadataHookTest extends BaseTest {
+    @Test
+    public void getRuntimeEnv() {
+        String env = baseMetadataHook.getRuntimeEnv();
+        Assert.assertEquals("default", env);
+    }
+
+    @Test
+    public void getName() {
+        baseMetadataHook.getIdentity();
+    }
+
     @Test
     public void getNetworkInfo() {
-        BaseNetworkInfo networkInfo = networkInfoHook.getNetworkInfo();
         Map<String, String> networkInfoMap = new HashMap<>();
         try {
             Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
@@ -52,7 +63,7 @@ public class BaseNetworkInfoHookTest extends BaseTest {
         } catch (SocketException e) {
             throw new ArkletInitException("getLocalNetworkInfo error", e);
         }
-        Assert.assertEquals(networkInfoMap.get(networkInfo.getLocalIP()),
-            networkInfo.getLocalHostName());
+        Assert.assertEquals(networkInfoMap.get(baseMetadataHook.getLocalIP()),
+            baseMetadataHook.getLocalHostName());
     }
 }
