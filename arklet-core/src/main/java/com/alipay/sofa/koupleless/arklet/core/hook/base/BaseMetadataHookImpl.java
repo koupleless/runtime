@@ -58,6 +58,11 @@ public class BaseMetadataHookImpl implements BaseMetadataHook {
     }
 
     @Override
+    public String getName() {
+        return "TO_BE_IMPLEMENTED";
+    }
+
+    @Override
     public String getIdentity() {
         String ip = getLocalIP();
         if (!UNNKOWN.equals(ip)) {
