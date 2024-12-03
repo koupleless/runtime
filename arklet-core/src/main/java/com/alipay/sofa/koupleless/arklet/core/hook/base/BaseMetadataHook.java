@@ -30,19 +30,27 @@ public interface BaseMetadataHook {
      */
     String getIdentity();
 
-    String getVersion();
+    /**
+     * name for this base app name
+     */
+    String getName();
 
     /**
-     * env for this base instance
-     * @return
+     * name for this base app version
      */
-    String getRuntimeEnv();
+    String getVersion();
 
     /**
      * cluster name for this base instance
      * @return
      */
     String getClusterName();
+
+    /**
+     * env for this base instance
+     * @return
+     */
+    String getRuntimeEnv();
 
     /**
      * local ip
