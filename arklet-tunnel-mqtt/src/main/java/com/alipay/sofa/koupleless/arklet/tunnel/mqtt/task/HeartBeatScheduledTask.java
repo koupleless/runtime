@@ -43,9 +43,9 @@ public class HeartBeatScheduledTask implements Runnable {
     @Override
     public void run() {
         // send heart beat message
-        BaseMetadata baseMetadata = BaseMetadata.builder().identity(baseMetadataHook.getIdentity())
-            .version(baseMetadataHook.getVersion()).clusterName(baseMetadataHook.getClusterName())
-            .build();
+        BaseMetadata baseMetadata = BaseMetadata.builder().name(baseMetadataHook.getName())
+            .identity(baseMetadataHook.getIdentity()).version(baseMetadataHook.getVersion())
+            .clusterName(baseMetadataHook.getClusterName()).build();
         BaseStatus baseStatus = BaseStatus.builder().baseMetadata(baseMetadata)
             .localIP(baseMetadataHook.getLocalIP())
             .localHostName(baseMetadataHook.getLocalHostName())

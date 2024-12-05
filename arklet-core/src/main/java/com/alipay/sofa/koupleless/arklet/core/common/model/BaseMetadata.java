@@ -33,9 +33,14 @@ public class BaseMetadata implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * runtime base name
+     * runtime base instance name
      */
     private String            identity;
+
+    /**
+     * base name
+     */
+    private String            name;
 
     /**
      * runtime base version

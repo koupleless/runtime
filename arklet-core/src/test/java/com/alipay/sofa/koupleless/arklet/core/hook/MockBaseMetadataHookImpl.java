@@ -25,6 +25,11 @@ public class MockBaseMetadataHookImpl implements BaseMetadataHook {
     }
 
     @Override
+    public String getName() {
+        return "";
+    }
+
+    @Override
     public String getVersion() {
         return "";
     }
