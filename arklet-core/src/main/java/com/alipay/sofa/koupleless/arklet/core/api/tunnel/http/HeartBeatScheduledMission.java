@@ -86,7 +86,7 @@ class HeartBeatScheduledMission implements Runnable {
     public void run() {
         try {
             // send heart beat message
-            BaseMetadata baseMetadata = BaseMetadata.builder()
+            BaseMetadata baseMetadata = BaseMetadata.builder().name(baseMetadataHook.getName())
                 .identity(baseMetadataHook.getIdentity())
                 .clusterName(baseMetadataHook.getClusterName()).build();
             BaseStatus baseStatus = BaseStatus.builder().baseMetadata(baseMetadata)

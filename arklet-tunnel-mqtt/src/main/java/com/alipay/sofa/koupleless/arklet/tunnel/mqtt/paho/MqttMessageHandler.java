@@ -154,8 +154,8 @@ public class MqttMessageHandler {
         }
         if (run.compareAndSet(false, true)) {
             // fetch baseline first
-            BaseMetadata metadata = BaseMetadata.builder().identity(baseMetadataHook.getIdentity())
-                .version(baseMetadataHook.getVersion())
+            BaseMetadata metadata = BaseMetadata.builder().name(baseMetadataHook.getName())
+                .identity(baseMetadataHook.getIdentity()).version(baseMetadataHook.getVersion())
                 .clusterName(baseMetadataHook.getClusterName()).build();
             try {
                 mqttClient.publish(getQueryBaselineTopic(),
