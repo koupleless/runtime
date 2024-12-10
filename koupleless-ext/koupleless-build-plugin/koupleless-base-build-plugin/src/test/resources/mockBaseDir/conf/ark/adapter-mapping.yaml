@@ -1,0 +1,8 @@
+version: 1.2.2
+adapterMappings:
+  - matcher:
+      groupId: com.ctrip.framework.apollo
+      artifactId: apollo-client
+      versionRange: "(,)"
+    adapter:
+      artifactId: koupleless-adapter-apollo-1.6

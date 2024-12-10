@@ -1,0 +1,120 @@
+version: 1.2.2
+adapterMappings:
+  - matcher:
+      regexp: ".*spring-boot-starter-logging:3.*"
+    adapter:
+      artifactId: koupleless-adapter-logback-spring-starter-3.2
+  - matcher:
+      groupId: org.springframework.boot
+      artifactId: spring-boot
+      versionRange: "[2.5.1,2.7.14]"
+    adapter:
+      artifactId: koupleless-adapter-spring-boot-logback-2.7.14
+  - matcher:
+      groupId: org.springframework.boot
+      artifactId: spring-boot-starter-logging
+      versionRange: "(,)"
+    adapter:
+      artifactId: koupleless-adapter-logback
+  - matcher:
+      groupId: org.springframework
+      artifactId: spring-aop
+      versionRange: "[6.0.8,6.0.9]"
+    adapter:
+      artifactId: koupleless-adapter-spring-aop-6.0.8
+  - matcher:
+      groupId: org.springframework
+      artifactId: spring-aop
+      versionRange: "[5.3.27,5.3.27]"
+    adapter:
+      artifactId: koupleless-adapter-spring-aop-5.3.27
+  - matcher:
+      groupId: org.apache.rocketmq
+      artifactId: rocketmq-client
+      versionRange: "[4.4.0,4.4.0]"
+    adapter:
+      artifactId: koupleless-adapter-rocketmq-4.4
+  - matcher:
+      groupId: com.ctrip.framework.apollo
+      artifactId: apollo-client
+      versionRange: "(,)"
+    adapter:
+      artifactId: koupleless-adapter-apollo-1.6
+  - matcher:
+      groupId: com.alibaba
+      artifactId: dubbo-dependencies-bom
+      versionRange: "[2.6.1,2.7.0)"
+    adapter:
+      artifactId: koupleless-adapter-dubbo-2.6
+  - matcher:
+      groupId: com.alibaba
+      artifactId: dubbo
+      versionRange: "[2.6.0,2.7.0)"
+    adapter:
+      artifactId: koupleless-adapter-dubbo-2.6
+  - matcher:
+      groupId: org.apache.dubbo
+      artifactId: dubbo-spring-boot-starter
+      versionRange: "[2.7.0,2.8.0)"
+    adapter:
+      artifactId: koupleless-adapter-dubbo-2.7
+  - matcher:
+      groupId: org.apache.dubbo
+      artifactId: dubbo
+      versionRange: "[2.7.0,2.8.0)"
+    adapter:
+      artifactId: koupleless-adapter-dubbo-2.7
+  - matcher:
+      groupId: org.apache.dubbo
+      artifactId: dubbo-common
+      versionRange: "[3.2.0,3.3.0)"
+    adapter:
+      artifactId: koupleless-adapter-dubbo-3.2
+  - matcher:
+      groupId: org.apache.dubbo
+      artifactId: dubbo-common
+      versionRange: "[3.1.0,3.2.0)"
+    adapter:
+      artifactId: koupleless-adapter-dubbo-3.1
+  - matcher:
+      groupId: org.springframework.boot
+      artifactId: spring-boot-starter-log4j2
+      versionRange: "[2.1.0,2.4.0)"
+    adapter:
+      artifactId: koupleless-adapter-log4j2-spring-starter-2.1
+  - matcher:
+      groupId: org.springframework.boot
+      artifactId: spring-boot-starter-log4j2
+      versionRange: "[2.4.0,2.7.0)"
+    adapter:
+      artifactId: koupleless-adapter-log4j2-spring-starter-2.4
+  - matcher:
+      groupId: org.springframework.boot
+      artifactId: spring-boot-starter-log4j2
+      versionRange: "[2.7.0,3.0.0)"
+    adapter:
+      artifactId: koupleless-adapter-log4j2-spring-starter-2.7
+  - matcher:
+      groupId: org.springframework.boot
+      artifactId: spring-boot-starter-log4j2
+      versionRange: "[3.0.0,3.2.0)"
+    adapter:
+      artifactId: koupleless-adapter-log4j2-spring-starter-3.0
+  - matcher:
+      groupId: org.springframework.boot
+      artifactId: spring-boot-starter-log4j2
+      versionRange: "[3.2.0,)"
+    adapter:
+      artifactId: koupleless-adapter-log4j2-spring-starter-3.2
+  - matcher:
+      groupId: org.springframework.boot
+      artifactId: spring-boot-starter-logging
+      versionRange: "[3.0.0,3.2.0)"
+    adapter:
+      artifactId: koupleless-adapter-logback-spring-starter-3.0
+  - matcher:
+      groupId: org.springframework.boot
+      artifactId: spring-boot-starter-logging
+      versionRange: "[3.2.0,)"
+    adapter:
+      artifactId: koupleless-adapter-logback-spring-starter-3.2
