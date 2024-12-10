@@ -46,12 +46,7 @@ public class StopLoggerCxtAfterBizStopEventHandlerTest {
             .getContextClassLoader();
     private static MockedStatic<PropertiesUtil> propertiesUtil;
 
-    private static final ClassLoader rootClassLoader = new ClassLoader(null) {
-        @Override
-        public String getName() {
-            return "TestClassLoader";
-        }
-    };
+    private static final ClassLoader rootClassLoader = new ClassLoader() {};
 
     @BeforeClass
     public static void beforeClass() {
