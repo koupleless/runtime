@@ -18,10 +18,12 @@ package com.alipay.sofa.koupleless.plugin.spring;
 
 import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.api.ArkConfigs;
+import com.alipay.sofa.koupleless.common.util.LoaderUtil;
 import org.springframework.boot.context.event.ApplicationStartingEvent;
 import org.springframework.boot.context.event.SpringApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.Ordered;
+
 
 import static com.alipay.sofa.ark.spi.constant.Constants.PLUGIN_EXPORT_CLASS_ENABLE;
 
@@ -39,6 +41,14 @@ public class ServerlessApplicationListener implements ApplicationListener<Spring
     /** {@inheritDoc} */
     @Override
     public void onApplicationEvent(SpringApplicationEvent event) {
+        ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
+            Class<?> restartClassLoaderClass = LoaderUtil.loadClass(
+                "org.springframework.boot.devtools.restart.classloader.RestartClassLoader");
+            if (restartClassLoaderClass.equals(currentClassLoader.getClass())) {
+                Thread.currentThread().setContextClassLoader(currentClassLoader.getParent());
+            }
+        } catch (ClassNotFoundException e) {}
         if (ArkClient.class.getClassLoader() == Thread.currentThread().getContextClassLoader()) {
             if (event instanceof ApplicationStartingEvent) {
                 // 开启ark2.0 embed
