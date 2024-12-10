@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>
+        <Console name="STDOUT-APPENDER" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d %-5p %c{2} - %m%n%throwable" charset="UTF-8"/>
+        </Console>
+
+        <Console name="STDERR-APPENDER" target="SYSTEM_ERR">
+            <PatternLayout pattern="%d %-5p %c{2} - %m%n%throwable" charset="UTF-8"/>
+        </Console>
+
+        <RollingFile name="APP-DEFAULT-APPENDER" fileName="${ctx:logging.path}/async/app-default.log"
+                     filePattern="${ctx:logging.path}/async/app-default.log.%d{yyyy-MM-dd}"
+                     append="true">
+            <PatternLayout
+                    pattern="%d [%X{traceId} %X{rpcId} - %X{loginUserEmail}/%X{loginUserID}/%X{remoteAddr}/%X{clientId} - %X{requestURIWithQueryString}] %-5p %c{2} - %m%n%throwable"
+                    charset="UTF-8"/>
+            <TimeBasedTriggeringPolicy/>
+            <DefaultRolloverStrategy/>
+        </RollingFile>
+
+        <Async name="AsyncLogAppender">
+            <AppenderRef ref="APP-DEFAULT-APPENDER"/>
+        </Async>
+    </Appenders>
+
+    <Loggers>
+        <AsyncLogger name="STDOUT" additivity="false" level="info">
+            <AppenderRef ref="STDOUT-APPENDER"/>
+        </AsyncLogger>
+
+        <AsyncLogger name="STDERR" additivity="false" level="info">
+            <AppenderRef ref="STDERR-APPENDER"/>
+        </AsyncLogger>
+
+        <AsyncLogger name="APP-DEFAULT" additivity="false" level="INFO">
+            <AppenderRef ref="AsyncLogAppender"/>
+        </AsyncLogger>
+
+        <AsyncRoot level="INFO">
+            <AppenderRef ref="AsyncLogAppender"/>
+            <!--            <AppenderRef ref="ERROR-APPENDER"/>-->
+        </AsyncRoot>
+    </Loggers>
+</Configuration>
