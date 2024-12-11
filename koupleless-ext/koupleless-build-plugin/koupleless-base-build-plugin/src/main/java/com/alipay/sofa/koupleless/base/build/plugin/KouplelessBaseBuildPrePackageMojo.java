@@ -202,7 +202,6 @@ public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
             Preconditions.checkState(artifactResult.isResolved(), "artifact not resolved.");
             return artifactResult.getArtifact();
         } catch (Throwable t) {
-            getLog().error(t);
             throw new RuntimeException(t);
         }
     }
