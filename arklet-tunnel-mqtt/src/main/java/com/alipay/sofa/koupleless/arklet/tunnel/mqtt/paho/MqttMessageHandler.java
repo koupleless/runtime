@@ -26,7 +26,7 @@ import com.alipay.sofa.koupleless.arklet.core.command.builtin.model.BizInfo;
 import com.alipay.sofa.koupleless.arklet.core.command.meta.Output;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletInitException;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletRuntimeException;
-import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
+import com.alipay.sofa.koupleless.common.log.ArkletLoggerFactory;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
 import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
 import com.alipay.sofa.koupleless.arklet.core.util.ExceptionUtils;
@@ -154,8 +154,8 @@ public class MqttMessageHandler {
         }
         if (run.compareAndSet(false, true)) {
             // fetch baseline first
-            BaseMetadata metadata = BaseMetadata.builder().identity(baseMetadataHook.getIdentity())
-                .version(baseMetadataHook.getVersion())
+            BaseMetadata metadata = BaseMetadata.builder().name(baseMetadataHook.getName())
+                .identity(baseMetadataHook.getIdentity()).version(baseMetadataHook.getVersion())
                 .clusterName(baseMetadataHook.getClusterName()).build();
             try {
                 mqttClient.publish(getQueryBaselineTopic(),

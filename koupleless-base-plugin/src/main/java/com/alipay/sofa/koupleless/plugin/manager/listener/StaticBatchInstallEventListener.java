@@ -20,7 +20,7 @@ import com.alipay.sofa.ark.api.ClientResponse;
 import com.alipay.sofa.ark.api.ResponseCode;
 import com.alipay.sofa.ark.common.util.StringUtils;
 import com.alipay.sofa.koupleless.arklet.core.ArkletComponentRegistry;
-import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
+import com.alipay.sofa.koupleless.common.log.ArkletLoggerFactory;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BatchInstallRequest;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BatchInstallResponse;
 import com.alipay.sofa.koupleless.arklet.core.ops.UnifiedOperationService;

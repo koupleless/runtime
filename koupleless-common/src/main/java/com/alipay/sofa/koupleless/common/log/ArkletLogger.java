@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.arklet.core.common.log;
+package com.alipay.sofa.koupleless.common.log;
 
 import org.slf4j.Logger;
 import org.slf4j.Marker;

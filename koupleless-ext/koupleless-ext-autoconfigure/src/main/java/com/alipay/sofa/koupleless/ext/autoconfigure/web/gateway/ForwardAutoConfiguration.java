@@ -14,12 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.ext.web.gateway;
+package com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway;
 
+import com.alipay.sofa.ark.api.ArkClient;
+import com.alipay.sofa.koupleless.common.util.ArkUtils;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * <p>ForwardAutoConfiguration class.</p>
@@ -27,16 +30,24 @@ import org.springframework.context.annotation.ComponentScan;
  * @author zzl_i
  * @version 1.0.0
  */
+
+@Configuration
 @EnableConfigurationProperties(GatewayProperties.class)
-@ComponentScan(basePackages = "com.alipay.sofa.koupleless.ext.web")
 public class ForwardAutoConfiguration {
     @Autowired
     private GatewayProperties gatewayProperties;
 
+    @PostConstruct
+    public void init() {
+        if (ArkUtils.isMasterBiz()) {
+            ArkClient.getEventAdminService().register(new CompositeBizForwardsHandler());
+        }
+    }
+
     /**
      * <p>forwards.</p>
      *
-     * @return a {@link com.alipay.sofa.koupleless.ext.web.gateway.Forwards} object
+     * @return a {@link Forwards} object
      */
     @Bean
     public Forwards forwards() {

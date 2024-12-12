@@ -19,7 +19,7 @@ package com.alipay.sofa.koupleless.arklet.tunnel.mqtt.task;
 import com.alibaba.fastjson.JSONObject;
 import com.alipay.sofa.ark.spi.model.BizState;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletRuntimeException;
-import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
+import com.alipay.sofa.koupleless.common.log.ArkletLoggerFactory;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BaseStatus;
 import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
@@ -43,9 +43,9 @@ public class HeartBeatScheduledTask implements Runnable {
     @Override
     public void run() {
         // send heart beat message
-        BaseMetadata baseMetadata = BaseMetadata.builder().identity(baseMetadataHook.getIdentity())
-            .version(baseMetadataHook.getVersion()).clusterName(baseMetadataHook.getClusterName())
-            .build();
+        BaseMetadata baseMetadata = BaseMetadata.builder().name(baseMetadataHook.getName())
+            .identity(baseMetadataHook.getIdentity()).version(baseMetadataHook.getVersion())
+            .clusterName(baseMetadataHook.getClusterName()).build();
         BaseStatus baseStatus = BaseStatus.builder().baseMetadata(baseMetadata)
             .localIP(baseMetadataHook.getLocalIP())
             .localHostName(baseMetadataHook.getLocalHostName())

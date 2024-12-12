@@ -22,8 +22,7 @@ import java.util.stream.Collectors;
 
 import com.alipay.sofa.koupleless.arklet.core.ArkletComponentRegistry;
 import com.alipay.sofa.koupleless.arklet.core.command.meta.AbstractCommandHandler;
-import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger;
-import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
+import com.alipay.sofa.koupleless.common.log.ArkletLoggerFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.context.event.ContextRefreshedEvent;

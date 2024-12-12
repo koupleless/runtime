@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.ext.web.gateway;
+package com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway;
 
 import org.springframework.util.StringUtils;
 
@@ -55,7 +55,7 @@ public class Forwards {
      *
      * @param host a {@link java.lang.String} object
      * @param path a {@link java.lang.String} object
-     * @return a {@link com.alipay.sofa.koupleless.ext.web.gateway.ForwardItem} object
+     * @return a {@link ForwardItem} object
      */
     public ForwardItem getForwardItem(String host, String path) {
         String key = host + path;

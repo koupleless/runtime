@@ -19,8 +19,8 @@ package com.alipay.sofa.koupleless.arklet.core.api.tunnel.http;
 import com.alibaba.fastjson.JSONObject;
 import com.alipay.sofa.ark.spi.model.BizState;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletRuntimeException;
-import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger;
-import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
+import com.alipay.sofa.koupleless.common.log.ArkletLogger;
+import com.alipay.sofa.koupleless.common.log.ArkletLoggerFactory;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BaseStatus;
 import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
@@ -86,7 +86,7 @@ class HeartBeatScheduledMission implements Runnable {
     public void run() {
         try {
             // send heart beat message
-            BaseMetadata baseMetadata = BaseMetadata.builder()
+            BaseMetadata baseMetadata = BaseMetadata.builder().name(baseMetadataHook.getName())
                 .identity(baseMetadataHook.getIdentity())
                 .clusterName(baseMetadataHook.getClusterName()).build();
             BaseStatus baseStatus = BaseStatus.builder().baseMetadata(baseMetadata)

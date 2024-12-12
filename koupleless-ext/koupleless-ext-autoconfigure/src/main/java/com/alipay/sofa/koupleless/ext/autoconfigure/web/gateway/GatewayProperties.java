@@ -14,40 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.ext.web.gateway;
+package com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway;
 
-import lombok.Getter;
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import java.util.List;
 
 /**
- * <p>ForwardItem class.</p>
+ * <p>GatewayProperties class.</p>
  *
  * @author zzl_i
  * @version 1.0.0
  */
-public class ForwardItem {
-
-    @Getter
-    private final String contextPath;
-    @Getter
-    private final String host;
-    @Getter
-    private final String from;
-
-    @Getter
-    private final String to;
-
-    /**
-     * <p>Constructor for ForwardItem.</p>
-     *
-     * @param contextPath a {@link java.lang.String} object
-     * @param host a {@link java.lang.String} object
-     * @param from a {@link java.lang.String} object
-     * @param to a {@link java.lang.String} object
-     */
-    public ForwardItem(String contextPath, String host, String from, String to) {
-        this.contextPath = contextPath;
-        this.host = host;
-        this.from = from;
-        this.to = to;
-    }
+@ConfigurationProperties(prefix = "koupleless.web.gateway")
+@Data
+public class GatewayProperties {
+    private List<Forward> forwards;
 }

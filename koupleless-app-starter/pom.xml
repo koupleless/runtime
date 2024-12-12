@@ -17,6 +17,11 @@
             <artifactId>koupleless-common</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.alipay.sofa.koupleless</groupId>
+            <artifactId>koupleless-ext-autoconfigure</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
