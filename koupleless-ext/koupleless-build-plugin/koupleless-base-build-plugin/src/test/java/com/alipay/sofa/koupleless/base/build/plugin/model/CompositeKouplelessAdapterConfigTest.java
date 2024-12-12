@@ -17,6 +17,7 @@
 package com.alipay.sofa.koupleless.base.build.plugin.model;
 
 import com.alipay.sofa.koupleless.base.build.plugin.KouplelessBaseBuildPrePackageMojo;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.project.MavenProject;
@@ -120,6 +121,15 @@ public class CompositeKouplelessAdapterConfigTest {
 
         KouplelessAdapterConfig defaultConfig = getField("defaultConfig", config);
         assertNotNull(defaultConfig);
+        List<MavenDependencyAdapterMapping> adapterMappings = defaultConfig.getAdapterMappings();
+        for (MavenDependencyAdapterMapping mapping : adapterMappings) {
+            assertTrue(StringUtils.isNotEmpty(mapping.getAdapter().getGroupId()));
+            assertTrue(StringUtils.isNotEmpty(mapping.getAdapter().getArtifactId()));
+
+            assertTrue(StringUtils.isNotEmpty(mapping.getMatcher().getGroupId()));
+            assertTrue(StringUtils.isNotEmpty(mapping.getMatcher().getArtifactId()));
+            assertTrue(StringUtils.isNotEmpty(mapping.getMatcher().getVersionRange()));
+        }
     }
 
     @Test
