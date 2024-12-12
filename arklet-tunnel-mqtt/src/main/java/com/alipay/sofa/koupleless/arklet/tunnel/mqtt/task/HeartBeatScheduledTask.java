@@ -19,7 +19,7 @@ package com.alipay.sofa.koupleless.arklet.tunnel.mqtt.task;
 import com.alibaba.fastjson.JSONObject;
 import com.alipay.sofa.ark.spi.model.BizState;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletRuntimeException;
-import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
+import com.alipay.sofa.koupleless.common.log.ArkletLoggerFactory;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BaseStatus;
 import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;

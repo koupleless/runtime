@@ -16,7 +16,7 @@
  */
 package com.alipay.sofa.koupleless.arklet.core.logger;
 
-import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger;
+import com.alipay.sofa.koupleless.common.log.ArkletLogger;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
