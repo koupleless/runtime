@@ -17,7 +17,7 @@
 package com.alipay.sofa.koupleless.arklet.core.ops;
 
 import com.alipay.sofa.ark.spi.service.PriorityOrdered;
-import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
+import com.alipay.sofa.koupleless.common.log.ArkletLoggerFactory;
 import com.google.common.base.Preconditions;
 import lombok.SneakyThrows;
 

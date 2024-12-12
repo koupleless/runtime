@@ -31,8 +31,7 @@ import com.alipay.sofa.koupleless.arklet.core.health.model.Health;
 import com.alipay.sofa.koupleless.arklet.core.health.model.Health.HealthBuilder;
 import com.alipay.sofa.koupleless.arklet.core.health.model.PluginHealthMeta;
 import com.alipay.sofa.koupleless.arklet.core.command.builtin.model.PluginInfo;
-import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger;
-import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
+import com.alipay.sofa.koupleless.common.log.ArkletLoggerFactory;
 import com.google.inject.Singleton;
 
 import java.util.List;

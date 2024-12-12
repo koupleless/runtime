@@ -18,8 +18,8 @@ package com.alipay.sofa.koupleless.arklet.core.util;
 
 import com.alipay.sofa.koupleless.arklet.core.api.tunnel.Tunnel;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletInitException;
-import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger;
-import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
+import com.alipay.sofa.koupleless.common.log.ArkletLogger;
+import com.alipay.sofa.koupleless.common.log.ArkletLoggerFactory;
 import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
 
 import java.lang.reflect.InvocationTargetException;

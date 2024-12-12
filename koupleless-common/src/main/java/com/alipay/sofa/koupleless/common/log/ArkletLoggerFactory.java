@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.arklet.core.common.log;
+package com.alipay.sofa.koupleless.common.log;
 
 import com.alipay.sofa.common.log.LoggerSpaceManager;
 
@@ -39,7 +39,7 @@ public class ArkletLoggerFactory {
      * <p>getLogger.</p>
      *
      * @param clazz a {@link java.lang.Class} object
-     * @return a {@link com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger} object
+     * @return a {@link ArkletLogger} object
      */
     public static ArkletLogger getLogger(Class<?> clazz) {
         if (clazz == null) {
@@ -52,7 +52,7 @@ public class ArkletLoggerFactory {
      * <p>getLogger.</p>
      *
      * @param name a {@link java.lang.String} object
-     * @return a {@link com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger} object
+     * @return a {@link ArkletLogger} object
      */
     public static ArkletLogger getLogger(String name) {
         if (name == null || name.isEmpty()) {
@@ -64,7 +64,7 @@ public class ArkletLoggerFactory {
     /**
      * <p>Getter for the field <code>defaultLogger</code>.</p>
      *
-     * @return a {@link com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger} object
+     * @return a {@link ArkletLogger} object
      */
     public static ArkletLogger getDefaultLogger() {
         if (defaultLogger == null) {

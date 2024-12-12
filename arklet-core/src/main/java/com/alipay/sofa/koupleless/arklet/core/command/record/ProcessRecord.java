@@ -17,8 +17,7 @@
 package com.alipay.sofa.koupleless.arklet.core.command.record;
 
 import com.alipay.sofa.koupleless.arklet.core.command.meta.bizops.ArkBizMeta;
-import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger;
-import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
+import com.alipay.sofa.koupleless.common.log.ArkletLoggerFactory;
 import lombok.Getter;
 import lombok.Setter;
 
