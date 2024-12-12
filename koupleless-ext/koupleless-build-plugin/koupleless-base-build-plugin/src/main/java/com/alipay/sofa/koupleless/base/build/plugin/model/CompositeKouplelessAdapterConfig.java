@@ -244,7 +244,7 @@ public class CompositeKouplelessAdapterConfig implements AdapterConfig {
             VersionRangeResult rangeResult = mojo.repositorySystem
                 .resolveVersionRange(mojo.session.getRepositorySession(), rangeRequest);
             Version latestVersion = rangeResult.getHighestVersion();
-            version = latestVersion.toString();
+            version = null == latestVersion ? "" : latestVersion.toString();
         } catch (VersionRangeResolutionException e) {
             mojo.getLog().warn(
                 "Failed to resolve latest version of koupleless-adapter-configs, use default config only.");
