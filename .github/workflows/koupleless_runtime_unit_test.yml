@@ -19,7 +19,7 @@ env:
   WORK_DIR: .
 
 jobs:
-  unit-test-for-jdk8-in-linux:
+  unit-test-for-jdk17-in-linux:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -40,7 +40,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
-  unit-test-for-jdk8-in-windows:
+  unit-test-for-jdk17-in-windows:
     runs-on:  windows-latest
     steps:
       - uses: actions/checkout@v3
