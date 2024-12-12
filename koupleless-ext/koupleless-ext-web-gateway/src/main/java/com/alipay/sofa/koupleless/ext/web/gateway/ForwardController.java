@@ -18,8 +18,8 @@ package com.alipay.sofa.koupleless.ext.web.gateway;
 
 import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.spi.model.Biz;
-import com.alipay.sofa.koupleless.common.log.KouplelessLogger;
-import com.alipay.sofa.koupleless.common.log.KouplelessLoggerFactory;
+import com.alipay.sofa.koupleless.common.log.ArkletLogger;
+import com.alipay.sofa.koupleless.common.log.ArkletLoggerFactory;
 import com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway.CompositeBizForwardsHandler;
 import com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway.ForwardItem;
 import com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway.Forwards;
@@ -48,17 +48,17 @@ import java.util.Map;
 @Controller
 @RequestMapping
 public class ForwardController {
-    private static final KouplelessLogger LOGGER            = KouplelessLoggerFactory
-        .getLogger("web-gateway");
+    private static final ArkletLogger  LOGGER            = ArkletLoggerFactory
+        .getLogger(ForwardController.class);
 
     @Autowired
-    private Forwards                      baseForwards;
+    private Forwards                   baseForwards;
 
-    private Map<ClassLoader, Forwards>    bizForwards       = CompositeBizForwardsHandler
+    private Map<ClassLoader, Forwards> bizForwards       = CompositeBizForwardsHandler
         .getBizForwards();
 
-    private static final String           SEPARATOR         = "/";
-    private static final String           DOUBLE_SEPARATORS = SEPARATOR + SEPARATOR;
+    private static final String        SEPARATOR         = "/";
+    private static final String        DOUBLE_SEPARATORS = SEPARATOR + SEPARATOR;
 
     /**
      * <p>redirect.</p>

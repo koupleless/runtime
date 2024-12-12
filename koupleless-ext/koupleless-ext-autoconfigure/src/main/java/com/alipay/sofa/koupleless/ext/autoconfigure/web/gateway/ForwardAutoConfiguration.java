@@ -18,12 +18,11 @@ package com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway;
 
 import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.koupleless.common.util.ArkUtils;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.PostConstruct;
 
 /**
  * <p>ForwardAutoConfiguration class.</p>
