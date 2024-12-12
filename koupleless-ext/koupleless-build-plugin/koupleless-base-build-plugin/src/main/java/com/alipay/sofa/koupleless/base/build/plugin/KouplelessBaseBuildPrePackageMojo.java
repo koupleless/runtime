@@ -34,13 +34,11 @@ package com.alipay.sofa.koupleless.base.build.plugin;
 
 import com.alipay.sofa.koupleless.base.build.plugin.adapter.AdapterCopyService;
 import com.alipay.sofa.koupleless.base.build.plugin.common.JarFileUtils;
-import com.alipay.sofa.koupleless.base.build.plugin.model.KouplelessAdapterConfig;
+import com.alipay.sofa.koupleless.base.build.plugin.model.CompositeKouplelessAdapterConfig;
 import com.alipay.sofa.koupleless.base.build.plugin.model.MavenDependencyAdapterMapping;
 import com.alipay.sofa.koupleless.base.build.plugin.model.MavenDependencyMatcher;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.base.Preconditions;
-import org.apache.commons.collections4.CollectionUtils;
+import com.google.common.base.Strings;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.execution.MavenSession;
@@ -57,17 +55,19 @@ import org.eclipse.aether.artifact.Artifact;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResult;
+import org.eclipse.aether.version.InvalidVersionSpecificationException;
 
 import java.io.File;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Goal which touches a timestamp file.
@@ -78,49 +78,43 @@ import java.util.regex.Pattern;
 @Mojo(name = "add-patch", defaultPhase = LifecyclePhase.PROCESS_CLASSES)
 public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
 
-    String                  MAPPING_FILE       = "adapter-mapping.yaml";
-
     @Parameter(defaultValue = "${project.build.directory}", readonly = true)
-    File                    outputDirectory;
+    File                                       outputDirectory;
 
     @Parameter(defaultValue = "${project}", required = true, readonly = true)
-    MavenProject            project;
+    public MavenProject                        project;
 
     @Parameter(defaultValue = "${session}", required = true, readonly = true)
-    MavenSession            session;
+    public MavenSession                        session;
+
+    @Parameter(defaultValue = "${project.basedir}", required = true)
+    public File                                baseDir;
 
     @Component
-    RepositorySystem        repositorySystem;
+    public RepositorySystem                    repositorySystem;
 
-    private ObjectMapper    yamlMapper         = new ObjectMapper(new YAMLFactory());
+    protected CompositeKouplelessAdapterConfig kouplelessAdapterConfig;
 
-    KouplelessAdapterConfig kouplelessAdapterConfig;
+    @Parameter(defaultValue = "", required = false)
+    public String                              kouplelessAdapterConfigVersion;
 
-    AdapterCopyService      adapterCopyService = new AdapterCopyService();
+    @Parameter(defaultValue = "", required = false)
+    public String                              customAdaptorMapping = "";
 
-    String                  defaultGroupId     = "";
-    String                  defaultVersion     = "";
+    AdapterCopyService                         adapterCopyService   = new AdapterCopyService();
+
+    String                                     defaultGroupId       = "";
+    String                                     defaultVersion       = "";
 
     void initKouplelessAdapterConfig() throws Exception {
         if (kouplelessAdapterConfig == null) {
-            InputStream mappingConfigIS = this.getClass().getClassLoader()
-                .getResourceAsStream(MAPPING_FILE);
-
-            kouplelessAdapterConfig = yamlMapper.readValue(mappingConfigIS,
-                KouplelessAdapterConfig.class);
+            kouplelessAdapterConfig = new CompositeKouplelessAdapterConfig(this);
         }
 
         Properties properties = new Properties();
         properties.load(getClass().getClassLoader().getResourceAsStream("project.properties"));
         defaultGroupId = properties.getProperty("project.groupId");
         defaultVersion = properties.getProperty("project.version");
-    }
-
-    String getArtifactFullId(org.apache.maven.artifact.Artifact artifact) {
-        return artifact.getGroupId() + ":" + artifact.getArtifactId() + ":"
-               + artifact.getBaseVersion() + ":" + artifact.getType()
-               + (StringUtils.isNotEmpty(artifact.getClassifier()) ? ":" + artifact.getClassifier()
-                   : "");
     }
 
     // visible for testing
@@ -135,9 +129,6 @@ public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
             adapterDependencies.addAll(kouplelessAdapterConfig.getCommonDependencies());
         }
 
-        Collection<MavenDependencyAdapterMapping> adapterMappings = CollectionUtils
-            .emptyIfNull(kouplelessAdapterConfig.getAdapterMappings());
-
         // get resolvedArtifacts from project by reflection
         Field field = MavenProject.class.getDeclaredField("resolvedArtifacts");
         field.setAccessible(true);
@@ -146,23 +137,28 @@ public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
         if (resolvedArtifacts == null) {
             return adapterDependencies;
         }
-        for (org.apache.maven.artifact.Artifact artifact : resolvedArtifacts) {
-            for (MavenDependencyAdapterMapping adapterMapping : adapterMappings) {
-                MavenDependencyMatcher matcher = adapterMapping.getMatcher();
-                if (matcher != null && matcher.getRegexp() != null) {
-                    String regexp = matcher.getRegexp();
-                    String dependencyId = getArtifactFullId(artifact);
-                    if (Pattern.compile(regexp).matcher(dependencyId).matches()) {
-                        adapterDependencies.add(adapterMapping.getAdapter());
-                        getLog().info(String.format("koupleless adapter matched %s with %s", regexp,
-                            artifact));
-                        break;
-                    }
-                }
-            }
-        }
+
+        // get dependencies by matching
+        adapterDependencies.addAll(getDependenciesByMatching(resolvedArtifacts));
 
         return adapterDependencies;
+    }
+
+    List<Dependency> getDependenciesByMatching(Collection<org.apache.maven.artifact.Artifact> resolvedArtifacts) throws InvalidVersionSpecificationException {
+        Map<MavenDependencyAdapterMapping, org.apache.maven.artifact.Artifact> matchedArtifact = kouplelessAdapterConfig
+            .matches(resolvedArtifacts);
+        for (Entry<MavenDependencyAdapterMapping, org.apache.maven.artifact.Artifact> entry : matchedArtifact
+            .entrySet()) {
+            MavenDependencyMatcher matcher = entry.getKey().getMatcher();
+            getLog().info("koupleless adapter matched artifact: " + entry.getValue()
+                          + " with matcher: " + matcher);
+        }
+
+        List<Dependency> result = new ArrayList<>();
+        for (MavenDependencyAdapterMapping mapping : matchedArtifact.keySet()) {
+            result.add(mapping.getAdapter());
+        }
+        return result;
     }
 
     void addDependenciesDynamically() throws Exception {
@@ -174,17 +170,16 @@ public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
         Collection<Dependency> dependencies = getDependenciesToAdd();
         for (Dependency dependency : dependencies) {
             try {
-                if (StringUtils.isBlank(dependency.getVersion())) {
-                    dependency.setVersion(kouplelessAdapterConfig.getVersion());
-                }
-                if (StringUtils.isBlank(dependency.getGroupId())) {
-                    dependency.setGroupId(defaultGroupId);
-                }
-                getLog().debug("start downloading dependency: " + dependency.toString());
-                Artifact artifact = downloadAdapterDependency(dependency);
-                getLog().debug("start add dependency to project root: " + dependency.toString());
+                Preconditions.checkArgument(StringUtils.isNotEmpty(dependency.getVersion()),
+                    "dependency version is empty: " + dependency);
+                Preconditions.checkArgument(StringUtils.isNotEmpty(dependency.getGroupId()),
+                    "dependency groupId is empty: " + dependency);
+
+                getLog().debug("start downloading dependency: " + dependency);
+                Artifact artifact = downloadDependency(dependency);
+                getLog().debug("start add dependency to project root: " + dependency);
                 addArtifactToProjectRoot(artifact);
-                getLog().info("success add dependency: " + dependency.toString());
+                getLog().info("success add dependency: " + dependency);
             } catch (Throwable t) {
                 getLog().error("error add dependency: " + dependency.toString(), t);
                 throw new RuntimeException(t);
@@ -192,7 +187,7 @@ public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
         }
     }
 
-    Artifact downloadAdapterDependency(Dependency dependency) {
+    public Artifact downloadDependency(Dependency dependency) {
         DefaultArtifact patchArtifact = new DefaultArtifact(
             dependency.getGroupId() + ":" + dependency.getArtifactId() + ":"
                                                             + dependency.getVersion());
@@ -207,7 +202,6 @@ public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
             Preconditions.checkState(artifactResult.isResolved(), "artifact not resolved.");
             return artifactResult.getArtifact();
         } catch (Throwable t) {
-            getLog().error(t);
             throw new RuntimeException(t);
         }
     }

@@ -14,22 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.ext.web.gateway;
+package com.alipay.sofa.koupleless.base.build.plugin.model;
 
-import com.ctrip.framework.apollo.spring.annotation.ApolloConfigChangeListener;
-import lombok.Data;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.model.Dependency;
+import org.eclipse.aether.version.InvalidVersionSpecificationException;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
- * <p>GatewayProperties class.</p>
- *
- * @author zzl_i
- * @version 1.0.0
+ * @author lianglipeng.llp@alibaba-inc.com
+ * @version $Id: AdapterConfig.java, v 0.1 2024年11月27日 11:40 立蓬 Exp $
  */
-@ConfigurationProperties(prefix = "koupleless.web.gateway")
-@Data
-public class GatewayProperties {
-    private List<Forward> forwards;
+public interface AdapterConfig {
+    /**
+     * a mapping rule only map to an artifact; but an artifact can be mapped to multiple mapping rules
+     * mapping -> artifact: 1 -> 1
+     * artifact -> mapping: 1 -> N
+     *
+     */
+    Map<MavenDependencyAdapterMapping, Artifact> matches(Collection<Artifact> resolvedArtifacts);
+
+    List<Dependency> getCommonDependencies();
 }
