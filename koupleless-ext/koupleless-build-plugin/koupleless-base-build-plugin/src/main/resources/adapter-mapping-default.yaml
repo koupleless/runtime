@@ -8,9 +8,9 @@ adapterMappings:
       artifactId: koupleless-adapter-spring-boot-logback-2.7.14
       groupId: com.alipay.sofa.koupleless
   - matcher:
-      groupId: org.springframework.boot
-      artifactId: spring-boot-starter-logging
-      versionRange: "(,)"
+      groupId: ch.qos.logback
+      artifactId: logback-classic
+      versionRange: "[1.1.7,1.2.13]"
     adapter:
       artifactId: koupleless-adapter-logback
       groupId: com.alipay.sofa.koupleless
