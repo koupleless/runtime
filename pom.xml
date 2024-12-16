@@ -156,6 +156,11 @@
             </dependency>
             <dependency>
                 <groupId>com.alipay.sofa</groupId>
+                <artifactId>sofa-ark-common</artifactId>
+                <version>${sofa.ark.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alipay.sofa</groupId>
                 <artifactId>sofa-ark-api</artifactId>
                 <version>${sofa.ark.version}</version>
             </dependency>
