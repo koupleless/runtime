@@ -16,8 +16,7 @@
  */
 package com.alipay.sofa.koupleless.test.suite.common;
 
-import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
-import lombok.Getter;
+import com.alipay.sofa.koupleless.common.log.ArkletLoggerFactory;
 import org.slf4j.Logger;
 
 /**

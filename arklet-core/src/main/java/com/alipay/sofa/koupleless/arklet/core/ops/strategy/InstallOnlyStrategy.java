@@ -20,8 +20,8 @@ import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.api.ClientResponse;
 import com.alipay.sofa.ark.spi.constant.Constants;
 import com.alipay.sofa.ark.spi.model.BizOperation;
-import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger;
-import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
+import com.alipay.sofa.koupleless.common.log.ArkletLogger;
+import com.alipay.sofa.koupleless.common.log.ArkletLoggerFactory;
 import com.alipay.sofa.koupleless.arklet.core.common.model.InstallRequest;
 
 import java.util.Map;

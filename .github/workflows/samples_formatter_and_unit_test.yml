@@ -39,7 +39,7 @@ jobs:
           echo "$GITHUB_WORKSPACE/apache-maven-${MAVEN_VERSION}/bin" >> $GITHUB_PATH
 
       - name: Install Runtime
-        run: mvn clean install -DskipTests -Dmaven.javadoc.skip=true -am -B -U
+        run: mvn clean install -Dmaven.javadoc.skip=true -am -B -U
 
       - name: Check code formatter
         run: sh ./check_format.sh
@@ -91,7 +91,7 @@ jobs:
           echo "$GITHUB_WORKSPACE/apache-maven-${MAVEN_VERSION}/bin" >> $GITHUB_PATH
 
       - name: Install Runtime
-        run: mvn clean install -DskipTests -Dmaven.javadoc.skip=true -am -B -U
+        run: mvn clean install -Dmaven.javadoc.skip=true -am -B -U
 
       - name: Check code formatter
         run: sh ./check_format.sh
@@ -143,7 +143,7 @@ jobs:
           echo "$GITHUB_WORKSPACE/apache-maven-${MAVEN_VERSION}/bin" >> $GITHUB_PATH
 
       - name: Install Runtime
-        run: mvn clean install -DskipTests -Dmaven.javadoc.skip=true -am -B -U
+        run: mvn clean install -Dmaven.javadoc.skip=true -am -B -U
 
       - name: Check code formatter
         run: sh ./check_format.sh
@@ -195,7 +195,7 @@ jobs:
           echo "$GITHUB_WORKSPACE/apache-maven-${MAVEN_VERSION}/bin" >> $GITHUB_PATH
 
       - name: Install Runtime
-        run: mvn clean install -DskipTests -Dmaven.javadoc.skip=true -am -B -U
+        run: mvn clean install -Dmaven.javadoc.skip=true -am -B -U
 
       - name: Check code formatter
         run: sh ./check_format.sh
@@ -247,7 +247,7 @@ jobs:
           echo "$GITHUB_WORKSPACE/apache-maven-${MAVEN_VERSION}/bin" >> $GITHUB_PATH
 
       - name: Install Runtime
-        run: mvn clean install -DskipTests -Dmaven.javadoc.skip=true -am -B -U
+        run: mvn clean install -Dmaven.javadoc.skip=true -am -B -U
 
       - name: Check code formatter
         run: sh ./check_format.sh

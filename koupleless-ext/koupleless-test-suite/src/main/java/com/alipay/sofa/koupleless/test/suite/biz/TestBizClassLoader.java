@@ -16,18 +16,15 @@
  */
 package com.alipay.sofa.koupleless.test.suite.biz;
 
-import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.common.util.ClassLoaderUtils;
 import com.alipay.sofa.ark.container.service.classloader.BizClassLoader;
 import com.alipay.sofa.ark.exception.ArkLoaderException;
-import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLogger;
-import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
+import com.alipay.sofa.koupleless.common.log.ArkletLoggerFactory;
 import lombok.SneakyThrows;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.lang.reflect.Field;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.security.CodeSource;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;

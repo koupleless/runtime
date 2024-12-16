@@ -17,7 +17,7 @@
 package com.alipay.sofa.koupleless.test.suite.spring.base;
 
 import com.alipay.sofa.ark.common.util.ClassLoaderUtils;
-import com.alipay.sofa.koupleless.arklet.core.common.log.ArkletLoggerFactory;
+import com.alipay.sofa.koupleless.common.log.ArkletLoggerFactory;
 import com.alipay.sofa.koupleless.common.util.OSUtils;
 import com.alipay.sofa.koupleless.test.suite.common.IntegrationLogger;
 import com.google.common.collect.Lists;

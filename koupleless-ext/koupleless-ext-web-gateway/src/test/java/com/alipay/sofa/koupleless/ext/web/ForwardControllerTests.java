@@ -20,7 +20,6 @@ import com.alibaba.fastjson.JSONArray;
 import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.ark.spi.service.biz.BizManagerService;
-import com.alipay.sofa.koupleless.common.log.KouplelessLogger;
 import com.alipay.sofa.koupleless.common.util.ReflectionUtils;
 import com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway.Forward;
 import com.alipay.sofa.koupleless.ext.autoconfigure.web.gateway.ForwardItems;

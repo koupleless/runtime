@@ -9,8 +9,8 @@
     <packaging>pom</packaging>
 
     <properties>
-        <revision>1.3.3-SNAPSHOT</revision>
-        <sofa.ark.version>2.2.16-SNAPSHOT</sofa.ark.version>
+        <revision>1.3.3</revision>
+        <sofa.ark.version>2.2.16</sofa.ark.version>
         <koupleless.runtime.version>${revision}</koupleless.runtime.version>
         <spring.boot.version>2.7.15</spring.boot.version>
         <project.encoding>UTF-8</project.encoding>
@@ -152,6 +152,11 @@
             <dependency>
                 <groupId>com.alipay.sofa</groupId>
                 <artifactId>sofa-ark-spi</artifactId>
+                <version>${sofa.ark.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alipay.sofa</groupId>
+                <artifactId>sofa-ark-common</artifactId>
                 <version>${sofa.ark.version}</version>
             </dependency>
             <dependency>
