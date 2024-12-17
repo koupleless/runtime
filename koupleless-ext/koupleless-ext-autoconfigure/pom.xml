@@ -41,11 +41,25 @@
         <dependency>
             <groupId>com.alipay.sofa</groupId>
             <artifactId>sofa-ark-spi</artifactId>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.alipay.sofa</groupId>
+                    <artifactId>sofa-ark-common</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>com.alipay.sofa</groupId>
             <artifactId>sofa-ark-api</artifactId>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.alipay.sofa</groupId>
+                    <artifactId>sofa-ark-common</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
