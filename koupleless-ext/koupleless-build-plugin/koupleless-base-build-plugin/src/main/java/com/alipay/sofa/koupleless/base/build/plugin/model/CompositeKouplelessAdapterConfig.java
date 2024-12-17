@@ -59,8 +59,6 @@ public class CompositeKouplelessAdapterConfig implements AdapterConfig {
 
     private static final String           REMOTE_ADAPTER_CONFIGS = "com.alipay.sofa.koupleless:koupleless-adapter-configs";
 
-    private static final String           DEFAULT_MAPPING_FILE   = "adapter-mapping-default.yaml";
-
     /**
      * 用户自定义配置：用户配置的 ${baseDir}/adapter-mapping.yaml
      */
@@ -71,11 +69,6 @@ public class CompositeKouplelessAdapterConfig implements AdapterConfig {
      */
     private List<KouplelessAdapterConfig> remoteConfigs          = new ArrayList<>();
 
-    /**
-     * 插件默认配置：如果远程配置不存在，则使用插件默认配置
-     */
-    private KouplelessAdapterConfig       defaultConfig;
-
     public CompositeKouplelessAdapterConfig() {
     }
 
@@ -83,8 +76,6 @@ public class CompositeKouplelessAdapterConfig implements AdapterConfig {
         initCustomConfig(mojo);
 
         initRemoteConfig(mojo);
-
-        initDefaultConfig();
     }
 
     /**
@@ -103,14 +94,8 @@ public class CompositeKouplelessAdapterConfig implements AdapterConfig {
             remote.putAll(toMapWithIdAsKey(config.getCommonDependencies()));
         }
 
-        Map<String, Dependency> defaulted = Maps.newHashMap();
-        if (null != defaultConfig) {
-            defaulted = toMapWithIdAsKey(defaultConfig.getCommonDependencies());
-        }
-
-        // 优先级：custom > remote > defaulted
+        // 优先级：custom > remote
         Map<String, Dependency> res = newHashMap();
-        res.putAll(defaulted);
         res.putAll(remote);
         res.putAll(custom);
         return new ArrayList<>(res.values());
@@ -146,13 +131,7 @@ public class CompositeKouplelessAdapterConfig implements AdapterConfig {
             remote.putAll(config.matches(resolvedArtifacts));
         }
 
-        Map<MavenDependencyAdapterMapping, org.apache.maven.artifact.Artifact> defaulted = newHashMap();
-        if (null != defaultConfig) {
-            defaulted = defaultConfig.matches(resolvedArtifacts);
-        }
-
         Map<MavenDependencyAdapterMapping, org.apache.maven.artifact.Artifact> res = newHashMap();
-        res.putAll(defaulted);
         res.putAll(remote);
         res.putAll(custom);
         return res;
@@ -173,19 +152,6 @@ public class CompositeKouplelessAdapterConfig implements AdapterConfig {
         customConfig = yaml.loadAs(mappingConfigIS, KouplelessAdapterConfig.class);
     }
 
-    protected void initDefaultConfig() {
-        // 如果远程配置存在，则无需初始化插件默认配置
-        if (CollectionUtils.isNotEmpty(remoteConfigs)) {
-            return;
-        }
-
-        InputStream mappingConfigIS = this.getClass().getClassLoader()
-            .getResourceAsStream(DEFAULT_MAPPING_FILE);
-
-        Yaml yaml = new Yaml();
-        defaultConfig = yaml.loadAs(mappingConfigIS, KouplelessAdapterConfig.class);
-    }
-
     protected void initRemoteConfig(KouplelessBaseBuildPrePackageMojo mojo) {
         String kouplelessAdapterConfigVersion = parseRemoteConfigVersion(mojo);
         Artifact artifact = downloadAdapterConfigsJar(mojo, kouplelessAdapterConfigVersion);
@@ -203,9 +169,9 @@ public class CompositeKouplelessAdapterConfig implements AdapterConfig {
                 parseDependency(REMOTE_ADAPTER_CONFIGS + ":" + kouplelessAdapterConfigVersion));
         } catch (Exception e) {
             mojo.getLog()
-                .warn("Failed to resolve koupleless-adapter-configs, use default config only.");
+                .error("Failed to resolve koupleless-adapter-configs, use default config only.");
+            throw new RuntimeException(e);
         }
-        return null;
     }
 
     private List<KouplelessAdapterConfig> parseConfigs(Artifact artifact) {

@@ -115,24 +115,6 @@ public class CompositeKouplelessAdapterConfigTest {
     }
 
     @Test
-    public void testInitDefaultConfig() {
-        CompositeKouplelessAdapterConfig config = new CompositeKouplelessAdapterConfig();
-        config.initDefaultConfig();
-
-        KouplelessAdapterConfig defaultConfig = getField("defaultConfig", config);
-        assertNotNull(defaultConfig);
-        List<MavenDependencyAdapterMapping> adapterMappings = defaultConfig.getAdapterMappings();
-        for (MavenDependencyAdapterMapping mapping : adapterMappings) {
-            assertTrue(StringUtils.isNotEmpty(mapping.getAdapter().getGroupId()));
-            assertTrue(StringUtils.isNotEmpty(mapping.getAdapter().getArtifactId()));
-
-            assertTrue(StringUtils.isNotEmpty(mapping.getMatcher().getGroupId()));
-            assertTrue(StringUtils.isNotEmpty(mapping.getMatcher().getArtifactId()));
-            assertTrue(StringUtils.isNotEmpty(mapping.getMatcher().getVersionRange()));
-        }
-    }
-
-    @Test
     public void testGetCommonDependencies() {
         CompositeKouplelessAdapterConfig config = new CompositeKouplelessAdapterConfig();
 
@@ -149,14 +131,8 @@ public class CompositeKouplelessAdapterConfigTest {
             mockDependency("com.alipay.sofa", "repeated", "2.0.0"))).when(remoteConfig)
                 .getCommonDependencies();
 
-        KouplelessAdapterConfig defaultConfig = mock(KouplelessAdapterConfig.class);
-        doReturn(asList(mockDependency("com.alipay.sofa", "defaultConfig", "1.0.0"),
-            mockDependency("com.alipay.sofa", "repeated", "3.0.0"))).when(defaultConfig)
-                .getCommonDependencies();
-        setField("defaultConfig", config, defaultConfig);
-
         List<Dependency> commonDependencies = config.getCommonDependencies();
-        assertEquals(4, commonDependencies.size());
+        assertEquals(3, commonDependencies.size());
         assertEquals("1.0.0", commonDependencies.stream()
             .filter(d -> d.getArtifactId().equals("repeated")).findFirst().get().getVersion());
     }
@@ -180,16 +156,9 @@ public class CompositeKouplelessAdapterConfigTest {
             mock(org.apache.maven.artifact.Artifact.class));
         doReturn(remote).when(remoteConfig).matches(any());
 
-        KouplelessAdapterConfig defaultConfig = mock(KouplelessAdapterConfig.class);
-        Map<MavenDependencyAdapterMapping, org.apache.maven.artifact.Artifact> defaulted = new HashMap<>();
-        defaulted.put(mock(MavenDependencyAdapterMapping.class),
-            mock(org.apache.maven.artifact.Artifact.class));
-        doReturn(defaulted).when(defaultConfig).matches(any());
-        setField("defaultConfig", config, defaultConfig);
-
         Map<MavenDependencyAdapterMapping, org.apache.maven.artifact.Artifact> matches = config
             .matches(asList(mock(org.apache.maven.artifact.Artifact.class)));
-        assertEquals(3, matches.size());
+        assertEquals(2, matches.size());
     }
 
     private Dependency mockDependency(String groupId, String artifactId, String version) {
