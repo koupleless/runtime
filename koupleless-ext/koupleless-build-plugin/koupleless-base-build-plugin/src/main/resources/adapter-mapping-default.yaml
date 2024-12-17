@@ -7,13 +7,31 @@ adapterMappings:
     adapter:
       artifactId: koupleless-adapter-spring-boot-logback-2.7.14
       groupId: com.alipay.sofa.koupleless
+      version: 1.2.3
   - matcher:
-      groupId: org.springframework.boot
-      artifactId: spring-boot-starter-logging
-      versionRange: "(,)"
+      groupId: ch.qos.logback
+      artifactId: logback-classic
+      versionRange: "[1.1.7,1.2.13]"
     adapter:
       artifactId: koupleless-adapter-logback
       groupId: com.alipay.sofa.koupleless
+      version: 1.2.5
+  - matcher:
+      groupId: ch.qos.logback
+      artifactId: logback-classic
+      versionRange: "(,1.4.12)"
+    adapter:
+      artifactId: koupleless-adapter-logback-classic-1.1.6
+      groupId: com.alipay.sofa.koupleless
+      version: 1.2.4
+  - matcher:
+      groupId: ch.qos.logback
+      artifactId: logback-classic
+      versionRange: "[1.4.12,)"
+    adapter:
+      artifactId: koupleless-adapter-logback-classic-1.4.12
+      groupId: com.alipay.sofa.koupleless
+      version: 1.2.4
   - matcher:
       groupId: org.springframework
       artifactId: spring-aop
@@ -21,6 +39,7 @@ adapterMappings:
     adapter:
       artifactId: koupleless-adapter-spring-aop-6.0.8
       groupId: com.alipay.sofa.koupleless
+      version: 1.2.2
   - matcher:
       groupId: org.springframework
       artifactId: spring-aop
@@ -28,6 +47,7 @@ adapterMappings:
     adapter:
       artifactId: koupleless-adapter-spring-aop-5.3.27
       groupId: com.alipay.sofa.koupleless
+      version: 1.2.2
   - matcher:
       groupId: org.apache.rocketmq
       artifactId: rocketmq-client
@@ -35,6 +55,7 @@ adapterMappings:
     adapter:
       artifactId: koupleless-adapter-rocketmq-4.4
       groupId: com.alipay.sofa.koupleless
+      version: 1.2.2
   - matcher:
       groupId: com.ctrip.framework.apollo
       artifactId: apollo-client
@@ -42,6 +63,7 @@ adapterMappings:
     adapter:
       artifactId: koupleless-adapter-apollo-1.6
       groupId: com.alipay.sofa.koupleless
+      version: 1.2.2
   - matcher:
       groupId: com.alibaba
       artifactId: dubbo-dependencies-bom
@@ -49,6 +71,7 @@ adapterMappings:
     adapter:
       artifactId: koupleless-adapter-dubbo-2.6
       groupId: com.alipay.sofa.koupleless
+      version: 1.2.2
   - matcher:
       groupId: com.alibaba
       artifactId: dubbo
@@ -56,6 +79,7 @@ adapterMappings:
     adapter:
       artifactId: koupleless-adapter-dubbo-2.6
       groupId: com.alipay.sofa.koupleless
+      version: 1.2.2
   - matcher:
       groupId: org.apache.dubbo
       artifactId: dubbo-spring-boot-starter
@@ -63,6 +87,7 @@ adapterMappings:
     adapter:
       artifactId: koupleless-adapter-dubbo-2.7
       groupId: com.alipay.sofa.koupleless
+      version: 1.2.2
   - matcher:
       groupId: org.apache.dubbo
       artifactId: dubbo
@@ -70,6 +95,7 @@ adapterMappings:
     adapter:
       artifactId: koupleless-adapter-dubbo-2.7
       groupId: com.alipay.sofa.koupleless
+      version: 1.2.2
   - matcher:
       groupId: org.apache.dubbo
       artifactId: dubbo-common
@@ -77,6 +103,7 @@ adapterMappings:
     adapter:
       artifactId: koupleless-adapter-dubbo-3.2
       groupId: com.alipay.sofa.koupleless
+      version: 1.2.2
   - matcher:
       groupId: org.apache.dubbo
       artifactId: dubbo-common
@@ -84,6 +111,7 @@ adapterMappings:
     adapter:
       artifactId: koupleless-adapter-dubbo-3.1
       groupId: com.alipay.sofa.koupleless
+      version: 1.2.2
   - matcher:
       groupId: org.springframework.boot
       artifactId: spring-boot-starter-log4j2
@@ -91,6 +119,7 @@ adapterMappings:
     adapter:
       artifactId: koupleless-adapter-log4j2-spring-starter-2.1
       groupId: com.alipay.sofa.koupleless
+      version: 1.2.2
   - matcher:
       groupId: org.springframework.boot
       artifactId: spring-boot-starter-log4j2
@@ -98,6 +127,7 @@ adapterMappings:
     adapter:
       artifactId: koupleless-adapter-log4j2-spring-starter-2.4
       groupId: com.alipay.sofa.koupleless
+      version: 1.2.2
   - matcher:
       groupId: org.springframework.boot
       artifactId: spring-boot-starter-log4j2
@@ -105,6 +135,7 @@ adapterMappings:
     adapter:
       artifactId: koupleless-adapter-log4j2-spring-starter-2.7
       groupId: com.alipay.sofa.koupleless
+      version: 1.2.2
   - matcher:
       groupId: org.springframework.boot
       artifactId: spring-boot-starter-log4j2
@@ -112,6 +143,7 @@ adapterMappings:
     adapter:
       artifactId: koupleless-adapter-log4j2-spring-starter-3.0
       groupId: com.alipay.sofa.koupleless
+      version: 1.2.2
   - matcher:
       groupId: org.springframework.boot
       artifactId: spring-boot-starter-log4j2
@@ -119,6 +151,7 @@ adapterMappings:
     adapter:
       artifactId: koupleless-adapter-log4j2-spring-starter-3.2
       groupId: com.alipay.sofa.koupleless
+      version: 1.2.2
   - matcher:
       groupId: org.springframework.boot
       artifactId: spring-boot-starter-logging
@@ -126,6 +159,7 @@ adapterMappings:
     adapter:
       artifactId: koupleless-adapter-logback-spring-starter-3.0
       groupId: com.alipay.sofa.koupleless
+      version: 1.2.4
   - matcher:
       groupId: org.springframework.boot
       artifactId: spring-boot-starter-logging
@@ -133,3 +167,12 @@ adapterMappings:
     adapter:
       artifactId: koupleless-adapter-logback-spring-starter-3.2
       groupId: com.alipay.sofa.koupleless
+      version: 1.2.4
+  - matcher:
+      groupId: org.springframework.boot
+      artifactId: spring-boot
+      versionRange: "[2.3.*]"
+    adapter:
+      artifactId: koupleless-adapter-springboot-2.3
+      groupId: com.alipay.sofa.koupleless
+      version: 1.2.2
