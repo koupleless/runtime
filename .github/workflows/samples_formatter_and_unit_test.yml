@@ -41,6 +41,13 @@ jobs:
       - name: Install Runtime
         run: mvn clean install -Dmaven.javadoc.skip=true -am -B -U
 
+      - name: get current runtime version
+        id: get_runtime_version
+        run: |
+          tmp_runtime_version=$(mvn help:effective-pom | grep "koupleless.runtime.version" | uniq | grep -oP '(?<=<koupleless\.runtime\.version>).*(?=</koupleless\.runtime\.version>)')
+          echo "runtime version: ${tmp_runtime_version}"
+          echo "runtime_version=${tmp_runtime_version}" >> $GITHUB_OUTPUT
+
       - name: Check code formatter
         run: sh ./check_format.sh
 
@@ -65,6 +72,11 @@ jobs:
           sudo systemctl start redis-server
           docker compose  -f samples/springboot-samples/config/apollo/config/docker-compose.yml up -d
           /bin/sh samples/springboot-samples/db/mybatis/config/init_mysql.sh
+
+      - name: Update runtime version in samples
+        run: |
+          ./update-runtime-jdk8-version.sh ${{ steps.get_runtime_version.outputs.runtime_version }}
+        working-directory: samples
 
       - name: Test for springboot samples
         run: mvn clean install -Dmaven.javadoc.skip=true -am -B -U
@@ -93,6 +105,13 @@ jobs:
       - name: Install Runtime
         run: mvn clean install -Dmaven.javadoc.skip=true -am -B -U
 
+      - name: get current runtime version
+        id: get_runtime_version
+        run: |
+          tmp_runtime_version=$(mvn help:effective-pom | grep "koupleless.runtime.version" | uniq | grep -oP '(?<=<koupleless\.runtime\.version>).*(?=</koupleless\.runtime\.version>)')
+          echo "runtime version: ${tmp_runtime_version}"
+          echo "runtime_version=${tmp_runtime_version}" >> $GITHUB_OUTPUT
+
       - name: Check code formatter
         run: sh ./check_format.sh
 
@@ -117,6 +136,11 @@ jobs:
           sudo systemctl start redis-server
           docker compose  -f samples/springboot-samples/config/apollo/config/docker-compose.yml up -d
           /bin/sh samples/springboot-samples/db/mybatis/config/init_mysql.sh
+
+      - name: Update runtime version in samples
+        run: |
+          ./update-runtime-jdk8-version.sh ${{ steps.get_runtime_version.outputs.runtime_version }}
+        working-directory: samples
 
       - name: Test for sofaboot samples
         run: mvn clean install -Dmaven.javadoc.skip=true -am -B -U
@@ -145,6 +169,13 @@ jobs:
       - name: Install Runtime
         run: mvn clean install -Dmaven.javadoc.skip=true -am -B -U
 
+      - name: get current runtime version
+        id: get_runtime_version
+        run: |
+          tmp_runtime_version=$(mvn help:effective-pom | grep "koupleless.runtime.version" | uniq | grep -oP '(?<=<koupleless\.runtime\.version>).*(?=</koupleless\.runtime\.version>)')
+          echo "runtime version: ${tmp_runtime_version}"
+          echo "runtime_version=${tmp_runtime_version}" >> $GITHUB_OUTPUT
+
       - name: Check code formatter
         run: sh ./check_format.sh
 
@@ -169,6 +200,11 @@ jobs:
           sudo systemctl start redis-server
           docker compose  -f samples/springboot-samples/config/apollo/config/docker-compose.yml up -d
           /bin/sh samples/springboot-samples/db/mybatis/config/init_mysql.sh
+
+      - name: Update runtime version in samples
+        run: |
+          ./update-runtime-jdk8-version.sh ${{ steps.get_runtime_version.outputs.runtime_version }}
+        working-directory: samples
 
       - name: Test for dubbo samples
         run: mvn clean install -Dmaven.javadoc.skip=true -am -B -U
@@ -197,6 +233,13 @@ jobs:
       - name: Install Runtime
         run: mvn clean install -Dmaven.javadoc.skip=true -am -B -U
 
+      - name: get current runtime version
+        id: get_runtime_version
+        run: |
+          tmp_runtime_version=$(mvn help:effective-pom | grep "koupleless.runtime.version" | uniq | grep -oP '(?<=<koupleless\.runtime\.version>).*(?=</koupleless\.runtime\.version>)')
+          echo "runtime version: ${tmp_runtime_version}"
+          echo "runtime_version=${tmp_runtime_version}" >> $GITHUB_OUTPUT
+
       - name: Check code formatter
         run: sh ./check_format.sh
 
@@ -221,6 +264,11 @@ jobs:
           sudo systemctl start redis-server
           docker compose  -f samples/springboot-samples/config/apollo/config/docker-compose.yml up -d
           /bin/sh samples/springboot-samples/db/mybatis/config/init_mysql.sh
+
+      - name: Update runtime version in samples
+        run: |
+          ./update-runtime-jdk17-version.sh ${{ steps.get_runtime_version.outputs.runtime_version }}
+        working-directory: samples
 
       - name: Test for dubbo32 samples
         run: mvn clean install -Dmaven.javadoc.skip=true -am -B -U
@@ -249,6 +297,13 @@ jobs:
       - name: Install Runtime
         run: mvn clean install -Dmaven.javadoc.skip=true -am -B -U
 
+      - name: get current runtime version
+        id: get_runtime_version
+        run: |
+          tmp_runtime_version=$(mvn help:effective-pom | grep "koupleless.runtime.version" | uniq | grep -oP '(?<=<koupleless\.runtime\.version>).*(?=</koupleless\.runtime\.version>)')
+          echo "runtime version: ${tmp_runtime_version}"
+          echo "runtime_version=${tmp_runtime_version}" >> $GITHUB_OUTPUT
+
       - name: Check code formatter
         run: sh ./check_format.sh
 
@@ -273,6 +328,11 @@ jobs:
           sudo systemctl start redis-server
           docker compose  -f samples/springboot-samples/config/apollo/config/docker-compose.yml up -d
           /bin/sh samples/springboot-samples/db/mybatis/config/init_mysql.sh
+
+      - name: Update runtime version in samples
+        run: |
+          ./update-runtime-jdk17-version.sh ${{ steps.get_runtime_version.outputs.runtime_version }}
+        working-directory: samples
 
       - name: Test for springboot3 samples
         run: mvn clean install -Dmaven.javadoc.skip=true -am -B -U
