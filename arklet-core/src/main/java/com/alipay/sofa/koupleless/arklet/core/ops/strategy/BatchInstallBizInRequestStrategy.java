@@ -1,6 +1,18 @@
-/**
- * Alipay.com Inc.
- * Copyright (c) 2004-2024 All Rights Reserved.
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.alipay.sofa.koupleless.arklet.core.ops.strategy;
 
@@ -26,10 +38,11 @@ import java.util.TreeMap;
 public class BatchInstallBizInRequestStrategy implements BatchInstallStrategy {
 
     private final BatchInstallHelper batchInstallHelper = new BatchInstallHelper();
+
     @Override
     public Map<Integer, List<InstallRequest>> convertToInstallInput(BatchInstallRequest request) throws Throwable {
-        Map<Integer,List<InstallRequest>> result = new TreeMap<>();
-        for (InstallRequest installRequest : request.getInstallRequests()){
+        Map<Integer, List<InstallRequest>> result = new TreeMap<>();
+        for (InstallRequest installRequest : request.getInstallRequests()) {
             Integer order = parsePriority(installRequest);
             result.putIfAbsent(order, new ArrayList<>());
             result.get(order).add(installRequest);
@@ -38,16 +51,16 @@ public class BatchInstallBizInRequestStrategy implements BatchInstallStrategy {
     }
 
     @SneakyThrows
-    private Integer parsePriority(InstallRequest installRequest){
+    private Integer parsePriority(InstallRequest installRequest) {
         URL url = new URL(installRequest.getBizUrl());
-        File bizFile = ArkClient.createBizSaveFile(installRequest.getBizName(), installRequest.getBizVersion());
+        File bizFile = ArkClient.createBizSaveFile(installRequest.getBizName(),
+            installRequest.getBizVersion());
         FileUtils.copyInputStreamToFile(url.openStream(), bizFile);
 
         Map<String, Object> mainAttributes = batchInstallHelper
-                .getMainAttributes(bizFile.getAbsolutePath());
+            .getMainAttributes(bizFile.getAbsolutePath());
         org.apache.commons.io.FileUtils.deleteQuietly(bizFile);
         return Integer.valueOf(
-                mainAttributes.getOrDefault("priority", PriorityOrdered.DEFAULT_PRECEDENCE)
-                        .toString());
+            mainAttributes.getOrDefault("priority", PriorityOrdered.DEFAULT_PRECEDENCE).toString());
     }
 }

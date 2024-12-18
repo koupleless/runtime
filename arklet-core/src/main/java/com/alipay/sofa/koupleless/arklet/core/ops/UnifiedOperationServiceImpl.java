@@ -54,7 +54,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class UnifiedOperationServiceImpl implements UnifiedOperationService {
     private final BatchInstallStrategy batchInstallBizInDirAbsolutePathStrategy = new BatchInstallBizInDirAbsolutePathStrategy();
 
-    private final BatchInstallStrategy batchInstallBizInRequestStrategy = new BatchInstallBizInRequestStrategy();
+    private final BatchInstallStrategy batchInstallBizInRequestStrategy         = new BatchInstallBizInRequestStrategy();
 
     /** {@inheritDoc} */
     @Override
@@ -103,17 +103,18 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
         long startTimestamp = System.currentTimeMillis();
 
         BatchInstallStrategy batchInstallStrategy = getBatchInstallStrategy(request);
-        Map<Integer,List<InstallRequest>> installRequestsWithOrder = batchInstallStrategy.convertToInstallInput(request);
+        Map<Integer, List<InstallRequest>> installRequestsWithOrder = batchInstallStrategy
+            .convertToInstallInput(request);
 
         ThreadPoolExecutor executorService = ExecutorServiceManager.getArkBizOpsExecutor();
         Map<String, ClientResponse> bizUrlToInstallResult = new HashMap<>();
         boolean hasFailed = false;
-        for (Entry<Integer,List<InstallRequest>> entry : installRequestsWithOrder.entrySet()) {
+        for (Entry<Integer, List<InstallRequest>> entry : installRequestsWithOrder.entrySet()) {
             List<InstallRequest> bizRequestInSameOrder = entry.getValue();
             List<CompletableFuture<ClientResponse>> futures = new ArrayList<>();
             for (InstallRequest bizRequest : bizRequestInSameOrder) {
-                futures.add(CompletableFuture.supplyAsync(
-                    () -> safeBatchInstall(bizRequest), executorService));
+                futures.add(CompletableFuture.supplyAsync(() -> safeBatchInstall(bizRequest),
+                    executorService));
             }
 
             // wait for all install futures done
@@ -139,7 +140,7 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
     }
 
     private BatchInstallStrategy getBatchInstallStrategy(BatchInstallRequest request) {
-        if(StringUtil.isNotEmpty(request.getBizDirAbsolutePath())){
+        if (StringUtil.isNotEmpty(request.getBizDirAbsolutePath())) {
             return batchInstallBizInRequestStrategy;
         }
         return batchInstallBizInRequestStrategy;

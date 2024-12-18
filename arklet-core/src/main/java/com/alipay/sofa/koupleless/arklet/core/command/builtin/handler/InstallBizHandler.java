@@ -106,12 +106,12 @@ public class InstallBizHandler extends
 
     public static void validateInput(Input input) throws CommandValidationException {
         isTrue(!input.isAsync() || !StringUtils.isEmpty(input.getRequestId()),
-                "requestId should not be blank when async is true");
+            "requestId should not be blank when async is true");
         notBlank(input.getBizUrl(), "bizUrl should not be blank");
 
         if (StringUtils.isEmpty(input.getBizName()) || StringUtils.isEmpty(input.getBizVersion())) {
             LOGGER.warn(
-                    "biz name and version should not be empty, or it will reduce the performance.");
+                "biz name and version should not be empty, or it will reduce the performance.");
         }
 
         if (StringUtils.isEmpty(input.getBizName()) && StringUtils.isEmpty(input.getBizVersion())) {
@@ -120,16 +120,16 @@ public class InstallBizHandler extends
                 refreshBizInfoFromJar(input);
             } catch (IOException e) {
                 throw new CommandValidationException(
-                        String.format("refresh biz info from jar failed: %s", e.getMessage()));
+                    String.format("refresh biz info from jar failed: %s", e.getMessage()));
             }
         } else if (!StringUtils.isEmpty(input.getBizName())
-                && !StringUtils.isEmpty(input.getBizVersion())) {
+                   && !StringUtils.isEmpty(input.getBizVersion())) {
             // if bizName and bizVersion is not blank, it means that we should install the biz with the given bizName and bizVersion.
             // do nothing.
         } else {
             // if bizName or bizVersion is blank, it is invalid, throw exception.
             throw new CommandValidationException(
-                    "bizName and bizVersion should be both blank or both not blank.");
+                "bizName and bizVersion should be both blank or both not blank.");
         }
     }
 

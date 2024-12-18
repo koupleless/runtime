@@ -1,6 +1,18 @@
-/**
- * Alipay.com Inc.
- * Copyright (c) 2004-2024 All Rights Reserved.
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.alipay.sofa.koupleless.arklet.core.command.builtin.handler;
 
@@ -30,13 +42,15 @@ import static com.alipay.sofa.koupleless.arklet.core.command.builtin.BuiltinComm
  * @author lianglipeng.llp@alibaba-inc.com
  * @version $Id: BatchInstallBizHandler.java, v 0.1 2024年12月18日 15:04 立蓬 Exp $
  */
-public class BatchInstallBizHandler extends AbstractCommandHandler<BatchInstallInput, BatchInstallResponse> implements ArkBizOps {
+public class BatchInstallBizHandler extends
+                                    AbstractCommandHandler<BatchInstallInput, BatchInstallResponse>
+                                    implements ArkBizOps {
 
     @Override
     public void validate(BatchInstallInput batchInstallInput) throws CommandValidationException {
         notNull(batchInstallInput.getBizList(), "bizList is null");
 
-        for(Input bizInput: batchInstallInput.bizList){
+        for (Input bizInput : batchInstallInput.bizList) {
             bizInput.setAsync(false);
             InstallBizHandler.validateInput(bizInput);
         }
@@ -48,9 +62,8 @@ public class BatchInstallBizHandler extends AbstractCommandHandler<BatchInstallI
         long startSpace = metaSpaceMXBean.getUsage().getUsed();
         try {
             BatchInstallResponse response = convertClientResponse(
-                    getOperationService().batchInstall(convertBatchInstallRequest(batchInstallInput)));
-            response
-                    .setElapsedSpace(metaSpaceMXBean.getUsage().getUsed() - startSpace);
+                getOperationService().batchInstall(convertBatchInstallRequest(batchInstallInput)));
+            response.setElapsedSpace(metaSpaceMXBean.getUsage().getUsed() - startSpace);
             if (ResponseCode.SUCCESS.equals(response.getCode())) {
                 return Output.ofSuccess(response);
             } else {
@@ -69,17 +82,14 @@ public class BatchInstallBizHandler extends AbstractCommandHandler<BatchInstallI
     private BatchInstallRequest convertBatchInstallRequest(BatchInstallInput input) {
         ArrayList<InstallRequest> installRequestList = new ArrayList<>();
 
-        for(Input bizInput: input.getBizList()){
-            installRequestList.add(InstallRequest.builder()
-                    .bizName(bizInput.getBizName())
-                    .bizVersion(bizInput.getBizVersion())
-                    .bizUrl(bizInput.getBizUrl())
-                    .args(bizInput.getArgs())
-                    .envs(bizInput.getEnvs())
-                    .installStrategy(bizInput.getInstallStrategy())
-                    .build());
+        for (Input bizInput : input.getBizList()) {
+            installRequestList.add(InstallRequest.builder().bizName(bizInput.getBizName())
+                .bizVersion(bizInput.getBizVersion()).bizUrl(bizInput.getBizUrl())
+                .args(bizInput.getArgs()).envs(bizInput.getEnvs())
+                .installStrategy(bizInput.getInstallStrategy()).build());
         }
-        return BatchInstallRequest.builder().installRequests(installRequestList.toArray(new InstallRequest[0])).build();
+        return BatchInstallRequest.builder()
+            .installRequests(installRequestList.toArray(new InstallRequest[0])).build();
     }
 
     private BatchInstallResponse convertClientResponse(com.alipay.sofa.koupleless.arklet.core.common.model.BatchInstallResponse res) {
@@ -98,7 +108,8 @@ public class BatchInstallBizHandler extends AbstractCommandHandler<BatchInstallI
 
     @Getter
     @Setter
-    public static class BatchInstallResponse extends com.alipay.sofa.koupleless.arklet.core.common.model.BatchInstallResponse {
+    public static class BatchInstallResponse extends
+                                             com.alipay.sofa.koupleless.arklet.core.common.model.BatchInstallResponse {
         private long elapsedSpace;
     }
 }

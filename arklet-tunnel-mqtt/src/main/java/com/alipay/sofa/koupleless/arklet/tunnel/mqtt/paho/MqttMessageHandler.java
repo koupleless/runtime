@@ -241,22 +241,21 @@ public class MqttMessageHandler {
         ArkletLoggerFactory.getDefaultLogger()
             .info("start to playback baseline with content: " + cmdContent);
 
-        Output<BatchInstallResponse> output = null;
+        Output<?> output = null;
         try {
             output = commandService.process(BuiltinCommand.BATCH_INSTALL_BIZ.getId(), cmdContent);
         } catch (Throwable e) {
             ArkletLoggerFactory.getDefaultLogger().error(
-                    String.format("fail to handle command %s with content: %s", cmd, e.getMessage()));
+                String.format("fail to handle command %s with content: %s", cmd, e.getMessage()));
             return;
         }
 
         if (!output.failed()) {
             ArkletLoggerFactory.getDefaultLogger()
-                    .info("install biz success when playback baseline");
+                .info("install biz success when playback baseline");
         } else {
-            Map<String, ClientResponse> bizUrlToResponse = null == output.getData()?null:output.getData().getBizUrlToResponse();
-            ArkletLoggerFactory.getDefaultLogger().error(
-                    String.format("fail to handle command %s with content: %s", cmd, bizUrlToResponse));
+            ArkletLoggerFactory.getDefaultLogger()
+                .error("fail to handle command {} with content: {}", cmd, output);
         }
     }
 
