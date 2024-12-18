@@ -13,3 +13,9 @@ org.springframework.boot.autoconfigure.AutoConfigurationImportFilter=\
 
 org.springframework.context.ApplicationContextInitializer=\
   com.alipay.sofa.koupleless.plugin.spring.BizApplicationContextInitializer
+
+
+org.springframework.boot.ApplicationContextFactory=\
+com.alipay.sofa.koupleless.plugin.context.BizAnnotationConfigReactiveWebServerApplicationContext.Factory,\
+com.alipay.sofa.koupleless.plugin.context.BizAnnotationConfigServletWebServerApplicationContext.Factory, \
+com.alipay.sofa.koupleless.plugin.context.DefaultApplicationContextFactory
