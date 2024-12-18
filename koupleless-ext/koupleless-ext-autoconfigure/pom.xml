@@ -10,7 +10,6 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-
     <artifactId>koupleless-ext-autoconfigure</artifactId>
 
     <dependencies>
@@ -41,7 +40,6 @@
         <dependency>
             <groupId>com.alipay.sofa</groupId>
             <artifactId>sofa-ark-spi</artifactId>
-            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <groupId>com.alipay.sofa</groupId>
@@ -53,7 +51,6 @@
         <dependency>
             <groupId>com.alipay.sofa</groupId>
             <artifactId>sofa-ark-api</artifactId>
-            <scope>provided</scope>
             <exclusions>
                 <exclusion>
                     <groupId>com.alipay.sofa</groupId>
