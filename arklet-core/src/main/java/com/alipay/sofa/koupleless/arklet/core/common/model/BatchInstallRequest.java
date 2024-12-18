@@ -43,4 +43,9 @@ public class BatchInstallRequest {
      */
     @Builder.Default
     private String installStrategy = STRATEGY_INSTALL_ONLY_STRATEGY;
+
+    /**
+     * 模块批量发布请求。
+     */
+    private InstallRequest[] installRequests = new InstallRequest[0];
 }

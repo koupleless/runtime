@@ -31,6 +31,7 @@ import com.alipay.sofa.koupleless.arklet.core.command.meta.bizops.ArkBizMeta;
 import com.alipay.sofa.koupleless.arklet.core.command.meta.bizops.ArkBizOps;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletRuntimeException;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.CommandValidationException;
+import com.alipay.sofa.koupleless.arklet.core.util.ResourceUtils;
 import com.alipay.sofa.koupleless.common.log.ArkletLogger;
 import com.alipay.sofa.koupleless.common.log.ArkletLoggerFactory;
 import com.alipay.sofa.koupleless.arklet.core.common.model.InstallRequest;
@@ -39,10 +40,8 @@ import lombok.Setter;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryPoolMXBean;
 import java.net.URL;
-import java.util.List;
 import java.util.Map;
 
 import static com.alipay.sofa.koupleless.arklet.core.common.model.Constants.STRATEGY_INSTALL_ONLY_STRATEGY;
@@ -62,7 +61,7 @@ public class InstallBizHandler extends
     /** {@inheritDoc} */
     @Override
     public Output<InstallBizClientResponse> handle(Input input) {
-        MemoryPoolMXBean metaSpaceMXBean = getMetaSpaceMXBean();
+        MemoryPoolMXBean metaSpaceMXBean = ResourceUtils.getMetaSpaceMXBean();
         long startSpace = metaSpaceMXBean.getUsage().getUsed();
         try {
             InstallBizClientResponse installBizClientResponse = convertClientResponse(
@@ -85,15 +84,6 @@ public class InstallBizHandler extends
             .envs(input.getEnvs()).installStrategy(input.getInstallStrategy()).build();
     }
 
-    private MemoryPoolMXBean getMetaSpaceMXBean() {
-        MemoryPoolMXBean metaSpaceMXBean = null;
-        List<MemoryPoolMXBean> memoryPoolMXBeans = ManagementFactory.getMemoryPoolMXBeans();
-        for (MemoryPoolMXBean memoryPoolMXBean : memoryPoolMXBeans)
-            if (memoryPoolMXBean.getName().equals("Metaspace"))
-                metaSpaceMXBean = memoryPoolMXBean;
-        return metaSpaceMXBean;
-    }
-
     private InstallBizClientResponse convertClientResponse(ClientResponse res) {
         InstallBizClientResponse installBizClientResponse = new InstallBizClientResponse();
         installBizClientResponse.setBizInfos(res.getBizInfos());
@@ -111,13 +101,17 @@ public class InstallBizHandler extends
     /** {@inheritDoc} */
     @Override
     public void validate(Input input) throws CommandValidationException {
+        InstallBizHandler.validateInput(input);
+    }
+
+    public static void validateInput(Input input) throws CommandValidationException {
         isTrue(!input.isAsync() || !StringUtils.isEmpty(input.getRequestId()),
-            "requestId should not be blank when async is true");
+                "requestId should not be blank when async is true");
         notBlank(input.getBizUrl(), "bizUrl should not be blank");
 
         if (StringUtils.isEmpty(input.getBizName()) || StringUtils.isEmpty(input.getBizVersion())) {
             LOGGER.warn(
-                "biz name and version should not be empty, or it will reduce the performance.");
+                    "biz name and version should not be empty, or it will reduce the performance.");
         }
 
         if (StringUtils.isEmpty(input.getBizName()) && StringUtils.isEmpty(input.getBizVersion())) {
@@ -126,20 +120,20 @@ public class InstallBizHandler extends
                 refreshBizInfoFromJar(input);
             } catch (IOException e) {
                 throw new CommandValidationException(
-                    String.format("refresh biz info from jar failed: %s", e.getMessage()));
+                        String.format("refresh biz info from jar failed: %s", e.getMessage()));
             }
         } else if (!StringUtils.isEmpty(input.getBizName())
-                   && !StringUtils.isEmpty(input.getBizVersion())) {
+                && !StringUtils.isEmpty(input.getBizVersion())) {
             // if bizName and bizVersion is not blank, it means that we should install the biz with the given bizName and bizVersion.
             // do nothing.
         } else {
             // if bizName or bizVersion is blank, it is invalid, throw exception.
             throw new CommandValidationException(
-                "bizName and bizVersion should be both blank or both not blank.");
+                    "bizName and bizVersion should be both blank or both not blank.");
         }
     }
 
-    private void refreshBizInfoFromJar(Input input) throws IOException {
+    private static void refreshBizInfoFromJar(Input input) throws IOException {
         // 如果入参里没有jar，例如模块卸载，这里就直接返回
         if (StringUtils.isEmpty(input.getBizUrl())) {
             return;

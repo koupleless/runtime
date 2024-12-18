@@ -26,6 +26,7 @@ import com.alipay.sofa.koupleless.arklet.core.command.builtin.model.BizInfo;
 import com.alipay.sofa.koupleless.arklet.core.command.meta.Output;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletInitException;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletRuntimeException;
+import com.alipay.sofa.koupleless.arklet.core.common.model.BatchInstallResponse;
 import com.alipay.sofa.koupleless.common.log.ArkletLoggerFactory;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
 import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
@@ -234,24 +235,28 @@ public class MqttMessageHandler {
 
     private void handlePlaybackBaseline(String cmd, MqttMessage msg) throws ArkletRuntimeException {
         List<Map<String, Object>> cmdContents = JSONObject.parseObject(msg.toString(), List.class);
+        Map<String, Object> cmdContent = new HashMap<>();
+        cmdContent.put("bizList", cmdContents);
 
         ArkletLoggerFactory.getDefaultLogger()
-            .info("start to playback baseline with content: " + cmdContents);
-        // TODO: parallel process
-        List<Map<String, Object>> failedContents = new ArrayList<>();
-        for (Map<String, Object> cmdContent : cmdContents) {
-            try {
-                commandService.process(BuiltinCommand.INSTALL_BIZ.getId(), cmdContent);
-            } catch (Throwable e) {
-                failedContents.add(cmdContent);
-            }
-        }
-        if (!failedContents.isEmpty()) {
+            .info("start to playback baseline with content: " + cmdContent);
+
+        Output<BatchInstallResponse> output = null;
+        try {
+            output = commandService.process(BuiltinCommand.BATCH_INSTALL_BIZ.getId(), cmdContent);
+        } catch (Throwable e) {
             ArkletLoggerFactory.getDefaultLogger().error(
-                String.format("fail to handle command %s with content: %s", cmd, failedContents));
-        } else {
+                    String.format("fail to handle command %s with content: %s", cmd, e.getMessage()));
+            return;
+        }
+
+        if (!output.failed()) {
             ArkletLoggerFactory.getDefaultLogger()
-                .info("install biz success when playback baseline");
+                    .info("install biz success when playback baseline");
+        } else {
+            Map<String, ClientResponse> bizUrlToResponse = null == output.getData()?null:output.getData().getBizUrlToResponse();
+            ArkletLoggerFactory.getDefaultLogger().error(
+                    String.format("fail to handle command %s with content: %s", cmd, bizUrlToResponse));
         }
     }
 

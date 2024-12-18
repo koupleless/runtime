@@ -31,6 +31,8 @@ public enum BuiltinCommand implements Command {
 
                                                INSTALL_BIZ("installBiz", "install one ark biz"),
 
+    BATCH_INSTALL_BIZ("batchInstallBiz", "install one ark biz"),
+
                                                UNINSTALL_BIZ("uninstallBiz",
                                                              "uninstall one ark biz"),
 
