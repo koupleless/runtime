@@ -49,7 +49,8 @@ class HeartBeatScheduledMission implements Runnable {
         String body = JSONObject.toJSONString(baseStatus);
         HttpURLConnection conn = null;
         try {
-            LOGGER.debug("Heartbeat message sent successfully. {}", body);
+            LOGGER.info("Heartbeat message send to {} successfully: {}", this.heartBeatEndpoint,
+                body);
             conn = getHttpURLConnection();
             try (OutputStream out = conn.getOutputStream()) {
                 out.write(body.getBytes());
@@ -87,7 +88,7 @@ class HeartBeatScheduledMission implements Runnable {
         try {
             // send heart beat message
             BaseMetadata baseMetadata = BaseMetadata.builder().name(baseMetadataHook.getName())
-                .identity(baseMetadataHook.getIdentity())
+                .identity(baseMetadataHook.getIdentity()).version(baseMetadataHook.getVersion())
                 .clusterName(baseMetadataHook.getClusterName()).build();
             BaseStatus baseStatus = BaseStatus.builder().baseMetadata(baseMetadata)
                 .localIP(baseMetadataHook.getLocalIP())
