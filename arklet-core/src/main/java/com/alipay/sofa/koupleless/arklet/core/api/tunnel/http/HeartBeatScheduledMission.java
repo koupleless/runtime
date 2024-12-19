@@ -49,7 +49,8 @@ class HeartBeatScheduledMission implements Runnable {
         String body = JSONObject.toJSONString(baseStatus);
         HttpURLConnection conn = null;
         try {
-            LOGGER.info("Heartbeat message sent to {} successfully: {}", this.heartBeatEndpoint, body);
+            LOGGER.info("Heartbeat message send to {} successfully: {}", this.heartBeatEndpoint,
+                body);
             conn = getHttpURLConnection();
             try (OutputStream out = conn.getOutputStream()) {
                 out.write(body.getBytes());
