@@ -88,7 +88,7 @@ public class HttpTunnel implements Tunnel {
 
                 heartBeatExecutor.scheduleAtFixedRate(
                     new HeartBeatScheduledMission(port, heartBeatEndpoint, baseMetadataHook), 0,
-                    120000L, TimeUnit.MILLISECONDS);
+                    12000L, TimeUnit.MILLISECONDS);
             }
 
             LOGGER.info("http tunnel initialized: {}", this);
