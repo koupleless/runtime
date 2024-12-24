@@ -40,13 +40,13 @@ import static org.slf4j.LoggerFactory.getLogger;
  * 使用 context.stop 尝试释放Logger资源(目前仅处理Log4j), 因此监听 BeforeBizRecycleEvent 模块事件
  */
 public class StopLoggerContextOnUninstallEventHandler implements
-                                                             EventHandler<BeforeBizRecycleEvent> {
+                                                      EventHandler<BeforeBizRecycleEvent> {
 
-    private static final Logger                                                         LOGGER                              = getLogger(
+    private static final Logger LOGGER                           = getLogger(
         StopLoggerContextOnUninstallEventHandler.class);
 
     /** Constant <code>LOGGER_STOP_TIMEOUT_MILLISECONDS="com.alipay.koupleless.logger.stop.timeout.milliseconds"{trunked}</code> */
-    public static final String                                                          LOGGER_STOP_TIMEOUT_MILLISECONDS      = "com.alipay.koupleless.logger.stop.timeout.milliseconds";
+    public static final String  LOGGER_STOP_TIMEOUT_MILLISECONDS = "com.alipay.koupleless.logger.stop.timeout.milliseconds";
 
     /** {@inheritDoc} */
     @Override
@@ -54,8 +54,8 @@ public class StopLoggerContextOnUninstallEventHandler implements
 
         ClassLoader bizClassLoader = event.getSource().getBizClassLoader();
         LOGGER.info(
-                "[StopLoggerContextOnUninstallEventHandler] Module name: {} , BizClassLoader: {} .",
-                event.getSource().getBizName(), bizClassLoader);
+            "[StopLoggerContextOnUninstallEventHandler] Module name: {} , BizClassLoader: {} .",
+            event.getSource().getBizName(), bizClassLoader);
 
         LoggerContextFactory factory = LogManager.getFactory();
 
@@ -63,12 +63,13 @@ public class StopLoggerContextOnUninstallEventHandler implements
             String ctxName = Integer.toHexString(System.identityHashCode(bizClassLoader));
             ContextSelector selector = ((Log4jContextFactory) factory).getSelector();
 
-            int stopTimeoutMilliSeconds = parseInt(getProperty(LOGGER_STOP_TIMEOUT_MILLISECONDS, "500"));
+            int stopTimeoutMilliSeconds = parseInt(
+                getProperty(LOGGER_STOP_TIMEOUT_MILLISECONDS, "500"));
             for (LoggerContext context : selector.getLoggerContexts()) {
                 if (context.getName().equals(ctxName)) {
                     LOGGER.info(
-                            "[StopLoggerContextOnUninstallEventHandler] {} managed Log4j context found for module: {} . ",
-                            ctxName, event.getSource().getBizName());
+                        "[StopLoggerContextOnUninstallEventHandler] {} managed Log4j context found for module: {} . ",
+                        ctxName, event.getSource().getBizName());
                     context.stop(stopTimeoutMilliSeconds, TimeUnit.MILLISECONDS);
                 }
             }
@@ -76,8 +77,8 @@ public class StopLoggerContextOnUninstallEventHandler implements
         }
 
         LOGGER.info(
-                "[StopLoggerContextOnUninstallEventHandler] No managed Log4j context for module: {}.",
-                event.getSource().getBizName());
+            "[StopLoggerContextOnUninstallEventHandler] No managed Log4j context for module: {}.",
+            event.getSource().getBizName());
     }
 
     /** {@inheritDoc} */

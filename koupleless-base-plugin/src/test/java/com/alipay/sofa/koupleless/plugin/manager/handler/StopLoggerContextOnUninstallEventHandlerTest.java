@@ -63,13 +63,15 @@ public class StopLoggerContextOnUninstallEventHandlerTest {
 
         StopLoggerContextOnUninstallEventHandler handler = new StopLoggerContextOnUninstallEventHandler();
         LoggerContext ctx = (LoggerContext) LogManager.getContext(contextClassLoader, false);
-        assertEquals("Expected logger context state to be STARTED", LifeCycle.State.STARTED, ctx.getState());
+        assertEquals("Expected logger context state to be STARTED", LifeCycle.State.STARTED,
+            ctx.getState());
 
         BizModel bizModel = new BizModel();
         bizModel.setClassLoader(contextClassLoader);
         BeforeBizRecycleEvent event = new BeforeBizRecycleEvent(bizModel);
         handler.handleEvent(event);
-        assertEquals("Expected logger context state to be STOPPED", LifeCycle.State.STOPPED, ctx.getState());
+        assertEquals("Expected logger context state to be STOPPED", LifeCycle.State.STOPPED,
+            ctx.getState());
 
         stopLog4jLoggerContext();
     }
@@ -86,7 +88,8 @@ public class StopLoggerContextOnUninstallEventHandlerTest {
 
         handler.handleEvent(event);
         boolean conditionMet = contextFactory instanceof SLF4JLoggerContextFactory;
-        assertTrue("SLF4JLoggerContextFactory should be the active logger context factory", conditionMet);
+        assertTrue("SLF4JLoggerContextFactory should be the active logger context factory",
+            conditionMet);
     }
 
     private void setLog4jLoggerContext() {
