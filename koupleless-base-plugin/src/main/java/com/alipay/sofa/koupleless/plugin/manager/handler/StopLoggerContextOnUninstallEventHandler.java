@@ -67,10 +67,16 @@ public class StopLoggerContextOnUninstallEventHandler implements
                 getProperty(LOGGER_STOP_TIMEOUT_MILLISECONDS, "500"));
             for (LoggerContext context : selector.getLoggerContexts()) {
                 if (context.getName().equals(ctxName)) {
-                    LOGGER.info(
-                        "[StopLoggerContextOnUninstallEventHandler] {} managed Log4j context found for module: {} . ",
-                        ctxName, event.getSource().getBizName());
-                    context.stop(stopTimeoutMilliSeconds, TimeUnit.MILLISECONDS);
+                    try {
+                        context.stop(stopTimeoutMilliSeconds, TimeUnit.MILLISECONDS);
+                        LOGGER.info(
+                            "[StopLoggerContextOnUninstallEventHandler] Successfully stopped Log4j context {} for module: {}.",
+                            ctxName, event.getSource().getBizName());
+                    } catch (Exception e) {
+                        LOGGER.error(
+                            "[StopLoggerContextOnUninstallEventHandler] Failed to stop Log4j context {} for module: {}.",
+                            ctxName, event.getSource().getBizName(), e);
+                    }
                 }
             }
             return;
