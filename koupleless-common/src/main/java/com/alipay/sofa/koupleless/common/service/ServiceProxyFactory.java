@@ -282,7 +282,8 @@ public class ServiceProxyFactory {
             throw new BizRuntimeException(E100003,
                 String.format("biz %s:%s does not exist", bizName, bizVersion));
         }
-        if (biz.getBizState() != BizState.ACTIVATED && biz.getBizState() != BizState.DEACTIVATED) {
+        if (biz.getBizState() != BizState.RESOLVED && biz.getBizState() != BizState.ACTIVATED
+            && biz.getBizState() != BizState.DEACTIVATED) {
             throw new BizRuntimeException(E100004, String.format("biz %s:%s state %s is not valid",
                 bizName, bizVersion, biz.getBizState()));
         }
