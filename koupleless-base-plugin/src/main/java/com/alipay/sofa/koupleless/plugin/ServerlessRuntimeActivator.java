@@ -46,9 +46,9 @@ public class ServerlessRuntimeActivator implements PluginActivator {
 
         // 清理用户主动托管给 Serverless 运行时的 ExecutorService (含线程池), Timer 和 Thread.
         eventAdminService.register(new ShutdownExecutorServicesOnUninstallEventHandler());
-        eventAdminService.register(new StopLoggerContextOnUninstallEventHandler());
         eventAdminService.register(new CancelTimersOnUninstallEventHandler());
         eventAdminService.register(new ForceStopThreadsOnUninstallEventHandler());
+        eventAdminService.register(new StopLoggerContextOnUninstallEventHandler());
     }
 
     /** {@inheritDoc} */
