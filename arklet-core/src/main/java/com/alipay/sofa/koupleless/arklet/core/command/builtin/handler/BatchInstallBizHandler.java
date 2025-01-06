@@ -22,8 +22,8 @@ import com.alipay.sofa.koupleless.arklet.core.command.builtin.handler.BatchInsta
 import com.alipay.sofa.koupleless.arklet.core.command.builtin.handler.InstallBizHandler.Input;
 import com.alipay.sofa.koupleless.arklet.core.command.meta.AbstractCommandHandler;
 import com.alipay.sofa.koupleless.arklet.core.command.meta.Command;
-import com.alipay.sofa.koupleless.arklet.core.command.meta.InputMeta;
 import com.alipay.sofa.koupleless.arklet.core.command.meta.Output;
+import com.alipay.sofa.koupleless.arklet.core.command.meta.bizops.ArkBizMeta;
 import com.alipay.sofa.koupleless.arklet.core.command.meta.bizops.ArkBizOps;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletRuntimeException;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.CommandValidationException;
@@ -102,7 +102,7 @@ public class BatchInstallBizHandler extends
 
     @Getter
     @Setter
-    public static class BatchInstallInput extends InputMeta {
+    public static class BatchInstallInput extends ArkBizMeta {
         private Input[] bizList;
     }
 
