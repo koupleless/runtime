@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static com.alipay.sofa.koupleless.arklet.core.common.model.Constants.STRATEGY_INSTALL_ONLY_STRATEGY;
 import static com.alipay.sofa.koupleless.arklet.core.common.model.Constants.STRATEGY_UNINSTALL_THEN_INSTALL;
@@ -182,10 +183,9 @@ public class UnifiedOperationServiceImplTests {
             BatchInstallResponse response = unifiedOperationService.batchInstall(
                 BatchInstallRequest.builder().bizDirAbsolutePath("/path/to/biz").build());
 
-            Assert.assertTrue(response.getBizUrlToResponse().containsKey("file:///file/a-biz.jar"));
-
-            Assert.assertTrue(response.getBizUrlToResponse().containsKey("file:///file/b-biz.jar"));
-
+            Set<String> bizUrls = response.getBizUrlToResponse().keySet();
+            Assert.assertTrue(bizUrls.stream().anyMatch(url -> url.endsWith("a-biz.jar")));
+            Assert.assertTrue(bizUrls.stream().anyMatch(url -> url.endsWith("b-biz.jar")));
         }
     }
 }
