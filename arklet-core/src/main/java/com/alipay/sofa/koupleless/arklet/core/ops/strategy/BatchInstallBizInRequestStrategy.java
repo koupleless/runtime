@@ -37,8 +37,6 @@ import java.util.TreeMap;
  */
 public class BatchInstallBizInRequestStrategy implements BatchInstallStrategy {
 
-    private final BatchInstallHelper batchInstallHelper = new BatchInstallHelper();
-
     @Override
     public Map<Integer, List<InstallRequest>> convertToInstallInput(BatchInstallRequest request) throws Throwable {
         Map<Integer, List<InstallRequest>> result = new TreeMap<>();
@@ -57,7 +55,7 @@ public class BatchInstallBizInRequestStrategy implements BatchInstallStrategy {
             installRequest.getBizVersion());
         FileUtils.copyInputStreamToFile(url.openStream(), bizFile);
 
-        Map<String, Object> mainAttributes = batchInstallHelper
+        Map<String, Object> mainAttributes = BatchInstallHelper
             .getMainAttributes(bizFile.getAbsolutePath());
         org.apache.commons.io.FileUtils.deleteQuietly(bizFile);
         return Integer.valueOf(

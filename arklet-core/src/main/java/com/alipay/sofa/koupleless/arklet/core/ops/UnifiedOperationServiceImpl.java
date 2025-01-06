@@ -141,7 +141,7 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
 
     private BatchInstallStrategy getBatchInstallStrategy(BatchInstallRequest request) {
         if (StringUtil.isNotEmpty(request.getBizDirAbsolutePath())) {
-            return batchInstallBizInRequestStrategy;
+            return batchInstallBizInDirAbsolutePathStrategy;
         }
         return batchInstallBizInRequestStrategy;
     }
