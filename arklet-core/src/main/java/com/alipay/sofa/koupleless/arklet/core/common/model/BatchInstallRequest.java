@@ -37,10 +37,15 @@ public class BatchInstallRequest {
     /**
      * 本地文件系统目录。
      */
-    private String bizDirAbsolutePath;
+    private String           bizDirAbsolutePath;
     /**
      * 静态合并部署，默认没有老版本模块，可以直接使用普通安装策略。
      */
     @Builder.Default
-    private String installStrategy = STRATEGY_INSTALL_ONLY_STRATEGY;
+    private String           installStrategy = STRATEGY_INSTALL_ONLY_STRATEGY;
+
+    /**
+     * 模块批量发布请求。
+     */
+    private InstallRequest[] installRequests = new InstallRequest[0];
 }

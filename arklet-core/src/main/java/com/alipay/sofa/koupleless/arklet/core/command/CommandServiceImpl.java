@@ -26,6 +26,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alipay.sofa.ark.common.util.BizIdentityUtils;
 import com.alipay.sofa.common.utils.StringUtil;
 import com.alipay.sofa.koupleless.arklet.core.api.model.ResponseCode;
+import com.alipay.sofa.koupleless.arklet.core.command.builtin.handler.BatchInstallBizHandler;
 import com.alipay.sofa.koupleless.arklet.core.command.builtin.handler.HelpHandler;
 import com.alipay.sofa.koupleless.arklet.core.command.builtin.handler.InstallBizHandler;
 import com.alipay.sofa.koupleless.arklet.core.command.builtin.handler.QueryAllBizHandler;
@@ -98,6 +99,7 @@ public class CommandServiceImpl implements CommandService {
         registerCommandHandler(new SwitchBizHandler());
         registerCommandHandler(new HealthHandler());
         registerCommandHandler(new QueryBizOpsHandler());
+        registerCommandHandler(new BatchInstallBizHandler());
     }
 
     /** {@inheritDoc} */
