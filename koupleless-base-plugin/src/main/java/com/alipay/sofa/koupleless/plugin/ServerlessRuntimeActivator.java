@@ -48,6 +48,7 @@ public class ServerlessRuntimeActivator implements PluginActivator {
         eventAdminService.register(new ShutdownExecutorServicesOnUninstallEventHandler());
         eventAdminService.register(new CancelTimersOnUninstallEventHandler());
         eventAdminService.register(new ForceStopThreadsOnUninstallEventHandler());
+        eventAdminService.register(new StopLoggerCxtAfterBizStopEventHandler());
     }
 
     /** {@inheritDoc} */
