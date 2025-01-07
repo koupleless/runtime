@@ -41,7 +41,6 @@ public class ServerlessRuntimeActivator implements PluginActivator {
         EventAdminService eventAdminService = context.referenceService(EventAdminService.class)
             .getService();
 
-        eventAdminService.register(new StopLoggerCxtAfterBizStopEventHandler());
         eventAdminService.register(new BizUninstallEventHandler());
         eventAdminService.register(new BeforeBizStartupEventHandler());
 
@@ -49,6 +48,7 @@ public class ServerlessRuntimeActivator implements PluginActivator {
         eventAdminService.register(new ShutdownExecutorServicesOnUninstallEventHandler());
         eventAdminService.register(new CancelTimersOnUninstallEventHandler());
         eventAdminService.register(new ForceStopThreadsOnUninstallEventHandler());
+        eventAdminService.register(new StopLoggerCxtAfterBizStopEventHandler());
     }
 
     /** {@inheritDoc} */

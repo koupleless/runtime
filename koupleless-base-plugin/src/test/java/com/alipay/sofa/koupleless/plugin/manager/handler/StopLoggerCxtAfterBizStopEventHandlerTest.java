@@ -42,11 +42,12 @@ import java.util.Properties;
  * @author gaowh
  */
 public class StopLoggerCxtAfterBizStopEventHandlerTest {
-    private final ClassLoader bizClassLoader = currentThread()
-            .getContextClassLoader();
+    private final ClassLoader                   bizClassLoader  = currentThread()
+        .getContextClassLoader();
     private static MockedStatic<PropertiesUtil> propertiesUtil;
 
-    private static final ClassLoader rootClassLoader = new ClassLoader() {};
+    private static final ClassLoader            rootClassLoader = new ClassLoader() {
+                                                                };
 
     @BeforeClass
     public static void beforeClass() {
@@ -85,14 +86,16 @@ public class StopLoggerCxtAfterBizStopEventHandlerTest {
         Log4jContextFactory contextFactory = (Log4jContextFactory) LogManager.getFactory();
         String name = contextFactory.getSelector().getLoggerContexts().get(0).getName();
         LogManager.getContext(bizClassLoader, false);
-        assertEquals("Should have two logger context initially", 2, contextFactory.getSelector().getLoggerContexts().size());
+        assertEquals("Should have two logger context initially", 2,
+            contextFactory.getSelector().getLoggerContexts().size());
         BizModel bizModel = new BizModel();
         bizModel.setClassLoader(bizClassLoader);
         BeforeBizStopEvent event = new BeforeBizStopEvent(bizModel);
         handler.handleEvent(event);
         int afterSize = contextFactory.getSelector().getLoggerContexts().size();
         assertEquals("only one logger context should be closed", afterSize, 1);
-        assertEquals("active logger context name is ", name, contextFactory.getSelector().getLoggerContexts().get(0).getName());
+        assertEquals("active logger context name is ", name,
+            contextFactory.getSelector().getLoggerContexts().get(0).getName());
     }
 
     @Test

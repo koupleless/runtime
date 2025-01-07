@@ -42,9 +42,8 @@ public class StopLoggerCxtAfterBizStopEventHandler implements EventHandler<Befor
     private static final Logger LOGGER                                  = getLogger(
         StopLoggerCxtAfterBizStopEventHandler.class);
 
-    public static final String LOGGER_CONTEXT_STOP_TIMEOUT_MILLISECOND = "com.alipay.koupleless.loggerContext.stop.timeout.millisecond";
-    public static final String LOG4J2_FACTORY_CLASS_NAME = "org.apache.logging.log4j.core.impl.Log4jContextFactory";
-
+    public static final String  LOGGER_CONTEXT_STOP_TIMEOUT_MILLISECOND = "com.alipay.koupleless.loggerContext.stop.timeout.millisecond";
+    public static final String  LOG4J2_FACTORY_CLASS_NAME               = "org.apache.logging.log4j.core.impl.Log4jContextFactory";
 
     @Override
     public void handleEvent(BeforeBizStopEvent beforeBizStopEvent) {
