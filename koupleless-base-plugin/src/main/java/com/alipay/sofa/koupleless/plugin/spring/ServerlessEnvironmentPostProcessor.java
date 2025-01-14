@@ -19,7 +19,6 @@ package com.alipay.sofa.koupleless.plugin.spring;
 import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.common.util.StringUtils;
 import com.alipay.sofa.ark.spi.model.Biz;
-import com.alipay.sofa.koupleless.arklet.core.common.model.Constants;
 import com.alipay.sofa.koupleless.common.util.PropertiesUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,9 +44,6 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static com.alipay.sofa.koupleless.plugin.spring.SkipAutoConfigurationImportFilter.MODULE_AUTO_CONFIGURATION_EXCLUDE;
-import static com.alipay.sofa.koupleless.plugin.spring.SkipInitializerListener.MODULE_INITIALIZER_SKIP;
 
 /**
  * <p>ServerlessEnvironmentPostProcessor class.</p>
@@ -81,12 +77,7 @@ public class ServerlessEnvironmentPostProcessor implements EnvironmentPostProces
     private final static String                       SOFA_ARK_BIZ_PROPERTY_SOURCE_PREFIX        = "Biz-Config resource";
 
     // 框架定义的允许共享的配置列表
-    private static final Set<String>                  DEFAULT_SHARE_KEYS                         = new HashSet<String>() {
-                                                                                                     {
-                                                                                                         add(MODULE_INITIALIZER_SKIP);
-                                                                                                         add(MODULE_AUTO_CONFIGURATION_EXCLUDE);
-                                                                                                     }
-                                                                                                 };
+    private static final Set<String>                  DEFAULT_SHARE_KEYS                         = new HashSet<>();
 
     private static final Map<String, String>          COMPATIBLE_KEYS                            = new HashMap<>();
 
