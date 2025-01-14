@@ -26,6 +26,8 @@ import com.alipay.sofa.koupleless.arklet.core.command.builtin.model.BizInfo;
 import com.alipay.sofa.koupleless.arklet.core.command.meta.Output;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletInitException;
 import com.alipay.sofa.koupleless.arklet.core.common.exception.ArkletRuntimeException;
+import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.paho.handler.MsgHandler;
+import com.alipay.sofa.koupleless.arklet.tunnel.mqtt.paho.handler.PlaybackBaselineHandler;
 import com.alipay.sofa.koupleless.common.log.ArkletLoggerFactory;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BaseMetadata;
 import com.alipay.sofa.koupleless.arklet.core.hook.base.BaseMetadataHook;
@@ -52,12 +54,14 @@ import static com.alipay.sofa.koupleless.arklet.core.health.model.Constants.*;
  */
 public class MqttMessageHandler {
 
-    public static boolean          baselineQueryComplete = false;
-    private final CommandService   commandService;
-    private final BaseMetadataHook baseMetadataHook;
-    private final MqttClient       mqttClient;
-    private String                 baseEnv;
-    private final AtomicBoolean    run                   = new AtomicBoolean(false);
+    public static boolean                 baselineQueryComplete = false;
+    private final CommandService          commandService;
+    private final BaseMetadataHook        baseMetadataHook;
+    private final MqttClient              mqttClient;
+    private String                        baseEnv;
+    private final AtomicBoolean           run                   = new AtomicBoolean(false);
+
+    private final Map<String, MsgHandler> msgHandlers           = new HashMap<>();
 
     public MqttMessageHandler(CommandService commandService, BaseMetadataHook baseMetadataHook,
                               MqttClient mqttClient, String baseEnv) {
@@ -70,6 +74,13 @@ public class MqttMessageHandler {
         } else {
             this.baseEnv = this.baseEnv.toLowerCase();
         }
+
+        initMsgHandlers();
+    }
+
+    private void initMsgHandlers() {
+        msgHandlers.put(PlaybackBaselineHandler.Mqtt_CMD,
+            new PlaybackBaselineHandler(commandService, baseMetadataHook, mqttClient, baseEnv));
     }
 
     /**
@@ -187,8 +198,8 @@ public class MqttMessageHandler {
         if (cmd.equals(BuiltinCommand.INSTALL_BIZ.getId())
             || cmd.equals(BuiltinCommand.UNINSTALL_BIZ.getId())) {
             handleBizOperation(cmd, msg);
-        } else if (cmd.equals("baseline")) {
-            handlePlaybackBaseline(cmd, msg);
+        } else if (PlaybackBaselineHandler.Mqtt_CMD.equals(cmd)) {
+            msgHandlers.get(PlaybackBaselineHandler.Mqtt_CMD).handle(msg);
         } else if (cmd.equals(BuiltinCommand.HEALTH.getId())) {
             handleHealthCommand(cmd, msg);
         } else if (cmd.equals(BuiltinCommand.QUERY_ALL_BIZ.getId())) {
@@ -229,29 +240,6 @@ public class MqttMessageHandler {
                 throw new ArkletRuntimeException(ex);
             }
             throw new ArkletRuntimeException(t);
-        }
-    }
-
-    private void handlePlaybackBaseline(String cmd, MqttMessage msg) throws ArkletRuntimeException {
-        List<Map<String, Object>> cmdContents = JSONObject.parseObject(msg.toString(), List.class);
-
-        ArkletLoggerFactory.getDefaultLogger()
-            .info("start to playback baseline with content: " + cmdContents);
-        // TODO: parallel process
-        List<Map<String, Object>> failedContents = new ArrayList<>();
-        for (Map<String, Object> cmdContent : cmdContents) {
-            try {
-                commandService.process(BuiltinCommand.INSTALL_BIZ.getId(), cmdContent);
-            } catch (Throwable e) {
-                failedContents.add(cmdContent);
-            }
-        }
-        if (!failedContents.isEmpty()) {
-            ArkletLoggerFactory.getDefaultLogger().error(
-                String.format("fail to handle command %s with content: %s", cmd, failedContents));
-        } else {
-            ArkletLoggerFactory.getDefaultLogger()
-                .info("install biz success when playback baseline");
         }
     }
 
