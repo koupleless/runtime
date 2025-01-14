@@ -25,9 +25,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.context.event.ApplicationStartingEvent;
 import org.springframework.boot.context.event.SpringApplicationEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.EnvironmentAware;
 import org.springframework.core.annotation.Order;
-import org.springframework.core.env.Environment;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -41,14 +39,11 @@ import static org.slf4j.LoggerFactory.getLogger;
  * @version 1.0.0
  */
 @Order
-public class SkipInitializerListener implements ApplicationListener<SpringApplicationEvent>,
-                                     EnvironmentAware {
+public class SkipInitializerListener implements ApplicationListener<SpringApplicationEvent> {
     private static final Logger LOGGER                  = getLogger(SkipInitializerListener.class);
 
     /** Constant <code>MODULE_INITIALIZER_SKIP="koupleless.module.initializer.skip"</code> */
     public static final String  MODULE_INITIALIZER_SKIP = "koupleless.module.initializer.skip";
-
-    private Environment         environment;
 
     /** {@inheritDoc} */
     @Override
@@ -85,19 +80,9 @@ public class SkipInitializerListener implements ApplicationListener<SpringApplic
             bizRuntimeContext.getRootApplicationContext().getEnvironment(),
             MODULE_INITIALIZER_SKIP);
 
-        // 2. gettting the exclude and include configs from current biz
-        Set<String> initializerSkipsInBiz = PropertiesUtil.formatPropertyValues(this.environment,
-            MODULE_INITIALIZER_SKIP);
-
-        moduleInitializerSkips.addAll(initializerSkipsInBiz);
         application.setInitializers(application.getInitializers().stream()
             .filter(
                 initializer -> !moduleInitializerSkips.contains(initializer.getClass().getName()))
             .collect(Collectors.toList()));
-    }
-
-    @Override
-    public void setEnvironment(Environment environment) {
-        this.environment = environment;
     }
 }
