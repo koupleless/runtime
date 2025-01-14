@@ -19,22 +19,25 @@ package com.alipay.sofa.koupleless.arklet.core.ops;
 import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.api.ClientResponse;
 import com.alipay.sofa.ark.api.ResponseCode;
-import com.alipay.sofa.ark.spi.constant.Constants;
 import com.alipay.sofa.ark.spi.model.Biz;
+import com.alipay.sofa.common.utils.StringUtil;
 import com.alipay.sofa.koupleless.arklet.core.command.executor.ExecutorServiceManager;
+import com.alipay.sofa.koupleless.arklet.core.ops.strategy.BatchInstallBizInDirAbsolutePathStrategy;
+import com.alipay.sofa.koupleless.arklet.core.ops.strategy.BatchInstallBizInRequestStrategy;
+import com.alipay.sofa.koupleless.arklet.core.ops.strategy.BatchInstallStrategy;
 import com.alipay.sofa.koupleless.common.log.ArkletLoggerFactory;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BatchInstallRequest;
 import com.alipay.sofa.koupleless.arklet.core.common.model.BatchInstallResponse;
 import com.alipay.sofa.koupleless.arklet.core.common.model.InstallRequest;
 import com.alipay.sofa.koupleless.arklet.core.common.model.InstallRequest.InstallStrategyEnum;
 import com.alipay.sofa.koupleless.arklet.core.ops.strategy.InstallStrategy;
-import com.alipay.sofa.koupleless.common.util.OSUtils;
 import com.google.inject.Singleton;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -47,8 +50,9 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 @Singleton
 public class UnifiedOperationServiceImpl implements UnifiedOperationService {
+    private final BatchInstallStrategy batchInstallBizInDirAbsolutePathStrategy = new BatchInstallBizInDirAbsolutePathStrategy();
 
-    private BatchInstallHelper batchInstallHelper = new BatchInstallHelper();
+    private final BatchInstallStrategy batchInstallBizInRequestStrategy         = new BatchInstallBizInRequestStrategy();
 
     /** {@inheritDoc} */
     @Override
@@ -72,20 +76,12 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
     /**
      * <p>safeBatchInstall.</p>
      *
-     * @param bizAbsolutePath a {@link java.lang.String} object
+     * @param bizRequest a {@link InstallRequest} object
      * @return a {@link com.alipay.sofa.ark.api.ClientResponse} object
      */
-    public ClientResponse safeBatchInstall(String bizAbsolutePath, String installStrategy) {
+    public ClientResponse safeBatchInstall(InstallRequest bizRequest) {
         try {
-            String bizUrl = OSUtils.getLocalFileProtocolPrefix() + bizAbsolutePath;
-            Map<String, Object> mainAttributes = batchInstallHelper
-                .getMainAttributes(bizAbsolutePath);
-            String bizName = (String) mainAttributes.get(Constants.ARK_BIZ_NAME);
-            String bizVersion = (String) mainAttributes.get(Constants.ARK_BIZ_VERSION);
-
-            InstallRequest installRequest = InstallRequest.builder().bizUrl(bizUrl).bizName(bizName)
-                .bizVersion(bizVersion).installStrategy(installStrategy).build();
-            return install(installRequest);
+            return install(bizRequest);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
             return new ClientResponse().setCode(ResponseCode.FAILED)
@@ -103,19 +99,20 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
     @Override
     public BatchInstallResponse batchInstall(BatchInstallRequest request) throws Throwable {
         long startTimestamp = System.currentTimeMillis();
-        Map<Integer, List<String>> bizUrls = batchInstallHelper
-            .getBizUrlsFromLocalFileSystem(request.getBizDirAbsolutePath());
-        ArkletLoggerFactory.getDefaultLogger().info("Found biz jar files: {}", bizUrls);
-        ThreadPoolExecutor executorService = ExecutorServiceManager.getArkBizOpsExecutor();
 
+        BatchInstallStrategy batchInstallStrategy = getBatchInstallStrategy(request);
+        Map<Integer, List<InstallRequest>> installRequestsWithOrder = batchInstallStrategy
+                .convertToInstallInput(request);
+
+        ThreadPoolExecutor executorService = ExecutorServiceManager.getArkBizOpsExecutor();
         Map<String, ClientResponse> bizUrlToInstallResult = new HashMap<>();
         boolean hasFailed = false;
-        for (Map.Entry<Integer, List<String>> entry : bizUrls.entrySet()) {
-            List<String> bizUrlsInSameOrder = entry.getValue();
+        for (Entry<Integer, List<InstallRequest>> entry : installRequestsWithOrder.entrySet()) {
+            List<InstallRequest> bizRequestInSameOrder = entry.getValue();
             List<CompletableFuture<ClientResponse>> futures = new ArrayList<>();
-            for (String bizUrl : bizUrlsInSameOrder) {
-                futures.add(CompletableFuture.supplyAsync(
-                    () -> safeBatchInstall(bizUrl, request.getInstallStrategy()), executorService));
+            for (InstallRequest bizRequest : bizRequestInSameOrder) {
+                futures.add(CompletableFuture.supplyAsync(() -> safeBatchInstall(bizRequest),
+                    executorService));
             }
 
             // wait for all install futures done
@@ -123,8 +120,8 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
             int counter = 0;
             for (CompletableFuture<ClientResponse> future : futures) {
                 ClientResponse clientResponse = future.get();
-                String bizUrl = bizUrlsInSameOrder.get(counter);
-                bizUrlToInstallResult.put(bizUrl, clientResponse);
+                InstallRequest bizRequest = bizRequestInSameOrder.get(counter);
+                bizUrlToInstallResult.put(bizRequest.getBizUrl(), clientResponse);
                 hasFailed = hasFailed || clientResponse.getCode() != ResponseCode.SUCCESS;
                 counter++;
             }
@@ -138,6 +135,13 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
             .code(hasFailed ? ResponseCode.FAILED : ResponseCode.SUCCESS)
             .message(hasFailed ? "batch install failed" : "batch install success")
             .bizUrlToResponse(bizUrlToInstallResult).build();
+    }
+
+    private BatchInstallStrategy getBatchInstallStrategy(BatchInstallRequest request) {
+        if (StringUtil.isNotEmpty(request.getBizDirAbsolutePath())) {
+            return batchInstallBizInDirAbsolutePathStrategy;
+        }
+        return batchInstallBizInRequestStrategy;
     }
 
     /** {@inheritDoc} */

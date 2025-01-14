@@ -25,6 +25,7 @@ import com.alipay.sofa.koupleless.arklet.core.common.model.InstallRequest;
 import com.alipay.sofa.koupleless.arklet.core.health.custom.MockBizManagerService;
 import com.alipay.sofa.koupleless.arklet.core.ops.BatchInstallHelper;
 import com.alipay.sofa.koupleless.arklet.core.ops.UnifiedOperationServiceImpl;
+import com.alipay.sofa.koupleless.common.BizRuntimeContextRegistry;
 import lombok.SneakyThrows;
 import org.junit.Assert;
 import org.junit.Before;
@@ -40,6 +41,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static com.alipay.sofa.koupleless.arklet.core.common.model.Constants.STRATEGY_INSTALL_ONLY_STRATEGY;
 import static com.alipay.sofa.koupleless.arklet.core.common.model.Constants.STRATEGY_UNINSTALL_THEN_INSTALL;
@@ -52,20 +54,9 @@ import static org.mockito.Mockito.doReturn;
  * @since 2023/10/26
  */
 
-@RunWith(MockitoJUnitRunner.class)
 public class UnifiedOperationServiceImplTests {
-    @InjectMocks
-    private UnifiedOperationServiceImpl unifiedOperationService;
-
-    @Spy
-    private BatchInstallHelper          batchInstallHelper;
-
-    @Before
-    public void setUp() {
-        if (unifiedOperationService == null) {
-            unifiedOperationService = new UnifiedOperationServiceImpl();
-        }
-    }
+    private final UnifiedOperationServiceImpl unifiedOperationService = Mockito
+        .spy(new UnifiedOperationServiceImpl());
 
     /**
      * 测试初始化方法
@@ -169,25 +160,32 @@ public class UnifiedOperationServiceImplTests {
     @SneakyThrows
     @Test
     public void testBatchInstall() {
-        {
-            List<String> paths = new ArrayList<>();
-            paths.add("/file/a-biz.jar");
-            paths.add("/file/b-biz.jar");
-            paths.add("/file/notbiz.jar");
-            Map<Integer, List<String>> pathsInOrder = new HashMap<>();
-            pathsInOrder.put(100, paths);
+        try (MockedStatic<BatchInstallHelper> batchInstallHelperMockedStatic = Mockito
+            .mockStatic(BatchInstallHelper.class)) {
+            {
+                List<String> paths = new ArrayList<>();
+                paths.add("/file/a-biz.jar");
+                paths.add("/file/b-biz.jar");
+                paths.add("/file/notbiz.jar");
+                Map<Integer, List<String>> pathsInOrder = new HashMap<>();
+                pathsInOrder.put(100, paths);
+                batchInstallHelperMockedStatic
+                    .when(() -> BatchInstallHelper.getBizUrlsFromLocalFileSystem(any()))
+                    .thenReturn(pathsInOrder);
+                batchInstallHelperMockedStatic
+                    .when(() -> BatchInstallHelper.getMainAttributes(anyString()))
+                    .thenReturn(new HashMap<>());
 
-            doReturn(pathsInOrder).when(batchInstallHelper).getBizUrlsFromLocalFileSystem(any());
+                doReturn(Mockito.mock(ClientResponse.class)).when(unifiedOperationService)
+                    .safeBatchInstall(any());
+            }
 
-            doReturn(new HashMap<>()).when(batchInstallHelper).getMainAttributes(anyString());
+            BatchInstallResponse response = unifiedOperationService.batchInstall(
+                BatchInstallRequest.builder().bizDirAbsolutePath("/path/to/biz").build());
+
+            Set<String> bizUrls = response.getBizUrlToResponse().keySet();
+            Assert.assertTrue(bizUrls.stream().anyMatch(url -> url.endsWith("a-biz.jar")));
+            Assert.assertTrue(bizUrls.stream().anyMatch(url -> url.endsWith("b-biz.jar")));
         }
-
-        BatchInstallResponse response = unifiedOperationService
-            .batchInstall(BatchInstallRequest.builder().bizDirAbsolutePath("/path/to/biz").build());
-
-        Assert.assertTrue(response.getBizUrlToResponse().containsKey("/file/a-biz.jar"));
-
-        Assert.assertTrue(response.getBizUrlToResponse().containsKey("/file/b-biz.jar"));
-
     }
 }

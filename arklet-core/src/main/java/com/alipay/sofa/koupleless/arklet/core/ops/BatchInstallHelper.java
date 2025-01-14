@@ -46,7 +46,7 @@ public class BatchInstallHelper {
      * @return a {@link java.util.List} object
      */
     @SneakyThrows
-    public Map<Integer, List<String>> getBizUrlsFromLocalFileSystem(String absoluteBizDirPath) {
+    public static Map<Integer, List<String>> getBizUrlsFromLocalFileSystem(String absoluteBizDirPath) {
         Map<Integer, List<String>> bizUrlsWithPriority = new HashMap<>();
         Files.walkFileTree(new File(absoluteBizDirPath).toPath(), new SimpleFileVisitor<Path>() {
             @Override
@@ -86,7 +86,7 @@ public class BatchInstallHelper {
      * @return 主属性。
      */
     @SneakyThrows
-    public Map<String, Object> getMainAttributes(String bizUrl) {
+    public static Map<String, Object> getMainAttributes(String bizUrl) {
         try (JarFile jarFile = new JarFile(bizUrl)) {
             Manifest manifest = jarFile.getManifest();
             Preconditions.checkState(manifest != null, "Manifest file not found in the JAR.");
