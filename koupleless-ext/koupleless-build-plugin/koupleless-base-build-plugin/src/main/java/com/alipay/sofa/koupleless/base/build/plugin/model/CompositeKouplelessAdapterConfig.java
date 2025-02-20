@@ -55,9 +55,7 @@ import static com.google.common.collect.Maps.newHashMap;
  */
 public class CompositeKouplelessAdapterConfig implements AdapterConfig {
 
-    private static final String           CUSTOM_MAPPING_FILE    = "adapter-mapping.yaml";
-
-    private static final String           REMOTE_ADAPTER_CONFIGS = "com.alipay.sofa.koupleless:koupleless-adapter-configs";
+    private static final String           CUSTOM_MAPPING_FILE = "adapter-mapping.yaml";
 
     /**
      * 用户自定义配置：用户配置的 ${baseDir}/adapter-mapping.yaml
@@ -67,7 +65,7 @@ public class CompositeKouplelessAdapterConfig implements AdapterConfig {
     /**
      * 远程配置：读取最新的 koupleless-adapter-configs 中的配置
      */
-    private List<KouplelessAdapterConfig> remoteConfigs          = new ArrayList<>();
+    private List<KouplelessAdapterConfig> remoteConfigs       = new ArrayList<>();
 
     public CompositeKouplelessAdapterConfig() {
     }
@@ -75,7 +73,11 @@ public class CompositeKouplelessAdapterConfig implements AdapterConfig {
     public CompositeKouplelessAdapterConfig(KouplelessBaseBuildPrePackageMojo mojo) {
         initCustomConfig(mojo);
 
+        // Koupleless 自定义的 jar 形式的 adapter-mapping
         initRemoteConfig(mojo);
+
+        // 各企业内部自定义的 jar 形式的 adapter-mapping
+        initCustomRemoteConfig(mojo);
     }
 
     /**
@@ -153,23 +155,46 @@ public class CompositeKouplelessAdapterConfig implements AdapterConfig {
     }
 
     protected void initRemoteConfig(KouplelessBaseBuildPrePackageMojo mojo) {
-        String kouplelessAdapterConfigVersion = parseRemoteConfigVersion(mojo);
-        Artifact artifact = downloadAdapterConfigsJar(mojo, kouplelessAdapterConfigVersion);
+        String groupId = "com.alipay.sofa.koupleless";
+        String artifactId = "koupleless-adapter-configs";
+        String version = mojo.kouplelessAdapterConfigVersion;
+
+        // get latest version if not set version
+        String parsedVersion = parseRemoteConfigVersion(mojo, groupId, artifactId, version);
+        Artifact artifact = downloadAdapterConfigsJar(mojo, groupId, artifactId, parsedVersion);
         remoteConfigs = parseConfigs(artifact);
     }
 
+    protected void initCustomRemoteConfig(KouplelessBaseBuildPrePackageMojo mojo) {
+        if (CollectionUtils.isEmpty(mojo.customAdaptorMappingDependencies)) {
+            return;
+        }
+        for (Dependency dependency : mojo.customAdaptorMappingDependencies) {
+            String groupId = dependency.getGroupId();
+            String artifactId = dependency.getArtifactId();
+            String version = dependency.getVersion();
+
+            // get latest version if not set version
+            String parsedVersion = parseRemoteConfigVersion(mojo, groupId, artifactId, version);
+            Artifact artifact = downloadAdapterConfigsJar(mojo, groupId, artifactId, parsedVersion);
+            remoteConfigs.addAll(parseConfigs(artifact));
+        }
+    }
+
     private Artifact downloadAdapterConfigsJar(KouplelessBaseBuildPrePackageMojo mojo,
-                                               String kouplelessAdapterConfigVersion) {
-        if (StringUtils.isEmpty(kouplelessAdapterConfigVersion)) {
+                                               String groupId, String artifactId, String version) {
+        if (StringUtils.isEmpty(version)) {
             return null;
         }
 
         try {
             return mojo.downloadDependency(
-                parseDependency(REMOTE_ADAPTER_CONFIGS + ":" + kouplelessAdapterConfigVersion));
+                parseDependency(String.format("%s:%s:%s", groupId, artifactId, version)));
         } catch (Exception e) {
             mojo.getLog()
-                .error("Failed to resolve koupleless-adapter-configs, use default config only.");
+                .error(String.format(
+                    "Failed to resolve and download %s:%s:%s, use default config only.", groupId,
+                    artifactId, version));
             throw new RuntimeException(e);
         }
     }
@@ -194,29 +219,30 @@ public class CompositeKouplelessAdapterConfig implements AdapterConfig {
         return remoteConfigs;
     }
 
-    private String parseRemoteConfigVersion(KouplelessBaseBuildPrePackageMojo mojo) {
-        if (StringUtils.isNotEmpty(mojo.kouplelessAdapterConfigVersion)) {
-            return mojo.kouplelessAdapterConfigVersion;
+    private String parseRemoteConfigVersion(KouplelessBaseBuildPrePackageMojo mojo, String groupId,
+                                            String artifactId, String version) {
+        if (StringUtils.isNotEmpty(version)) {
+            return version;
         }
 
         // 从远端获取最新版本
-        String version = "";
+        String latestVersion = "";
         try {
             VersionRangeRequest rangeRequest = new VersionRangeRequest()
                 .setArtifact(new org.eclipse.aether.artifact.DefaultArtifact(
-                    REMOTE_ADAPTER_CONFIGS + ":(,)"))
+                    String.format("%s:%s:(,)", groupId, artifactId)))
                 .setRepositories(mojo.project.getRemoteProjectRepositories());
 
             VersionRangeResult rangeResult = mojo.repositorySystem
                 .resolveVersionRange(mojo.session.getRepositorySession(), rangeRequest);
-            Version latestVersion = rangeResult.getHighestVersion();
-            version = null == latestVersion ? "" : latestVersion.toString();
+            Version rangeHighestVersion = rangeResult.getHighestVersion();
+            latestVersion = null == rangeHighestVersion ? "" : rangeHighestVersion.toString();
         } catch (VersionRangeResolutionException e) {
             mojo.getLog().warn(
                 "Failed to resolve latest version of koupleless-adapter-configs, use default config only.");
         }
 
-        return version;
+        return latestVersion;
     }
 
     private Dependency parseDependency(String dependencyStr) {
