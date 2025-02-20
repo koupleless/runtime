@@ -55,7 +55,7 @@ import static com.google.common.collect.Maps.newHashMap;
  */
 public class CompositeKouplelessAdapterConfig implements AdapterConfig {
 
-    private static final String           CUSTOM_MAPPING_FILE    = "adapter-mapping.yaml";
+    private static final String           CUSTOM_MAPPING_FILE = "adapter-mapping.yaml";
 
     /**
      * 用户自定义配置：用户配置的 ${baseDir}/adapter-mapping.yaml
@@ -65,7 +65,7 @@ public class CompositeKouplelessAdapterConfig implements AdapterConfig {
     /**
      * 远程配置：读取最新的 koupleless-adapter-configs 中的配置
      */
-    private List<KouplelessAdapterConfig> remoteConfigs          = new ArrayList<>();
+    private List<KouplelessAdapterConfig> remoteConfigs       = new ArrayList<>();
 
     public CompositeKouplelessAdapterConfig() {
     }
@@ -166,6 +166,9 @@ public class CompositeKouplelessAdapterConfig implements AdapterConfig {
     }
 
     protected void initCustomRemoteConfig(KouplelessBaseBuildPrePackageMojo mojo) {
+        if (CollectionUtils.isEmpty(mojo.customAdaptorMappingDependencies)) {
+            return;
+        }
         for (Dependency dependency : mojo.customAdaptorMappingDependencies) {
             String groupId = dependency.getGroupId();
             String artifactId = dependency.getArtifactId();

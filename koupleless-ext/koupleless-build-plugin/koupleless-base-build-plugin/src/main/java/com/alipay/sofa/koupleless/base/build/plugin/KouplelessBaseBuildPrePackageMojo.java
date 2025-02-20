@@ -99,7 +99,7 @@ public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
     public String                              kouplelessAdapterConfigVersion;
 
     @Parameter(defaultValue = "", required = false)
-    public List<Dependency>                          customAdaptorMappingDependencies;
+    public List<Dependency>                    customAdaptorMappingDependencies;
 
     AdapterCopyService                         adapterCopyService = new AdapterCopyService();
 
