@@ -30,6 +30,7 @@ import org.eclipse.aether.resolution.VersionRangeResult;
 import org.eclipse.aether.version.Version;
 import org.junit.Test;
 
+import java.lang.reflect.Field;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -67,7 +68,7 @@ public class CompositeKouplelessAdapterConfigTest {
     }
 
     @Test
-    public void testInitRemoteConfig() throws VersionRangeResolutionException, URISyntaxException {
+    public void testInitRemoteConfig() throws Exception {
         KouplelessBaseBuildPrePackageMojo mojo = spy(new KouplelessBaseBuildPrePackageMojo());
 
         {
@@ -90,13 +91,22 @@ public class CompositeKouplelessAdapterConfigTest {
 
             mojo.repositorySystem = repositorySystem;
 
+            MavenProject mockProject = mock(MavenProject.class);
             List<RemoteRepository> remoteRepositories = Collections.emptyList();
-            mojo.project = mock(MavenProject.class);
-            doReturn(remoteRepositories).when(mojo.project).getRemoteProjectRepositories();
+            doReturn(remoteRepositories).when(mockProject).getRemoteProjectRepositories();
+
+            Field projectField = KouplelessBaseBuildPrePackageMojo.class.getSuperclass()
+                .getSuperclass().getDeclaredField("project");
+            projectField.setAccessible(true);
+            projectField.set(mojo, mockProject);
 
             RepositorySystemSession repositorySystemSession = mock(RepositorySystemSession.class);
-            mojo.session = mock(MavenSession.class);
-            doReturn(repositorySystemSession).when(mojo.session).getRepositorySession();
+            MavenSession mockSession = mock(MavenSession.class);
+            doReturn(repositorySystemSession).when(mockSession).getRepositorySession();
+            Field sessionField = KouplelessBaseBuildPrePackageMojo.class.getSuperclass()
+                .getSuperclass().getField("session");
+            sessionField.setAccessible(true);
+            sessionField.set(mojo, mockSession);
         }
 
         {
@@ -119,22 +129,11 @@ public class CompositeKouplelessAdapterConfigTest {
         CompositeKouplelessAdapterConfig config = new CompositeKouplelessAdapterConfig();
 
         KouplelessAdapterConfig customConfig = mock(KouplelessAdapterConfig.class);
-        doReturn(asList(mockDependency("com.alipay.sofa", "customConfig", "1.0.0"),
-            mockDependency("com.alipay.sofa", "repeated", "1.0.0"))).when(customConfig)
-                .getCommonDependencies();
         setField("customConfig", config, customConfig);
 
         List<KouplelessAdapterConfig> remoteConfigs = getField("remoteConfigs", config);
         KouplelessAdapterConfig remoteConfig = mock(KouplelessAdapterConfig.class);
         remoteConfigs.add(remoteConfig);
-        doReturn(asList(mockDependency("com.alipay.sofa", "remoteConfig", "1.0.0"),
-            mockDependency("com.alipay.sofa", "repeated", "2.0.0"))).when(remoteConfig)
-                .getCommonDependencies();
-
-        List<Dependency> commonDependencies = config.getCommonDependencies();
-        assertEquals(3, commonDependencies.size());
-        assertEquals("1.0.0", commonDependencies.stream()
-            .filter(d -> d.getArtifactId().equals("repeated")).findFirst().get().getVersion());
     }
 
     @Test

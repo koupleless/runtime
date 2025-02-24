@@ -75,7 +75,7 @@ public class KouplelessBaseBuildPrePackageMojoTest {
     @Test
     public void testAddDependencyDynamically() throws Exception {
         KouplelessBaseBuildPrePackageMojo mojo = new KouplelessBaseBuildPrePackageMojo();
-        mojo.project = mock(MavenProject.class);
+        MavenProject mockProject = mock(MavenProject.class);
         // init maven project
         Set<org.apache.maven.artifact.Artifact> artifacts = new HashSet<>();
         org.apache.maven.artifact.Artifact artifact = mock(
@@ -84,11 +84,16 @@ public class KouplelessBaseBuildPrePackageMojoTest {
         //            doReturn("B").when(artifact).getArtifactId();
         doReturn("C").when(artifact).getBaseVersion();
         artifacts.add(artifact);
-        doReturn(artifacts).when(mojo.project).getArtifacts();
+        doReturn(artifacts).when(mockProject).getArtifacts();
         // set resolvedArtifacts in project
         Field field = MavenProject.class.getDeclaredField("resolvedArtifacts");
         field.setAccessible(true);
-        field.set(mojo.project, artifacts);
+        field.set(mockProject, artifacts);
+
+        Field projectField = KouplelessBaseBuildPrePackageMojo.class.getSuperclass().getSuperclass()
+            .getDeclaredField("project");
+        projectField.setAccessible(true);
+        projectField.set(mojo, mockProject);
 
         {
             // init the adapter config
@@ -97,12 +102,8 @@ public class KouplelessBaseBuildPrePackageMojoTest {
             mockDependency.setArtifactId("YYY");
             mockDependency.setVersion("ZZZ");
 
-            List<Dependency> commonDependencies = new ArrayList<>();
-            commonDependencies.add(mockDependency);
-
             Map<MavenDependencyAdapterMapping, org.apache.maven.artifact.Artifact> matchedResult = new HashMap<>();
             mojo.kouplelessAdapterConfig = mock(CompositeKouplelessAdapterConfig.class);
-            doReturn(commonDependencies).when(mojo.kouplelessAdapterConfig).getCommonDependencies();
 
             List<MavenDependencyAdapterMapping> mappings = new ArrayList<>();
             mappings.add(MavenDependencyAdapterMapping.builder().adapter(mockDependency)
@@ -128,20 +129,30 @@ public class KouplelessBaseBuildPrePackageMojoTest {
         {
             // mock the session
             MavenSession session = mock(MavenSession.class);
-            mojo.session = session;
+            Field sessionField = KouplelessBaseBuildPrePackageMojo.class.getSuperclass()
+                .getSuperclass().getField("session");
+            sessionField.setAccessible(true);
+            sessionField.set(mojo, session);
         }
 
         {
             // init output directory
-            mojo.outputDirectory = Files.createTempDirectory("mojotest").toFile();
+            Field outputDirectoryField = KouplelessBaseBuildPrePackageMojo.class.getSuperclass()
+                .getDeclaredField("outputDirectory");
+            outputDirectoryField.setAccessible(true);
+            outputDirectoryField.set(mojo, Files.createTempDirectory("mojotest").toFile());
+
+            Field compileSourceRoots = KouplelessBaseBuildPrePackageMojo.class.getSuperclass()
+                .getDeclaredField("compileSourceRoots");
+            compileSourceRoots.setAccessible(true);
+            compileSourceRoots.set(mojo, new ArrayList<>());
         }
 
         mojo.execute();
 
         {
-            Assert.assertTrue(Paths
-                .get(mojo.outputDirectory.getAbsolutePath(), "classes", "com", "example", "demo")
-                .toFile().exists());
+            Assert.assertTrue(Paths.get(mojo.getOutputDirectory().getAbsolutePath(), "classes",
+                "com", "example", "demo").toFile().exists());
         }
     }
 

@@ -81,42 +81,6 @@ public class CompositeKouplelessAdapterConfig implements AdapterConfig {
     }
 
     /**
-     * priority：custom > remote > default
-     * @return java.util.List<org.apache.maven.model.Dependency>
-     */
-    @Override
-    public List<Dependency> getCommonDependencies() {
-        Map<String, Dependency> custom = Maps.newHashMap();
-        if (null != customConfig) {
-            custom = toMapWithIdAsKey(customConfig.getCommonDependencies());
-        }
-
-        Map<String, Dependency> remote = Maps.newHashMap();
-        for (KouplelessAdapterConfig config : remoteConfigs) {
-            remote.putAll(toMapWithIdAsKey(config.getCommonDependencies()));
-        }
-
-        // 优先级：custom > remote
-        Map<String, Dependency> res = newHashMap();
-        res.putAll(remote);
-        res.putAll(custom);
-        return new ArrayList<>(res.values());
-    }
-
-    private Map<String, Dependency> toMapWithIdAsKey(List<Dependency> dependencies) {
-        if (CollectionUtils.isEmpty(dependencies)) {
-            return Collections.emptyMap();
-        }
-
-        Map<String, Dependency> res = newHashMap();
-        dependencies.forEach(d -> {
-            String key = d.getGroupId() + STRING_COLON + d.getArtifactId();
-            res.put(key, d);
-        });
-        return res;
-    }
-
-    /**
      * no priority, all configs are activated
      * @param resolvedArtifacts project resolved artifacts
      * @return java.util.Map<com.alipay.sofa.koupleless.base.build.plugin.model.MavenDependencyAdapterMapping,org.apache.maven.artifact.Artifact>
@@ -231,10 +195,11 @@ public class CompositeKouplelessAdapterConfig implements AdapterConfig {
             VersionRangeRequest rangeRequest = new VersionRangeRequest()
                 .setArtifact(new org.eclipse.aether.artifact.DefaultArtifact(
                     String.format("%s:%s:(,)", groupId, artifactId)))
-                .setRepositories(mojo.project.getRemoteProjectRepositories());
+                .setRepositories(mojo.getMavenProject().getRemoteProjectRepositories());
 
-            VersionRangeResult rangeResult = mojo.repositorySystem
-                .resolveVersionRange(mojo.session.getRepositorySession(), rangeRequest);
+            VersionRangeResult rangeResult = mojo.repositorySystem.resolveVersionRange(
+                mojo.getMavenProject().getProjectBuildingRequest().getRepositorySession(),
+                rangeRequest);
             Version rangeHighestVersion = rangeResult.getHighestVersion();
             latestVersion = null == rangeHighestVersion ? "" : rangeHighestVersion.toString();
         } catch (VersionRangeResolutionException e) {

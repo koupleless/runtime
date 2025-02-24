@@ -16,6 +16,8 @@
  */
 package com.alipay.sofa.koupleless.base.build.plugin.adapter;
 
+import com.github.difflib.DiffUtils;
+import com.github.difflib.UnifiedDiffUtils;
 import lombok.SneakyThrows;
 
 import java.io.File;
@@ -32,6 +34,7 @@ public class AdapterCopyService {
     private ClassCopyStrategy                    classCopyStrategy                    = new ClassCopyStrategy();
     private MergeServiceDirectoryCopyStrategy    mergeServiceDirectoryCopyStrategy    = new MergeServiceDirectoryCopyStrategy();
     private MergeSpringFactoryConfigCopyStrategy mergeSpringFactoryConfigCopyStrategy = new MergeSpringFactoryConfigCopyStrategy();
+    private PatchCopyStrategy                    patchCopyStrategy                    = new PatchCopyStrategy();
 
     /**
      * <p>copy.</p>
@@ -48,6 +51,13 @@ public class AdapterCopyService {
             mergeServiceDirectoryCopyStrategy.copy(buildDir, entryName, content);
         } else if (entryName.equals("META-INF/spring.factories")) {
             mergeSpringFactoryConfigCopyStrategy.copy(buildDir, entryName, content);
+        } else if (entryName.endsWith(".patch")) {
+            // 1. 下载 source 文件
+            // 2. 读取 patch 文件
+            // 3. 执行 patch
+
+            //            DiffUtils.patch();
+            //            patchCopyStrategy.copy(buildDir,);
         }
     }
 }

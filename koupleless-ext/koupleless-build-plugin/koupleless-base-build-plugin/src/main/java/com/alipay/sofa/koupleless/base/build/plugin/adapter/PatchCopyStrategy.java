@@ -14,35 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.base.build.plugin.model;
+package com.alipay.sofa.koupleless.base.build.plugin.adapter;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.apache.maven.model.Dependency;
+import java.io.File;
 
-/**
- * <p>MavenDependencyAdapterMapping class.</p>
- *
- * @author CodeNoobKing
- * @since 2024/2/6
- * @version 1.0.0
- */
-@NoArgsConstructor
-@AllArgsConstructor
-@Data
-@Builder
-public class MavenDependencyAdapterMapping {
-    /**
-     * 匹配用户的依赖。
-     */
-    private MavenDependencyMatcher matcher;
+public class PatchCopyStrategy implements CopyAdapterStrategy {
+    @Override
+    public void copy(File buildDir, String entryName, byte[] content) throws Throwable {
 
-    private Dependency             sourceToAdapter;
-
-    /**
-     * 适配的依赖。
-     */
-    private Dependency             adapter;
+    }
 }

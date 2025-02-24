@@ -36,6 +36,4 @@ public interface AdapterConfig {
      *
      */
     Map<MavenDependencyAdapterMapping, Artifact> matches(Collection<Artifact> resolvedArtifacts);
-
-    List<Dependency> getCommonDependencies();
 }
