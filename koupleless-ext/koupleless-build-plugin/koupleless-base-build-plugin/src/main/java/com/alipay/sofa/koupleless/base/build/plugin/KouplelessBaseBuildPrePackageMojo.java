@@ -92,14 +92,17 @@ import org.apache.maven.plugin.compiler.CompilerMojo;
  * @author zzl_i
  * @version 1.0.0
  */
-@Mojo(name = "add-patch", defaultPhase = LifecyclePhase.COMPILE)
-public class KouplelessBaseBuildPrePackageMojo extends CompilerMojo {
+@Mojo(name = "add-patch", defaultPhase = LifecyclePhase.PROCESS_CLASSES)
+public class KouplelessBaseBuildPrePackageMojo extends AbstractMojo {
 
-    //    @Parameter(defaultValue = "${project}", required = true, readonly = true)
-    //    public MavenProject                          project;
+    @Parameter(defaultValue = "${project.build.directory}", readonly = true)
+    File                                         outputDirectory;
 
-    //    @Parameter(defaultValue = "${session}", required = true, readonly = true)
-    //    public MavenSession                          session;
+    @Parameter(defaultValue = "${project}", required = true, readonly = true)
+    public MavenProject                          project;
+
+    @Parameter(defaultValue = "${session}", required = true, readonly = true)
+    public MavenSession                          session;
 
     @Parameter(defaultValue = "${project.basedir}", required = true)
     public File                                  baseDir;
@@ -148,7 +151,7 @@ public class KouplelessBaseBuildPrePackageMojo extends CompilerMojo {
         Field field = MavenProject.class.getDeclaredField("resolvedArtifacts");
         field.setAccessible(true);
         Set<org.apache.maven.artifact.Artifact> resolvedArtifacts = (Set<org.apache.maven.artifact.Artifact>) field
-            .get(getProject());
+            .get(project);
         if (resolvedArtifacts == null) {
             return adapterDependencies;
         }
@@ -217,11 +220,10 @@ public class KouplelessBaseBuildPrePackageMojo extends CompilerMojo {
 
         try {
             ArtifactRequest artifactRequest = new ArtifactRequest().setArtifact(patchArtifact)
-                .setRepositories(getProject().getRemoteProjectRepositories());
+                .setRepositories(project.getRemoteProjectRepositories());
 
-            ArtifactResult artifactResult = repositorySystem.resolveArtifact(
-                getMavenProject().getProjectBuildingRequest().getRepositorySession(),
-                artifactRequest);
+            ArtifactResult artifactResult = repositorySystem
+                .resolveArtifact(session.getRepositorySession(), artifactRequest);
 
             Preconditions.checkState(artifactResult.isResolved(), "artifact not resolved.");
             return artifactResult.getArtifact();
@@ -236,11 +238,10 @@ public class KouplelessBaseBuildPrePackageMojo extends CompilerMojo {
 
         try {
             ArtifactRequest artifactRequest = new ArtifactRequest().setArtifact(patchArtifact)
-                .setRepositories(getProject().getRemoteProjectRepositories());
+                .setRepositories(project.getRemoteProjectRepositories());
 
-            ArtifactResult artifactResult = repositorySystem.resolveArtifact(
-                getMavenProject().getProjectBuildingRequest().getRepositorySession(),
-                artifactRequest);
+            ArtifactResult artifactResult = repositorySystem
+                .resolveArtifact(session.getRepositorySession(), artifactRequest);
 
             Preconditions.checkState(artifactResult.isResolved(), "artifact not resolved.");
             return artifactResult.getArtifact();
@@ -254,11 +255,11 @@ public class KouplelessBaseBuildPrePackageMojo extends CompilerMojo {
         Artifact sourceArtifact = downloadDependency(sourceDep);
         Artifact desArtifact = downloadDependency(desDep);
         File file = desArtifact.getFile();
-        File buildDir = new File(getOutputDirectory(), "classes");
+        File buildDir = new File(outputDirectory, "classes");
 
         // add patched source to compile source root
-        File toBuildSourceDir = new File(getOutputDirectory(), "source");
-        this.getCompileSourceRoots().add(toBuildSourceDir.getAbsolutePath());
+        File toBuildSourceDir = new File(outputDirectory, "source");
+        //        this.getCompileSourceRoots().add(toBuildSourceDir.getAbsolutePath());
 
         Map<String, Byte[]> sourceEntryToConent = new HashMap<>();
         Map<String, Byte[]> entryToContent = JarFileUtils.getFileContentAsLines(file,
@@ -319,20 +320,9 @@ public class KouplelessBaseBuildPrePackageMojo extends CompilerMojo {
         try {
             initKouplelessAdapterConfig();
             addDependenciesDynamically();
-
-            super.execute();
         } catch (Throwable t) {
             getLog().error(t);
             throw new RuntimeException(t);
         }
-    }
-
-    @Override
-    public File getOutputDirectory() {
-        return super.getOutputDirectory();
-    }
-
-    public MavenProject getMavenProject() {
-        return super.getProject();
     }
 }

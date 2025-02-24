@@ -91,22 +91,13 @@ public class CompositeKouplelessAdapterConfigTest {
 
             mojo.repositorySystem = repositorySystem;
 
-            MavenProject mockProject = mock(MavenProject.class);
             List<RemoteRepository> remoteRepositories = Collections.emptyList();
-            doReturn(remoteRepositories).when(mockProject).getRemoteProjectRepositories();
-
-            Field projectField = KouplelessBaseBuildPrePackageMojo.class.getSuperclass()
-                .getSuperclass().getDeclaredField("project");
-            projectField.setAccessible(true);
-            projectField.set(mojo, mockProject);
+            mojo.project = mock(MavenProject.class);
+            doReturn(remoteRepositories).when(mojo.project).getRemoteProjectRepositories();
 
             RepositorySystemSession repositorySystemSession = mock(RepositorySystemSession.class);
-            MavenSession mockSession = mock(MavenSession.class);
-            doReturn(repositorySystemSession).when(mockSession).getRepositorySession();
-            Field sessionField = KouplelessBaseBuildPrePackageMojo.class.getSuperclass()
-                .getSuperclass().getField("session");
-            sessionField.setAccessible(true);
-            sessionField.set(mojo, mockSession);
+            mojo.session = mock(MavenSession.class);
+            doReturn(repositorySystemSession).when(mojo.session).getRepositorySession();
         }
 
         {

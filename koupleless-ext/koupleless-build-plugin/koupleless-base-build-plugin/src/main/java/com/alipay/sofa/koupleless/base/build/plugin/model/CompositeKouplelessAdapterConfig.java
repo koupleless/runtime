@@ -195,11 +195,10 @@ public class CompositeKouplelessAdapterConfig implements AdapterConfig {
             VersionRangeRequest rangeRequest = new VersionRangeRequest()
                 .setArtifact(new org.eclipse.aether.artifact.DefaultArtifact(
                     String.format("%s:%s:(,)", groupId, artifactId)))
-                .setRepositories(mojo.getMavenProject().getRemoteProjectRepositories());
+                .setRepositories(mojo.project.getRemoteProjectRepositories());
 
-            VersionRangeResult rangeResult = mojo.repositorySystem.resolveVersionRange(
-                mojo.getMavenProject().getProjectBuildingRequest().getRepositorySession(),
-                rangeRequest);
+            VersionRangeResult rangeResult = mojo.repositorySystem
+                .resolveVersionRange(mojo.session.getRepositorySession(), rangeRequest);
             Version rangeHighestVersion = rangeResult.getHighestVersion();
             latestVersion = null == rangeHighestVersion ? "" : rangeHighestVersion.toString();
         } catch (VersionRangeResolutionException e) {
