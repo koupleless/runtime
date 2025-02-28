@@ -218,6 +218,12 @@ public class MavenUtils {
 
     }
 
+    /**
+     * copied from https://github.com/apache/maven-resolver/blame/master/maven-resolver-util/src/main/java/org/eclipse/aether/util/version/VersionSchemeSupport.java
+     * @param constraint
+     * @return
+     * @throws InvalidVersionSpecificationException
+     */
     public static List<String> parseUnionVersionRange(final String constraint) throws InvalidVersionSpecificationException {
         String process = requireNonNull(constraint, "constraint cannot be null");
 
