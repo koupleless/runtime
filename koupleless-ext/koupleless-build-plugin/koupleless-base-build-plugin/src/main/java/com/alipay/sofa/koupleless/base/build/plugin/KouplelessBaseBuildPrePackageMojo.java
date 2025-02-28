@@ -33,12 +33,11 @@ package com.alipay.sofa.koupleless.base.build.plugin;
  */
 
 import com.alipay.sofa.koupleless.base.build.plugin.adapter.AdapterCopyService;
-import com.alipay.sofa.koupleless.base.build.plugin.common.JarFileUtils;
+import com.alipay.sofa.koupleless.base.build.plugin.utils.JarFileUtils;
 import com.alipay.sofa.koupleless.base.build.plugin.model.CompositeKouplelessAdapterConfig;
 import com.alipay.sofa.koupleless.base.build.plugin.model.MavenDependencyAdapterMapping;
 import com.alipay.sofa.koupleless.base.build.plugin.model.MavenDependencyMatcher;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.execution.MavenSession;
@@ -67,7 +66,6 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Goal which touches a timestamp file.

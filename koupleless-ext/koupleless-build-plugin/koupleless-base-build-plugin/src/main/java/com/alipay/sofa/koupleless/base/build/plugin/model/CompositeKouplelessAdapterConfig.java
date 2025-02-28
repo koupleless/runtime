@@ -17,7 +17,7 @@
 package com.alipay.sofa.koupleless.base.build.plugin.model;
 
 import com.alipay.sofa.koupleless.base.build.plugin.KouplelessBaseBuildPrePackageMojo;
-import com.alipay.sofa.koupleless.base.build.plugin.common.JarFileUtils;
+import com.alipay.sofa.koupleless.base.build.plugin.utils.JarFileUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import lombok.SneakyThrows;
@@ -46,7 +46,6 @@ import java.util.regex.Pattern;
 
 import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.ARK_CONF_BASE_DIR;
 import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.STRING_COLON;
-import static com.alipay.sofa.koupleless.base.build.plugin.utils.MavenUtils.getDependencyIdentity;
 import static com.google.common.collect.Maps.newHashMap;
 
 /**

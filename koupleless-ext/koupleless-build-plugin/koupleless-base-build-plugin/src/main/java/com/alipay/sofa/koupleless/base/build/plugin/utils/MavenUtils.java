@@ -35,6 +35,7 @@ import org.apache.maven.shared.invoker.InvocationResult;
 import org.apache.maven.shared.invoker.Invoker;
 import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.eclipse.aether.version.InvalidVersionSpecificationException;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -49,6 +50,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.STRING_COLON;
+import static java.util.Objects.requireNonNull;
 
 /**
  * @author lianglipeng.llp@alibaba-inc.com
@@ -214,6 +216,43 @@ public class MavenUtils {
                    + artifact.getVersion() + STRING_COLON + artifact.getType();
         }
 
+    }
+
+    public static List<String> parseUnionVersionRange(final String constraint) throws InvalidVersionSpecificationException {
+        String process = requireNonNull(constraint, "constraint cannot be null");
+
+        List<String> ranges = new ArrayList<>();
+
+        while (process.startsWith("[") || process.startsWith("(")) {
+            int index1 = process.indexOf(')');
+            int index2 = process.indexOf(']');
+
+            int index = index2;
+            if (index2 < 0 || (index1 >= 0 && index1 < index2)) {
+                index = index1;
+            }
+
+            if (index < 0) {
+                throw new InvalidVersionSpecificationException(constraint,
+                    "Unbounded version range " + constraint);
+            }
+
+            String versionRange = process.substring(0, index + 1);
+            ranges.add(versionRange);
+
+            process = process.substring(index + 1).trim();
+
+            if (process.startsWith(",")) {
+                process = process.substring(1).trim();
+            }
+        }
+
+        if (!process.isEmpty() && !ranges.isEmpty()) {
+            throw new InvalidVersionSpecificationException(constraint,
+                "Invalid version range " + constraint + ", expected [ or ( but got " + process);
+        }
+
+        return ranges;
     }
 
     private static class DependencyListMojo extends ListMojo {
