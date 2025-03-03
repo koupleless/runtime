@@ -111,13 +111,13 @@ public class KouplelessAdapterConfig implements AdapterConfig {
 
     private boolean versionRangeMatches(MavenDependencyMatcher matcher,
                                         org.apache.maven.artifact.Artifact artifact) {
-        if (null == matcher || null == matcher.getGenericVersionRange()) {
+        if (null == matcher || null == matcher.getUnionVersionRange()) {
             return false;
         }
 
         return StringUtils.equals(matcher.getGroupId(), artifact.getGroupId())
                && StringUtils.equals(matcher.getArtifactId(), artifact.getArtifactId()) && matcher
-                   .getGenericVersionRange().containsVersion(parseVersion(artifact.getVersion()));
+                   .getUnionVersionRange().containsVersion(parseVersion(artifact.getVersion()));
     }
 
     private String getArtifactFullId(org.apache.maven.artifact.Artifact artifact) {

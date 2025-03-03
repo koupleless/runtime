@@ -58,7 +58,7 @@ import java.util.stream.Stream;
 
 import static com.alipay.sofa.koupleless.base.build.plugin.KouplelessBasePackageFacadeMojo.JVMFileTypeEnum.JAVA;
 import static com.alipay.sofa.koupleless.base.build.plugin.KouplelessBasePackageFacadeMojo.JVMFileTypeEnum.KOTLIN;
-import static com.alipay.sofa.koupleless.base.build.plugin.common.FileUtils.createNewDirectory;
+import static com.alipay.sofa.koupleless.base.build.plugin.utils.FileUtils.createNewDirectory;
 import static com.alipay.sofa.koupleless.base.build.plugin.utils.CollectionUtils.nonNull;
 import static com.alipay.sofa.koupleless.base.build.plugin.utils.MavenUtils.getAllBundleArtifact;
 import static com.alipay.sofa.koupleless.base.build.plugin.utils.MavenUtils.getDependencyArtifacts;

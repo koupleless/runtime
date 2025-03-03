@@ -102,7 +102,7 @@ public class UnifiedOperationServiceImpl implements UnifiedOperationService {
 
         BatchInstallStrategy batchInstallStrategy = getBatchInstallStrategy(request);
         Map<Integer, List<InstallRequest>> installRequestsWithOrder = batchInstallStrategy
-                .convertToInstallInput(request);
+            .convertToInstallInput(request);
 
         ThreadPoolExecutor executorService = ExecutorServiceManager.getArkBizOpsExecutor();
         Map<String, ClientResponse> bizUrlToInstallResult = new HashMap<>();
