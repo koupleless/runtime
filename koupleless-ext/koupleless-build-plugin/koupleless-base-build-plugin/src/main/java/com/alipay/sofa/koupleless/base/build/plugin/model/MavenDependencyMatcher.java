@@ -16,13 +16,20 @@
  */
 package com.alipay.sofa.koupleless.base.build.plugin.model;
 
+import com.alipay.sofa.koupleless.base.build.plugin.utils.MavenUtils;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.aether.util.version.UnionVersionRange;
 import org.eclipse.aether.version.InvalidVersionSpecificationException;
 import org.eclipse.aether.version.VersionRange;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.alipay.sofa.koupleless.base.build.plugin.utils.ParseUtils.parseVersionRange;
 
@@ -63,12 +70,13 @@ public class MavenDependencyMatcher {
      * [1.0,2.0] 表示从 1.0（包含）到 2.0（包含）的版本。
      * (,1.0] 表示小于或等于 1.0 的版本。
      * [2.0,) 表示大于或等于 2.0 的版本。
+     * [2.11.0, 2.13.1),(2.13.1, 2.19.0] 表示[2.11.0, 2.13.1)和(2.13.1, 2.19.0]的并集，即：从 2.11.0（包含）到 2.13.1（不包含）或 2.13.1（不包含）到 2.19.0（包含）的版本。
      */
     @Getter
     private String       versionRange;
 
     @Getter
-    private VersionRange genericVersionRange;
+    private VersionRange unionVersionRange;
 
     @Builder
     public MavenDependencyMatcher(String regexp, String groupId, String artifactId,
@@ -77,20 +85,33 @@ public class MavenDependencyMatcher {
         this.groupId = groupId;
         this.artifactId = artifactId;
         this.versionRange = versionRange;
-        this.genericVersionRange = initGenericVersionRange();
+        this.unionVersionRange = initUnionVersionRange();
     }
 
     public void setVersionRange(String versionRange) throws InvalidVersionSpecificationException {
         this.versionRange = versionRange;
-        this.genericVersionRange = initGenericVersionRange();
+        this.unionVersionRange = initUnionVersionRange();
     }
 
-    private VersionRange initGenericVersionRange() throws InvalidVersionSpecificationException {
+    private VersionRange initGenericVersionRange(String versionRange) throws InvalidVersionSpecificationException {
         if (StringUtils.isEmpty(versionRange)) {
             return null;
         }
 
         return parseVersionRange(versionRange);
+    }
+
+    private VersionRange initUnionVersionRange() throws InvalidVersionSpecificationException {
+        if (StringUtils.isEmpty(versionRange)) {
+            return null;
+        }
+
+        List<String> strVersionRanges = MavenUtils.parseUnionVersionRange(versionRange);
+        List<VersionRange> versionRanges = new ArrayList<>();
+        for (String s : strVersionRanges) {
+            versionRanges.add(initGenericVersionRange(s));
+        }
+        return UnionVersionRange.from(versionRanges);
     }
 
     @Override

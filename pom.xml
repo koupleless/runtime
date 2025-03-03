@@ -9,7 +9,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <revision>2.1.10</revision>
+        <revision>2.1.11-SNAPSHOT</revision>
         <sofa.ark.version>3.1.9</sofa.ark.version>
         <koupleless.runtime.version>${revision}</koupleless.runtime.version>
         <spring.boot.version>3.2.1</spring.boot.version>
@@ -211,7 +211,7 @@
             <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-core</artifactId>
-                <version>3.9.6</version>
+                <version>3.9.9</version>
             </dependency>
 
             <dependency>
@@ -256,8 +256,8 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.maven</groupId>
-                <artifactId>maven-aether-provider</artifactId>
-                <version>3.3.9</version>
+                <artifactId>maven-resolver-provider</artifactId>
+                <version>3.9.9</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

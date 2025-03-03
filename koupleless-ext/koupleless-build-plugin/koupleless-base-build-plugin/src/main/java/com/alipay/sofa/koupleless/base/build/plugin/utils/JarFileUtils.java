@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.alipay.sofa.koupleless.base.build.plugin.common;
+package com.alipay.sofa.koupleless.base.build.plugin.utils;
 
 import com.google.common.base.Preconditions;
 import lombok.SneakyThrows;
