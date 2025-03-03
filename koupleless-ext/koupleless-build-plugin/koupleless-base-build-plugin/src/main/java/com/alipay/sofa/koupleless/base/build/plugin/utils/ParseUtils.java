@@ -18,6 +18,7 @@ package com.alipay.sofa.koupleless.base.build.plugin.utils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.aether.util.version.GenericVersionScheme;
+import org.eclipse.aether.util.version.UnionVersionRange;
 import org.eclipse.aether.version.Version;
 import org.eclipse.aether.version.VersionRange;
 

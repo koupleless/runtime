@@ -16,7 +16,7 @@
  */
 package com.alipay.sofa.koupleless.base.build.plugin;
 
-import com.alipay.sofa.koupleless.base.build.plugin.common.JarFileUtils;
+import com.alipay.sofa.koupleless.base.build.plugin.utils.JarFileUtils;
 import com.alipay.sofa.koupleless.base.build.plugin.model.ArkConfigHolder;
 import com.alipay.sofa.koupleless.base.build.plugin.model.KouplelessIntegrateBizConfig;
 import com.alipay.sofa.koupleless.base.build.plugin.utils.ParseUtils;
