@@ -23,7 +23,6 @@ import com.caucho.hessian.io.SerializerFactory;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Array;
 
 /**
  * <p>SerializeUtils class.</p>
@@ -34,26 +33,14 @@ import java.lang.reflect.Array;
  * @version 1.0.0
  */
 public class SerializeUtils {
-
-    private static Object _serializeTransform(Object source, ClassLoader targetClassLoader) {
-        try {
-            if (source == null) {
-                return source;
-            }
-            Class<?> sourceClass;
-            if (source.getClass().equals(Class.class)) {
-                sourceClass = (Class<?>) source;
-            } else {
-                sourceClass = source.getClass();
-            }
-            if (sourceClass.getClassLoader() == targetClassLoader
-                || targetClassLoader.loadClass(sourceClass.getName())
-                    .getClassLoader() == sourceClass.getClassLoader()) {
-                return source;
-            }
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+    /**
+     * <p>serializeTransform.</p>
+     *
+     * @param originalSource a {@link java.lang.Object} object
+     * @param targetClassLoader a {@link java.lang.ClassLoader} object
+     * @return a {@link java.lang.Object} object
+     */
+    public static Object serializeTransform(Object originalSource, ClassLoader targetClassLoader) {
         Object target;
         ClassLoader currentContextClassloader = Thread.currentThread().getContextClassLoader();
         try {
@@ -67,7 +54,7 @@ public class SerializeUtils {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             Hessian2Output h2o = new Hessian2Output(bos);
             h2o.setSerializerFactory(serializerFactory);
-            h2o.writeObject(source);
+            h2o.writeObject(originalSource);
             h2o.flush();
             byte[] content = bos.toByteArray();
 
@@ -80,34 +67,5 @@ public class SerializeUtils {
             Thread.currentThread().setContextClassLoader(currentContextClassloader);
         }
         return target;
-    }
-
-    /**
-     * <p>serializeTransform.</p>
-     *
-     * @param originalSource a {@link java.lang.Object} object
-     * @param targetClassLoader a {@link java.lang.ClassLoader} object
-     * @return a {@link java.lang.Object} object
-     */
-    public static Object serializeTransform(Object originalSource, ClassLoader targetClassLoader) {
-        if (originalSource == null) {
-            return null;
-        }
-        if (originalSource.getClass().isArray()) {
-            Object[] sources = (Object[]) originalSource;
-            if (sources.length > 0) {
-                Object[] targets = (Object[]) Array
-                    .newInstance(sources.getClass().getComponentType(), sources.length);
-
-                for (int i = 0; i < sources.length; i++) {
-                    targets[i] = _serializeTransform(sources[i], targetClassLoader);
-                }
-                return (Object) targets;
-            } else {
-                return originalSource;
-            }
-        } else {
-            return _serializeTransform(originalSource, targetClassLoader);
-        }
     }
 }
