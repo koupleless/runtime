@@ -1,6 +1,18 @@
-/**
- * Alipay.com Inc.
- * Copyright (c) 2004-2025 All Rights Reserved.
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package com.alipay.sofa.koupleless.base.build.plugin;
 
@@ -48,23 +60,21 @@ public class KouplelessBasePackagePluginDependencyMojoTest {
 
     @Test
     public void testExecute() throws MojoExecutionException, MojoFailureException,
-            URISyntaxException, MavenInvocationException {
+                              URISyntaxException, MavenInvocationException {
         KouplelessBasePackagePluginDependencyMojo mojo = spy(createMojo());
         doNothing().when(mojo).installPluginDependencies();
 
         mojo.execute();
 
-        assertTrue(CommonUtils
-                .resourceExists("mockBizPluginDir/biz-plugin-bom/pom.xml"));
+        assertTrue(CommonUtils.resourceExists("mockBizPluginDir/biz-plugin-bom/pom.xml"));
 
-        Model pom = MavenUtils.buildPomModel(CommonUtils
-                .getResourceFile("mockBizPluginDir/biz-plugin-bom/pom.xml"));
+        Model pom = MavenUtils
+            .buildPomModel(CommonUtils.getResourceFile("mockBizPluginDir/biz-plugin-bom/pom.xml"));
 
         assertEquals(1, pom.getDependencyManagement().getDependencies().size());
         assertEquals(1, pom.getDependencyManagement().getDependencies().stream()
-                .filter(d -> d.getArtifactId().equals("hutool-all")).count());
+            .filter(d -> d.getArtifactId().equals("hutool-all")).count());
     }
-
 
     private MavenProject getMockBootstrapProject() throws URISyntaxException {
         MavenProject project = new MavenProject();
@@ -81,7 +91,6 @@ public class KouplelessBasePackagePluginDependencyMojoTest {
         when(bizPluginArtifact.getGroupId()).thenReturn("com.mock");
         when(bizPluginArtifact.getVersion()).thenReturn("0.0.1-SNAPSHOT");
         project.setArtifact(bizPluginArtifact);
-
 
         Model model = MavenUtils.buildPomModel(project.getFile());
         project.setOriginalModel(model);
@@ -110,7 +119,7 @@ public class KouplelessBasePackagePluginDependencyMojoTest {
         when(a3.getBaseVersion()).thenReturn("0.0.1-SNAPSHOT");
         when(a3.getType()).thenReturn("jar");
         when(a3.getScope()).thenReturn("compile");
-        project.setArtifacts(Sets.newHashSet(a1, a2,a3));
+        project.setArtifacts(Sets.newHashSet(a1, a2, a3));
 
         return project;
     }
@@ -121,7 +130,8 @@ public class KouplelessBasePackagePluginDependencyMojoTest {
         project.setGroupId("com.mock");
         project.setVersion("0.0.1-SNAPSHOT");
         project.setPackaging("pom");
-        project.setFile(CommonUtils.getResourceFile("mockBizPluginDir/baseDependenciesStarterPom.xml"));
+        project.setFile(
+            CommonUtils.getResourceFile("mockBizPluginDir/baseDependenciesStarterPom.xml"));
         project.setParent(null);
 
         Model model = MavenUtils.buildPomModel(project.getFile());
