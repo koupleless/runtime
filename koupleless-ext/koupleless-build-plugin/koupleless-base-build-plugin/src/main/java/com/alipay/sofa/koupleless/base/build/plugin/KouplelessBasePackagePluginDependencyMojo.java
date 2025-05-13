@@ -187,7 +187,7 @@ public class KouplelessBasePackagePluginDependencyMojo extends AbstractMojo {
         pom.setLicenses(Collections.singletonList(license));
 
         // 配置 properties
-        Properties properties = this.mavenProject.getProperties();
+        Properties properties = this.mavenProject.getOriginalModel().getProperties();
         properties.putIfAbsent("maven-source-plugin.version", "3.2.1");
         pom.setProperties(properties);
 
