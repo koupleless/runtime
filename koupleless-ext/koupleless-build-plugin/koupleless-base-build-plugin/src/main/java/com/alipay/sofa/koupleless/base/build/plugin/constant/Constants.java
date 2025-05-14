@@ -48,7 +48,7 @@ public class Constants {
     public final static String ARK_YML_FILE                         = "bootstrap.yml";
 
     public final static String SOFA_ARK_MODULE                      = "SOFA-ARK" + File.separator
-        + "biz";
+                                                                      + "biz";
 
     /**
      * extension-config
