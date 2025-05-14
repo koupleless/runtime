@@ -35,13 +35,10 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.io.File;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 import static com.alipay.sofa.koupleless.base.build.plugin.KouplelessBasePackageFacadeMojo.JVMFileTypeEnum.JAVA;
 import static com.alipay.sofa.koupleless.base.build.plugin.KouplelessBasePackageFacadeMojo.JVMFileTypeEnum.KOTLIN;

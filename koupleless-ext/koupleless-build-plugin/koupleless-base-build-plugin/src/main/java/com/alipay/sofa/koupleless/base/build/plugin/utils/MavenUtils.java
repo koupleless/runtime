@@ -278,4 +278,26 @@ public class MavenUtils {
         }
     }
 
+    public static String getArtifactIdentityWithoutVersion(Artifact artifact) {
+        if (artifact.hasClassifier()) {
+            return artifact.getGroupId() + STRING_COLON + artifact.getArtifactId() + STRING_COLON
+                   + artifact.getClassifier() + STRING_COLON + artifact.getType();
+        } else {
+            return artifact.getGroupId() + STRING_COLON + artifact.getArtifactId() + STRING_COLON
+                   + artifact.getType();
+        }
+
+    }
+
+    public static String getDependencyIdentityWithoutVersion(Dependency dependency) {
+        if (org.apache.commons.lang3.StringUtils.isNotEmpty(dependency.getClassifier())) {
+            return dependency.getGroupId() + STRING_COLON + dependency.getArtifactId()
+                   + STRING_COLON + dependency.getClassifier() + STRING_COLON
+                   + dependency.getType();
+        } else {
+            return dependency.getGroupId() + STRING_COLON + dependency.getArtifactId()
+                   + STRING_COLON + dependency.getType();
+        }
+    }
+
 }
