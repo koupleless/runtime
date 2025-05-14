@@ -16,10 +16,40 @@
  */
 package com.alipay.sofa.koupleless.base.build.plugin;
 
-import com.alipay.sofa.koupleless.base.build.plugin.utils.JarFileUtils;
+import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.AUTHORIZATION_BASIC;
+import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.EXTENSION_INTEGRATE_LOCAL_DIRS;
+import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.EXTENSION_INTEGRATE_URLS;
+import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.FILE_PREFIX;
+import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.HTTPS_PREFIX;
+import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.HTTP_PREFIX;
+import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.INTEGRATE_BIZ_URL;
+import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.INTEGRATE_BIZ_URL_AUTHORIZATION_TYPE;
+import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.INTEGRATE_BIZ_URL_BASIC_PASSWORD;
+import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.INTEGRATE_BIZ_URL_BASIC_USERNAME;
+import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.SOFA_ARK_MODULE;
+
+import com.alibaba.fastjson.JSON;
 import com.alipay.sofa.koupleless.base.build.plugin.model.ArkConfigHolder;
 import com.alipay.sofa.koupleless.base.build.plugin.model.KouplelessIntegrateBizConfig;
+import com.alipay.sofa.koupleless.base.build.plugin.model.KouplelessIntegrateBizConfig.KouplelessIntegrateBizAuthorization;
+import com.alipay.sofa.koupleless.base.build.plugin.utils.JarFileUtils;
 import com.alipay.sofa.koupleless.base.build.plugin.utils.ParseUtils;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import lombok.SneakyThrows;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -27,27 +57,6 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-
-import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.EXTENSION_INTEGRATE_LOCAL_DIRS;
-import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.EXTENSION_INTEGRATE_URLS;
-import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.FILE_PREFIX;
-import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.HTTPS_PREFIX;
-import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.HTTP_PREFIX;
-import static com.alipay.sofa.koupleless.base.build.plugin.constant.Constants.SOFA_ARK_MODULE;
 
 /**
  * @author lianglipeng.llp@alibaba-inc.com
@@ -64,7 +73,9 @@ public class KouplelessBaseIntegrateBizMojo extends AbstractMojo {
 
     KouplelessIntegrateBizConfig kouplelessIntegrateBizConfig = new KouplelessIntegrateBizConfig();
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void execute() {
         try {
@@ -87,10 +98,42 @@ public class KouplelessBaseIntegrateBizMojo extends AbstractMojo {
             File targetFile = new File(targetDir, getFullRevision(urlStr));
             if (!targetFile.exists()) {
                 URL url = new URL(urlStr);
-                try (InputStream inputStream = url.openStream()) {
+                URLConnection conn = url.openConnection();
+
+                if (StringUtils.startsWith(urlStr, HTTP_PREFIX)
+                    || StringUtils.startsWith(urlStr, HTTPS_PREFIX)) {
+                    // 如果是http或https协议，设置认证头
+                    setAuthorizationHeader(conn);
+                }
+                try (InputStream inputStream = conn.getInputStream()) {
                     FileUtils.copyInputStreamToFile(inputStream, targetFile);
                 }
             }
+        }
+    }
+
+    private void setAuthorizationHeader(URLConnection conn) throws IOException {
+        KouplelessIntegrateBizAuthorization httpAuthorization = kouplelessIntegrateBizConfig
+            .getHttpAuthorization();
+        if (httpAuthorization == null
+            || StringUtils.isBlank(httpAuthorization.getAuthorizationType())) {
+            return;
+        }
+        switch (httpAuthorization.getAuthorizationType()) {
+            case AUTHORIZATION_BASIC:
+                String username = httpAuthorization.getBasicUsername();
+                String password = httpAuthorization.getBasicPassword();
+                if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
+                    throw new IllegalArgumentException(
+                        "Both username and password should be set when using basic authorization.");
+                }
+                String auth = username + ":" + password;
+                String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes());
+                conn.setRequestProperty("Authorization", "Basic " + encodedAuth);
+                break;
+            default:
+                throw new UnsupportedOperationException(
+                    "Unsupported authorization type: " + httpAuthorization.getAuthorizationType());
         }
     }
 
@@ -155,6 +198,9 @@ public class KouplelessBaseIntegrateBizMojo extends AbstractMojo {
             .addFileURLs(ParseUtils.getStringSet(arkYaml, EXTENSION_INTEGRATE_URLS));
         kouplelessIntegrateBizConfig
             .addLocalDirs(ParseUtils.getStringSet(arkYaml, EXTENSION_INTEGRATE_LOCAL_DIRS));
+        kouplelessIntegrateBizConfig.setHttpAuthorization(
+            JSON.parseObject(JSON.toJSONString(arkYaml.get(INTEGRATE_BIZ_URL)),
+                KouplelessIntegrateBizAuthorization.class));
     }
 
     private void readFromArkPropertiesFile() {
@@ -163,6 +209,13 @@ public class KouplelessBaseIntegrateBizMojo extends AbstractMojo {
             .addFileURLs(ParseUtils.getSetValues(arkProperties, EXTENSION_INTEGRATE_URLS));
         kouplelessIntegrateBizConfig
             .addLocalDirs(ParseUtils.getSetValues(arkProperties, EXTENSION_INTEGRATE_LOCAL_DIRS));
-
+        KouplelessIntegrateBizAuthorization httpAuthorization = new KouplelessIntegrateBizAuthorization();
+        httpAuthorization
+            .setAuthorizationType(arkProperties.getProperty(INTEGRATE_BIZ_URL_AUTHORIZATION_TYPE));
+        httpAuthorization
+            .setBasicUsername(arkProperties.getProperty(INTEGRATE_BIZ_URL_BASIC_USERNAME));
+        httpAuthorization
+            .setBasicPassword(arkProperties.getProperty(INTEGRATE_BIZ_URL_BASIC_PASSWORD));
+        kouplelessIntegrateBizConfig.setHttpAuthorization(httpAuthorization);
     }
 }

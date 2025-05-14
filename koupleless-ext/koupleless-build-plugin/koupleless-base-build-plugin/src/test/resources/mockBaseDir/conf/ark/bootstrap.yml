@@ -3,3 +3,7 @@ integrateBizURLs:
 integrateLocalDirs:
   - /aaa
   - /bbb
+integrateBizURL:
+  authorizationType: Basic
+  basicUsername: yml-test
+  basicPassword: yml-test
