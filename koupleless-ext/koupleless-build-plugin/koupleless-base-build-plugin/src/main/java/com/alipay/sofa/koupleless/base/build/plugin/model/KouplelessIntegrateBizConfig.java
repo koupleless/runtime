@@ -23,6 +23,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
 import java.util.Set;
+import lombok.Setter;
 
 /**
  * @author lianglipeng.llp@alibaba-inc.com
@@ -33,16 +34,22 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Setter
 public class KouplelessIntegrateBizConfig {
     /**
      * 指定文件URL，将拷贝到 classpath 下的 SOFA-ARK/biz，支持：file:///,http://, https://
      */
-    Set<String> fileURLs  = new HashSet<>();
+    Set<String>                                 fileURLs  = new HashSet<>();
 
     /**
      * 指定本地目录，将拷贝该目录下的所有 ark-biz 到 classpath 下的 SOFA-ARK/biz
      */
-    Set<String> localDirs = new HashSet<>();
+    Set<String>                                 localDirs = new HashSet<>();
+
+    /**
+     * http、https header的Authorization配置
+     */
+    private KouplelessIntegrateBizAuthorization httpAuthorization;
 
     public void addFileURLs(Set<String> urls) {
         fileURLs.addAll(urls);
@@ -50,5 +57,24 @@ public class KouplelessIntegrateBizConfig {
 
     public void addLocalDirs(Set<String> absolutePath) {
         localDirs.addAll(absolutePath);
+    }
+
+    @Getter
+    @Setter
+    public static class KouplelessIntegrateBizAuthorization {
+        /**
+         * http、https header的Authorization类型
+         */
+        String authorizationType;
+
+        /**
+         * authorizationType为basic类型时，用户名
+         */
+        String basicUsername;
+
+        /**
+         * authorizationType为basic类型时，密码
+         */
+        String basicPassword;
     }
 }
