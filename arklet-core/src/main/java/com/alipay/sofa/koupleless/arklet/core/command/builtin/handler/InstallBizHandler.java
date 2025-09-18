@@ -19,11 +19,13 @@ package com.alipay.sofa.koupleless.arklet.core.command.builtin.handler;
 import com.alipay.sofa.ark.api.ArkClient;
 import com.alipay.sofa.ark.api.ClientResponse;
 import com.alipay.sofa.ark.api.ResponseCode;
+import com.alipay.sofa.ark.common.util.BizIdentityUtils;
 import com.alipay.sofa.ark.common.util.FileUtils;
 import com.alipay.sofa.ark.common.util.StringUtils;
 import com.alipay.sofa.ark.spi.model.Biz;
 import com.alipay.sofa.ark.spi.service.biz.BizFactoryService;
 import com.alipay.sofa.koupleless.arklet.core.command.builtin.BuiltinCommand;
+import com.alipay.sofa.koupleless.arklet.core.command.coordinate.BizOpsPodCoordinator;
 import com.alipay.sofa.koupleless.arklet.core.command.meta.AbstractCommandHandler;
 import com.alipay.sofa.koupleless.arklet.core.command.meta.Command;
 import com.alipay.sofa.koupleless.arklet.core.command.meta.Output;
@@ -69,6 +71,10 @@ public class InstallBizHandler extends
             installBizClientResponse
                 .setElapsedSpace(metaSpaceMXBean.getUsage().getUsed() - startSpace);
             if (ResponseCode.SUCCESS.equals(installBizClientResponse.getCode())) {
+                String bizIdentity = BizIdentityUtils.generateBizIdentity(input.getBizName(),
+                    input.getBizVersion());
+                String bizModelVersion = input.getBizModelVersion();
+                BizOpsPodCoordinator.save(bizIdentity, bizModelVersion);
                 return Output.ofSuccess(installBizClientResponse);
             } else {
                 return Output.ofFailed(installBizClientResponse, "install biz not success!");

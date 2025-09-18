@@ -29,6 +29,7 @@ public class ArkBizMeta extends InputMeta {
     private String  bizName;
     private String  bizVersion;
     private String  requestId;
+    private String  bizModelVersion;
     private boolean async;
 
     /**
@@ -83,6 +84,24 @@ public class ArkBizMeta extends InputMeta {
      */
     public void setRequestId(String requestId) {
         this.requestId = requestId;
+    }
+
+    /**
+     * <p>Getter for the field <code>bizModelVersion</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
+    public String getBizModelVersion() {
+        return bizModelVersion;
+    }
+
+    /**
+     * <p>Setter for the field <code>bizModelVersion</code>.</p>
+     *
+     * @param bizModelVersion a {@link java.lang.String} object
+     */
+    public void setBizModelVersion(String bizModelVersion) {
+        this.bizModelVersion = bizModelVersion;
     }
 
     /**
